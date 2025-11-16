@@ -8,7 +8,7 @@ Teaem: First Order
 
 ## To access the form
 
-Navigate to: **`http://localhost:PORT/scout-2021`**
+## Navigate to: `http://localhost:PORT/scout-2021`
 
 The port can be whatever is currently running, so 3000, 3001, 3002, etc.
 
@@ -141,9 +141,7 @@ JSON.parse(localStorage.getItem("scout2021_submissions"));
 
 - for some of the ZOD related stuff I had to use AI so that it can explain to me what was being done by ZOD and I had it teach me what it was doing since I do not have much experience with ZOD.
 
-### THIS WAS MADE BY AI
-
-###************************\_\_\_************************
+### THIS BOTTOM SECTION WAS MADE BY AI
 
 ## 🔧 Future Enhancements
 
@@ -172,4 +170,4 @@ await db.insert(standForm2021).values({
 
 - Copy analysis structure from `/apps/web/app/(sidebar)/analysis/`
 - Adapt queries to use `standForm2021` table
-- Use same chart/table components ###********************************\_\_\_\_********************************
+- Use same chart/table components
