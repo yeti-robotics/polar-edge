@@ -10,7 +10,7 @@ export function FormProgress() {
 
     return (
         <Progress //simple progress bar tag
-            className="rounded-none bg-gray-900 h-2 [&>*]:bg-gray-500"
+            className="rounded-none bg-gray-900 h-2 [&>*]:bg-red-700"
             value={progress}
         />
     );

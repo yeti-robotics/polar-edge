@@ -186,7 +186,7 @@ export function MatchDetail() { //this is the function that is exported to the f
                         type="button"
                         variant="secondary"
                         onClick={() => handleMatchNumberChange(matchNumber)}
-                        className="border border-gray-600 hover:border-gray-500 bg-transparent text-gray-300"
+                        className="border border-red-800 hover:border-red-600 bg-transparent text-red-500 hover:bg-red-950/30"
                     >
                         Refetch match details <RefreshCcw />
                     </Button>

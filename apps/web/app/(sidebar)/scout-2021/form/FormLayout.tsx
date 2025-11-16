@@ -10,7 +10,7 @@ export function FormLayout({ children }: { children: React.ReactNode }) {
     return (
         <StandForm2021Provider>
             <div className="mx-auto flex max-w-md flex-col gap-y-4">
-                <Card className="overflow-hidden rounded-md border-gray-700 bg-black shadow-xl shadow-black/50">
+                <Card className="overflow-hidden rounded-md border-2 border-red-900 bg-black shadow-xl shadow-red-950/50">
                     <FormProgress />
                     <FormHeader />
                     {children}

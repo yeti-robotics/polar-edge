@@ -48,17 +48,17 @@ export function CounterInput({
     return (
         <div className="grid grid-cols-[1fr_auto_1fr] gap-1">
             <Button
-                className="aspect-square h-9 border-gray-600 hover:bg-gray-900/50"
+                className="aspect-square h-9 border-red-800 hover:bg-red-950/30 hover:border-red-600"
                 disabled={!!min && count <= min}
                 onClick={handleDecrement}
                 variant="outline"
                 size="icon"
                 type="button"
             >
-                <Minus className="text-gray-400" />
+                <Minus className="text-red-500" />
             </Button>
             <Input
-                className="h-9 w-full p-0 text-center select-none border-gray-600 focus:border-gray-400 bg-black"
+                className="h-9 w-full p-0 text-center select-none border-red-800 focus:border-red-600 bg-black text-red-400"
                 value={count}
                 onChange={handleChange} //utilizing the handleChange function to change the count
                 readOnly //making the input read only so that the user cannot change the value
@@ -72,10 +72,10 @@ export function CounterInput({
                 variant="outline" //setting the variant for the button to outline
                 size="icon" //setting the size for the button to icon
                 type="button"
-                className="aspect-square h-9 border-gray-600 hover:bg-gray-900/50" //setting the class name for the button
+                className="aspect-square h-9 border-red-800 hover:bg-red-950/30 hover:border-red-600" //setting the class name for the button
             >
                 {/*sign for button, the plus sign*/}
-                <Plus className="text-gray-400" />
+                <Plus className="text-red-500" />
             </Button>
         </div>
     );

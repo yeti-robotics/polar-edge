@@ -28,16 +28,16 @@ export function PowerCellInput({ period }: { period: "auto" | "teleop" }) {
         <Dialog>
             <DialogTrigger asChild>
                 <Button //this is the button that is used to trigger the dialog
-                    className="flex aspect-square h-auto flex-col border-gray-600 bg-black hover:border-gray-500 hover:bg-gray-950 [&_svg]:size-8"
+                    className="flex aspect-square h-auto flex-col border-red-800 bg-black hover:border-red-600 hover:bg-red-950/30 [&_svg]:size-8"
                     variant="outline" //this is the variant for the button, outline
                 >
-                    <Circle className="fill-gray-400 text-gray-600" />
-                    <span className="text-gray-200">Power Cells</span>
+                    <Circle className="fill-red-600 text-red-800" />
+                    <span className="text-red-500">Power Cells</span>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-scroll border-gray-600 bg-black">
+            <DialogContent className="max-h-[90vh] overflow-scroll border-2 border-red-900 bg-black">
                 <DialogHeader>
-                    <DialogTitle className="text-gray-100">
+                    <DialogTitle className="text-red-500">
                         {period === "auto" ? "Autonomous" : "Teleop"} Power Cells
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
@@ -45,7 +45,7 @@ export function PowerCellInput({ period }: { period: "auto" | "teleop" }) {
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-4 overflow-scroll">
-                    <div className="relative h-[380px] max-h-[50vh] w-full rounded-lg overflow-hidden border-2 border-gray-700 bg-black">
+                    <div className="relative h-[380px] max-h-[50vh] w-full rounded-lg overflow-hidden border-2 border-red-900 bg-black">
                         <Image //used Image instead of img tag so that the image can be responsive and the size can be adjusted to the container and image is more clear
                             src="/2021-field-diagram.png" //This is where I was able to gather the image of the powerport similar to how we had an image of the coral so that user's can easily see what section is being scouted
                             alt="2021 Infinite Recharge Field Diagram"

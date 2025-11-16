@@ -20,13 +20,13 @@ export function FormNavigation() {
     const form = useFormContext<StandForm2021Data>();
 
     return (
-        <div className="flex justify-between border-t border-gray-700 p-4 bg-gray-950">
+        <div className="flex justify-between border-t-2 border-red-900 p-4 bg-gray-950">
             <Button
                 type="button"
                 variant="outline"
                 onClick={goToPreviousStep}
                 disabled={!canGoPrevious}
-                className="border-gray-600 text-gray-300 hover:bg-gray-900/50 disabled:opacity-30"
+                className="border-gray-600 text-gray-300 hover:bg-gray-900/50 hover:border-red-800 disabled:opacity-30"
             >
                 Previous
             </Button>
@@ -36,7 +36,7 @@ export function FormNavigation() {
                     isLastStep ? form.handleSubmit(submitForm) : goToNextStep
                 }
                 disabled={isLastStep ? isSubmitting : !canGoNext}
-                className="border border-gray-500 bg-gray-900 hover:bg-gray-800 text-gray-100 disabled:opacity-30"
+                className="bg-red-900 hover:bg-red-800 text-gray-100 border border-red-700 disabled:opacity-30"
             >
                 {isLastStep
                     ? isSubmitting
