@@ -52,7 +52,7 @@ const gameColors2 = {
 
 export function ChartComparison() {
     return (
-        <ResponsiveContainer width="50%" height={200}>
+        <ResponsiveContainer width="25%" height={100}>
             <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="level" />
@@ -68,7 +68,7 @@ export function ChartComparison() {
 
 export function ChartComparisonTwo() {
     return (
-        <ResponsiveContainer width="50%" height={200}>
+        <ResponsiveContainer width="25%" height={100}>
             <BarChart data={chartData2}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="level" />
