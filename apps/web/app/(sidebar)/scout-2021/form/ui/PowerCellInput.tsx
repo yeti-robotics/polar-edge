@@ -28,10 +28,16 @@ export function PowerCellInput({ period }: { period: "auto" | "teleop" }) {
         <Dialog>
             <DialogTrigger asChild>
                 <Button //this is the button that is used to trigger the dialog
-                    className="flex aspect-square h-auto flex-col border-red-800 bg-black hover:border-red-600 hover:bg-red-950/30 [&_svg]:size-8"
+                    className="flex aspect-square h-auto flex-col border-red-800 bg-black hover:border-red-600 hover:bg-red-950/30"
                     variant="outline" //this is the variant for the button, outline
                 >
-                    <Circle className="fill-red-600 text-red-800" />
+                    <Image
+                        src="/2021ScoutFirstOrder.png"
+                        alt="Scout First Order Logo"
+                        width={100}
+                        height={100}
+                        className="object-contain"
+                    />
                     <span className="text-red-500">Power Cells</span>
                 </Button>
             </DialogTrigger>
