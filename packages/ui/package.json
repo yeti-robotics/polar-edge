@@ -44,7 +44,7 @@
         "lucide-react": "^0.454.0",
         "react": "19.2.1",
         "react-day-picker": "^9.8.1",
-        "react-dom": "19.1.0",
+        "react-dom": "19.2.1",
         "react-hook-form": "7.56.3",
         "tailwind-merge": "^2.6.0",
         "vaul": "^1.1.2",
