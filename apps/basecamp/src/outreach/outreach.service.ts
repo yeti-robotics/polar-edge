@@ -97,7 +97,7 @@ export class OutreachService {
         0,
       );
 
-      return totalHours;
+      return Math.round(totalHours * 100) / 100;
     } catch (error) {
       console.error('Error getting total team outreach hours:', error);
       return 0;
