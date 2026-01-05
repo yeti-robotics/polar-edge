@@ -9,6 +9,7 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "@repo/*",
+    "scouting",
     "@app/*"
   ]
 }
