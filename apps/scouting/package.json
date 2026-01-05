@@ -19,6 +19,7 @@
 		"@hookform/resolvers": "^5.1.1",
 		"@repo/ui": "workspace:*",
 		"@tanstack/react-table": "^8.21.3",
+		"better-auth": "^1.4.10",
 		"csv-parse": "^6.1.0",
 		"drizzle-orm": "^0.44.2",
 		"lucide-react": "^0.525.0",
