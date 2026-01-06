@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { randomBytes } from 'node:crypto';
+import { randomBytes } from "node:crypto";
+import { Injectable } from "@nestjs/common";
 
 type CodeSlot = {
   windowId: number;
@@ -10,8 +10,6 @@ type CodeSlot = {
 export class AttendanceTwoFAService {
   private readonly NEW_CODE_INTERVAL = 30_000;
   private slots: [CodeSlot | null, CodeSlot | null] = [null, null];
-
-  constructor() {}
 
   /** Gets the window ID for the current time. */
   private getWindowId() {

@@ -7,12 +7,7 @@ export enum Cage {
   PARK = "Parked",
 }
 
-const EndGameState2025Schema = z.enum([
-  Cage.NONE,
-  Cage.PARK,
-  Cage.SHALLOW,
-  Cage.DEEP,
-]);
+const EndGameState2025Schema = z.enum([Cage.NONE, Cage.PARK, Cage.SHALLOW, Cage.DEEP]);
 
 const ReefBreakdown2025RowSchema = z.object({
   nodeA: z.boolean(),

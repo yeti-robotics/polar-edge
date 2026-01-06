@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { SheetService } from 'src/sheet/sheet.service';
-import { ConfigService } from '@nestjs/config';
-import { z } from 'zod';
+import { Injectable } from "@nestjs/common";
+import type { ConfigService } from "@nestjs/config";
+import type { SheetService } from "src/sheet/sheet.service";
+import { z } from "zod";
 
 const OutreachColumnSchema = z.object({
   date: z.string(),
@@ -17,14 +17,12 @@ export class OutreachService {
 
   constructor(
     private readonly sheetService: SheetService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
-    const outreachSheetId = this.configService.get<string>(
-      'OUTREACH_SPREADSHEET_ID',
-    );
+    const outreachSheetId = this.configService.get<string>("OUTREACH_SPREADSHEET_ID");
 
     if (!outreachSheetId) {
-      throw new Error('OUTREACH_SPREADSHEET_ID is not set');
+      throw new Error("OUTREACH_SPREADSHEET_ID is not set");
     }
 
     this.outreachSheetId = outreachSheetId;
@@ -34,7 +32,7 @@ export class OutreachService {
     try {
       const sheet = await this.sheetService.getSheetValues(
         this.outreachSheetId,
-        'OutreachInput!A:E',
+        "OutreachInput!A:E"
       );
 
       if (!sheet) {
@@ -50,7 +48,7 @@ export class OutreachService {
           event: row[2],
           eventType: row[3],
           hours: Number(row[4]),
-        }),
+        })
       );
     } catch (error) {
       console.error(error);
@@ -62,7 +60,7 @@ export class OutreachService {
     try {
       const sheet = await this.sheetService.getSheetValues(
         this.outreachSheetId,
-        'OutreachInput!A:E',
+        "OutreachInput!A:E"
       );
 
       if (!sheet) {
@@ -77,12 +75,12 @@ export class OutreachService {
           event: row[2],
           eventType: row[3],
           hours: Number(row[4]),
-        }),
+        })
       );
 
       return outreachData;
     } catch (error) {
-      console.error('Error parsing outreach data:', error);
+      console.error("Error parsing outreach data:", error);
       return [];
     }
   }
@@ -92,14 +90,11 @@ export class OutreachService {
       const outreachData = await this.parseAllOutreachData();
 
       // Sum all hours across all users
-      const totalHours = outreachData.reduce(
-        (sum, entry) => sum + entry.hours,
-        0,
-      );
+      const totalHours = outreachData.reduce((sum, entry) => sum + entry.hours, 0);
 
       return Math.round(totalHours * 100) / 100;
     } catch (error) {
-      console.error('Error getting total team outreach hours:', error);
+      console.error("Error getting total team outreach hours:", error);
       return 0;
     }
   }
@@ -128,7 +123,7 @@ export class OutreachService {
 
       return leaderboard;
     } catch (error) {
-      console.error('Error getting leaderboard:', error);
+      console.error("Error getting leaderboard:", error);
       return [];
     }
   }

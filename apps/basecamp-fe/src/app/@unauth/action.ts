@@ -3,15 +3,15 @@
 import { login } from "@/lib/auth";
 
 export async function signIn(formData: FormData) {
-	const password = formData.get("password");
+  const password = formData.get("password");
 
-	if (!password || typeof password !== "string") {
-		return;
-	}
+  if (!password || typeof password !== "string") {
+    return;
+  }
 
-	const success = await login(password);
+  const success = await login(password);
 
-	if (!success) {
-		return;
-	}
+  if (!success) {
+    return;
+  }
 }

@@ -1,20 +1,20 @@
-import { Module } from '@nestjs/common';
-import { NecordModule } from 'necord';
-import { ConfigService } from '@nestjs/config';
-import { IntentsBitField } from 'discord.js';
-import { BotCommands } from './bot.commands';
-import { HandbookModule } from '../handbook/handbook.module';
-import { AttendanceModule } from 'src/attendance/attendance.module';
-import { OutreachModule } from 'src/outreach/outreach.module';
+import { Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { IntentsBitField } from "discord.js";
+import { NecordModule } from "necord";
+import { AttendanceModule } from "src/attendance/attendance.module";
+import { OutreachModule } from "src/outreach/outreach.module";
+import { HandbookModule } from "../handbook/handbook.module";
+import { BotCommands } from "./bot.commands";
 
 @Module({
   imports: [
     NecordModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
-        const token = configService.get<string>('DISCORD_TOKEN');
-        const devGuildId = configService.get<string>('DEV_GUILD_ID');
+        const token = configService.get<string>("DISCORD_TOKEN");
+        const devGuildId = configService.get<string>("DEV_GUILD_ID");
         if (!token) {
-          throw new Error('DISCORD_TOKEN is not set');
+          throw new Error("DISCORD_TOKEN is not set");
         }
         return {
           token,

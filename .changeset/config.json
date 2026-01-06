@@ -7,9 +7,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "@repo/*",
-    "scouting",
-    "@app/*"
-  ]
+  "ignore": ["@repo/*", "scouting", "@app/*"]
 }

@@ -1,5 +1,5 @@
-import { Cache } from "@/cache/types";
-import { CachedResponse } from "@/fetcher/types";
+import type { Cache } from "@/cache/types";
+import type { CachedResponse } from "@/fetcher/types";
 
 interface CacheOptions {
   maxSizeBytes?: number;

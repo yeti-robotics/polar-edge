@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HandbookService } from './handbook.service';
-import { ConfigService } from '@nestjs/config';
-import { AiService } from '../ai/ai.service';
+import { ConfigService } from "@nestjs/config";
+import { Test, type TestingModule } from "@nestjs/testing";
+import { AiService } from "../ai/ai.service";
+import { HandbookService } from "./handbook.service";
 
-describe('HandbookService', () => {
+describe("HandbookService", () => {
   let service: HandbookService;
 
   beforeEach(async () => {
@@ -30,7 +30,7 @@ describe('HandbookService', () => {
     service = module.get<HandbookService>(HandbookService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 });

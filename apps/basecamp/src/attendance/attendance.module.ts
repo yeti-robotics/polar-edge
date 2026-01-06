@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { AttendanceService } from './attendance.service';
-import { SheetModule } from '../sheet/sheet.module';
-import { AttendanceTwoFAService } from './attendance-twofa/attendance-twofa.service';
-import { AttendanceTwofaController } from './attendance-twofa/attendance-twofa.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtModule } from "@nestjs/jwt";
+import { SheetModule } from "../sheet/sheet.module";
+import { AttendanceService } from "./attendance.service";
+import { AttendanceTwofaController } from "./attendance-twofa/attendance-twofa.controller";
+import { AttendanceTwoFAService } from "./attendance-twofa/attendance-twofa.service";
 
 @Module({
   imports: [
@@ -13,9 +13,9 @@ import { ConfigService } from '@nestjs/config';
       global: true,
       useFactory: (configService: ConfigService) => {
         return {
-          secret: configService.get('JWT_SECRET'),
+          secret: configService.get("JWT_SECRET"),
           signOptions: {
-            algorithm: 'HS256',
+            algorithm: "HS256",
           },
         };
       },
