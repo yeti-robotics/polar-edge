@@ -44,10 +44,10 @@
       ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
-    "lint": {},
-    "lint:fix": {},
-    "format": {},
-    "format:fix": {},
+    "//#lint": {},
+    "//#lint:fix": {
+      "cache": false
+    },
     "test": {},
     "db:start": {
       "cache": false

@@ -19,9 +19,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "lint": "eslint src --ext .ts --max-warnings 0",
-    "format": "prettier --write \"src/**/*.ts\""
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

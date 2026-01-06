@@ -51,4 +51,4 @@ jobs:
         run: pnpm install
 
       - name: Lint, format, test, and build
-        run: pnpm turbo run lint format test build --affected
+        run: pnpm turbo run lint test build --affected
