@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import type { ConfigService } from "@nestjs/config";
-import type { SheetService } from "src/sheet/sheet.service";
+import { ConfigService } from "@nestjs/config";
+import { SheetService } from "src/sheet/sheet.service";
 import { z } from "zod";
 
 const OutreachColumnSchema = z.object({

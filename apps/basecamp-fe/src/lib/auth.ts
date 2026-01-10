@@ -16,11 +16,21 @@ export async function login(password: string) {
     return false;
   }
 
-  const { token } = await res.json();
+  const { token, secret } = await res.json();
 
   if (token) {
     const cookieStore = await cookies();
     cookieStore.set("toofaToken", token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      // No expiry - session cookie
+    });
+  }
+
+  if (secret) {
+    const cookieStore = await cookies();
+    cookieStore.set("toofaSecret", secret, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

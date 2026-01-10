@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+
   "scripts": {
     "build": "nest build",
     "start": "nest start",
@@ -25,6 +26,7 @@
     "@nestjs/core": "^11.1.6",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^11.1.6",
+    "@repo/twofa": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "discord.js": "^14.22.1",
@@ -54,7 +56,8 @@
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "@repo/typescript-config": "workspace:*"
   },
   "jest": {
     "moduleFileExtensions": ["js", "json", "ts"],
