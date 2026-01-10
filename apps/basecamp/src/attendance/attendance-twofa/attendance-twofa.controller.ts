@@ -1,24 +1,12 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Post,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, HttpStatus, Post, Res, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import type { Response } from "express";
 import type { AttendanceTwofaSignInDto, AttendanceTwofaValidateDto } from "./attendance-twofa.dto";
-import { AttendanceTwofaGuard } from "./attendance-twofa.guard";
-import { AttendanceTwoFAService } from "./attendance-twofa.service";
 
 @Controller("2fa")
 export class AttendanceTwofaController {
   constructor(
-    private readonly attendanceTwofaService: AttendanceTwoFAService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService
   ) {}
@@ -29,8 +17,6 @@ export class AttendanceTwofaController {
       "ATTENDANCE_2FA_SECRET",
       undefined
     );
-
-    console.log(expectedPassword, password);
 
     if (!password || password !== expectedPassword) {
       console.error("Invalid password");
