@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@repo/ui/styles/globals.css";
+import "./globals.css";
 import { Libre_Franklin, Space_Mono } from "next/font/google";
 
 export const metadata: Metadata = {
