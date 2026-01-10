@@ -10,7 +10,7 @@
   "dependencies": {
     "@number-flow/react": "^0.5.10",
     "@repo/twofa": "workspace:*",
-    "next": "15.5.7",
+    "next": "15.5.9",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
