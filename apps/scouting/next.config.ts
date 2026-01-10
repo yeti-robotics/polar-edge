@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   // Configure `pageExtensions` to include MDX files
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   // Optionally, add any other Next.js config below
@@ -8,6 +8,7 @@ const nextConfig = {
   outputFileTracingIncludes: {
     "/": ["lib/database/drizzle/**"],
   },
+  cacheComponents: true,
   experimental: {
     serverActions: {
       allowedOrigins: [
@@ -18,6 +19,6 @@ const nextConfig = {
     },
     esmExternals: true,
   },
-} satisfies NextConfig;
+};
 
 export default nextConfig;

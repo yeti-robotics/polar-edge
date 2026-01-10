@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
 import "@repo/ui/globals.css";
+import { Suspense } from "react";
+import { Header } from "@/components/layout/Header";
 
 const libreFranklin = Libre_Franklin({
   subsets: ["latin"],
@@ -24,6 +26,7 @@ export default function RootLayout({
       <body
         className={`${libreFranklin.variable} bg-background dark:prose-invert min-h-screen font-sans`}
       >
+        <Header />
         {children}
       </body>
     </html>

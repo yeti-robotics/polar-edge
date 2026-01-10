@@ -17,17 +17,5 @@ async function signIn() {
 }
 
 export default async function Home() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (session) {
-    return <div>ur signed in! hi there {session.user.name}</div>;
-  }
-
-  return (
-    <form action={signIn}>
-      <button type="submit">Sign in</button>
-    </form>
-  );
+  return <main>Welcome to Polar Edge Analytics!</main>;
 }

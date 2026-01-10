@@ -26,5 +26,3 @@ export const auth = betterAuth({
     nextCookies(),
   ],
 });
-
-export const authClient = createAuthClient({});
