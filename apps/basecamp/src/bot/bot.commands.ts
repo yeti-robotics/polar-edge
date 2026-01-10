@@ -1,10 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { type ChatInputCommandInteraction, MessageFlags } from "discord.js";
 import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
-import type { AttendanceSignInDto, AttendanceSignOutDto } from "src/attendance/attendance.dto";
+import { AttendanceSignInDto, AttendanceSignOutDto } from "src/attendance/attendance.dto";
 import { AttendanceService } from "src/attendance/attendance.service";
 import { HandbookService } from "src/handbook/handbook.service";
-import type { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
+import { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
 import { OutreachService } from "src/outreach/outreach.service";
 
 const TOTAL_HOURS = 390;
@@ -98,12 +98,13 @@ export class BotCommands {
     @Context() [interaction]: SlashCommandContext,
     @Options() { code }: AttendanceSignInDto
   ) {
+    await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
+
     const nickname = await this.getNickname(interaction);
 
     if (!nickname) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "You must have a nickname to sign in",
-        flags: [MessageFlags.Ephemeral],
       });
     }
 
@@ -118,14 +119,12 @@ export class BotCommands {
       if (interaction.channel?.isSendable()) {
         await interaction.channel.send(`<@${interaction.user.id}> has signed in.`);
       }
-      return interaction.reply({
+      return interaction.editReply({
         content: "Signed in successfully",
-        flags: [MessageFlags.Ephemeral],
       });
     } else {
-      return interaction.reply({
+      return interaction.editReply({
         content: "Failed to sign in!",
-        flags: [MessageFlags.Ephemeral],
       });
     }
   }
@@ -138,12 +137,13 @@ export class BotCommands {
     @Context() [interaction]: SlashCommandContext,
     @Options() { code }: AttendanceSignOutDto
   ) {
+    await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
+
     const nickname = await this.getNickname(interaction);
 
     if (!nickname) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "You must have a nickname to sign out",
-        flags: [MessageFlags.Ephemeral],
       });
     }
 
@@ -158,14 +158,12 @@ export class BotCommands {
       if (interaction.channel?.isSendable()) {
         await interaction.channel.send(`<@${interaction.user.id}> has signed out.`);
       }
-      return interaction.reply({
+      return interaction.editReply({
         content: "Signed out successfully",
-        flags: [MessageFlags.Ephemeral],
       });
     } else {
-      return interaction.reply({
+      return interaction.editReply({
         content: "Failed to sign out!",
-        flags: [MessageFlags.Ephemeral],
       });
     }
   }
