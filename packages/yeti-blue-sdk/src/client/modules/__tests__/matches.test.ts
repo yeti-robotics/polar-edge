@@ -1,9 +1,8 @@
+import axios, { type AxiosInstance } from "axios";
 import { MemoryCache } from "../../../cache/memoryCache";
-import { Match, Alliance } from "../../../schemas/match";
+import { Alliance, type Match } from "../../../schemas/match";
 import { Cage } from "../../../schemas/match-breakdowns/reefscape-2025";
 import { YETIBlueClient } from "../../yetiBlue";
-
-import axios, { AxiosInstance } from "axios";
 
 // Mock axios
 jest.mock("axios");
@@ -385,9 +384,7 @@ describe("Modules - Matches", () => {
       },
     });
 
-    await expect(
-      client.matches.getEventMatchesSimple("2025test")
-    ).rejects.toThrow();
+    await expect(client.matches.getEventMatchesSimple("2025test")).rejects.toThrow();
   });
 
   it("gets match by key", async () => {

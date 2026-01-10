@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { AiService } from '../ai/ai.service';
-import { handbookPrompt } from './handbook.prompt';
+import { Injectable } from "@nestjs/common";
+import type { AiService } from "../ai/ai.service";
+import { handbookPrompt } from "./handbook.prompt";
 
 @Injectable()
 export class HandbookService {
@@ -8,14 +8,14 @@ export class HandbookService {
 
   public async askHandbookQuestion(question: string) {
     const ai = this.aiService.getAiClient();
-    const model = 'gemini-2.0-flash';
+    const model = "gemini-2.0-flash";
     const config = {
-      responseMimeType: 'text/plain',
+      responseMimeType: "text/plain",
       systemInstruction: handbookPrompt,
     };
     const contents = [
       {
-        role: 'user',
+        role: "user",
         parts: [
           {
             text: question,

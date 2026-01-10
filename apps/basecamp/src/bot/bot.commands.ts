@@ -1,14 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Context, Options, SlashCommand, SlashCommandContext } from 'necord';
-import { AttendanceService } from 'src/attendance/attendance.service';
-import { OutreachService } from 'src/outreach/outreach.service';
-import { ChatInputCommandInteraction, MessageFlags } from 'discord.js';
-import { HandbookService } from 'src/handbook/handbook.service';
-import { HandbookQuestionDto } from 'src/handbook/handbook-question.dto';
-import {
-  AttendanceSignInDto,
-  AttendanceSignOutDto,
-} from 'src/attendance/attendance.dto';
+import { Injectable, Logger } from "@nestjs/common";
+import { type ChatInputCommandInteraction, MessageFlags } from "discord.js";
+import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
+import type { AttendanceSignInDto, AttendanceSignOutDto } from "src/attendance/attendance.dto";
+import type { AttendanceService } from "src/attendance/attendance.service";
+import type { HandbookService } from "src/handbook/handbook.service";
+import type { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
+import type { OutreachService } from "src/outreach/outreach.service";
 
 const TOTAL_HOURS = 390;
 const MEMBER_REQUIRED_HOURS = TOTAL_HOURS * 0.75;
@@ -29,13 +26,12 @@ export class BotCommands {
   private readonly globalRateLimit: RateLimitConfig = {
     maxRequests: 2, // 10 requests per minute
     windowMs: 60000, // 1 minute
-    message:
-      '🌐 The handbook is currently busy. Please try again in {time} seconds.',
+    message: "🌐 The handbook is currently busy. Please try again in {time} seconds.",
   };
   constructor(
     private readonly attendanceService: AttendanceService,
     private readonly outreachService: OutreachService,
-    private readonly handbookService: HandbookService,
+    private readonly handbookService: HandbookService
   ) {
     // Clean up old requests periodically
     setInterval(() => this.cleanupRequests(), 30000); // Every 30 seconds
@@ -55,7 +51,7 @@ export class BotCommands {
 
   private checkRateLimit(
     requests: number[],
-    config: RateLimitConfig,
+    config: RateLimitConfig
   ): { limited: boolean; waitTime?: number } {
     const now = Date.now();
 
@@ -66,9 +62,7 @@ export class BotCommands {
 
     if (requests.length >= config.maxRequests) {
       const oldestRequest = requests[0];
-      const waitTime = Math.ceil(
-        (oldestRequest + config.windowMs - now) / 1000,
-      );
+      const waitTime = Math.ceil((oldestRequest + config.windowMs - now) / 1000);
       return { limited: true, waitTime };
     }
 
@@ -85,8 +79,8 @@ export class BotCommands {
   }
 
   @SlashCommand({
-    name: 'ping',
-    description: 'Ping the bot',
+    name: "ping",
+    description: "Ping the bot",
     dmPermission: true,
   })
   public async onPing(@Context() [interaction]: SlashCommandContext) {
@@ -97,37 +91,35 @@ export class BotCommands {
   }
 
   @SlashCommand({
-    name: 'signin',
-    description: 'Sign in to a YETI meeting at the zone',
+    name: "signin",
+    description: "Sign in to a YETI meeting at the zone",
   })
   public async onSignIn(
     @Context() [interaction]: SlashCommandContext,
-    @Options() { code }: AttendanceSignInDto,
+    @Options() { code }: AttendanceSignInDto
   ) {
     const nickname = await this.getNickname(interaction);
 
     if (!nickname) {
       return interaction.reply({
-        content: 'You must have a nickname to sign in',
+        content: "You must have a nickname to sign in",
         flags: [MessageFlags.Ephemeral],
       });
     }
 
     const result = await this.attendanceService.signIn(
       interaction.user.id,
-      interaction.guild?.id || '',
+      interaction.guild?.id || "",
       nickname,
-      code,
+      code
     );
 
     if (result.success) {
       if (interaction.channel?.isSendable()) {
-        await interaction.channel.send(
-          `<@${interaction.user.id}> has signed in.`,
-        );
+        await interaction.channel.send(`<@${interaction.user.id}> has signed in.`);
       }
       return interaction.reply({
-        content: 'Signed in successfully',
+        content: "Signed in successfully",
         flags: [MessageFlags.Ephemeral],
       });
     } else {
@@ -139,37 +131,35 @@ export class BotCommands {
   }
 
   @SlashCommand({
-    name: 'signout',
-    description: 'Sign out of a YETI meeting at the zone',
+    name: "signout",
+    description: "Sign out of a YETI meeting at the zone",
   })
   public async onSignOut(
     @Context() [interaction]: SlashCommandContext,
-    @Options() { code }: AttendanceSignOutDto,
+    @Options() { code }: AttendanceSignOutDto
   ) {
     const nickname = await this.getNickname(interaction);
 
     if (!nickname) {
       return interaction.reply({
-        content: 'You must have a nickname to sign out',
+        content: "You must have a nickname to sign out",
         flags: [MessageFlags.Ephemeral],
       });
     }
 
     const result = await this.attendanceService.signOut(
       interaction.user.id,
-      interaction.guildId || '',
+      interaction.guildId || "",
       nickname,
-      code,
+      code
     );
 
     if (result.success) {
       if (interaction.channel?.isSendable()) {
-        await interaction.channel.send(
-          `<@${interaction.user.id}> has signed out.`,
-        );
+        await interaction.channel.send(`<@${interaction.user.id}> has signed out.`);
       }
       return interaction.reply({
-        content: 'Signed out successfully',
+        content: "Signed out successfully",
         flags: [MessageFlags.Ephemeral],
       });
     } else {
@@ -181,20 +171,20 @@ export class BotCommands {
   }
 
   @SlashCommand({
-    name: 'outreach',
-    description: 'Get your current outreach progress',
+    name: "outreach",
+    description: "Get your current outreach progress",
   })
   public async onOutreach(@Context() [interaction]: SlashCommandContext) {
     const nickname = await this.getNickname(interaction);
 
     if (!nickname) {
-      return interaction.reply('You must have a nickname set to get outreach');
+      return interaction.reply("You must have a nickname set to get outreach");
     }
 
     const outreach = await this.outreachService.getUserOutreach(nickname);
 
     if (!outreach) {
-      return interaction.reply('No outreach found for you');
+      return interaction.reply("No outreach found for you");
     }
 
     const hourTotal = outreach.reduce((acc, curr) => acc + curr.hours, 0);
@@ -203,39 +193,37 @@ export class BotCommands {
 
     if (hourTotal < 50) {
       outreachString += `\n- You need ${50 - hourTotal} more hours to reach the rookie minimum (${Math.round(
-        (100 * hourTotal) / 50,
+        (100 * hourTotal) / 50
       )}% complete)\n- You need ${100 - hourTotal} more hours to reach the veteran minimum (${Math.round(
-        (100 * hourTotal) / 100,
+        (100 * hourTotal) / 100
       )}% complete)`;
     } else if (hourTotal < 100) {
       outreachString += `\n- ✅ Rookie minimum achieved!\n- You need ${100 - hourTotal} more hours to reach the veteran minimum (${Math.round(
-        (100 * hourTotal) / 100,
+        (100 * hourTotal) / 100
       )}% complete)`;
     } else {
       outreachString += `\n- 🎉 Veteran minimum achieved! Great work!`;
     }
 
     outreachString +=
-      '\n*Please reach out to Ms. I in <#408795997410426880> if you feel our record of your outreach is incorrect*';
+      "\n*Please reach out to Ms. I in <#408795997410426880> if you feel our record of your outreach is incorrect*";
 
     return interaction.reply(outreachString);
   }
 
   @SlashCommand({
-    name: 'attendance',
-    description: 'Get your current attendance',
+    name: "attendance",
+    description: "Get your current attendance",
   })
   public async onAttendance(@Context() [interaction]: SlashCommandContext) {
     const nickname = await this.getNickname(interaction);
 
     if (!nickname) {
-      return interaction.reply('You must have a nickname to get attendance');
+      return interaction.reply("You must have a nickname to get attendance");
     }
 
     try {
-      const hours = await this.attendanceService.getUserHours(
-        interaction.user.id,
-      );
+      const hours = await this.attendanceService.getUserHours(interaction.user.id);
       //Floors hours to the nearest integer
       const hoursString = Math.floor(hours);
       //Calculates hoursPercentage without rounding anything
@@ -245,167 +233,153 @@ export class BotCommands {
 
       if (hours >= LEADERSHIP_REQUIRED_HOURS) {
         return interaction.reply(
-          `You've met the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${TOTAL_HOURS})! :tada:`,
+          `You've met the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${TOTAL_HOURS})! :tada:`
         );
       } else if (hours >= MEMBER_REQUIRED_HOURS) {
         return interaction.reply(
-          `You've met the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${TOTAL_HOURS})! If you're on leadership, you still have ${Math.ceil(LEADERSHIP_REQUIRED_HOURS - hours)} more hours to go to hit your leadership requirement.`,
+          `You've met the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${TOTAL_HOURS})! If you're on leadership, you still have ${Math.ceil(LEADERSHIP_REQUIRED_HOURS - hours)} more hours to go to hit your leadership requirement.`
         );
       } else {
         return interaction.reply(
-          `You've got ${hoursString} hours (${hoursPercentageString}% of ${TOTAL_HOURS}). You have ${Math.ceil(MEMBER_REQUIRED_HOURS - hours)} more hours to go to hit your minimum hours goal! :rocket:`,
+          `You've got ${hoursString} hours (${hoursPercentageString}% of ${TOTAL_HOURS}). You have ${Math.ceil(MEMBER_REQUIRED_HOURS - hours)} more hours to go to hit your minimum hours goal! :rocket:`
         );
       }
     } catch (error) {
-      this.logger.error(
-        `Error getting attendance for user ${interaction.user.id}:`,
-        error,
-      );
+      this.logger.error(`Error getting attendance for user ${interaction.user.id}:`, error);
       return interaction.reply(
-        'There was an error getting your attendance. Please let a mentor know.',
+        "There was an error getting your attendance. Please let a mentor know."
       );
     }
   }
 
   @SlashCommand({
-    name: 'outreach-leaderboard',
-    description: 'Show the top 5 members by outreach hours',
+    name: "outreach-leaderboard",
+    description: "Show the top 5 members by outreach hours",
   })
-  public async onOutreachLeaderboard(
-    @Context() [interaction]: SlashCommandContext,
-  ) {
+  public async onOutreachLeaderboard(@Context() [interaction]: SlashCommandContext) {
     const [leaderboard, totalTeamHours] = await Promise.all([
       this.outreachService.getTopMembersByHours(5),
       this.outreachService.getTotalTeamOutreachHours(),
     ]);
 
     if (!leaderboard || leaderboard.length === 0) {
-      return interaction.reply('No outreach data found');
+      return interaction.reply("No outreach data found");
     }
 
     let leaderboardString = `:trophy: **Outreach Leaderboard** :trophy:\n:chart_with_upwards_trend: **Team Total: ${totalTeamHours} hours** :chart_with_upwards_trend:\n\n`;
 
     leaderboard.forEach((entry, index) => {
       const rank = index + 1;
-      let prefix = '';
+      let prefix = "";
 
       // Medal emojis for top 3, numbers for 4th and 5th
       switch (rank) {
         case 1:
-          prefix = ':first_place_medal:';
+          prefix = ":first_place_medal:";
           break;
         case 2:
-          prefix = ':second_place_medal:';
+          prefix = ":second_place_medal:";
           break;
         case 3:
-          prefix = ':third_place_medal:';
+          prefix = ":third_place_medal:";
           break;
         case 4:
-          prefix = '4.';
+          prefix = "4.";
           break;
         case 5:
-          prefix = '5.';
+          prefix = "5.";
           break;
       }
 
       leaderboardString += `${prefix} **${entry.userName}** - ${entry.totalHours} hours\n`;
     });
 
-    leaderboardString += '\n*Updated in real-time from outreach records*';
+    leaderboardString += "\n*Updated in real-time from outreach records*";
 
     return interaction.reply(leaderboardString);
   }
 
   @SlashCommand({
-    name: 'attendance-leaderboard',
-    description: 'Show the top 5 members by attendance hours',
+    name: "attendance-leaderboard",
+    description: "Show the top 5 members by attendance hours",
   })
-  public async onAttendanceLeaderboard(
-    @Context() [interaction]: SlashCommandContext,
-  ) {
+  public async onAttendanceLeaderboard(@Context() [interaction]: SlashCommandContext) {
     const leaderboard = await this.attendanceService.getTopMembersByHours(5);
 
     if (!leaderboard || leaderboard.length === 0) {
-      return interaction.reply('No attendance data found');
+      return interaction.reply("No attendance data found");
     }
 
-    let leaderboardString = ':clock: **Attendance Leaderboard** :clock:\n\n';
+    let leaderboardString = ":clock: **Attendance Leaderboard** :clock:\n\n";
 
     leaderboard.forEach((entry, index) => {
       const rank = index + 1;
-      let prefix = '';
+      let prefix = "";
 
       // Medal emojis for top 3, numbers for 4th and 5th
       switch (rank) {
         case 1:
-          prefix = ':first_place_medal:';
+          prefix = ":first_place_medal:";
           break;
         case 2:
-          prefix = ':second_place_medal:';
+          prefix = ":second_place_medal:";
           break;
         case 3:
-          prefix = ':third_place_medal:';
+          prefix = ":third_place_medal:";
           break;
         case 4:
-          prefix = '4.';
+          prefix = "4.";
           break;
         case 5:
-          prefix = '5.';
+          prefix = "5.";
           break;
       }
 
       leaderboardString += `${prefix} **${entry.userName}** - ${entry.totalHours} hours\n`;
     });
 
-    leaderboardString += '\n*Updated in real-time from attendance records*';
+    leaderboardString += "\n*Updated in real-time from attendance records*";
 
     return interaction.reply(leaderboardString);
   }
 
   @SlashCommand({
-    name: 'handbook',
-    description: 'Ask the handbook a question',
+    name: "handbook",
+    description: "Ask the handbook a question",
   })
   public async onHandbook(
     @Context() [interaction]: SlashCommandContext,
-    @Options() { question }: HandbookQuestionDto,
+    @Options() { question }: HandbookQuestionDto
   ) {
     const userId = interaction.user.id;
 
     // Check global rate limit
-    const globalLimit = this.checkRateLimit(
-      this.globalRequests,
-      this.globalRateLimit,
-    );
+    const globalLimit = this.checkRateLimit(this.globalRequests, this.globalRateLimit);
     if (globalLimit.limited) {
       this.logger.warn(`Global rate limit reached. User ${userId} blocked.`);
       return interaction.reply({
         content: this.globalRateLimit.message.replace(
-          '{time}',
-          globalLimit.waitTime!.toString(),
+          "{time}",
+          globalLimit.waitTime?.toString() || "0"
         ),
         flags: [MessageFlags.Ephemeral],
       });
     }
 
     if (!question) {
-      return interaction.reply('Please provide a question to ask the handbook');
+      return interaction.reply("Please provide a question to ask the handbook");
     }
 
     // Add requests to both counters
     this.addRequest(this.globalRequests);
 
-    this.logger.log(
-      `Handbook request from user ${userId}: ${question.substring(0, 50)}...`,
-    );
+    this.logger.log(`Handbook request from user ${userId}: ${question.substring(0, 50)}...`);
 
     try {
       const response = await this.handbookService.askHandbookQuestion(question);
 
       if (!response) {
-        return interaction.reply(
-          'Failed to get a response from the handbook agent.',
-        );
+        return interaction.reply("Failed to get a response from the handbook agent.");
       }
 
       return interaction.reply(`Question: ${question}\n\nAnswer: ${response}`);

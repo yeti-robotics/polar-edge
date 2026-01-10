@@ -1,8 +1,8 @@
-import { ModuleBase, ModuleBaseConfig } from "@/client/modules/base";
-import { Fetcher } from "@/fetcher";
-import { FetcherOptions } from "@/fetcher/types";
-import { MediaSchema } from "@/schemas";
 import { z } from "zod";
+import { ModuleBase, type ModuleBaseConfig } from "@/client/modules/base";
+import type { Fetcher } from "@/fetcher";
+import type { FetcherOptions } from "@/fetcher/types";
+import { MediaSchema } from "@/schemas";
 
 /**
  * @description A module for interacting with The Blue Alliance Team API
@@ -17,11 +17,7 @@ export class MediaResource extends ModuleBase {
     this.fetcher = this.createFetcher(config.baseUrl, config.apiKey);
   }
 
-  async getTeamMediaForYear(
-    teamNumber: number,
-    year: number,
-    options?: FetcherOptions
-  ) {
+  async getTeamMediaForYear(teamNumber: number, year: number, options?: FetcherOptions) {
     const res = await this.fetcher.fetch(
       `/team/frc${teamNumber}/media/${year}`,
       this.getFetcherOptions(options)

@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { HandbookService } from './handbook.service';
-import { AiModule } from '../ai/ai.module';
+import { Module } from "@nestjs/common";
+import { AiModule } from "../ai/ai.module";
+import { HandbookService } from "./handbook.service";
 
 @Module({
   imports: [AiModule],

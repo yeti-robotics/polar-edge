@@ -1,12 +1,12 @@
-import { ModuleBase, ModuleBaseConfig } from "@/client/modules/base";
-import { Fetcher } from "@/fetcher";
-import { FetcherOptions } from "@/fetcher/types";
+import { z } from "zod";
+import { ModuleBase, type ModuleBaseConfig } from "@/client/modules/base";
+import type { Fetcher } from "@/fetcher";
+import type { FetcherOptions } from "@/fetcher/types";
 import {
   DistrictRankingSchema,
   EventRankingsSchema,
   RegionalPoolRankingSchema,
 } from "@/schemas/rankings";
-import { z } from "zod";
 
 /**
  * @description A module for interacting with The Blue Alliance Team API

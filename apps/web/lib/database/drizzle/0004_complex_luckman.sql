@@ -1,1 +1,0 @@
-ALTER TABLE "team" ALTER COLUMN "team_name" SET DEFAULT '';

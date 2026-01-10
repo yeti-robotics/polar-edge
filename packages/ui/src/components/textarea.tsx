@@ -1,6 +1,5 @@
-import { cn } from "@repo/ui/lib/utils"
-import * as React from "react"
-
+import { cn } from "@repo/ui/lib/utils";
+import type * as React from "react";
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
@@ -12,7 +11,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { Textarea }
+export { Textarea };

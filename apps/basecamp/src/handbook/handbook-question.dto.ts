@@ -1,9 +1,9 @@
-import { StringOption } from 'necord';
+import { StringOption } from "necord";
 
 export class HandbookQuestionDto {
   @StringOption({
-    name: 'question',
-    description: 'Your question',
+    name: "question",
+    description: "Your question",
     required: true,
   })
   question: string;

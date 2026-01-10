@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { GoogleGenAI } from '@google/genai';
-import { ConfigService } from '@nestjs/config';
+import { GoogleGenAI } from "@google/genai";
+import { Injectable } from "@nestjs/common";
+import type { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class AiService {
@@ -8,7 +8,7 @@ export class AiService {
 
   constructor(private readonly configService: ConfigService) {
     this.ai = new GoogleGenAI({
-      apiKey: this.configService.get<string>('GEMINI_API_KEY'),
+      apiKey: this.configService.get<string>("GEMINI_API_KEY"),
     });
   }
 

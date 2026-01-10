@@ -1,16 +1,12 @@
-import { Cache } from "@/cache";
-import { FetcherOptions, FetcherResponse } from "@/fetcher/types";
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
+import type { Cache } from "@/cache";
+import type { FetcherOptions, FetcherResponse } from "@/fetcher/types";
 
 export class Fetcher {
   private client: AxiosInstance;
   private cache: Cache<unknown>;
 
-  constructor(
-    baseURL: string,
-    cache: Cache<unknown>,
-    defaultHeaders: Record<string, string> = {}
-  ) {
+  constructor(baseURL: string, cache: Cache<unknown>, defaultHeaders: Record<string, string> = {}) {
     this.client = axios.create({
       baseURL,
       headers: defaultHeaders,
@@ -33,8 +29,7 @@ export class Fetcher {
     };
 
     if (options.etag) {
-      (config.headers as Record<string, string>)["If-None-Match"] =
-        options.etag;
+      (config.headers as Record<string, string>)["If-None-Match"] = options.etag;
     }
 
     try {

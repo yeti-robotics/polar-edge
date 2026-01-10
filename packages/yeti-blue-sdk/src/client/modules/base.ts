@@ -1,6 +1,6 @@
-import { Cache, MemoryCache } from "@/cache";
+import { type Cache, MemoryCache } from "@/cache";
 import { Fetcher } from "@/fetcher";
-import { FetcherOptions } from "@/fetcher/types";
+import type { FetcherOptions } from "@/fetcher/types";
 
 export interface ModuleBaseConfig {
   apiKey: string;

@@ -1,8 +1,7 @@
+import axios, { type AxiosInstance } from "axios";
 import { MemoryCache } from "../../../cache/memoryCache";
-import { Team, TeamSimple } from "../../../schemas";
+import type { Team, TeamSimple } from "../../../schemas";
 import { YETIBlueClient } from "../../yetiBlue";
-
-import axios, { AxiosInstance } from "axios";
 
 const teamSimple = {
   city: "Charlotte",

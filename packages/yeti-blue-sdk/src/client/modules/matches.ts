@@ -1,8 +1,8 @@
-import { ModuleBase, ModuleBaseConfig } from "@/client/modules/base";
-import { Fetcher } from "@/fetcher";
-import { FetcherOptions } from "@/fetcher/types";
-import { MatchSchema } from "@/schemas/match";
 import { z } from "zod";
+import { ModuleBase, type ModuleBaseConfig } from "@/client/modules/base";
+import type { Fetcher } from "@/fetcher";
+import type { FetcherOptions } from "@/fetcher/types";
+import { MatchSchema } from "@/schemas/match";
 
 /**
  * @description A module for interacting with The Blue Alliance Team API
@@ -18,7 +18,7 @@ export class MatchesResource extends ModuleBase {
   }
 
   private getYearFromEventKey(eventKey: string) {
-    return parseInt(eventKey.slice(0, 4));
+    return Number.parseInt(eventKey.slice(0, 4), 10);
   }
 
   private injectYear(data: unknown) {
@@ -41,18 +41,13 @@ export class MatchesResource extends ModuleBase {
       this.getFetcherOptions(options)
     );
     if (Array.isArray(res.data)) {
-      return z
-        .array(MatchSchema)
-        .parseAsync(res.data.map(this.injectYear.bind(this)));
+      return z.array(MatchSchema).parseAsync(res.data.map(this.injectYear.bind(this)));
     }
     throw new Error("Invalid response from TBA");
   }
 
   async getMatchByKey(matchKey: string, options?: FetcherOptions) {
-    const res = await this.fetcher.fetch(
-      `/match/${matchKey}`,
-      this.getFetcherOptions(options)
-    );
+    const res = await this.fetcher.fetch(`/match/${matchKey}`, this.getFetcherOptions(options));
     return MatchSchema.parseAsync(this.injectYear(res.data));
   }
 }

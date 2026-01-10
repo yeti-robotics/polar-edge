@@ -1,37 +1,31 @@
 {
-	"name": "polar-edge-analytics",
-	"private": true,
-	"scripts": {
-		"build": "turbo run build",
-		"dev": "turbo run dev",
-		"dev:yeti-blue": "turbo run dev --filter=@yeti-robotics/yeti-blue-sdk --filter=@app/yeti-blue-sandbox",
-		"format": "turbo run format",
-		"format:fix": "turbo run format:fix",
-		"lint": "turbo run lint",
-		"lint:fix": "turbo run lint:fix",
-		"test": "turbo run test",
-		"db:start": "turbo run db:start",
-		"release": "pnpm build --filter=./packages/* && changeset publish",
-		"dev:scouting": "turbo run dev --filter=@app/web",
-		"dev:attendance": "pnpm turbo run dev --filter=@app/plus"
-	},
-	"devDependencies": {
-		"prettier": "^3.6.2",
-		"prettier-plugin-tailwindcss": "^0.6.13",
-		"turbo": "latest",
-		"typescript": "^5.8.3"
-	},
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
-	"packageManager": "pnpm@10.10.0",
-	"dependencies": {
-		"@changesets/cli": "^2.29.5"
-	},
-	"pnpm": {
-		"overrides": {
-			"esbuild": "^0.25.0"
-		}
-	}
+  "name": "polar-edge-analytics",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:yeti-blue": "turbo run dev --filter=@yeti-robotics/yeti-blue-sdk --filter=@app/yeti-blue-sandbox",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --write",
+    "test": "turbo run test",
+    "db:start": "turbo run db:start",
+    "release": "pnpm build --filter=./packages/* && changeset publish",
+    "dev:scouting": "turbo run dev --filter=@app/web",
+    "dev:attendance": "pnpm turbo run dev --filter=@app/plus"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.11",
+    "turbo": "latest",
+    "typescript": "^5.8.3"
+  },
+  "workspaces": ["apps/*", "packages/*"],
+  "packageManager": "pnpm@10.10.0",
+  "dependencies": {
+    "@changesets/cli": "^2.29.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "^0.25.0"
+    }
+  }
 }

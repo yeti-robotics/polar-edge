@@ -1,77 +1,77 @@
 {
-	"$schema": "https://turbo.build/schema.json",
-	"ui": "tui",
-	"globalEnv": ["NODE_ENV"],
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"outputs": [".next/**", "!.next/cache/**", "dist/**"]
-		},
-		"@app/web#build": {
-			"inputs": [
-				"$TURBO_DEFAULT$",
-				".env.development.local",
-				".env.local",
-				".env.development",
-				".env"
-			],
-			"dependsOn": ["^build"],
-			"env": [
-				"AUTH_DISCORD_ID",
-				"AUTH_DISCORD_SECRET",
-				"DATABASE_URL",
-				"AUTH_SECRET",
-				"TBA_API_KEY",
-				"ADMIN_USERS"
-			],
-			"outputs": [".next/**", "!.next/cache/**", "dist/**"]
-		},
-		"@app/plus#build": {
-			"inputs": [
-				"$TURBO_DEFAULT$",
-				".env.development.local",
-				".env.local",
-				".env.development",
-				".env"
-			],
-			"dependsOn": ["^build"],
-			"env": [
-				"GOOGLE_CREDENTIALS",
-				"ATTENDANCE_SPREADSHEET_ID",
-				"AUTH_SECRET",
-				"AUTH_DISCORD_ID",
-				"AUTH_DISCORD_SECRET"
-			],
-			"outputs": [".next/**", "!.next/cache/**", "dist/**"]
-		},
-		"lint": {},
-		"lint:fix": {},
-		"format": {},
-		"format:fix": {},
-		"test": {},
-		"db:start": {
-			"cache": false
-		},
-		"db:generate": {
-			"cache": false
-		},
-		"db:migrate": {
-			"cache": false
-		},
-		"db:studio": {
-			"cache": false
-		},
-		"dev": {
-			"persistent": true,
-			"cache": false,
-			"inputs": [
-				"$TURBO_DEFAULT$",
-				".env.development.local",
-				".env.local",
-				".env.development",
-				".env"
-			],
-			"dependsOn": ["db:start"]
-		}
-	}
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalEnv": ["NODE_ENV"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "@app/web#build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.development.local",
+        ".env.local",
+        ".env.development",
+        ".env"
+      ],
+      "dependsOn": ["^build"],
+      "env": [
+        "AUTH_DISCORD_ID",
+        "AUTH_DISCORD_SECRET",
+        "DATABASE_URL",
+        "AUTH_SECRET",
+        "TBA_API_KEY",
+        "ADMIN_USERS"
+      ],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "@app/plus#build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.development.local",
+        ".env.local",
+        ".env.development",
+        ".env"
+      ],
+      "dependsOn": ["^build"],
+      "env": [
+        "GOOGLE_CREDENTIALS",
+        "ATTENDANCE_SPREADSHEET_ID",
+        "AUTH_SECRET",
+        "AUTH_DISCORD_ID",
+        "AUTH_DISCORD_SECRET"
+      ],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "//#lint": {},
+    "//#lint:fix": {
+      "cache": false
+    },
+    "test": {},
+    "db:start": {
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:studio": {
+      "cache": false
+    },
+    "dev": {
+      "persistent": true,
+      "cache": false,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.development.local",
+        ".env.local",
+        ".env.development",
+        ".env"
+      ],
+      "dependsOn": ["db:start"]
+    }
+  }
 }

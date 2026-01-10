@@ -1,4 +1,4 @@
-import { CachedResponse } from "../fetcher/types";
+import type { CachedResponse } from "../fetcher/types";
 
 export interface Cache<Value> {
   get(key: string): Promise<CachedResponse<Value> | null>;

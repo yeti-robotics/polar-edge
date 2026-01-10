@@ -1,6 +1,6 @@
-import { ModuleBase, ModuleBaseConfig } from "@/client/modules/base";
-import { Fetcher } from "@/fetcher";
-import { FetcherOptions } from "@/fetcher/types";
+import { ModuleBase, type ModuleBaseConfig } from "@/client/modules/base";
+import type { Fetcher } from "@/fetcher";
+import type { FetcherOptions } from "@/fetcher/types";
 import { TeamSchema, TeamSimpleSchema } from "@/schemas/team";
 
 /**
@@ -25,10 +25,7 @@ export class TeamsResource extends ModuleBase {
   }
 
   async get(teamNumber: number, options?: FetcherOptions) {
-    const res = await this.fetcher.fetch(
-      `/team/frc${teamNumber}`,
-      this.getFetcherOptions(options)
-    );
+    const res = await this.fetcher.fetch(`/team/frc${teamNumber}`, this.getFetcherOptions(options));
     return TeamSchema.parseAsync(res.data);
   }
 }

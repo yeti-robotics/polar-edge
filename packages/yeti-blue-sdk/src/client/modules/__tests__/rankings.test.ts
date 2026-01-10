@@ -1,7 +1,7 @@
+import axios, { type AxiosInstance } from "axios";
 import { MemoryCache } from "@/cache";
 import { YETIBlueClient } from "@/client";
-import { DistrictRanking, RegionalPoolRanking } from "@/schemas/rankings";
-import axios, { AxiosInstance } from "axios";
+import type { DistrictRanking, RegionalPoolRanking } from "@/schemas/rankings";
 
 // Mock axios
 jest.mock("axios");

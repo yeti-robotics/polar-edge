@@ -1,6 +1,6 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import type { Request } from 'express';
+import { type CanActivate, type ExecutionContext, Injectable } from "@nestjs/common";
+import type { JwtService } from "@nestjs/jwt";
+import type { Request } from "express";
 
 @Injectable()
 export class AttendanceTwofaGuard implements CanActivate {
@@ -8,8 +8,7 @@ export class AttendanceTwofaGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const authHeader = request.headers.authorization;
-    const token =
-      typeof authHeader === 'string' ? authHeader.split(' ')[1] : undefined;
+    const token = typeof authHeader === "string" ? authHeader.split(" ")[1] : undefined;
     if (!token) {
       return false;
     }

@@ -7,23 +7,20 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
-} from '@nestjs/common';
-import type { Response } from 'express';
-import { AttendanceTwoFAService } from './attendance-twofa.service';
-import { AttendanceTwofaGuard } from './attendance-twofa.guard';
-import {
-  AttendanceTwofaSignInDto,
-  AttendanceTwofaValidateDto,
-} from './attendance-twofa.dto';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+} from "@nestjs/common";
+import type { ConfigService } from "@nestjs/config";
+import type { JwtService } from "@nestjs/jwt";
+import type { Response } from "express";
+import type { AttendanceTwofaSignInDto, AttendanceTwofaValidateDto } from "./attendance-twofa.dto";
+import { AttendanceTwofaGuard } from "./attendance-twofa.guard";
+import type { AttendanceTwoFAService } from "./attendance-twofa.service";
 
-@Controller('2fa')
+@Controller("2fa")
 export class AttendanceTwofaController {
   constructor(
     private readonly attendanceTwofaService: AttendanceTwoFAService,
     private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   @Get()
@@ -33,36 +30,33 @@ export class AttendanceTwofaController {
     return res.status(HttpStatus.OK).json({ code });
   }
 
-  @Post('authenticate')
+  @Post("authenticate")
   signIn(@Body() { password }: AttendanceTwofaSignInDto, @Res() res: Response) {
     const expectedPassword = this.configService.get<string | undefined>(
-      'ATTENDANCE_2FA_PASSWORD',
-      undefined,
+      "ATTENDANCE_2FA_PASSWORD",
+      undefined
     );
 
     if (!password || password !== expectedPassword) {
-      throw new UnauthorizedException('Invalid password');
+      throw new UnauthorizedException("Invalid password");
     }
 
     const token = this.jwtService.sign({
-      sub: 'attendance-2fa',
+      sub: "attendance-2fa",
     });
 
-    return res.status(HttpStatus.ACCEPTED).json({ message: 'Accepted', token });
+    return res.status(HttpStatus.ACCEPTED).json({ message: "Accepted", token });
   }
 
-  @Post('validate')
-  validateToken(
-    @Body() { token }: AttendanceTwofaValidateDto,
-    @Res() res: Response,
-  ) {
+  @Post("validate")
+  validateToken(@Body() { token }: AttendanceTwofaValidateDto, @Res() res: Response) {
     try {
       this.jwtService.verify(token);
     } catch (error) {
       console.error(error);
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException("Invalid token");
     }
 
-    return res.status(HttpStatus.OK).json({ message: 'Valid' });
+    return res.status(HttpStatus.OK).json({ message: "Valid" });
   }
 }
