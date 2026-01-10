@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { validateToken } from "@/lib/auth";
 import { CodeFlipper } from "./flipper";
-import teamsData from "./teams.json";
 
 export async function FlipperWrapper() {
   const cookieStore = await cookies();
@@ -11,5 +10,5 @@ export async function FlipperWrapper() {
     return null;
   }
 
-  return <CodeFlipper teams={teamsData} />;
+  return <CodeFlipper />;
 }
