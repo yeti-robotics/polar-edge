@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import type { ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { google, type sheets_v4 } from "googleapis";
 
 export type SheetCredentials = {

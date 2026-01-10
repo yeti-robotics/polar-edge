@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import type { ConfigService } from "@nestjs/config";
-import type { SheetService } from "src/sheet/sheet.service";
+import { ConfigService } from "@nestjs/config";
+import { SheetService } from "src/sheet/sheet.service";
 import { z } from "zod";
-import type { AttendanceTwoFAService } from "./attendance-twofa/attendance-twofa.service";
+import { AttendanceTwoFAService } from "./attendance-twofa/attendance-twofa.service";
 
 const AttendanceSchema = z.object({
   discordId: z.string(),

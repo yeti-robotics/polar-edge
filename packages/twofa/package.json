@@ -1,0 +1,39 @@
+{
+  "name": "@repo/twofa",
+  "version": "1.0.0",
+  "description": "TOTP (Time-based One-Time Password) implementation for client and server",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs"
+    },
+    "./client": {
+      "types": "./dist/esm/client.d.ts",
+      "import": "./dist/esm/client.js",
+      "require": "./dist/cjs/client.cjs"
+    },
+    "./server": {
+      "types": "./dist/esm/server.d.ts",
+      "import": "./dist/esm/server.js",
+      "require": "./dist/cjs/server.cjs"
+    }
+  },
+  "keywords": ["totp", "2fa", "authentication"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@repo/typescript-config": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  }
+}

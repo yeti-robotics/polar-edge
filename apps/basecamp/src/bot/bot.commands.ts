@@ -2,10 +2,10 @@ import { Injectable, Logger } from "@nestjs/common";
 import { type ChatInputCommandInteraction, MessageFlags } from "discord.js";
 import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
 import type { AttendanceSignInDto, AttendanceSignOutDto } from "src/attendance/attendance.dto";
-import type { AttendanceService } from "src/attendance/attendance.service";
-import type { HandbookService } from "src/handbook/handbook.service";
+import { AttendanceService } from "src/attendance/attendance.service";
+import { HandbookService } from "src/handbook/handbook.service";
 import type { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
-import type { OutreachService } from "src/outreach/outreach.service";
+import { OutreachService } from "src/outreach/outreach.service";
 
 const TOTAL_HOURS = 390;
 const MEMBER_REQUIRED_HOURS = TOTAL_HOURS * 0.75;
@@ -124,7 +124,7 @@ export class BotCommands {
       });
     } else {
       return interaction.reply({
-        content: result.message,
+        content: "Failed to sign in!",
         flags: [MessageFlags.Ephemeral],
       });
     }
@@ -164,7 +164,7 @@ export class BotCommands {
       });
     } else {
       return interaction.reply({
-        content: result.message,
+        content: "Failed to sign out!",
         flags: [MessageFlags.Ephemeral],
       });
     }

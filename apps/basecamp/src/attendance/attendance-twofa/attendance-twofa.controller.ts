@@ -8,12 +8,12 @@ import {
   UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
-import type { ConfigService } from "@nestjs/config";
-import type { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import type { Response } from "express";
 import type { AttendanceTwofaSignInDto, AttendanceTwofaValidateDto } from "./attendance-twofa.dto";
 import { AttendanceTwofaGuard } from "./attendance-twofa.guard";
-import type { AttendanceTwoFAService } from "./attendance-twofa.service";
+import { AttendanceTwoFAService } from "./attendance-twofa.service";
 
 @Controller("2fa")
 export class AttendanceTwofaController {
@@ -23,21 +23,17 @@ export class AttendanceTwofaController {
     private readonly jwtService: JwtService
   ) {}
 
-  @Get()
-  @UseGuards(AttendanceTwofaGuard)
-  getCode(@Res() res: Response) {
-    const code = this.attendanceTwofaService.getOrCreateCode();
-    return res.status(HttpStatus.OK).json({ code });
-  }
-
   @Post("authenticate")
   signIn(@Body() { password }: AttendanceTwofaSignInDto, @Res() res: Response) {
     const expectedPassword = this.configService.get<string | undefined>(
-      "ATTENDANCE_2FA_PASSWORD",
+      "ATTENDANCE_2FA_SECRET",
       undefined
     );
 
+    console.log(expectedPassword, password);
+
     if (!password || password !== expectedPassword) {
+      console.error("Invalid password");
       throw new UnauthorizedException("Invalid password");
     }
 
@@ -45,7 +41,9 @@ export class AttendanceTwofaController {
       sub: "attendance-2fa",
     });
 
-    return res.status(HttpStatus.ACCEPTED).json({ message: "Accepted", token });
+    const totpSecret = this.configService.get<string>("ATTENDANCE_2FA_SECRET");
+
+    return res.status(HttpStatus.ACCEPTED).json({ message: "Accepted", token, secret: totpSecret });
   }
 
   @Post("validate")

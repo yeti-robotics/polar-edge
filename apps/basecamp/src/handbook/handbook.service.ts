@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { AiService } from "../ai/ai.service";
+import { AiService } from "../ai/ai.service";
 import { handbookPrompt } from "./handbook.prompt";
 
 @Injectable()

@@ -10,19 +10,11 @@ export async function FlipperWrapper() {
     return null;
   }
 
-  const response = await fetch(new URL("/2fa", process.env.BASECAMP_URL), {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    console.error("Basecamp API returned an error", response.status, await response.text());
+  const secret = cookieStore.get("toofaSecret")?.value;
+  if (!secret) {
+    console.error("TOTP secret not found in cookies");
     return null;
   }
 
-  const { code } = await response.json();
-
-  return <CodeFlipper initialCode={code} />;
+  return <CodeFlipper secret={secret} />;
 }

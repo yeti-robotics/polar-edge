@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "@repo/ui/styles/globals.css";
-import { Libre_Franklin } from "next/font/google";
+import { Libre_Franklin, Space_Mono } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -12,10 +12,16 @@ const libreFranklin = Libre_Franklin({
   variable: "--font-libre-franklin",
 });
 
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space-mono",
+});
+
 export default function RootLayout(props: LayoutProps<"/">) {
   return (
     <html lang="en">
-      <body className={`${libreFranklin.variable} font-sans antialiased`}>
+      <body className={`${libreFranklin.variable} ${spaceMono.variable} font-sans antialiased`}>
         {props.unauth}
         {props.auth}
       </body>
