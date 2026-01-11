@@ -12,11 +12,11 @@ export function TeamDisplay({ teams }: { teams: Record<string, string> }) {
       {/* Team Name */}
       <div className="flex flex-col items-center gap-4 text-center">
         {teamName ? (
-          <h2 className="text-lg text-slate-900 tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 className="text-6xl text-slate-900 tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-500">
             {teamName}
           </h2>
         ) : (
-          <p className="text-slate-400 text-lg">No team found</p>
+          <p className="text-slate-600 text-4xl">No team found</p>
         )}
       </div>
     </div>

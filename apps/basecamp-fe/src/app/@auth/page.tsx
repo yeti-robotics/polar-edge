@@ -28,8 +28,8 @@ export default async function AuthPage() {
         <TOTPProgressBar />
         <div className="w-full max-w-6xl flex flex-col items-center relative z-10">
           <div className="text-center space-y-4">
-            <h1 className="text-7xl font-black text-yeti-500">YETI Pass</h1>
-            <p className="text-slate-400 text-lg">Use this code to sign in or out</p>
+            <h1 className="text-5xl md:text-9xl font-black text-yeti-500">YETI Pass</h1>
+            <p className="text-slate-600 text-4xl">Use this code to sign in or out</p>
           </div>
 
           <Suspense
@@ -42,7 +42,7 @@ export default async function AuthPage() {
             <FlipperWrapper />
           </Suspense>
 
-          <div className="mt-8 flex flex-col items-center gap-2 text-center">
+          <div className="mt-8 flex flex-col items-center gap-8 text-center">
             <TeamDisplay teams={teamsData} />
 
             <div className="flex flex-col items-center gap-4 text-center">
@@ -51,7 +51,7 @@ export default async function AuthPage() {
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 h-2/5 min-h-[400px] text-yeti-300 opacity-10 z-0 pointer-events-none">
+        <div className="fixed bottom-0 left-0 right-0 h-2/5 min-h-[400px] text-yeti-400 z-0 pointer-events-none">
           <svg
             viewBox="0 0 1440 320"
             className="w-full h-full preserve-3d"

@@ -21,7 +21,7 @@ export function CodeFlipper() {
           <div
             // biome-ignore lint/suspicious/noArrayIndexKey: position is stable
             key={index}
-            className="bg-white rounded-3xl shadow-xl border border-slate-200 w-24 h-36 md:w-44 md:h-60 flex items-center justify-center"
+            className="bg-white rounded-3xl w-24 h-36 md:w-32 md:h-60 flex items-center justify-center"
           >
             <NumberFlow
               willChange
