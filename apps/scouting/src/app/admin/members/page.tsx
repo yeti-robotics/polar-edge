@@ -107,61 +107,56 @@ async function MembersContent() {
   const members = membersResponse?.members ?? [];
 
   return (
-    <>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Team Members</h1>
-        <p className="mt-2 text-muted-foreground">
-          Manage and view all members of {organization?.name ?? "your organization"}
-        </p>
-      </div>
-
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Member</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Joined</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {members.map((memberData) => (
-            <TableRow key={memberData.id}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <Avatar className="size-9">
-                    <AvatarImage
-                      src={memberData.user.image ?? undefined}
-                      alt={memberData.user.name}
-                    />
-                    <AvatarFallback className="text-xs">
-                      {getInitials(memberData.user.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{memberData.user.name}</span>
-                    <span className="text-sm text-muted-foreground">{memberData.user.email}</span>
-                  </div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Member</TableHead>
+          <TableHead>Role</TableHead>
+          <TableHead>Joined</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {members.map((memberData) => (
+          <TableRow key={memberData.id}>
+            <TableCell>
+              <div className="flex items-center gap-3">
+                <Avatar className="size-9">
+                  <AvatarImage
+                    src={memberData.user.image ?? undefined}
+                    alt={memberData.user.name}
+                  />
+                  <AvatarFallback className="text-xs">
+                    {getInitials(memberData.user.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="font-medium">{memberData.user.name}</span>
+                  <span className="text-sm text-muted-foreground">{memberData.user.email}</span>
                 </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant={getRoleBadgeVariant(memberData.role)} className="capitalize">
-                  {memberData.role}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {formatDate(new Date(memberData.createdAt))}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </>
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge variant={getRoleBadgeVariant(memberData.role)} className="capitalize">
+                {memberData.role}
+              </Badge>
+            </TableCell>
+            <TableCell className="text-muted-foreground">
+              {formatDate(new Date(memberData.createdAt))}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
 export default function MembersPage() {
   return (
     <main className="container mx-auto max-w-5xl px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl tracking-tight">Team Members</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Manage and view members</p>
+      </div>
       <Suspense fallback={<LoadingTable />}>
         <MembersContent />
       </Suspense>
