@@ -13,6 +13,7 @@ import {
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { CheckCircle2Icon, CopyIcon } from "lucide-react";
+import { useToast } from "@repo/ui/hooks/use-toast";
 import { generateInviteLink } from "./actions";
 
 export function InviteLinkManager() {
@@ -21,6 +22,7 @@ export function InviteLinkManager() {
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   async function handleGenerate() {
@@ -39,11 +41,12 @@ export function InviteLinkManager() {
 
       if (result.data) {
         setInviteLink(result.data.url);
+        setIsGenerating(false);
         startTransition(() => {
           router.refresh();
         });
       }
-    } catch (err) {
+    } catch (_) {
       setError("An unexpected error occurred. Please try again.");
       setIsGenerating(false);
     }
@@ -55,8 +58,9 @@ export function InviteLinkManager() {
     try {
       await navigator.clipboard.writeText(inviteLink);
       setCopied(true);
+      toast({ description: "Invite link copied to clipboard" });
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch (_) {
       setError("Failed to copy link to clipboard");
     }
   }
@@ -101,7 +105,7 @@ export function InviteLinkManager() {
           </div>
         )}
 
-        <Button onClick={handleGenerate} disabled={isGenerating || isPending} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || isPending} className="w-full sm:w-auto">
           {isGenerating ? "Generating..." : "Generate Invite Link"}
         </Button>
       </CardContent>

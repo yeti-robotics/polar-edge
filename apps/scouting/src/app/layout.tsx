@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
 import "@repo/ui/globals.css";
+import { Toaster } from "@repo/ui/components/toaster";
 import { Suspense } from "react";
 import { Header } from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme";
@@ -35,6 +36,7 @@ export default function RootLayout({
         >
           <Header />
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
