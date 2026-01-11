@@ -10,6 +10,8 @@ on:
             - "packages/**"
             - "package.json"
             - "pnpm-workspace.yaml"
+            - "pnpm-lock.yaml"
+            - ".github/workflows/publish-basecamp.yml"
             - "turbo.json"
     workflow_dispatch:
 
