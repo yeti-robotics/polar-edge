@@ -31,20 +31,31 @@ while True:
     req = urllib.request.Request(url, headers=headers)
 
     print("Fetching page", page)
-    
+
     try:
         with urllib.request.urlopen(req) as response:
             teams = json.loads(response.read().decode())
-            
+
             if not teams:
                 break
-            
+
             for team in teams:
                 team_num = team.get('team_number')
                 nickname = team.get('nickname', '')
+                city = team.get('city')
+                state_prov = team.get('state_prov')
+                country = team.get('country')
+
                 if team_num:
-                    mapping[str(team_num)] = nickname
-            
+                    mapping[str(team_num)] = {
+                        "name": nickname,
+                        "location": {
+                            "city": city,
+                            "state_prov": state_prov,
+                            "country": country
+                        }
+                    }
+
             page += 1
     except urllib.error.HTTPError as e:
         if e.code == 404:
