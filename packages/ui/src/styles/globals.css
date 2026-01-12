@@ -55,7 +55,7 @@
 }
 
 .dark {
-  --background: var(--color-slate-950);
+  --background: var(--color-neutral-950);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
@@ -166,11 +166,8 @@
   * {
     @apply border-border;
   }
-  html {
-    @apply font-sans;
-  }
   body {
-    @apply bg-background text-foreground font-medium;
+    @apply bg-background text-foreground font-sans;
   }
 }
 
