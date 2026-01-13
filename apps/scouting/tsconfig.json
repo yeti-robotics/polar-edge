@@ -1,6 +1,8 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
+    "moduleResolution": "Node",
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -15,6 +17,8 @@
     "declarationMap": false
   },
   "include": [
+    "src/**/*.ts",
+    "pages/**/*.ts",
     "next-env.d.ts",
     "next.config.ts",
     "**/*.ts",
