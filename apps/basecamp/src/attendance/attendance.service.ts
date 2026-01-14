@@ -90,11 +90,10 @@ export class AttendanceService {
       const result = await this.sheetService.appendSheetValues(
         this.attendanceSheetId,
         SHEET_RANGE_APPEND,
-        [
-          COLUMN_NAMES.map((value) =>
-            attendance[value as keyof typeof attendance].toString()
-          ),
-        ]
+        [COLUMN_NAMES.map((value) => attendance[value as keyof typeof attendance].toString())],
+        {
+          valueInputOption: "RAW",
+        }
       );
 
       if (result.updates?.updatedRows && result.updates.updatedRows >= 1) {
