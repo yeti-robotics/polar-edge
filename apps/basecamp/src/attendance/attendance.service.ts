@@ -308,10 +308,8 @@ export class AttendanceService {
 
       if (!allAttendance?.length) return [];
 
-      // Map of discordId -> { userName, records }
       const userRecords = new Map<string, { userName: string; records: AttendanceRecord[] }>();
 
-      // Process each record (skip header row)
       for (let i = 1; i < allAttendance.length; i++) {
         const row = allAttendance[i];
         if (!row?.[COLUMN_INDICES.IS_SIGNING_IN]) continue;
@@ -319,12 +317,13 @@ export class AttendanceService {
         const discordId = String(row[COLUMN_INDICES.DISCORD_ID]);
         const discordName = String(row[COLUMN_INDICES.DISCORD_NAME]);
 
-        // Initialize user data if it doesn't exist
-        if (!userRecords.has(discordId)) {
-          userRecords.set(discordId, {
+        let userData = userRecords.get(discordId);
+        if (!userData) {
+          userData = {
             userName: discordName,
             records: [],
-          });
+          };
+          userRecords.set(discordId, userData);
         }
 
         const record = AttendanceSchema.parse({
@@ -337,12 +336,12 @@ export class AttendanceService {
             row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE_UPPERCASE,
         });
 
-        userRecords.get(discordId)!.records.push(record);
+        userData.records.push(record);
       }
 
       // Calculate hours for each user and convert to array
       const usersWithHours = Array.from(userRecords.entries())
-        .map(([discordId, { userName, records }]) => ({
+        .map(([_, { userName, records }]) => ({
           userName,
           totalHours: this.calculateHoursFromRecords(records),
         }))

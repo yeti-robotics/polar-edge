@@ -12,8 +12,8 @@ export const MS_PER_HOUR = 1000 * 60 * 60;
 
 /** Google Sheets configuration */
 export const SHEET_NAME = "Attendance";
-export const SHEET_RANGE_APPEND = "Attendance!A:D";
-export const SHEET_RANGE_READ = "Attendance!A:E";
+export const SHEET_RANGE_APPEND = `${SHEET_NAME}!A:D`;
+export const SHEET_RANGE_READ = `${SHEET_NAME}!A:E`;
 
 /** Column indices in the attendance sheet */
 export const COLUMN_INDICES = {
