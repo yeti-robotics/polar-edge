@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
+import { useToast } from "@repo/ui/hooks/use-toast";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@repo/ui/hooks/use-toast";
 
 interface InviteLinkCopyProps {
   url: string;

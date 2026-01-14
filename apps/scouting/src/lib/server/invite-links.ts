@@ -1,9 +1,9 @@
-import { headers } from "next/headers";
 import { randomBytes } from "node:crypto";
+import { and, eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { organizationInviteLink, member } from "@/lib/database/auth-schema";
-import { eq, and } from "drizzle-orm";
+import { member, organizationInviteLink } from "@/lib/database/auth-schema";
 
 function generateId(): string {
   return randomBytes(16).toString("hex");
@@ -136,10 +136,7 @@ export async function acceptInviteLink(token: string) {
     .select()
     .from(member)
     .where(
-      and(
-        eq(member.organizationId, inviteLink.organizationId),
-        eq(member.userId, session.user.id)
-      )
+      and(eq(member.organizationId, inviteLink.organizationId), eq(member.userId, session.user.id))
     )
     .limit(1);
 

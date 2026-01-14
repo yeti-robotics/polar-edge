@@ -1,7 +1,3 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { AcceptInvitationForm } from "./AcceptInvitationForm";
 import {
   Card,
   CardContent,
@@ -9,6 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { AcceptInvitationForm } from "./AcceptInvitationForm";
 
 async function getInvitation(invitationId: string) {
   const requestHeaders = await headers();
@@ -41,9 +40,7 @@ export default async function AcceptInvitationPage({
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Invitation Not Found</CardTitle>
-            <CardDescription>
-              This invitation link is invalid or has expired.
-            </CardDescription>
+            <CardDescription>This invitation link is invalid or has expired.</CardDescription>
           </CardHeader>
         </Card>
       </main>
@@ -91,11 +88,11 @@ export default async function AcceptInvitationPage({
         <CardHeader>
           <CardTitle>Accept Invitation</CardTitle>
           <CardDescription>
-            You&apos;ve been invited to join <strong>{invitation.organization.name}</strong>
+            You&apos;ve been invited to join <strong>{invitation.organizationName}</strong>
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AcceptInvitationForm invitationId={id} organizationName={invitation.organization.name} />
+          <AcceptInvitationForm invitationId={id} organizationName={invitation.organizationName} />
         </CardContent>
       </Card>
     </main>

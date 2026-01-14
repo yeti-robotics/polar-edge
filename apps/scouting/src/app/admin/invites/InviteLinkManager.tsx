@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/button";
 import {
   Card,
@@ -12,8 +10,10 @@ import {
 } from "@repo/ui/components/card";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
-import { CheckCircle2Icon, CopyIcon } from "lucide-react";
 import { useToast } from "@repo/ui/hooks/use-toast";
+import { CheckCircle2Icon, CopyIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { generateInviteLink } from "./actions";
 
 export function InviteLinkManager() {
@@ -105,7 +105,11 @@ export function InviteLinkManager() {
           </div>
         )}
 
-        <Button onClick={handleGenerate} disabled={isGenerating || isPending} className="w-full sm:w-auto">
+        <Button
+          onClick={handleGenerate}
+          disabled={isGenerating || isPending}
+          className="w-full sm:w-auto"
+        >
           {isGenerating ? "Generating..." : "Generate Invite Link"}
         </Button>
       </CardContent>

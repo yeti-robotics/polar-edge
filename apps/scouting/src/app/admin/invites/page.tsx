@@ -1,4 +1,11 @@
 import { Badge } from "@repo/ui/components/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
@@ -8,21 +15,14 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@repo/ui/components/card";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { listInviteLinks } from "@/lib/server/invite-links";
+import { InviteLinkCopy } from "./InviteLinkCopy";
 import { InviteLinkManager } from "./InviteLinkManager";
 import { RevokeButton } from "./RevokeButton";
-import { InviteLinkCopy } from "./InviteLinkCopy";
 
 function LoadingTable() {
   return (
