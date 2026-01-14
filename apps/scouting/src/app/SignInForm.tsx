@@ -32,12 +32,22 @@ export function SignInForm({ redirectUrl }: SignInFormProps) {
       <input type="hidden" name="redirectUrl" value={redirectUrl ?? "/"} />
 
       <Button type="submit">Sign in with Discord</Button>
-
+<br/>
+<div style={{ marginTop: '20px', marginBottom: '10px' }}>
       <Link href="/frontend">
         <Button type="button" variant="outline">
-          View Frontend
+          Scouting Form
         </Button>
-      </Link>
+         </Link>
+        </div>
+        <br/>
+        <Link href="/results">
+        <Button type="button" variant="outline">
+          View Results
+        </Button>
+        </Link>
+
+     
     </form>
   );
 }
