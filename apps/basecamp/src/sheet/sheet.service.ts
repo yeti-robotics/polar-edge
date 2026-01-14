@@ -72,7 +72,7 @@ export class SheetService {
         const result = await this.sheetsClient.spreadsheets.values.append({
           spreadsheetId: spreadsheetId,
           range,
-          valueInputOption: options.valueInputOption || "RAW",
+          valueInputOption: options.valueInputOption || "USER_ENTERED",
           requestBody: { values },
         });
 
