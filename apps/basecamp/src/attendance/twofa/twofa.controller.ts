@@ -2,17 +2,17 @@ import { Body, Controller, HttpStatus, Post, Res, UnauthorizedException } from "
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import type { Response } from "express";
-import type { AttendanceTwofaSignInDto, AttendanceTwofaValidateDto } from "./attendance-twofa.dto";
+import type { TwofaSignInDto, TwofaValidateDto } from "./twofa.dto";
 
 @Controller("2fa")
-export class AttendanceTwofaController {
+export class TwofaController {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService
   ) {}
 
   @Post("authenticate")
-  signIn(@Body() { password }: AttendanceTwofaSignInDto, @Res() res: Response) {
+  signIn(@Body() { password }: TwofaSignInDto, @Res() res: Response) {
     const expectedPassword = this.configService.get<string | undefined>(
       "ATTENDANCE_2FA_SECRET",
       undefined
@@ -33,7 +33,7 @@ export class AttendanceTwofaController {
   }
 
   @Post("validate")
-  validateToken(@Body() { token }: AttendanceTwofaValidateDto, @Res() res: Response) {
+  validateToken(@Body() { token }: TwofaValidateDto, @Res() res: Response) {
     try {
       this.jwtService.verify(token);
     } catch (error) {

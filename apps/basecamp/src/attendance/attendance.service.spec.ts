@@ -2,7 +2,7 @@ import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { SheetService } from "../sheet/sheet.service";
 import { AttendanceService } from "./attendance.service";
-import { AttendanceTwoFAService } from "./attendance-twofa/attendance-twofa.service";
+import { TwofaService } from "./twofa/twofa.service";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -46,10 +46,9 @@ describe("AttendanceService", () => {
           },
         },
         {
-          provide: AttendanceTwoFAService,
+          provide: TwofaService,
           useValue: {
-            generateCode: jest.fn().mockResolvedValue(123456),
-            verifyCode: jest.fn().mockResolvedValue(true),
+            verifyCode: jest.fn().mockReturnValue(true),
           },
         },
       ],
