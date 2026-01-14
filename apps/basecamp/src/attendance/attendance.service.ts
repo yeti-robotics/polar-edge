@@ -2,7 +2,20 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { SheetService } from "src/sheet/sheet.service";
 import { z } from "zod";
-import { AttendanceTwoFAService } from "./attendance-twofa/attendance-twofa.service";
+import {
+  BOOLEAN_STRINGS,
+  COLUMN_INDICES,
+  COLUMN_NAMES,
+  DEFAULT_LEADERBOARD_LIMIT,
+  EXPIRED_SESSION_THRESHOLD_MS,
+  FORGOT_SIGNOUT_CREDIT_MS,
+  MS_PER_HOUR,
+  SHEET_RANGE_APPEND,
+  SHEET_RANGE_READ,
+  STALE_SIGNIN_THRESHOLD_MS,
+  TEAM_NAMES,
+} from "./attendance.constants";
+import { TwofaService } from "./twofa/twofa.service";
 
 const AttendanceSchema = z.object({
   discordId: z.string(),
@@ -12,9 +25,12 @@ const AttendanceSchema = z.object({
   isSigningIn: z.boolean(),
 });
 
+type AttendanceRecord = z.infer<typeof AttendanceSchema>;
+
 type AttendanceOperationResult =
   | {
       success: true;
+      message?: string;
     }
   | {
       success: false;
@@ -30,7 +46,7 @@ export class AttendanceService {
   constructor(
     private readonly sheetService: SheetService,
     private readonly configService: ConfigService,
-    private readonly attendanceTwofaService: AttendanceTwoFAService
+    private readonly twofaService: TwofaService
   ) {
     const attendanceSheetId = this.configService.get<string>("ATTENDANCE_SPREADSHEET_ID");
 
@@ -45,15 +61,15 @@ export class AttendanceService {
   private getTeam(guildId: string) {
     switch (guildId) {
       case this.configService.get<string>("YETI_SERVER_ID"):
-        return "YETI Robotics";
+        return TEAM_NAMES.YETI_ROBOTICS;
       case this.configService.get<string>("DEV_GUILD_ID"):
-        return "Dev";
+        return TEAM_NAMES.DEV;
       default:
         return "";
     }
   }
 
-  private async performAttendanceOperation(
+  private async recordAttendance(
     discordId: string,
     discordName: string,
     guildId: string,
@@ -73,12 +89,11 @@ export class AttendanceService {
     try {
       const result = await this.sheetService.appendSheetValues(
         this.attendanceSheetId,
-        "Attendance!A:D",
-        [
-          ["discordId", "team", "discordName", "date", "isSigningIn"].map((value) =>
-            attendance[value as keyof typeof attendance].toString()
-          ),
-        ]
+        SHEET_RANGE_APPEND,
+        [COLUMN_NAMES.map((value) => attendance[value as keyof typeof attendance].toString())],
+        {
+          valueInputOption: "RAW",
+        }
       );
 
       if (result.updates?.updatedRows && result.updates.updatedRows >= 1) {
@@ -92,30 +107,37 @@ export class AttendanceService {
     }
   }
 
-  public async getAttendance(discordId: string): Promise<z.infer<typeof AttendanceSchema>[]> {
+  public async getAttendance(discordId: string): Promise<AttendanceRecord[]> {
     const attendance = await this.sheetService.getSheetValues(
       this.attendanceSheetId,
-      `Attendance!A:E`
+      SHEET_RANGE_READ
     );
 
     if (!attendance) {
       return [];
     }
 
-    const userAttendance = attendance.filter((row) => row[0] === discordId);
+    const userAttendance = attendance.filter((row) => row[COLUMN_INDICES.DISCORD_ID] === discordId);
 
     return userAttendance.map((row) => {
       return AttendanceSchema.parse({
-        discordId: row[0],
-        team: row[1],
-        discordName: row[2],
-        date: row[3],
-        isSigningIn: row[4] === "true" || row[4] === "TRUE",
+        discordId: row[COLUMN_INDICES.DISCORD_ID],
+        team: row[COLUMN_INDICES.TEAM],
+        discordName: row[COLUMN_INDICES.DISCORD_NAME],
+        date: row[COLUMN_INDICES.DATE],
+        isSigningIn:
+          row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE ||
+          row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE_UPPERCASE,
       });
     });
   }
 
-  private validateAttendanceCode(code?: number) {
+  private async getLastAttendanceRecord(discordId: string): Promise<AttendanceRecord | undefined> {
+    const attendance = await this.getAttendance(discordId);
+    return attendance.at(-1);
+  }
+
+  private validateTwofaCode(code?: number): AttendanceOperationResult | null {
     if (!this.twofaEnabled) {
       return null;
     }
@@ -127,9 +149,7 @@ export class AttendanceService {
       };
     }
 
-    const isCodeValid = this.attendanceTwofaService.verifyCode(code);
-
-    if (!isCodeValid) {
+    if (!this.twofaService.verifyCode(code)) {
       return {
         success: false,
         message: "Invalid code.",
@@ -139,80 +159,95 @@ export class AttendanceService {
     return null;
   }
 
+  private isStaleSession(lastSignIn: Date): boolean {
+    return Date.now() - lastSignIn.getTime() > STALE_SIGNIN_THRESHOLD_MS;
+  }
+
+  private async handleForgotToSignOut(
+    discordId: string,
+    discordName: string,
+    guildId: string,
+    lastSignInDate: Date
+  ): Promise<AttendanceOperationResult> {
+    const creditTime = new Date(lastSignInDate.getTime() + FORGOT_SIGNOUT_CREDIT_MS);
+    const signOutResult = await this.recordAttendance(
+      discordId,
+      discordName,
+      guildId,
+      "signOut",
+      creditTime
+    );
+    const signInResult = await this.recordAttendance(discordId, discordName, guildId, "signIn");
+
+    if (signOutResult && signInResult) {
+      return {
+        success: true,
+        message:
+          "You signed in last meeting but did not sign out. You were credited with 1.5 hours of attendance for that meeting. You are now signed in.",
+      };
+    }
+    return { success: false, message: "Failed to sign in" };
+  }
+
+  private async recordSignIn(
+    discordId: string,
+    discordName: string,
+    guildId: string
+  ): Promise<AttendanceOperationResult> {
+    try {
+      const success = await this.recordAttendance(discordId, discordName, guildId, "signIn");
+      if (success) {
+        return { success: true };
+      }
+      return { success: false, message: "Failed to sign in." };
+    } catch (error) {
+      this.logger.error(`Failed to sign in: ${error}`);
+      return { success: false, message: "Failed to sign in." };
+    }
+  }
+
+  private async recordSignOut(
+    discordId: string,
+    discordName: string,
+    guildId: string
+  ): Promise<AttendanceOperationResult> {
+    try {
+      const success = await this.recordAttendance(discordId, discordName, guildId, "signOut");
+      if (success) {
+        return { success: true };
+      }
+      return { success: false, message: "Failed to sign out." };
+    } catch (error) {
+      this.logger.error(`Failed to sign out: ${error}`);
+      return { success: false, message: "Failed to sign out." };
+    }
+  }
+
   public async signIn(
     discordId: string,
     guildId: string,
     discordName: string,
     code?: number
   ): Promise<AttendanceOperationResult> {
-    const codeValidationError = this.validateAttendanceCode(code);
-    if (codeValidationError) {
-      return codeValidationError;
+    const codeError = this.validateTwofaCode(code);
+    if (codeError) {
+      return codeError;
     }
 
-    const existingAttendance = await this.getAttendance(discordId);
+    const lastOperation = await this.getLastAttendanceRecord(discordId);
 
-    const lastOperation = existingAttendance.at(-1);
-
-    if (lastOperation?.isSigningIn) {
-      const lastDate = new Date(lastOperation.date);
-      const currentDate = new Date();
-
-      if (currentDate.getTime() - lastDate.getTime() < 1000 * 60 * 60 * 3.5) {
-        return {
-          success: false,
-          message: "You are currently signed in.",
-        };
-      } else {
-        try {
-          const halfCreditResult = await this.performAttendanceOperation(
-            discordId,
-            discordName,
-            guildId,
-            "signOut",
-            new Date(lastDate.getTime() + 1000 * 60 * 60 * 1.5)
-          );
-          const newSigninResult = await this.performAttendanceOperation(
-            discordId,
-            discordName,
-            guildId,
-            "signIn"
-          );
-
-          if (halfCreditResult && newSigninResult) {
-            return {
-              success: false,
-              message:
-                "You signed in last meeting but did not sign out. You will be credited for 1.5 hours of attendance for that meeting. You are now signed in.",
-            };
-          } else {
-            return {
-              success: false,
-              message: "Failed to sign in",
-            };
-          }
-        } catch (error) {
-          this.logger.error(`Failed to sign in: ${error}`);
-          return {
-            success: false,
-            message: "Failed to sign in.",
-          };
-        }
-      }
+    // Not currently signed in - simple sign in
+    if (!lastOperation?.isSigningIn) {
+      return this.recordSignIn(discordId, discordName, guildId);
     }
 
-    try {
-      await this.performAttendanceOperation(discordId, discordName, guildId, "signIn");
-      return {
-        success: true,
-      };
-    } catch (error) {
-      this.logger.error(`Failed to sign in: ${error}`);
-      return {
-        success: false,
-        message: "Failed to sign in.",
-      };
+    // Already signed in - check if session is stale
+    const lastDate = new Date(lastOperation.date);
+    if (this.isStaleSession(lastDate)) {
+      return this.handleForgotToSignOut(discordId, discordName, guildId, lastDate);
     }
+
+    return { success: false, message: "You are currently signed in." };
   }
 
   public async signOut(
@@ -221,51 +256,38 @@ export class AttendanceService {
     discordName: string,
     code?: number
   ): Promise<AttendanceOperationResult> {
-    const codeValidationError = this.validateAttendanceCode(code);
-    if (codeValidationError) {
-      return codeValidationError;
+    const codeError = this.validateTwofaCode(code);
+    if (codeError) {
+      return codeError;
     }
 
-    const existingAttendance = await this.getAttendance(discordId);
-
-    const lastOperation = existingAttendance.at(-1);
+    const lastOperation = await this.getLastAttendanceRecord(discordId);
 
     if (!lastOperation?.isSigningIn) {
       return {
         success: false,
         message: "You are not signed in.",
       };
-    } else if (Date.now() - new Date(lastOperation.date).getTime() > 1000 * 60 * 60 * 18) {
+    }
+
+    // If session expired, treat as new sign-in
+    const lastDate = new Date(lastOperation.date);
+    if (Date.now() - lastDate.getTime() > EXPIRED_SESSION_THRESHOLD_MS) {
       return this.signIn(discordId, guildId, discordName, code);
     }
 
-    try {
-      await this.performAttendanceOperation(discordId, discordName, guildId, "signOut");
-      return {
-        success: true,
-      };
-    } catch (error) {
-      this.logger.error(`Failed to sign out: ${error}`);
-      return {
-        success: false,
-        message: "Failed to sign out.",
-      };
-    }
+    return this.recordSignOut(discordId, discordName, guildId);
   }
 
-  public async getUserHours(discordId: string): Promise<number> {
-    const attendance = await this.getAttendance(discordId);
-
+  private calculateHoursFromRecords(records: AttendanceRecord[]): number {
     let hours = 0;
     let lastSignIn: Date | null = null;
-    for (const attendanceRecord of attendance) {
-      const isSigningIn = attendanceRecord.isSigningIn;
-      const date = new Date(attendanceRecord.date);
 
-      if (isSigningIn) {
-        lastSignIn = date;
+    for (const record of records) {
+      if (record.isSigningIn) {
+        lastSignIn = new Date(record.date);
       } else if (lastSignIn) {
-        hours += (date.getTime() - lastSignIn.getTime()) / (1000 * 60 * 60);
+        hours += (new Date(record.date).getTime() - lastSignIn.getTime()) / MS_PER_HOUR;
         lastSignIn = null;
       } else {
         throw new Error("Invalid attendance record");
@@ -275,61 +297,67 @@ export class AttendanceService {
     return hours;
   }
 
-  public async getTopMembersByHours(limit: number = 5) {
+  public async getUserHours(discordId: string): Promise<number> {
+    const attendance = await this.getAttendance(discordId);
+    return this.calculateHoursFromRecords(attendance);
+  }
+
+  public async getTopMembersByHours(limit: number = DEFAULT_LEADERBOARD_LIMIT) {
     try {
       const allAttendance = await this.sheetService.getSheetValues(
         this.attendanceSheetId,
-        "Attendance!A:E"
+        SHEET_RANGE_READ
       );
 
       if (!allAttendance?.length) return [];
 
-      // Map of discordId -> { userName, hourTotal }
-      const userData = new Map<string, { userName: string; hourTotal: number }>();
-      // Map of discordId -> lastSignInTime
-      const lastSignIn = new Map<string, Date>();
+      // Map of discordId -> { userName, records }
+      const userRecords = new Map<string, { userName: string; records: AttendanceRecord[] }>();
 
       // Process each record (skip header row)
       for (let i = 1; i < allAttendance.length; i++) {
         const row = allAttendance[i];
-        if (!row?.[4]) continue;
+        if (!row?.[COLUMN_INDICES.IS_SIGNING_IN]) continue;
 
-        const discordId = String(row[0]);
-        const discordName = String(row[2]);
-        const timestamp = new Date(String(row[3]));
-        const isSignIn = row[4] === "true" || row[4] === "TRUE";
+        const discordId = String(row[COLUMN_INDICES.DISCORD_ID]);
+        const discordName = String(row[COLUMN_INDICES.DISCORD_NAME]);
 
         // Initialize user data if it doesn't exist
-        if (!userData.has(discordId)) {
-          userData.set(discordId, {
+        if (!userRecords.has(discordId)) {
+          userRecords.set(discordId, {
             userName: discordName,
-            hourTotal: 0,
+            records: [],
           });
         }
 
-        if (isSignIn) {
-          lastSignIn.set(discordId, timestamp);
-        } else if (lastSignIn.has(discordId)) {
-          const user = userData.get(discordId);
-          const signInTime = lastSignIn.get(discordId);
-          if (!user || !signInTime) {
-            throw new Error("Invalid attendance record");
-          }
-          const hours = (timestamp.getTime() - signInTime.getTime()) / 3.6e6;
-          if (hours > 0) user.hourTotal += hours;
-          lastSignIn.delete(discordId);
-        }
+        const record = AttendanceSchema.parse({
+          discordId: row[COLUMN_INDICES.DISCORD_ID],
+          team: row[COLUMN_INDICES.TEAM],
+          discordName: row[COLUMN_INDICES.DISCORD_NAME],
+          date: row[COLUMN_INDICES.DATE],
+          isSigningIn:
+            row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE ||
+            row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE_UPPERCASE,
+        });
+
+        userRecords.get(discordId)!.records.push(record);
       }
 
-      // Convert to array, sort, and limit results
-      return Array.from(userData.values())
-        .filter((user) => user.hourTotal > 0)
-        .sort((a, b) => b.hourTotal - a.hourTotal)
+      // Calculate hours for each user and convert to array
+      const usersWithHours = Array.from(userRecords.entries())
+        .map(([discordId, { userName, records }]) => ({
+          userName,
+          totalHours: this.calculateHoursFromRecords(records),
+        }))
+        .filter((user) => user.totalHours > 0)
+        .sort((a, b) => b.totalHours - a.totalHours)
         .slice(0, limit)
-        .map(({ userName, hourTotal: totalHours }) => ({
+        .map(({ userName, totalHours }) => ({
           userName,
           totalHours: parseFloat(totalHours.toFixed(2)),
         }));
+
+      return usersWithHours;
     } catch (error) {
       this.logger.error(`Error getting attendance leaderboard:`, error);
       return [];

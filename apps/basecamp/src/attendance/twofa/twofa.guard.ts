@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import type { Request } from "express";
 
 @Injectable()
-export class AttendanceTwofaGuard implements CanActivate {
+export class TwofaGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();

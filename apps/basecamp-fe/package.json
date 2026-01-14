@@ -17,6 +17,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@repo/ui": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

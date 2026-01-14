@@ -3,8 +3,8 @@ import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { SheetModule } from "../sheet/sheet.module";
 import { AttendanceService } from "./attendance.service";
-import { AttendanceTwofaController } from "./attendance-twofa/attendance-twofa.controller";
-import { AttendanceTwoFAService } from "./attendance-twofa/attendance-twofa.service";
+import { TwofaController } from "./twofa/twofa.controller";
+import { TwofaService } from "./twofa/twofa.service";
 
 @Module({
   imports: [
@@ -22,8 +22,8 @@ import { AttendanceTwoFAService } from "./attendance-twofa/attendance-twofa.serv
       inject: [ConfigService],
     }),
   ],
-  providers: [AttendanceService, AttendanceTwoFAService],
+  providers: [AttendanceService, TwofaService],
   exports: [AttendanceService],
-  controllers: [AttendanceTwofaController],
+  controllers: [TwofaController],
 })
 export class AttendanceModule {}

@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { verifyCode } from "@repo/twofa/server";
 
 @Injectable()
-export class AttendanceTwoFAService {
+export class TwofaService {
   private readonly secret: string;
 
   constructor(private readonly configService: ConfigService) {
