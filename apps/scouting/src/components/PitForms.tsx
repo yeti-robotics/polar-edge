@@ -67,14 +67,16 @@ function PitForm() {
   />
 </div>
 <hr/>
-<h1 className="bg-gray-500 text-white"> Scoring Capabilities 'Since doing late and school I will look at this tmr'</h1>
+<br/>
+
 
 <label
   htmlFor="scoring-capabilities"
-  className="text-sm font-medium text-muted-foreground"
+  className="text-lg font-medium text-muted-foreground"
 >
   Scoring Capabilities:
 </label>
+
 
 <input
   type="text"
