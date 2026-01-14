@@ -8,7 +8,7 @@ export class HandbookService {
 
   public async askHandbookQuestion(question: string) {
     const ai = this.aiService.getAiClient();
-    const model = "gemini-2.0-flash";
+    const model = "gemini-2.5-flash";
     const config = {
       responseMimeType: "text/plain",
       systemInstruction: handbookPrompt,
