@@ -42,7 +42,7 @@ describe("EventQueryBuilder", () => {
     });
 
     it("should pass fetcher and eventKey to MatchQueryBuilder", () => {
-      const matchBuilder = builder.matches();
+      const _matchBuilder = builder.matches();
       expect(MatchQueryBuilder).toHaveBeenCalledWith(fetcher, eventKey, {});
     });
 
