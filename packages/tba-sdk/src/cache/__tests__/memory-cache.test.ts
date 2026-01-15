@@ -1,5 +1,5 @@
-import { MemoryCache } from "./memory-cache";
-import type { CacheEntry } from "./types";
+import { MemoryCache } from "../memory-cache";
+import type { CacheEntry } from "../types";
 
 describe("MemoryCache", () => {
   let cache: MemoryCache;
