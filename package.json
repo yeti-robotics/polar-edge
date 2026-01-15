@@ -4,7 +4,6 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "dev:yeti-blue": "turbo run dev --filter=@yeti-robotics/yeti-blue-sdk --filter=@app/yeti-blue-sandbox",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "test": "turbo run test",
