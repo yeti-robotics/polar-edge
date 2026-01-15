@@ -1,8 +1,8 @@
 import type { Fetcher } from "@/fetcher";
 import type { FetcherOptions } from "@/fetcher/types";
 import { eventsResource } from "@/resources/events";
+import { matchesResource } from "@/resources/matches";
 import { rankingsResource } from "@/resources/rankings";
-import { MatchQueryBuilder } from "./match-builder";
 
 /**
  * Fluent query builder for event-related queries
@@ -18,7 +18,8 @@ export class EventQueryBuilder {
    * Query matches for this event
    */
   matches() {
-    return new MatchQueryBuilder(this.fetcher, this.eventKey, this.options);
+    const matches = matchesResource(this.fetcher);
+    return matches.getEventMatches(this.eventKey, this.options);
   }
 
   /**

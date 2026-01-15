@@ -1,13 +1,13 @@
 import { Fetcher } from "@/fetcher";
 import { eventsResource } from "@/resources/events";
+import { matchesResource } from "@/resources/matches";
 import { rankingsResource } from "@/resources/rankings";
 import { EventQueryBuilder } from "../event-builder";
-import { MatchQueryBuilder } from "../match-builder";
 
 // Mock the resources
 jest.mock("@/resources/events");
 jest.mock("@/resources/rankings");
-jest.mock("../match-builder");
+jest.mock("@/resources/matches");
 
 describe("EventQueryBuilder", () => {
   let fetcher: Fetcher;
@@ -36,21 +36,59 @@ describe("EventQueryBuilder", () => {
   });
 
   describe("matches()", () => {
-    it("should return a MatchQueryBuilder", () => {
-      const matchBuilder = builder.matches();
-      expect(matchBuilder).toBeInstanceOf(MatchQueryBuilder);
+    const mockMatches = [
+      {
+        key: "2024casj_qm1",
+        comp_level: "qm",
+        match_number: 1,
+        event_key: eventKey,
+        year: 2024,
+      },
+      {
+        key: "2024casj_qm2",
+        comp_level: "qm",
+        match_number: 2,
+        event_key: eventKey,
+        year: 2024,
+      },
+    ];
+
+    it("should get matches for the event", async () => {
+      const mockGetEventMatches = jest.fn().mockResolvedValue(mockMatches);
+      (matchesResource as jest.Mock).mockReturnValue({
+        getEventMatches: mockGetEventMatches,
+      });
+
+      const result = await builder.matches();
+
+      expect(mockGetEventMatches).toHaveBeenCalledWith(eventKey, {});
+      expect(result).toEqual(mockMatches);
     });
 
-    it("should pass fetcher and eventKey to MatchQueryBuilder", () => {
-      const _matchBuilder = builder.matches();
-      expect(MatchQueryBuilder).toHaveBeenCalledWith(fetcher, eventKey, {});
-    });
+    it("should pass options to getEventMatches", async () => {
+      const mockGetEventMatches = jest.fn().mockResolvedValue(mockMatches);
+      (matchesResource as jest.Mock).mockReturnValue({
+        getEventMatches: mockGetEventMatches,
+      });
 
-    it("should pass options to MatchQueryBuilder", () => {
       const options = { skipCache: true };
       const builderWithOptions = new EventQueryBuilder(fetcher, eventKey, options);
-      builderWithOptions.matches();
-      expect(MatchQueryBuilder).toHaveBeenCalledWith(fetcher, eventKey, options);
+      await builderWithOptions.matches();
+
+      expect(mockGetEventMatches).toHaveBeenCalledWith(eventKey, options);
+    });
+
+    it("should use builder options when no options provided", async () => {
+      const builderOptions = { skipCache: true };
+      const builderWithOptions = new EventQueryBuilder(fetcher, eventKey, builderOptions);
+      const mockGetEventMatches = jest.fn().mockResolvedValue(mockMatches);
+      (matchesResource as jest.Mock).mockReturnValue({
+        getEventMatches: mockGetEventMatches,
+      });
+
+      await builderWithOptions.matches();
+
+      expect(mockGetEventMatches).toHaveBeenCalledWith(eventKey, builderOptions);
     });
   });
 
