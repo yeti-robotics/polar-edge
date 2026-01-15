@@ -1,2 +1,3 @@
-export { Fetcher } from "@/fetcher/fetcher";
-export type * from "@/fetcher/types";
+export { Fetcher } from "./fetcher";
+
+export type { FetcherOptions } from "./types";
