@@ -1,10 +1,7 @@
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { sharedConfig } from "@repo/vitest-config";
 import swc from "unplugin-swc";
 import { defineConfig } from "vitest/config";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   ...sharedConfig,
@@ -28,7 +25,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      src: path.resolve(__dirname, "./src"),
+      src: path.resolve(process.cwd(), "./src"),
     },
   },
   test: {

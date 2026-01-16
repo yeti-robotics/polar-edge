@@ -4,24 +4,24 @@
   "description": "TOTP (Time-based One-Time Password) implementation for client and server",
   "type": "module",
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch"
+    "build": "tsdown",
+    "dev": "tsdown --watch"
   },
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.cjs"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./client": {
-      "types": "./dist/esm/client.d.ts",
-      "import": "./dist/esm/client.js",
-      "require": "./dist/cjs/client.cjs"
+      "types": "./dist/client.d.mts",
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.cjs"
     },
     "./server": {
-      "types": "./dist/esm/server.d.ts",
-      "import": "./dist/esm/server.js",
-      "require": "./dist/cjs/server.cjs"
+      "types": "./dist/server.d.mts",
+      "import": "./dist/server.mjs",
+      "require": "./dist/server.cjs"
     }
   },
   "keywords": ["totp", "2fa", "authentication"],
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "tsup": "^8.5.0",
+    "tsdown": "0.19.0",
     "typescript": "catalog:"
   }
 }

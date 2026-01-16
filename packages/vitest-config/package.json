@@ -2,28 +2,29 @@
   "name": "@repo/vitest-config",
   "version": "0.0.0",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./base": {
-      "types": "./dist/configs/base-config.d.ts",
-      "import": "./dist/configs/base-config.js",
-      "require": "./dist/configs/base-config.js"
+      "types": "./dist/configs/base-config.d.mts",
+      "import": "./dist/configs/base-config.mjs",
+      "require": "./dist/configs/base-config.cjs"
     },
     "./ui": {
-      "types": "./dist/configs/ui-config.d.ts",
-      "import": "./dist/configs/ui-config.js",
-      "require": "./dist/configs/ui-config.js"
+      "types": "./dist/configs/ui-config.d.mts",
+      "import": "./dist/configs/ui-config.mjs",
+      "require": "./dist/configs/ui-config.cjs"
     }
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "tsdown",
+    "dev": "tsdown --watch"
   },
   "dependencies": {
     "@vitest/coverage-istanbul": "catalog:",
@@ -32,6 +33,8 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "tsdown": "0.19.0",
     "typescript": "catalog:"
   }
 }

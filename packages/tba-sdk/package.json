@@ -16,21 +16,21 @@
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "generate:types": "openapi-typescript https://www.thebluealliance.com/swagger/api_v3.json -o ./src/generated/index.ts"
   },
   "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vitest-config": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-istanbul": "catalog:",
     "openapi-typescript": "^7.4.2",
-    "tsup": "^8.5.0",
+    "tsdown": "0.19.0",
     "typescript": "catalog:",
-    "vitest": "catalog:",
-    "@repo/vitest-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*"
+    "vitest": "catalog:"
   },
   "dependencies": {
     "lru-cache": "^11.2.4"
