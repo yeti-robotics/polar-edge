@@ -1,12 +1,25 @@
 {
   "name": "@repo/vitest-config",
   "version": "0.0.0",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./base": "./dist/configs/base-config.js",
-    "./ui": "./dist/configs/ui-config.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./base": {
+      "types": "./dist/configs/base-config.d.ts",
+      "import": "./dist/configs/base-config.js",
+      "require": "./dist/configs/base-config.js"
+    },
+    "./ui": {
+      "types": "./dist/configs/ui-config.d.ts",
+      "import": "./dist/configs/ui-config.js",
+      "require": "./dist/configs/ui-config.js"
+    }
   },
   "scripts": {
     "build": "tsc",

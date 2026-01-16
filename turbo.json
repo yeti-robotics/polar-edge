@@ -48,7 +48,9 @@
     "//#lint:fix": {
       "cache": false
     },
-    "test": {},
+    "test": {
+      "dependsOn": ["^build", "^test"]
+    },
     "db:start": {
       "cache": false
     },
