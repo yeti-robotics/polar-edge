@@ -6,6 +6,7 @@ import { Input } from "@repo/ui/components/input";
 import { Button } from "@repo/ui/components/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@repo/ui/components/select";
 import { useFormContext} from "react-hook-form";
+import Folder from "@/components/Folder";
 
 
 export default function FrontendOnlyForm() {
@@ -22,6 +23,20 @@ export default function FrontendOnlyForm() {
           <PitForm />
         </CardContent>
       </Card>
+      
+      <section className="ml-10 mt-10">
+        <Folder
+          color="#174dffff"
+          folderBackColor="#0b2a66ff"
+          paper1="#ffffffff"
+          paper2="#f0f0f0ff"
+          paper3="#e0e0e0ff"
+          papers={["Paper 1", "Paper 2", "Paper 3"]}
+        />
+      </section>
+          
+
+        
     </div>
 
   );

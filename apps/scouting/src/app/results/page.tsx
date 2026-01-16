@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import Link from "next/dist/client/link";
+import Link from "next/link";
 import ResultsTable from "@/components/ResultsTable";
 
 function ResultsPage() {

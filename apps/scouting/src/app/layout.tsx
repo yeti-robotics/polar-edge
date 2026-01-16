@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
-import "@repo/ui/globals.css";
-import { Toaster } from "@repo/ui/components/toaster";
 import { Suspense } from "react";
+import "@repo/ui/globals.css";
+
+import { SidebarProvider, SidebarTrigger } from "@repo/ui/components/sidebar";
+import { Sidebar as AppSidebar } from "@repo/ui/components/sidebar";
 import { Header } from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme";
+import { Toaster } from "@repo/ui/components/toaster";
 
 const libreFranklin = Libre_Franklin({
   subsets: ["latin"],
@@ -18,11 +21,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  // note that suppressHydrationWarning must be added b/c of next-themes
-  // see: https://github.com/pacocoursey/next-themes
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -34,9 +35,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-          <Toaster />
+          <SidebarProvider>
+            <Header />
+            <AppSidebar />
+            <main>
+              <SidebarTrigger />
+              <Suspense fallback={<div>Loading...</div>}>
+                {children}
+              </Suspense>
+            </main>
+            <Toaster />
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>
