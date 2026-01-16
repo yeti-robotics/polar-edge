@@ -28,4 +28,4 @@ WORKDIR /app
 COPY --from=sourcer /app/ .
 
 WORKDIR /app/apps/basecamp
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "dist/main.js"]
