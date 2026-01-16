@@ -6,9 +6,9 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/typography": "^0.5.16",
-    "@types/node": "^22.15.33",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "eslint": "^9.29.0",
     "tailwindcss": "^4.1.11",
     "tailwindcss-animate": "^1.0.7"
@@ -38,13 +38,13 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.454.0",
-    "react": "19.2.1",
+    "react": "catalog:",
     "react-day-picker": "^9.8.1",
-    "react-dom": "19.2.1",
+    "react-dom": "catalog:",
     "react-hook-form": "7.56.3",
     "tailwind-merge": "^2.6.0",
     "vaul": "^1.1.2",
-    "zod": "^4.3.5"
+    "zod": "catalog:"
   },
   "exports": {
     "./globals.css": "./src/styles/globals.css",

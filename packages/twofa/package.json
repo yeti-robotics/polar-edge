@@ -31,8 +31,8 @@
     "@repo/typescript-config": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.19.1",
+    "@types/node": "catalog:",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.3"
+    "typescript": "catalog:"
   }
 }
