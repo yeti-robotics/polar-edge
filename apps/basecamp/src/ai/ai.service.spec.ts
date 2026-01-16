@@ -1,5 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AiService } from "./ai.service";
 
 describe("AiService", () => {
@@ -12,7 +13,7 @@ describe("AiService", () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn(),
+            get: vi.fn(),
           },
         },
       ],
