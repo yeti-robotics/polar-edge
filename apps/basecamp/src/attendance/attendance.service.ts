@@ -287,7 +287,9 @@ export class AttendanceService {
         hours += (new Date(record.date).getTime() - lastSignIn.getTime()) / MS_PER_HOUR;
         lastSignIn = null;
       } else {
-        throw new Error("Invalid attendance record");
+        throw new Error(
+          `Data integrity error: sign-out record found without preceding sign-in record. Timestamp: ${record.date}`
+        );
       }
     }
 
@@ -316,6 +318,8 @@ export class AttendanceService {
 
         const discordId = String(row[COLUMN_INDICES.DISCORD_ID]);
         const discordName = String(row[COLUMN_INDICES.DISCORD_NAME]);
+
+        if (!discordId || !discordName) continue;
 
         let userData = userRecords.get(discordId);
         if (!userData) {
