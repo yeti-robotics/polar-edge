@@ -19,7 +19,6 @@ export function CodeFlipper() {
       <div className="flex gap-4 md:gap-8 justify-center items-center mt-8">
         {padded.split("").map((digit, index) => (
           <div
-            // biome-ignore lint/suspicious/noArrayIndexKey: position is stable
             key={index}
             className="bg-white rounded-3xl w-24 h-36 md:w-32 md:h-60 flex items-center justify-center"
           >

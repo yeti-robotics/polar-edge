@@ -1,6 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
-import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
+import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { SheetService } from "../sheet/sheet.service";
 import { OutreachService } from "./outreach.service";
 

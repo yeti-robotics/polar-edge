@@ -47,7 +47,7 @@ export function AcceptInviteLinkForm({ token, organizationName }: AcceptInviteLi
         router.refresh();
         router.push("/");
       }, 1500);
-    } catch (err) {
+    } catch (_err) {
       setError("An unexpected error occurred. Please try again.");
       setIsAccepting(false);
     }

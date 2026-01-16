@@ -89,7 +89,7 @@ async function MembersContent() {
   }
 
   // Fetch organization details and members in parallel
-  const [organization, membersResponse] = await Promise.all([
+  const [_organization, membersResponse] = await Promise.all([
     auth.api.getFullOrganization({
       query: { organizationId: activeOrganization },
       headers: requestHeaders,

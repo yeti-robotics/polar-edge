@@ -84,7 +84,7 @@ export function CreateOrganizationForm() {
           router.refresh();
         }, 1000);
       }
-    } catch (err) {
+    } catch (_err) {
       setError("An unexpected error occurred. Please try again.");
       setIsCreating(false);
     }

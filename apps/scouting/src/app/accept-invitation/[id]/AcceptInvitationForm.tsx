@@ -51,7 +51,7 @@ export function AcceptInvitationForm({
         router.push("/");
         router.refresh();
       }, 1500);
-    } catch (err) {
+    } catch (_err) {
       setError("An unexpected error occurred. Please try again.");
       setIsAccepting(false);
     }

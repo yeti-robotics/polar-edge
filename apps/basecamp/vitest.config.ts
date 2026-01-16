@@ -1,8 +1,8 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { sharedConfig } from "@repo/vitest-config";
 import swc from "unplugin-swc";
 import { defineConfig } from "vitest/config";
-import { sharedConfig } from "@repo/vitest-config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

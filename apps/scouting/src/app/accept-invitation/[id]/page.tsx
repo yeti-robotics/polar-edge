@@ -21,7 +21,7 @@ async function getInvitation(invitationId: string) {
     });
 
     return invitation;
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 }
