@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
 import { Suspense } from "react";
-import "@repo/ui/globals.css";
+import "./styles/globals.css";
 
 import { SidebarProvider, SidebarTrigger } from "@repo/ui/components/sidebar";
 import { Sidebar as AppSidebar } from "@repo/ui/components/sidebar";
