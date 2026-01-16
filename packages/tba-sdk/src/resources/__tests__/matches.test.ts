@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { Fetcher } from "@/fetcher";
 import { matchesResource } from "../matches";
 
@@ -10,7 +11,7 @@ describe("matchesResource", () => {
       "X-TBA-Auth-Key": "test-key",
     });
     matches = matchesResource(fetcher);
-    jest.spyOn(fetcher, "get");
+    vi.spyOn(fetcher, "get");
   });
 
   describe("getByKey()", () => {
@@ -22,7 +23,7 @@ describe("matchesResource", () => {
         comp_level: "qm",
         match_number: 1,
       };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatch);
+      (fetcher.get as Mock).mockResolvedValue(mockMatch);
 
       const result = await matches.getByKey(matchKey);
 
@@ -45,7 +46,7 @@ describe("matchesResource", () => {
         comp_level: "qf",
         match_number: 1,
       };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatch);
+      (fetcher.get as Mock).mockResolvedValue(mockMatch);
 
       const result = await matches.getByKey(matchKey);
 
@@ -55,7 +56,7 @@ describe("matchesResource", () => {
     it("should pass options to fetcher.get", async () => {
       const matchKey = "2024casj_qm1";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({
+      (fetcher.get as Mock).mockResolvedValue({
         key: matchKey,
         event_key: "2024casj",
       });
@@ -77,7 +78,7 @@ describe("matchesResource", () => {
         { key: "2024casj_qm1", event_key: eventKey, comp_level: "qm", match_number: 1 },
         { key: "2024casj_qm2", event_key: eventKey, comp_level: "qm", match_number: 2 },
       ];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await matches.getEventMatches(eventKey);
 
@@ -96,7 +97,7 @@ describe("matchesResource", () => {
       const mockMatches = [
         { key: "2023cmptx_qf1m1", event_key: eventKey, comp_level: "qf", match_number: 1 },
       ];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await matches.getEventMatches(eventKey);
 
@@ -106,7 +107,7 @@ describe("matchesResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await matches.getEventMatches(eventKey, options);
 
@@ -119,7 +120,7 @@ describe("matchesResource", () => {
 
     it("should handle empty array", async () => {
       const eventKey = "2024casj";
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       const result = await matches.getEventMatches(eventKey);
 
@@ -134,7 +135,7 @@ describe("matchesResource", () => {
         { key: "2024casj_qm1", event_key: eventKey, comp_level: "qm", match_number: 1 },
         { key: "2024casj_qm2", event_key: eventKey, comp_level: "qm", match_number: 2 },
       ];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await matches.getEventMatchesSimple(eventKey);
 
@@ -153,7 +154,7 @@ describe("matchesResource", () => {
       const mockMatches = [
         { key: "2023cmptx_qf1m1", event_key: eventKey, comp_level: "qf", match_number: 1 },
       ];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await matches.getEventMatchesSimple(eventKey);
 
@@ -163,7 +164,7 @@ describe("matchesResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await matches.getEventMatchesSimple(eventKey, options);
 
@@ -180,7 +181,7 @@ describe("matchesResource", () => {
       const teamNumber = 254;
       const eventKey = "2024casj";
       const mockMatches = [{ key: "2024casj_qm1" }, { key: "2024casj_qm2" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await matches.getTeamEventMatches(teamNumber, eventKey);
 
@@ -195,7 +196,7 @@ describe("matchesResource", () => {
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
       const eventKey = "2024casj";
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await matches.getTeamEventMatches(teamNumber, eventKey);
 
@@ -210,7 +211,7 @@ describe("matchesResource", () => {
       const teamNumber = 254;
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await matches.getTeamEventMatches(teamNumber, eventKey, options);
 
@@ -227,7 +228,7 @@ describe("matchesResource", () => {
       const teamNumber = 254;
       const eventKey = "2024casj";
       const mockMatches = [{ key: "2024casj_qm1" }, { key: "2024casj_qm2" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await matches.getTeamEventMatchesSimple(teamNumber, eventKey);
 
@@ -242,7 +243,7 @@ describe("matchesResource", () => {
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
       const eventKey = "2024casj";
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await matches.getTeamEventMatchesSimple(teamNumber, eventKey);
 
@@ -257,7 +258,7 @@ describe("matchesResource", () => {
       const teamNumber = 254;
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await matches.getTeamEventMatchesSimple(teamNumber, eventKey, options);
 

@@ -1,18 +1,14 @@
 {
+  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "target": "ES2024",
+    "baseUrl": "src",
+    "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "declaration": true,
-    "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
-    "baseUrl": ".",
+    "outDir": "dist",
+    "types": ["node"],
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./*"]
     }
   },
   "include": ["src"],

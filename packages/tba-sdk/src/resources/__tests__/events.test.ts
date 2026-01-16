@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { Fetcher } from "@/fetcher";
 import { eventsResource } from "../events";
 
@@ -10,14 +11,14 @@ describe("eventsResource", () => {
       "X-TBA-Auth-Key": "test-key",
     });
     events = eventsResource(fetcher);
-    jest.spyOn(fetcher, "get");
+    vi.spyOn(fetcher, "get");
   });
 
   describe("get()", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockEvent = { key: eventKey, name: "Silicon Valley Regional" };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockEvent);
+      (fetcher.get as Mock).mockResolvedValue(mockEvent);
 
       const result = await events.get(eventKey);
 
@@ -32,7 +33,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await events.get(eventKey, options);
 
@@ -48,7 +49,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockEvent = { key: eventKey, name: "Silicon Valley Regional" };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockEvent);
+      (fetcher.get as Mock).mockResolvedValue(mockEvent);
 
       const result = await events.getSimple(eventKey);
 
@@ -63,7 +64,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await events.getSimple(eventKey, options);
 
@@ -79,7 +80,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const year = 2024;
       const mockEvents = [{ key: "2024casj" }, { key: "2024cmptx" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockEvents);
+      (fetcher.get as Mock).mockResolvedValue(mockEvents);
 
       const result = await events.getByYear(year);
 
@@ -89,7 +90,7 @@ describe("eventsResource", () => {
 
     it("should convert year to string", async () => {
       const year = 2023;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getByYear(year);
 
@@ -99,7 +100,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const year = 2024;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getByYear(year, options);
 
@@ -111,7 +112,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const year = 2024;
       const mockEvents = [{ key: "2024casj" }, { key: "2024cmptx" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockEvents);
+      (fetcher.get as Mock).mockResolvedValue(mockEvents);
 
       const result = await events.getByYearSimple(year);
 
@@ -126,7 +127,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const year = 2024;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getByYearSimple(year, options);
 
@@ -138,7 +139,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockTeams = [{ key: "frc254" }, { key: "frc1678" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockTeams);
+      (fetcher.get as Mock).mockResolvedValue(mockTeams);
 
       const result = await events.getTeams(eventKey);
 
@@ -153,7 +154,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getTeams(eventKey, options);
 
@@ -169,7 +170,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockTeams = [{ key: "frc254" }, { key: "frc1678" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockTeams);
+      (fetcher.get as Mock).mockResolvedValue(mockTeams);
 
       const result = await events.getTeamsSimple(eventKey);
 
@@ -184,7 +185,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getTeamsSimple(eventKey, options);
 
@@ -200,7 +201,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockAwards = [{ name: "Chairman's Award" }, { name: "Engineering Inspiration" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockAwards);
+      (fetcher.get as Mock).mockResolvedValue(mockAwards);
 
       const result = await events.getAwards(eventKey);
 
@@ -215,7 +216,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getAwards(eventKey, options);
 
@@ -231,7 +232,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockAlliances = [{ picks: ["frc254", "frc1678"] }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockAlliances);
+      (fetcher.get as Mock).mockResolvedValue(mockAlliances);
 
       const result = await events.getAlliances(eventKey);
 
@@ -246,7 +247,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getAlliances(eventKey, options);
 
@@ -262,7 +263,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockPoints = { points: { frc254: 10 } };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockPoints);
+      (fetcher.get as Mock).mockResolvedValue(mockPoints);
 
       const result = await events.getDistrictPoints(eventKey);
 
@@ -277,7 +278,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await events.getDistrictPoints(eventKey, options);
 
@@ -293,7 +294,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockInsights = { qual: {}, playoff: {} };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockInsights);
+      (fetcher.get as Mock).mockResolvedValue(mockInsights);
 
       const result = await events.getInsights(eventKey);
 
@@ -308,7 +309,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await events.getInsights(eventKey, options);
 
@@ -324,7 +325,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockOPRs = { oprs: { frc254: 25.5 } };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockOPRs);
+      (fetcher.get as Mock).mockResolvedValue(mockOPRs);
 
       const result = await events.getOPRs(eventKey);
 
@@ -339,7 +340,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await events.getOPRs(eventKey, options);
 
@@ -355,7 +356,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockPredictions = { match_predictions: [] };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockPredictions);
+      (fetcher.get as Mock).mockResolvedValue(mockPredictions);
 
       const result = await events.getPredictions(eventKey);
 
@@ -370,7 +371,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await events.getPredictions(eventKey, options);
 
@@ -386,7 +387,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockMatches = [{ key: "2024casj_qm1" }, { key: "2024casj_qm2" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await events.getMatches(eventKey);
 
@@ -401,7 +402,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getMatches(eventKey, options);
 
@@ -417,7 +418,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockMatches = [{ key: "2024casj_qm1" }, { key: "2024casj_qm2" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await events.getMatchesSimple(eventKey);
 
@@ -432,7 +433,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await events.getMatchesSimple(eventKey, options);
 
@@ -448,7 +449,7 @@ describe("eventsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";
       const mockRankings = { rankings: [{ rank: 1, team_key: "frc254" }] };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockRankings);
+      (fetcher.get as Mock).mockResolvedValue(mockRankings);
 
       const result = await events.getRankings(eventKey);
 
@@ -463,7 +464,7 @@ describe("eventsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await events.getRankings(eventKey, options);
 

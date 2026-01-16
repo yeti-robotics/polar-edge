@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { Fetcher } from "@/fetcher";
 import { teamsResource } from "../teams";
 
@@ -10,14 +11,14 @@ describe("teamsResource", () => {
       "X-TBA-Auth-Key": "test-key",
     });
     teams = teamsResource(fetcher);
-    jest.spyOn(fetcher, "get");
+    vi.spyOn(fetcher, "get");
   });
 
   describe("get()", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const teamNumber = 254;
       const mockTeam = { key: "frc254", team_number: 254, nickname: "The Cheesy Poofs" };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockTeam);
+      (fetcher.get as Mock).mockResolvedValue(mockTeam);
 
       const result = await teams.get(teamNumber);
 
@@ -31,7 +32,7 @@ describe("teamsResource", () => {
 
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await teams.get(teamNumber);
 
@@ -45,7 +46,7 @@ describe("teamsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const teamNumber = 254;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await teams.get(teamNumber, options);
 
@@ -57,7 +58,7 @@ describe("teamsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const teamNumber = 254;
       const mockTeam = { key: "frc254", team_number: 254, nickname: "The Cheesy Poofs" };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockTeam);
+      (fetcher.get as Mock).mockResolvedValue(mockTeam);
 
       const result = await teams.getSimple(teamNumber);
 
@@ -71,7 +72,7 @@ describe("teamsResource", () => {
 
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await teams.getSimple(teamNumber);
 
@@ -85,7 +86,7 @@ describe("teamsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const teamNumber = 254;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({});
+      (fetcher.get as Mock).mockResolvedValue({});
 
       await teams.getSimple(teamNumber, options);
 
@@ -101,7 +102,7 @@ describe("teamsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const teamNumber = 254;
       const mockYears = [2020, 2021, 2022, 2023, 2024];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockYears);
+      (fetcher.get as Mock).mockResolvedValue(mockYears);
 
       const result = await teams.getYearsParticipated(teamNumber);
 
@@ -115,7 +116,7 @@ describe("teamsResource", () => {
 
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getYearsParticipated(teamNumber);
 
@@ -129,7 +130,7 @@ describe("teamsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const teamNumber = 254;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getYearsParticipated(teamNumber, options);
 
@@ -145,7 +146,7 @@ describe("teamsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const teamNumber = 254;
       const mockEvents = [{ key: "2024casj" }, { key: "2023cmptx" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockEvents);
+      (fetcher.get as Mock).mockResolvedValue(mockEvents);
 
       const result = await teams.getEvents(teamNumber);
 
@@ -159,7 +160,7 @@ describe("teamsResource", () => {
 
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEvents(teamNumber);
 
@@ -173,7 +174,7 @@ describe("teamsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const teamNumber = 254;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEvents(teamNumber, options);
 
@@ -190,7 +191,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const year = 2024;
       const mockEvents = [{ key: "2024casj" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockEvents);
+      (fetcher.get as Mock).mockResolvedValue(mockEvents);
 
       const result = await teams.getEventsByYear(teamNumber, year);
 
@@ -205,7 +206,7 @@ describe("teamsResource", () => {
     it("should convert year to string", async () => {
       const teamNumber = 254;
       const year = 2023;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEventsByYear(teamNumber, year);
 
@@ -219,7 +220,7 @@ describe("teamsResource", () => {
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
       const year = 2024;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEventsByYear(teamNumber, year);
 
@@ -234,7 +235,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const year = 2024;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEventsByYear(teamNumber, year, options);
 
@@ -250,7 +251,7 @@ describe("teamsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const teamNumber = 254;
       const mockEvents = [{ key: "2024casj" }, { key: "2023cmptx" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockEvents);
+      (fetcher.get as Mock).mockResolvedValue(mockEvents);
 
       const result = await teams.getEventsSimple(teamNumber);
 
@@ -265,7 +266,7 @@ describe("teamsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const teamNumber = 254;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEventsSimple(teamNumber, options);
 
@@ -282,7 +283,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const year = 2024;
       const mockEvents = [{ key: "2024casj" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockEvents);
+      (fetcher.get as Mock).mockResolvedValue(mockEvents);
 
       const result = await teams.getEventsByYearSimple(teamNumber, year);
 
@@ -298,7 +299,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const year = 2024;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEventsByYearSimple(teamNumber, year, options);
 
@@ -315,7 +316,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const eventKey = "2024casj";
       const mockMatches = [{ key: "2024casj_qm1" }, { key: "2024casj_qm2" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await teams.getEventMatches(teamNumber, eventKey);
 
@@ -330,7 +331,7 @@ describe("teamsResource", () => {
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
       const eventKey = "2024casj";
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEventMatches(teamNumber, eventKey);
 
@@ -345,7 +346,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEventMatches(teamNumber, eventKey, options);
 
@@ -362,7 +363,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const eventKey = "2024casj";
       const mockMatches = [{ key: "2024casj_qm1" }, { key: "2024casj_qm2" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMatches);
+      (fetcher.get as Mock).mockResolvedValue(mockMatches);
 
       const result = await teams.getEventMatchesSimple(teamNumber, eventKey);
 
@@ -378,7 +379,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getEventMatchesSimple(teamNumber, eventKey, options);
 
@@ -394,7 +395,7 @@ describe("teamsResource", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const teamNumber = 254;
       const mockAwards = [{ name: "Chairman's Award", year: 2024 }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockAwards);
+      (fetcher.get as Mock).mockResolvedValue(mockAwards);
 
       const result = await teams.getAwards(teamNumber);
 
@@ -408,7 +409,7 @@ describe("teamsResource", () => {
 
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getAwards(teamNumber);
 
@@ -422,7 +423,7 @@ describe("teamsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const teamNumber = 254;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getAwards(teamNumber, options);
 
@@ -439,7 +440,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const year = 2024;
       const mockAwards = [{ name: "Chairman's Award", year: 2024 }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockAwards);
+      (fetcher.get as Mock).mockResolvedValue(mockAwards);
 
       const result = await teams.getAwardsByYear(teamNumber, year);
 
@@ -454,7 +455,7 @@ describe("teamsResource", () => {
     it("should convert year to string", async () => {
       const teamNumber = 254;
       const year = 2023;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getAwardsByYear(teamNumber, year);
 
@@ -468,7 +469,7 @@ describe("teamsResource", () => {
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
       const year = 2024;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getAwardsByYear(teamNumber, year);
 
@@ -483,7 +484,7 @@ describe("teamsResource", () => {
       const teamNumber = 254;
       const year = 2024;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await teams.getAwardsByYear(teamNumber, year, options);
 

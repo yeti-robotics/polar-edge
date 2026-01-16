@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { Fetcher } from "@/fetcher";
 import { rankingsResource } from "../rankings";
 
@@ -10,7 +11,7 @@ describe("rankingsResource", () => {
       "X-TBA-Auth-Key": "test-key",
     });
     rankings = rankingsResource(fetcher);
-    jest.spyOn(fetcher, "get");
+    vi.spyOn(fetcher, "get");
   });
 
   describe("getDistrictRankings()", () => {
@@ -22,7 +23,7 @@ describe("rankingsResource", () => {
           { rank: 2, team_key: "frc1678" },
         ],
       };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockRankings);
+      (fetcher.get as Mock).mockResolvedValue(mockRankings);
 
       const result = await rankings.getDistrictRankings(districtKey);
 
@@ -37,7 +38,7 @@ describe("rankingsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const districtKey = "2024ne";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({ rankings: [] });
+      (fetcher.get as Mock).mockResolvedValue({ rankings: [] });
 
       await rankings.getDistrictRankings(districtKey, options);
 
@@ -58,7 +59,7 @@ describe("rankingsResource", () => {
           { rank: 2, team_key: "frc1678" },
         ],
       };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockRankings);
+      (fetcher.get as Mock).mockResolvedValue(mockRankings);
 
       const result = await rankings.getRegionalRankings(year);
 
@@ -72,7 +73,7 @@ describe("rankingsResource", () => {
 
     it("should convert year to string", async () => {
       const year = 2023;
-      (fetcher.get as jest.Mock).mockResolvedValue({ rankings: [] });
+      (fetcher.get as Mock).mockResolvedValue({ rankings: [] });
 
       await rankings.getRegionalRankings(year);
 
@@ -86,7 +87,7 @@ describe("rankingsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const year = 2024;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({ rankings: [] });
+      (fetcher.get as Mock).mockResolvedValue({ rankings: [] });
 
       await rankings.getRegionalRankings(year, options);
 
@@ -107,7 +108,7 @@ describe("rankingsResource", () => {
           { rank: 2, team_key: "frc1678" },
         ],
       };
-      (fetcher.get as jest.Mock).mockResolvedValue(mockRankings);
+      (fetcher.get as Mock).mockResolvedValue(mockRankings);
 
       const result = await rankings.getEventRankings(eventKey);
 
@@ -122,7 +123,7 @@ describe("rankingsResource", () => {
     it("should pass options to fetcher.get", async () => {
       const eventKey = "2024casj";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue({ rankings: [] });
+      (fetcher.get as Mock).mockResolvedValue({ rankings: [] });
 
       await rankings.getEventRankings(eventKey, options);
 

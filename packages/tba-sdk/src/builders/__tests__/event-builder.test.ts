@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { Fetcher } from "@/fetcher";
 import { eventsResource } from "@/resources/events";
 import { matchesResource } from "@/resources/matches";
@@ -5,9 +6,9 @@ import { rankingsResource } from "@/resources/rankings";
 import { EventQueryBuilder } from "../event-builder";
 
 // Mock the resources
-jest.mock("@/resources/events");
-jest.mock("@/resources/rankings");
-jest.mock("@/resources/matches");
+vi.mock("@/resources/events");
+vi.mock("@/resources/rankings");
+vi.mock("@/resources/matches");
 
 describe("EventQueryBuilder", () => {
   let fetcher: Fetcher;
@@ -19,7 +20,7 @@ describe("EventQueryBuilder", () => {
       "X-TBA-Auth-Key": "test-key",
     });
     builder = new EventQueryBuilder(fetcher, eventKey);
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("constructor", () => {
@@ -54,8 +55,8 @@ describe("EventQueryBuilder", () => {
     ];
 
     it("should get matches for the event", async () => {
-      const mockGetEventMatches = jest.fn().mockResolvedValue(mockMatches);
-      (matchesResource as jest.Mock).mockReturnValue({
+      const mockGetEventMatches = vi.fn().mockResolvedValue(mockMatches);
+      (matchesResource as Mock).mockReturnValue({
         getEventMatches: mockGetEventMatches,
       });
 
@@ -66,8 +67,8 @@ describe("EventQueryBuilder", () => {
     });
 
     it("should pass options to getEventMatches", async () => {
-      const mockGetEventMatches = jest.fn().mockResolvedValue(mockMatches);
-      (matchesResource as jest.Mock).mockReturnValue({
+      const mockGetEventMatches = vi.fn().mockResolvedValue(mockMatches);
+      (matchesResource as Mock).mockReturnValue({
         getEventMatches: mockGetEventMatches,
       });
 
@@ -81,8 +82,8 @@ describe("EventQueryBuilder", () => {
     it("should use builder options when no options provided", async () => {
       const builderOptions = { skipCache: true };
       const builderWithOptions = new EventQueryBuilder(fetcher, eventKey, builderOptions);
-      const mockGetEventMatches = jest.fn().mockResolvedValue(mockMatches);
-      (matchesResource as jest.Mock).mockReturnValue({
+      const mockGetEventMatches = vi.fn().mockResolvedValue(mockMatches);
+      (matchesResource as Mock).mockReturnValue({
         getEventMatches: mockGetEventMatches,
       });
 
@@ -100,8 +101,8 @@ describe("EventQueryBuilder", () => {
     };
 
     it("should get event information", async () => {
-      const mockGet = jest.fn().mockResolvedValue(mockEvent);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGet = vi.fn().mockResolvedValue(mockEvent);
+      (eventsResource as Mock).mockReturnValue({
         get: mockGet,
       });
 
@@ -112,8 +113,8 @@ describe("EventQueryBuilder", () => {
     });
 
     it("should pass options to get", async () => {
-      const mockGet = jest.fn().mockResolvedValue(mockEvent);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGet = vi.fn().mockResolvedValue(mockEvent);
+      (eventsResource as Mock).mockReturnValue({
         get: mockGet,
       });
 
@@ -126,8 +127,8 @@ describe("EventQueryBuilder", () => {
     it("should use builder options when no options provided", async () => {
       const builderOptions = { skipCache: true };
       const builderWithOptions = new EventQueryBuilder(fetcher, eventKey, builderOptions);
-      const mockGet = jest.fn().mockResolvedValue(mockEvent);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGet = vi.fn().mockResolvedValue(mockEvent);
+      (eventsResource as Mock).mockReturnValue({
         get: mockGet,
       });
 
@@ -145,8 +146,8 @@ describe("EventQueryBuilder", () => {
     };
 
     it("should get simple event information", async () => {
-      const mockGetSimple = jest.fn().mockResolvedValue(mockEventSimple);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGetSimple = vi.fn().mockResolvedValue(mockEventSimple);
+      (eventsResource as Mock).mockReturnValue({
         getSimple: mockGetSimple,
       });
 
@@ -157,8 +158,8 @@ describe("EventQueryBuilder", () => {
     });
 
     it("should pass options to getSimple", async () => {
-      const mockGetSimple = jest.fn().mockResolvedValue(mockEventSimple);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGetSimple = vi.fn().mockResolvedValue(mockEventSimple);
+      (eventsResource as Mock).mockReturnValue({
         getSimple: mockGetSimple,
       });
 
@@ -176,8 +177,8 @@ describe("EventQueryBuilder", () => {
     ];
 
     it("should get teams for the event", async () => {
-      const mockGetTeams = jest.fn().mockResolvedValue(mockTeams);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGetTeams = vi.fn().mockResolvedValue(mockTeams);
+      (eventsResource as Mock).mockReturnValue({
         getTeams: mockGetTeams,
       });
 
@@ -188,8 +189,8 @@ describe("EventQueryBuilder", () => {
     });
 
     it("should pass options to getTeams", async () => {
-      const mockGetTeams = jest.fn().mockResolvedValue(mockTeams);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGetTeams = vi.fn().mockResolvedValue(mockTeams);
+      (eventsResource as Mock).mockReturnValue({
         getTeams: mockGetTeams,
       });
 
@@ -209,8 +210,8 @@ describe("EventQueryBuilder", () => {
     };
 
     it("should get rankings for the event", async () => {
-      const mockGetEventRankings = jest.fn().mockResolvedValue(mockRankings);
-      (rankingsResource as jest.Mock).mockReturnValue({
+      const mockGetEventRankings = vi.fn().mockResolvedValue(mockRankings);
+      (rankingsResource as Mock).mockReturnValue({
         getEventRankings: mockGetEventRankings,
       });
 
@@ -221,8 +222,8 @@ describe("EventQueryBuilder", () => {
     });
 
     it("should pass options to getRankings", async () => {
-      const mockGetEventRankings = jest.fn().mockResolvedValue(mockRankings);
-      (rankingsResource as jest.Mock).mockReturnValue({
+      const mockGetEventRankings = vi.fn().mockResolvedValue(mockRankings);
+      (rankingsResource as Mock).mockReturnValue({
         getEventRankings: mockGetEventRankings,
       });
 
@@ -240,8 +241,8 @@ describe("EventQueryBuilder", () => {
     ];
 
     it("should get awards for the event", async () => {
-      const mockGetAwards = jest.fn().mockResolvedValue(mockAwards);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGetAwards = vi.fn().mockResolvedValue(mockAwards);
+      (eventsResource as Mock).mockReturnValue({
         getAwards: mockGetAwards,
       });
 
@@ -252,8 +253,8 @@ describe("EventQueryBuilder", () => {
     });
 
     it("should pass options to getAwards", async () => {
-      const mockGetAwards = jest.fn().mockResolvedValue(mockAwards);
-      (eventsResource as jest.Mock).mockReturnValue({
+      const mockGetAwards = vi.fn().mockResolvedValue(mockAwards);
+      (eventsResource as Mock).mockReturnValue({
         getAwards: mockGetAwards,
       });
 

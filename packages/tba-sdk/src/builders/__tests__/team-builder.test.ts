@@ -1,12 +1,13 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { Fetcher } from "@/fetcher";
 import { TeamQueryBuilder } from "../team-builder";
 
 // Mock the resources
-jest.mock("@/resources/teams", () => ({
-  teamsResource: jest.fn(),
+vi.mock("@/resources/teams", () => ({
+  teamsResource: vi.fn(),
 }));
-jest.mock("@/resources/media", () => ({
-  mediaResource: jest.fn(),
+vi.mock("@/resources/media", () => ({
+  mediaResource: vi.fn(),
 }));
 
 import { mediaResource } from "@/resources/media";
@@ -22,7 +23,7 @@ describe("TeamQueryBuilder", () => {
       "X-TBA-Auth-Key": "test-key",
     });
     builder = new TeamQueryBuilder(fetcher, teamNumber);
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("constructor", () => {
@@ -46,8 +47,8 @@ describe("TeamQueryBuilder", () => {
     };
 
     it("should get team information", async () => {
-      const mockGet = jest.fn().mockResolvedValue(mockTeam);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGet = vi.fn().mockResolvedValue(mockTeam);
+      (teamsResource as Mock).mockReturnValue({
         get: mockGet,
       });
 
@@ -58,8 +59,8 @@ describe("TeamQueryBuilder", () => {
     });
 
     it("should pass options to get", async () => {
-      const mockGet = jest.fn().mockResolvedValue(mockTeam);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGet = vi.fn().mockResolvedValue(mockTeam);
+      (teamsResource as Mock).mockReturnValue({
         get: mockGet,
       });
 
@@ -78,8 +79,8 @@ describe("TeamQueryBuilder", () => {
     };
 
     it("should get simple team information", async () => {
-      const mockGetSimple = jest.fn().mockResolvedValue(mockTeamSimple);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetSimple = vi.fn().mockResolvedValue(mockTeamSimple);
+      (teamsResource as Mock).mockReturnValue({
         getSimple: mockGetSimple,
       });
 
@@ -90,8 +91,8 @@ describe("TeamQueryBuilder", () => {
     });
 
     it("should pass options to getSimple", async () => {
-      const mockGetSimple = jest.fn().mockResolvedValue(mockTeamSimple);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetSimple = vi.fn().mockResolvedValue(mockTeamSimple);
+      (teamsResource as Mock).mockReturnValue({
         getSimple: mockGetSimple,
       });
 
@@ -109,8 +110,8 @@ describe("TeamQueryBuilder", () => {
     ];
 
     it("should get all team events when year is not provided", async () => {
-      const mockGetEvents = jest.fn().mockResolvedValue(mockEvents);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetEvents = vi.fn().mockResolvedValue(mockEvents);
+      (teamsResource as Mock).mockReturnValue({
         getEvents: mockGetEvents,
       });
 
@@ -122,8 +123,8 @@ describe("TeamQueryBuilder", () => {
 
     it("should get team events for a specific year", async () => {
       const year = 2024;
-      const mockGetEventsByYear = jest.fn().mockResolvedValue([mockEvents[0]]);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetEventsByYear = vi.fn().mockResolvedValue([mockEvents[0]]);
+      (teamsResource as Mock).mockReturnValue({
         getEventsByYear: mockGetEventsByYear,
       });
 
@@ -134,8 +135,8 @@ describe("TeamQueryBuilder", () => {
     });
 
     it("should pass options to getEvents", async () => {
-      const mockGetEvents = jest.fn().mockResolvedValue(mockEvents);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetEvents = vi.fn().mockResolvedValue(mockEvents);
+      (teamsResource as Mock).mockReturnValue({
         getEvents: mockGetEvents,
       });
 
@@ -147,8 +148,8 @@ describe("TeamQueryBuilder", () => {
 
     it("should pass options to getEventsByYear", async () => {
       const year = 2024;
-      const mockGetEventsByYear = jest.fn().mockResolvedValue([mockEvents[0]]);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetEventsByYear = vi.fn().mockResolvedValue([mockEvents[0]]);
+      (teamsResource as Mock).mockReturnValue({
         getEventsByYear: mockGetEventsByYear,
       });
 
@@ -167,8 +168,8 @@ describe("TeamQueryBuilder", () => {
     ];
 
     it("should get team matches for an event", async () => {
-      const mockGetEventMatches = jest.fn().mockResolvedValue(mockMatches);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetEventMatches = vi.fn().mockResolvedValue(mockMatches);
+      (teamsResource as Mock).mockReturnValue({
         getEventMatches: mockGetEventMatches,
       });
 
@@ -179,8 +180,8 @@ describe("TeamQueryBuilder", () => {
     });
 
     it("should pass options to getMatches", async () => {
-      const mockGetEventMatches = jest.fn().mockResolvedValue(mockMatches);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetEventMatches = vi.fn().mockResolvedValue(mockMatches);
+      (teamsResource as Mock).mockReturnValue({
         getEventMatches: mockGetEventMatches,
       });
 
@@ -198,8 +199,8 @@ describe("TeamQueryBuilder", () => {
     ];
 
     it("should get all team awards when year is not provided", async () => {
-      const mockGetAwards = jest.fn().mockResolvedValue(mockAwards);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetAwards = vi.fn().mockResolvedValue(mockAwards);
+      (teamsResource as Mock).mockReturnValue({
         getAwards: mockGetAwards,
       });
 
@@ -211,8 +212,8 @@ describe("TeamQueryBuilder", () => {
 
     it("should get team awards for a specific year", async () => {
       const year = 2024;
-      const mockGetAwardsByYear = jest.fn().mockResolvedValue([mockAwards[0]]);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetAwardsByYear = vi.fn().mockResolvedValue([mockAwards[0]]);
+      (teamsResource as Mock).mockReturnValue({
         getAwardsByYear: mockGetAwardsByYear,
       });
 
@@ -223,8 +224,8 @@ describe("TeamQueryBuilder", () => {
     });
 
     it("should pass options to getAwards", async () => {
-      const mockGetAwards = jest.fn().mockResolvedValue(mockAwards);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetAwards = vi.fn().mockResolvedValue(mockAwards);
+      (teamsResource as Mock).mockReturnValue({
         getAwards: mockGetAwards,
       });
 
@@ -236,8 +237,8 @@ describe("TeamQueryBuilder", () => {
 
     it("should pass options to getAwardsByYear", async () => {
       const year = 2024;
-      const mockGetAwardsByYear = jest.fn().mockResolvedValue([mockAwards[0]]);
-      (teamsResource as jest.Mock).mockReturnValue({
+      const mockGetAwardsByYear = vi.fn().mockResolvedValue([mockAwards[0]]);
+      (teamsResource as Mock).mockReturnValue({
         getAwardsByYear: mockGetAwardsByYear,
       });
 
@@ -256,8 +257,8 @@ describe("TeamQueryBuilder", () => {
     ];
 
     it("should get team media for a year", async () => {
-      const mockGetTeamMediaForYear = jest.fn().mockResolvedValue(mockMedia);
-      (mediaResource as jest.Mock).mockReturnValue({
+      const mockGetTeamMediaForYear = vi.fn().mockResolvedValue(mockMedia);
+      (mediaResource as Mock).mockReturnValue({
         getTeamMediaForYear: mockGetTeamMediaForYear,
       });
 
@@ -268,8 +269,8 @@ describe("TeamQueryBuilder", () => {
     });
 
     it("should pass options to getMedia", async () => {
-      const mockGetTeamMediaForYear = jest.fn().mockResolvedValue(mockMedia);
-      (mediaResource as jest.Mock).mockReturnValue({
+      const mockGetTeamMediaForYear = vi.fn().mockResolvedValue(mockMedia);
+      (mediaResource as Mock).mockReturnValue({
         getTeamMediaForYear: mockGetTeamMediaForYear,
       });
 
@@ -285,8 +286,8 @@ describe("TeamQueryBuilder", () => {
     const mockMedia = [{ type: "youtube", foreign_key: "abc123" }];
 
     it("should get team media by tag", async () => {
-      const mockGetTeamMediaByTag = jest.fn().mockResolvedValue(mockMedia);
-      (mediaResource as jest.Mock).mockReturnValue({
+      const mockGetTeamMediaByTag = vi.fn().mockResolvedValue(mockMedia);
+      (mediaResource as Mock).mockReturnValue({
         getTeamMediaByTag: mockGetTeamMediaByTag,
       });
 
@@ -297,8 +298,8 @@ describe("TeamQueryBuilder", () => {
     });
 
     it("should pass options to getMediaByTag", async () => {
-      const mockGetTeamMediaByTag = jest.fn().mockResolvedValue(mockMedia);
-      (mediaResource as jest.Mock).mockReturnValue({
+      const mockGetTeamMediaByTag = vi.fn().mockResolvedValue(mockMedia);
+      (mediaResource as Mock).mockReturnValue({
         getTeamMediaByTag: mockGetTeamMediaByTag,
       });
 
@@ -315,8 +316,8 @@ describe("TeamQueryBuilder", () => {
     const mockMedia = [{ type: "youtube", foreign_key: "abc123" }];
 
     it("should get team media by tag and year", async () => {
-      const mockGetTeamMediaByTagAndYear = jest.fn().mockResolvedValue(mockMedia);
-      (mediaResource as jest.Mock).mockReturnValue({
+      const mockGetTeamMediaByTagAndYear = vi.fn().mockResolvedValue(mockMedia);
+      (mediaResource as Mock).mockReturnValue({
         getTeamMediaByTagAndYear: mockGetTeamMediaByTagAndYear,
       });
 
@@ -327,8 +328,8 @@ describe("TeamQueryBuilder", () => {
     });
 
     it("should pass options to getMediaByTagAndYear", async () => {
-      const mockGetTeamMediaByTagAndYear = jest.fn().mockResolvedValue(mockMedia);
-      (mediaResource as jest.Mock).mockReturnValue({
+      const mockGetTeamMediaByTagAndYear = vi.fn().mockResolvedValue(mockMedia);
+      (mediaResource as Mock).mockReturnValue({
         getTeamMediaByTagAndYear: mockGetTeamMediaByTagAndYear,
       });
 

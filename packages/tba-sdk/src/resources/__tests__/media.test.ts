@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { Fetcher } from "@/fetcher";
 import { mediaResource } from "../media";
 
@@ -10,7 +11,7 @@ describe("mediaResource", () => {
       "X-TBA-Auth-Key": "test-key",
     });
     media = mediaResource(fetcher);
-    jest.spyOn(fetcher, "get");
+    vi.spyOn(fetcher, "get");
   });
 
   describe("getTeamMediaForYear()", () => {
@@ -21,7 +22,7 @@ describe("mediaResource", () => {
         { type: "youtube", foreign_key: "abc123" },
         { type: "imgur", foreign_key: "xyz789" },
       ];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMedia);
+      (fetcher.get as Mock).mockResolvedValue(mockMedia);
 
       const result = await media.getTeamMediaForYear(teamNumber, year);
 
@@ -36,7 +37,7 @@ describe("mediaResource", () => {
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
       const year = 2024;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaForYear(teamNumber, year);
 
@@ -50,7 +51,7 @@ describe("mediaResource", () => {
     it("should convert year to string", async () => {
       const teamNumber = 254;
       const year = 2023;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaForYear(teamNumber, year);
 
@@ -65,7 +66,7 @@ describe("mediaResource", () => {
       const teamNumber = 254;
       const year = 2024;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaForYear(teamNumber, year, options);
 
@@ -82,7 +83,7 @@ describe("mediaResource", () => {
       const teamNumber = 254;
       const tag = "youtube";
       const mockMedia = [{ type: "youtube", foreign_key: "abc123" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMedia);
+      (fetcher.get as Mock).mockResolvedValue(mockMedia);
 
       const result = await media.getTeamMediaByTag(teamNumber, tag);
 
@@ -97,7 +98,7 @@ describe("mediaResource", () => {
     it("should format team number as frc{number}", async () => {
       const teamNumber = 1678;
       const tag = "youtube";
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaByTag(teamNumber, tag);
 
@@ -111,7 +112,7 @@ describe("mediaResource", () => {
     it("should pass tag as media_tag parameter", async () => {
       const teamNumber = 254;
       const tag = "imgur";
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaByTag(teamNumber, tag);
 
@@ -126,7 +127,7 @@ describe("mediaResource", () => {
       const teamNumber = 254;
       const tag = "youtube";
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaByTag(teamNumber, tag, options);
 
@@ -144,7 +145,7 @@ describe("mediaResource", () => {
       const tag = "youtube";
       const year = 2024;
       const mockMedia = [{ type: "youtube", foreign_key: "abc123" }];
-      (fetcher.get as jest.Mock).mockResolvedValue(mockMedia);
+      (fetcher.get as Mock).mockResolvedValue(mockMedia);
 
       const result = await media.getTeamMediaByTagAndYear(teamNumber, tag, year);
 
@@ -160,7 +161,7 @@ describe("mediaResource", () => {
       const teamNumber = 1678;
       const tag = "youtube";
       const year = 2024;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaByTagAndYear(teamNumber, tag, year);
 
@@ -175,7 +176,7 @@ describe("mediaResource", () => {
       const teamNumber = 254;
       const tag = "youtube";
       const year = 2023;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaByTagAndYear(teamNumber, tag, year);
 
@@ -190,7 +191,7 @@ describe("mediaResource", () => {
       const teamNumber = 254;
       const tag = "imgur";
       const year = 2024;
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaByTagAndYear(teamNumber, tag, year);
 
@@ -206,7 +207,7 @@ describe("mediaResource", () => {
       const tag = "youtube";
       const year = 2024;
       const options = { skipCache: true };
-      (fetcher.get as jest.Mock).mockResolvedValue([]);
+      (fetcher.get as Mock).mockResolvedValue([]);
 
       await media.getTeamMediaByTagAndYear(teamNumber, tag, year, options);
 

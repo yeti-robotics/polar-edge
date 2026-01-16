@@ -1,9 +1,10 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { MemoryCache } from "@/cache";
 import { TBAError, TBANetworkError, TBANotFoundError, TBARateLimitError } from "@/errors";
 import { Fetcher } from "@/fetcher";
 
 // Mock global fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe("Fetcher", () => {
@@ -187,7 +188,7 @@ describe("Fetcher", () => {
 
       try {
         await fetcher.get("/team/{team_key}", { team_key: "frc99999" });
-        fail("Expected error to be thrown");
+        expect.fail("Expected error to be thrown");
       } catch (error) {
         expect(error).toBeInstanceOf(TBANotFoundError);
         expect((error as TBANotFoundError).status).toBe(404);
@@ -213,7 +214,7 @@ describe("Fetcher", () => {
 
       try {
         await fetcher.get("/team/{team_key}", { team_key: "frc254" });
-        fail("Expected error to be thrown");
+        expect.fail("Expected error to be thrown");
       } catch (error) {
         expect(error).toBeInstanceOf(TBAError);
         expect((error as TBAError).body).toBe("Plain text error");
