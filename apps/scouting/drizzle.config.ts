@@ -12,7 +12,7 @@ dotenv.config({ path: path.join(appRoot, ".env") });
 
 export default defineConfig({
   out: "./src/lib/database/drizzle",
-  schema: ["./src/lib/database/schema.ts", "./src/lib/database/auth-schema.ts"],
+  schema: ["./src/lib/database/schema"],
   dialect: "postgresql",
   casing: "snake_case",
   dbCredentials: {
