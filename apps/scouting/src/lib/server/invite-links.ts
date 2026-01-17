@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { member, organizationInviteLink } from "@/lib/database/auth-schema";
+import { member, organizationInviteLink } from "@/lib/database/schema/tables";
 
 function generateId(): string {
   return randomBytes(16).toString("hex");
