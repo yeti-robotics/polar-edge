@@ -246,17 +246,17 @@ export class BotCommands {
 
       if (hours >= leadershipRequiredHours) {
         return interaction.reply(
-          `You've met the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! :tada:`
+          `You're currently above the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! :tada:`
         );
       } else if (hours >= memberRequiredHours) {
         const remainingHours = Math.ceil(leadershipRequiredHours - hours);
         return interaction.reply(
-          `You've met the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! If you're on leadership, you still have ${remainingHours} more hours to go to hit your leadership requirement.`
+          `You've currently above the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
         );
       } else {
         const remainingHours = Math.ceil(memberRequiredHours - hours);
         return interaction.reply(
-          `You've got ${hoursString} hours (${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date). You have ${remainingHours} more hours to go to hit your minimum hours goal! :rocket:`
+          `You've got ${hoursString} hours (${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
         );
       }
     } catch (error) {
