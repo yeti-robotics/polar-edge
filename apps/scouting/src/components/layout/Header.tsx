@@ -10,6 +10,7 @@ export function Header() {
       </div>
       <nav className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
         <Link href="/">Home</Link>
+        <Link href="/auto-path">Auto Paths</Link>
       </nav>
     </header>
   );

@@ -1,0 +1,26 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { AutoPathForm } from "@/components/auto-path/AutoPathForm";
+import { auth } from "@/lib/auth";
+import { getMatches, getTeams } from "../actions";
+
+export default async function CreateAutoPathPage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    redirect("/");
+  }
+
+  const [teams, matches] = await Promise.all([getTeams(), getMatches()]);
+
+  return (
+    <main className="container mx-auto max-w-4xl px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl tracking-tight">Create Auto Path</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Draw and save an auto path for a robot</p>
+      </div>
+      <div className="rounded-lg border bg-card p-6">
+        <AutoPathForm teams={teams} matches={matches} />
+      </div>
+    </main>
+  );
+}

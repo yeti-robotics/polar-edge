@@ -18,7 +18,7 @@ export default async function Home({
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-2xl font-bold">Welcome to Polar Edge Analytics</h1>
           <p className="text-muted-foreground">Sign in with Discord to continue</p>
-          <SignInForm redirectUrl={redirectUrl} />
+          <SignInForm />
         </div>
       </main>
     );
