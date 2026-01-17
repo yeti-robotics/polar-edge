@@ -18,14 +18,15 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
   },
   "dependencies": {
-    "@google/genai": "^1.35.0",
     "@nestjs/cli": "^11.0.14",
     "@nestjs/common": "^11.1.11",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.11",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/platform-express": "^11.1.11",
+    "@repo/ai": "workspace:*",
     "@repo/twofa": "workspace:*",
+    "ai": "catalog:",
     "async-mutex": "^0.5.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
@@ -47,13 +48,13 @@
     "@types/express": "^5.0.6",
     "@types/node": "catalog:",
     "@types/supertest": "^6.0.3",
+    "@vitest/coverage-istanbul": "catalog:",
     "globals": "^16.5.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.2.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "catalog:",
     "unplugin-swc": "catalog:",
-    "vitest": "catalog:",
-    "@vitest/coverage-istanbul": "catalog:"
+    "vitest": "catalog:"
   }
 }

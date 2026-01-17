@@ -10,8 +10,10 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.13",
     "@repo/ui": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
+    "ai": "catalog:",
     "better-auth": "^1.4.13",
     "drizzle-orm": "^0.44.7",
     "lucide-react": "^0.525.0",
@@ -26,12 +28,12 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@repo/vitest-config": "workspace:*",
-    "@vitest/coverage-istanbul": "catalog:",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "catalog:",
     "@types/pg": "^8.16.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vitest/coverage-istanbul": "catalog:",
     "drizzle-kit": "^0.31.8",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",

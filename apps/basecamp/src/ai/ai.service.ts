@@ -1,18 +1,20 @@
-import { GoogleGenAI } from "@google/genai";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { createGradientProvider } from "@repo/ai";
 
 @Injectable()
 export class AiService {
-  private readonly ai: GoogleGenAI;
+  private readonly gradientProvider: ReturnType<typeof createGradientProvider>;
 
   constructor(private readonly configService: ConfigService) {
-    this.ai = new GoogleGenAI({
-      apiKey: this.configService.get<string>("GEMINI_API_KEY"),
-    });
+    const apiKey = this.configService.get<string>("DO_MODEL_ACCESS_KEY");
+    if (!apiKey) {
+      throw new Error("DO_MODEL_ACCESS_KEY is not set");
+    }
+    this.gradientProvider = createGradientProvider(apiKey);
   }
 
-  public getAiClient() {
-    return this.ai;
+  public getGradientProvider() {
+    return this.gradientProvider;
   }
 }

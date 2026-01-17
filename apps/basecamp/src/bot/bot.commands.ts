@@ -376,11 +376,20 @@ export class BotCommands {
     try {
       const response = await this.handbookService.askHandbookQuestion(question);
 
-      if (!response) {
+      if (!response || !response.text) {
         return interaction.reply("Failed to get a response from the handbook agent.");
       }
 
-      return interaction.reply(`Question: ${question}\n\nAnswer: ${response}`);
+      if (response.usage) {
+        this.logger.log(
+          `Handbook response usage - Prompt: ${response.usage.inputTokens}, Completion: ${response.usage.outputTokens}, Total: ${response.usage.totalTokens}`
+        );
+      }
+
+      return interaction.reply({
+        content: response.text,
+        allowedMentions: { parse: [] }, // Don't ping anyone
+      });
     } catch (error) {
       this.logger.error(`Handbook request failed for user ${userId}:`, error);
       throw error;
