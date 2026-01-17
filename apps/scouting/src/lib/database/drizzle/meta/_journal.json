@@ -29,6 +29,13 @@
       "when": 1768688170021,
       "tag": "0003_green_rage",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1768688604009,
+      "tag": "0004_closed_dexter_bennett",
+      "breakpoints": true
     }
   ]
 }

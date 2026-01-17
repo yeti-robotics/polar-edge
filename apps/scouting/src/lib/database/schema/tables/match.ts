@@ -1,4 +1,4 @@
-import { pgTable, smallint, varchar } from "drizzle-orm/pg-core";
+import { pgTable, smallint, unique, varchar } from "drizzle-orm/pg-core";
 import { allianceEnum } from "../types/alliance-enum";
 import { event } from "./event";
 
@@ -9,4 +9,6 @@ export const match = pgTable("match", {
   matchNumber: smallint("match_number").notNull(),
   eventKey: varchar("event_key", { length: 16 }).notNull().references(()=> event.key),
   winningAlliance: allianceEnum("winning_alliance").notNull(),
-});
+},
+(table) => [unique().on(table.compLevel, table.setNumber, table.matchNumber, table.eventKey)]
+);

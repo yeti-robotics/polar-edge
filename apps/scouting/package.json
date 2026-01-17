@@ -6,6 +6,7 @@
     "dev": "next dev --turbo",
     "db:start": "sh ./scripts/db-start.sh",
     "db:drop": "tsx scripts/db-drop.ts",
+    "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "pnpm db:start && tsx scripts/db-seed.ts",
     "db:reset": "pnpm db:start && pnpm db:drop && pnpm db:migrate && pnpm db:seed",
