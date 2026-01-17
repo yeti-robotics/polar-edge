@@ -15,6 +15,7 @@ import {
   STALE_SIGNIN_THRESHOLD_MS,
   TEAM_NAMES,
 } from "./attendance.constants";
+import { getTotalPossibleHoursToDate } from "./schedule.util";
 import { TwofaService } from "./twofa/twofa.service";
 
 const AttendanceSchema = z.object({
@@ -299,6 +300,15 @@ export class AttendanceService {
   public async getUserHours(discordId: string): Promise<number> {
     const attendance = await this.getAttendance(discordId);
     return this.calculateHoursFromRecords(attendance);
+  }
+
+  /**
+   * Gets the total possible hours to date based on the meeting schedule
+   * @param asOfDate Optional date to calculate hours up to (defaults to today)
+   * @returns Total possible hours from the start of the season to the given date
+   */
+  public getTotalPossibleHoursToDate(asOfDate?: Date): number {
+    return getTotalPossibleHoursToDate(asOfDate);
   }
 
   public async getTopMembersByHours(limit: number = DEFAULT_LEADERBOARD_LIMIT) {

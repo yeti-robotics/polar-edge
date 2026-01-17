@@ -7,9 +7,9 @@ import { HandbookService } from "src/handbook/handbook.service";
 import { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
 import { OutreachService } from "src/outreach/outreach.service";
 
-const TOTAL_HOURS = 390;
-const MEMBER_REQUIRED_HOURS = TOTAL_HOURS * 0.75;
-const LEADERSHIP_REQUIRED_HOURS = TOTAL_HOURS * 0.85;
+// Percentage requirements based on hours to date
+const MEMBER_REQUIRED_PERCENTAGE = 0.75; // 75% of hours to date
+const LEADERSHIP_REQUIRED_PERCENTAGE = 0.85; // 85% of hours to date
 
 interface RateLimitConfig {
   maxRequests: number;
@@ -41,11 +41,13 @@ export class BotCommands {
     const now = Date.now();
 
     // Clean global requests
-    while (
-      this.globalRequests.length > 0 &&
-      now - this.globalRequests[0] > this.globalRateLimit.windowMs
-    ) {
-      this.globalRequests.shift();
+    while (this.globalRequests.length > 0) {
+      const oldestRequest = this.globalRequests[0];
+      if (oldestRequest && now - oldestRequest > this.globalRateLimit.windowMs) {
+        this.globalRequests.shift();
+      } else {
+        break;
+      }
     }
   }
 
@@ -56,14 +58,21 @@ export class BotCommands {
     const now = Date.now();
 
     // Remove old requests
-    while (requests.length > 0 && now - requests[0] > config.windowMs) {
-      requests.shift();
+    while (requests.length > 0) {
+      const oldestRequest = requests[0];
+      if (oldestRequest && now - oldestRequest > config.windowMs) {
+        requests.shift();
+      } else {
+        break;
+      }
     }
 
     if (requests.length >= config.maxRequests) {
       const oldestRequest = requests[0];
-      const waitTime = Math.ceil((oldestRequest + config.windowMs - now) / 1000);
-      return { limited: true, waitTime };
+      if (oldestRequest !== undefined) {
+        const waitTime = Math.ceil((oldestRequest + config.windowMs - now) / 1000);
+        return { limited: true, waitTime };
+      }
     }
 
     return { limited: false };
@@ -222,24 +231,32 @@ export class BotCommands {
 
     try {
       const hours = await this.attendanceService.getUserHours(interaction.user.id);
+      const totalPossibleHours = this.attendanceService.getTotalPossibleHoursToDate();
+
       //Floors hours to the nearest integer
       const hoursString = Math.floor(hours);
-      //Calculates hoursPercentage without rounding anything
-      const hoursPercentage = (hours / TOTAL_HOURS) * 100;
+      //Calculates hoursPercentage based on hours to date
+      const hoursPercentage = totalPossibleHours > 0 ? (hours / totalPossibleHours) * 100 : 0;
       //Rounds hoursPercentage to 2 decimal places
       const hoursPercentageString = hoursPercentage.toFixed(2);
 
-      if (hours >= LEADERSHIP_REQUIRED_HOURS) {
+      // Calculate required hours based on percentage of hours to date
+      const memberRequiredHours = totalPossibleHours * MEMBER_REQUIRED_PERCENTAGE;
+      const leadershipRequiredHours = totalPossibleHours * LEADERSHIP_REQUIRED_PERCENTAGE;
+
+      if (hours >= leadershipRequiredHours) {
         return interaction.reply(
-          `You've met the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${TOTAL_HOURS})! :tada:`
+          `You've met the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! :tada:`
         );
-      } else if (hours >= MEMBER_REQUIRED_HOURS) {
+      } else if (hours >= memberRequiredHours) {
+        const remainingHours = Math.ceil(leadershipRequiredHours - hours);
         return interaction.reply(
-          `You've met the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${TOTAL_HOURS})! If you're on leadership, you still have ${Math.ceil(LEADERSHIP_REQUIRED_HOURS - hours)} more hours to go to hit your leadership requirement.`
+          `You've met the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! If you're on leadership, you still have ${remainingHours} more hours to go to hit your leadership requirement.`
         );
       } else {
+        const remainingHours = Math.ceil(memberRequiredHours - hours);
         return interaction.reply(
-          `You've got ${hoursString} hours (${hoursPercentageString}% of ${TOTAL_HOURS}). You have ${Math.ceil(MEMBER_REQUIRED_HOURS - hours)} more hours to go to hit your minimum hours goal! :rocket:`
+          `You've got ${hoursString} hours (${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date). You have ${remainingHours} more hours to go to hit your minimum hours goal! :rocket:`
         );
       }
     } catch (error) {
