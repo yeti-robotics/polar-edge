@@ -1,6 +1,5 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import * as authSchema from "./auth-schema";
 import * as schema from "./schema";
 
 const pool = new Pool({
@@ -9,10 +8,7 @@ const pool = new Pool({
 
 const db = drizzle({
   client: pool,
-  schema: {
-    ...schema,
-    ...authSchema,
-  },
+  schema,
 });
 
 export { db };
