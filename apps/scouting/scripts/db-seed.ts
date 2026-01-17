@@ -1,8 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
-import { seed } from "drizzle-seed";
-import { db } from "../src/lib/database";
+import { reset, seed } from "drizzle-seed";
 import * as schemaTables from "../src/lib/database/schema/tables";
 
 // Get the app root directory by going up one level from the scripts directory
@@ -19,13 +18,10 @@ async function main() {
   const { db } = await import("@/lib/database");
 
   // Use the organized schema export - includes all tables and enums, excludes relations
+
+  await reset(db, schemaTables);
   // This ensures proper type inference in drizzle-seed
-  await seed(db, schemaTables).refine((f) => {
-    // Type inference should work here now - try autocompleting: user, match, team, etc.
-    return {
-      user: {},
-    };
-  });
+  await seed(db, schemaTables);
 }
 
 main();
