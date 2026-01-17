@@ -13,7 +13,12 @@ describe("AiService", () => {
         {
           provide: ConfigService,
           useValue: {
-            get: vi.fn(),
+            get: vi.fn((key: string) => {
+              if (key === "DO_MODEL_ACCESS_KEY") {
+                return "test-api-key";
+              }
+              return undefined;
+            }),
           },
         },
       ],
