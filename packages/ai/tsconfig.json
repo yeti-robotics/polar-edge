@@ -1,11 +1,15 @@
 {
   "extends": "@repo/typescript-config/library.json",
-  "include": ["src"],
   "compilerOptions": {
     "baseUrl": "src",
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "outDir": "dist",
     "paths": {
       "@/*": ["./*"]
     }
   },
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
