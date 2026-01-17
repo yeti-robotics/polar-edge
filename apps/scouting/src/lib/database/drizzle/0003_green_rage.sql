@@ -1,0 +1,2 @@
+ALTER TABLE "match" ADD CONSTRAINT "match_event_key_event_event_key_fk" FOREIGN KEY ("event_key") REFERENCES "public"."event"("event_key") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+DROP TYPE "public"."cage";
