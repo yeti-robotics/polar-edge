@@ -58,17 +58,19 @@ async function dropAllTables() {
     }
 
     // Clear drizzle migrations table so migrations can be re-run
-    const migrationsTableExists = await client.query(`
+    const migrationsTableExists = await client
+      .query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
         WHERE table_schema = 'drizzle' 
         AND table_name = '__drizzle_migrations'
       );
-    `).catch(() => ({ rows: [{ exists: false }] }));
+    `)
+      .catch(() => ({ rows: [{ exists: false }] }));
 
     if (migrationsTableExists.rows[0].exists) {
       console.log("Clearing drizzle migrations table...");
-      await client.query('DELETE FROM drizzle.__drizzle_migrations');
+      await client.query("DELETE FROM drizzle.__drizzle_migrations");
       console.log("Drizzle migrations table cleared!");
     }
 

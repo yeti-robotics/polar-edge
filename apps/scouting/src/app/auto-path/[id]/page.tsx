@@ -1,10 +1,8 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
-import { Skeleton } from "@repo/ui/components/skeleton";
-import { headers } from "next/headers";
-import Link from "next/link";
 import { ArrowLeftIcon } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PathViewer } from "@/components/auto-path/PathViewer";
 import { getAutoPath } from "../actions";
@@ -80,25 +78,18 @@ async function AutoPathDetail({ id }: { id: string }) {
               <CardTitle>Path Visualization</CardTitle>
             </CardHeader>
             <CardContent>
-              <PathViewer
-                pathData={path.pathData}
-                className="w-full"
-              />
+              <PathViewer pathData={path.pathData} className="w-full" />
             </CardContent>
           </Card>
         </div>
       </div>
     );
-  } catch (error) {
+  } catch (_error) {
     notFound();
   }
 }
 
-export default async function AutoPathDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function AutoPathDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   return (

@@ -9,10 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { headers } from "next/headers";
+import { EyeIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { PlusIcon, EyeIcon } from "lucide-react";
 import { getAutoPaths } from "./actions";
 
 function formatDate(date: Date): string {
@@ -120,9 +119,7 @@ export default function AutoPathsPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl tracking-tight">Auto Paths</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            View and manage robot auto paths
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">View and manage robot auto paths</p>
         </div>
         <Button asChild>
           <Link href="/auto-path/create">
