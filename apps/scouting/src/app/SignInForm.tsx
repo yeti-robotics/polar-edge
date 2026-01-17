@@ -3,13 +3,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
-interface SignInFormProps {
-  redirectUrl?: string;
-}
-
-async function signIn(redirectUrl?: string) {
+async function signIn() {
   "use server";
-  const callbackURL = redirectUrl || "/";
+  const callbackURL = "/";
   const response = await auth.api.signInSocial({
     body: {
       provider: "discord",
@@ -23,9 +19,9 @@ async function signIn(redirectUrl?: string) {
   }
 }
 
-export function SignInForm({ redirectUrl }: SignInFormProps) {
+export function SignInForm() {
   return (
-    <form action={async () => signIn(redirectUrl)}>
+    <form action={signIn}>
       <Button type="submit">Sign in with Discord</Button>
     </form>
   );
