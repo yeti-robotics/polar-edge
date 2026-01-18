@@ -110,12 +110,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -261,12 +257,8 @@
           "name": "auto_path_team_number_team_team_number_fk",
           "tableFrom": "auto_path",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -274,12 +266,8 @@
           "name": "auto_path_match_id_match_match_id_fk",
           "tableFrom": "auto_path",
           "tableTo": "match",
-          "columnsFrom": [
-            "match_id"
-          ],
-          "columnsTo": [
-            "match_id"
-          ],
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["match_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -287,12 +275,8 @@
           "name": "auto_path_created_by_id_user_id_fk",
           "tableFrom": "auto_path",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -300,12 +284,8 @@
           "name": "auto_path_organization_id_organization_id_fk",
           "tableFrom": "auto_path",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -445,12 +425,8 @@
           "name": "invitation_organization_id_organization_id_fk",
           "tableFrom": "invitation",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -458,12 +434,8 @@
           "name": "invitation_inviter_id_user_id_fk",
           "tableFrom": "invitation",
           "tableTo": "user",
-          "columnsFrom": [
-            "inviter_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["inviter_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -522,12 +494,8 @@
           "name": "match_event_key_event_event_key_fk",
           "tableFrom": "match",
           "tableTo": "event",
-          "columnsFrom": [
-            "event_key"
-          ],
-          "columnsTo": [
-            "event_key"
-          ],
+          "columnsFrom": ["event_key"],
+          "columnsTo": ["event_key"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -611,12 +579,8 @@
           "name": "member_organization_id_organization_id_fk",
           "tableFrom": "member",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -624,12 +588,8 @@
           "name": "member_user_id_user_id_fk",
           "tableFrom": "member",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -704,9 +664,7 @@
         "organization_slug_unique": {
           "name": "organization_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -793,12 +751,8 @@
           "name": "organization_invite_link_organization_id_organization_id_fk",
           "tableFrom": "organization_invite_link",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -806,12 +760,8 @@
           "name": "organization_invite_link_created_by_id_user_id_fk",
           "tableFrom": "organization_invite_link",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -821,9 +771,7 @@
         "organization_invite_link_token_unique": {
           "name": "organization_invite_link_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -912,12 +860,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -927,9 +871,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -998,12 +940,8 @@
           "name": "team_match_match_id_match_match_id_fk",
           "tableFrom": "team_match",
           "tableTo": "match",
-          "columnsFrom": [
-            "match_id"
-          ],
-          "columnsTo": [
-            "match_id"
-          ],
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["match_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1011,12 +949,8 @@
           "name": "team_match_team_number_team_team_number_fk",
           "tableFrom": "team_match",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1024,10 +958,7 @@
       "compositePrimaryKeys": {
         "team_match_match_id_team_number_pk": {
           "name": "team_match_match_id_team_number_pk",
-          "columns": [
-            "match_id",
-            "team_number"
-          ]
+          "columns": ["match_id", "team_number"]
         }
       },
       "uniqueConstraints": {},
@@ -1092,9 +1023,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -1173,11 +1102,7 @@
     "public.alliance": {
       "name": "alliance",
       "schema": "public",
-      "values": [
-        "red",
-        "blue",
-        ""
-      ]
+      "values": ["red", "blue", ""]
     }
   },
   "schemas": {},

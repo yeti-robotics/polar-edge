@@ -1,10 +1,10 @@
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { faker } from "@faker-js/faker";
 import dotenv from "dotenv";
 import { reset, seed } from "drizzle-seed";
 import * as schemaTables from "../src/lib/database/schema/tables";
-import { faker } from "@faker-js/faker";
-import { readFile } from "node:fs/promises";
 
 // Get the app root directory by going up one level from the scripts directory
 const __filename = fileURLToPath(import.meta.url);
@@ -52,9 +52,7 @@ function buildTeamMatches(matchId: string, teamNumbers: number[]): TeamMatchInse
   const blueTeams = selectedTeams.slice(allianceSize);
 
   return [
-    ...redTeams.map((teamNumber, index) =>
-      createTeamMatch(matchId, teamNumber, "red", index + 1)
-    ),
+    ...redTeams.map((teamNumber, index) => createTeamMatch(matchId, teamNumber, "red", index + 1)),
     ...blueTeams.map((teamNumber, index) =>
       createTeamMatch(matchId, teamNumber, "blue", index + 1)
     ),
@@ -92,27 +90,19 @@ async function main() {
     },
   }));
 
-  const events = await db
-    .select({ key: schemaTables.event.key })
-    .from(schemaTables.event);
+  const events = await db.select({ key: schemaTables.event.key }).from(schemaTables.event);
 
-  const mappedMatches = events.flatMap((eventRow) =>
-    buildMatches(eventRow.key, matchesPerEvent)
-  );
+  const mappedMatches = events.flatMap((eventRow) => buildMatches(eventRow.key, matchesPerEvent));
 
   await db.insert(schemaTables.match).values(mappedMatches);
 
   const teams = await db
     .select({ teamNumber: schemaTables.team.teamNumber })
     .from(schemaTables.team);
-  const matches = await db
-    .select({ id: schemaTables.match.id })
-    .from(schemaTables.match);
+  const matches = await db.select({ id: schemaTables.match.id }).from(schemaTables.match);
 
   const teamNumbers = teams.map((team) => team.teamNumber);
-  const teamMatches = matches.flatMap((match) =>
-    buildTeamMatches(match.id, teamNumbers)
-  );
+  const teamMatches = matches.flatMap((match) => buildTeamMatches(match.id, teamNumbers));
 
   await db.insert(schemaTables.teamMatch).values(teamMatches);
 }
