@@ -133,8 +133,13 @@ export default function FrontendOnlyForm() {
         <div className="ml-10">
           <Folder />
           </div>
+
+          
+            <h1 className="text-center align-text-top text-[1.32rem]"> Robotics Upcoming Comps</h1>
+           
           </Card>
         </section>
+        
       </div>
     </main>
   );
