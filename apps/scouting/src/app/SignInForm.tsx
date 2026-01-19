@@ -22,20 +22,22 @@ export function SignInForm() {
   return (
     <form action={signIn}>
       <Button type="submit">Sign in with Discord</Button>
-      <br />
-      <div style={{ marginTop: "20px", marginBottom: "10px" }}>
-        <Link href="/frontend">
-          <Button type="button" variant="outline">
-            Scouting Form
-          </Button>
-        </Link>
-      </div>
-      <br />
-      <Link href="/results">
+<br/>
+<div style={{ marginTop: '20px', marginBottom: '10px' }}>
+      <Link href="/frontend">
+        <Button type="button" variant="outline">
+          Scouting Form
+        </Button>
+         </Link>
+        </div>
+        <br/>
+        <Link href="/results">
         <Button type="button" variant="outline">
           View Results
         </Button>
-      </Link>
+        </Link>
+
+     
     </form>
   );
 }

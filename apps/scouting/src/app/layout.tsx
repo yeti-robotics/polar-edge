@@ -3,13 +3,11 @@ import { Libre_Franklin } from "next/font/google";
 import { Suspense } from "react";
 // Use shared UI package global styles (exported by @repo/ui)
 import "@repo/ui/globals.css";
-
+import StickyNavbar from "@/components/StickyNavbar";
 import { SidebarProvider, SidebarTrigger } from "@repo/ui/components/sidebar";
 import AppSidebar from "@/components/app/sidebar";
 import MainContent from "@/components/MainContent";
-import { Header } from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme";
-import { Toaster } from "@repo/ui/components/toaster";
 
 const libreFranklin = Libre_Franklin({
   subsets: ["latin"],
@@ -31,6 +29,13 @@ export default function RootLayout({
       <body
         className={`${libreFranklin.variable} bg-background dark:prose-invert min-h-screen font-sans`}
       >
+        
+
+<section>
+
+<div className=" top-0 z-50 flex justify-center">
+  <StickyNavbar />
+</div>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -38,18 +43,20 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SidebarProvider>
-            <Header />
             <AppSidebar />
             {/* MainContent is a client component that reads sidebar state and adjusts page margin */}
             <MainContent>
-              <SidebarTrigger />
               <Suspense fallback={<div>Loading...</div>}>
                 {children}
               </Suspense>
             </MainContent>
-            <Toaster />
+           
+           
           </SidebarProvider>
         </ThemeProvider>
+         </section>
+         
+        
       </body>
     </html>
   );

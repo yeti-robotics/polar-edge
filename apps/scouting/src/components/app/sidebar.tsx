@@ -13,11 +13,18 @@ import {
   SidebarRail,
   useSidebar,
 } from "@repo/ui/components/sidebar";
-import { Home, List, BarChart2, Settings } from "lucide-react";
-import { Card } from "@repo/ui/components/card";
+import {
+  Home,
+  List,
+  BarChart2,
+  ChevronLeft,
+  ChevronRight,
+  Settings2Icon,
+  User2Icon,
+  PanelTopCloseIcon,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
-import { Avatar } from "@repo/ui/components/avatar";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+// Card import removed (not used here)
 import ProfilePage from "../ProfileYETI";
 
 export function AppSidebar() {
@@ -26,9 +33,10 @@ export function AppSidebar() {
 
   const menu = [
     { href: "/", label: "Home", icon: <Home className="mr-2" /> },
-    { href: "/results", label: "Results", icon: <BarChart2 className="mr-2" /> },
+    { href: "/results", label: "Data", icon: <BarChart2 className="mr-2" /> },
     { href: "/frontend", label: "Scouting", icon: <List className="mr-2" /> },
-    { href: "/outreach", label: "Outreach", icon: <Settings className="mr-2" /> },
+    { href: "/profile", label: "Profile", icon: <User2Icon className="mr-2" /> },
+    { href: "/admin", label: "Admin", icon: <Settings2Icon className="mr-2" /> },
   ];
 
   return (
@@ -36,11 +44,12 @@ export function AppSidebar() {
       {/* Floating open-handle when sidebar is collapsed/offcanvas. */}
       {state === "collapsed" && (
         <button
+          type="button"
           aria-label="Open sidebar"
           onClick={() => toggleSidebar()}
-          className="fixed left-3 top-4 z-40 hidden h-9 w-9 items-center justify-center rounded-md bg-background/80 shadow-md ring-1 ring-border backdrop-blur-sm transition-all hover:scale-105 sm:flex"
+          className="fixed left-3 top-4 z-40 w-2 h-2 hidden h-9 w-9 items-center justify-center rounded-md bg-background/80 shadow-md ring-1 ring-border backdrop-blur-sm transition-all hover:scale-105 sm:flex"
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={13} />
         </button>
       )}
 
@@ -60,6 +69,7 @@ export function AppSidebar() {
       strokeWidth="1.8"
       className="opacity-90"
     >
+          <title>Polar Edge logo</title>
       <circle cx="12" cy="12" r="8" />
     </svg>
   </div>
@@ -69,6 +79,7 @@ export function AppSidebar() {
   </span>
 </div>
             <button
+              type="button"
               aria-label={state === "expanded" ? "Collapse sidebar" : "Expand sidebar"}
               onClick={() => toggleSidebar()}
               className="p-1 rounded hover:bg-muted/10"
@@ -97,7 +108,7 @@ export function AppSidebar() {
         <SidebarSeparator />
 
         <SidebarFooter>
-          <div className="px-4 py-3 w-full mt-75">
+          <div className="px-4 py-3 w-full mt-55">
             <div className="flex items-center gap-3">
               <ProfilePage />
               <div>
