@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@repo/ui/components/button";
 import {
   Card,
   CardContent,
@@ -8,8 +7,6 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import Link from "next/link";
-import Logo from "@/components/logo";
-import ResultsTable from "@/components/ResultsTable";
 import { authClient } from "@/lib/auth-client";
 import Folder from "@/components/Folder";
 

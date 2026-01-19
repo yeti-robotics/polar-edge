@@ -18,7 +18,6 @@ import {
   ChevronRight,
   Home,
   List,
-  PanelTopCloseIcon,
   Settings2Icon,
   User2Icon,
 } from "lucide-react";
@@ -91,7 +90,7 @@ export function AppSidebar() {
 
           <SidebarMenu>
             {menu.map((m) => {
-              const isActive = pathname === m.href || pathname?.startsWith(m.href + "/");
+              const isActive = pathname === m.href || pathname?.startsWith(`${m.href}/`);
               return (
                 <SidebarMenuItem key={m.href}>
                   <SidebarMenuButton asChild isActive={isActive}>

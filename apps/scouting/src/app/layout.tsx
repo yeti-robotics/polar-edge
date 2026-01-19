@@ -3,7 +3,7 @@ import { Libre_Franklin } from "next/font/google";
 import { Suspense } from "react";
 // Use shared UI package global styles (exported by @repo/ui)
 import "@repo/ui/globals.css";
-import { SidebarProvider, SidebarTrigger } from "@repo/ui/components/sidebar";
+import { SidebarProvider } from "@repo/ui/components/sidebar";
 import AppSidebar from "@/components/app/sidebar";
 import MainContent from "@/components/MainContent";
 import StickyNavbar from "@/components/StickyNavbar";
