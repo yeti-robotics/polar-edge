@@ -15,7 +15,5 @@ export function OrganizationSelector() {
   const { data: currentOrganization } = authClient.useActiveOrganization();
   const router = useRouter();
 
-  return (
-    <> </>
-  );
+  return <> </>;
 }

@@ -7,9 +7,9 @@ export default async function AdminPage() {
     headers: await headers(),
   });
 
- if (member?.role !== "admin" && member?.role !== "owner") {
+  if (member?.role !== "admin" && member?.role !== "owner") {
     redirect("/");
-  } 
+  }
 
   return <div> Admin Roles Password Required </div>;
 }

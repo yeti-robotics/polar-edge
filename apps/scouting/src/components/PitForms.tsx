@@ -1,17 +1,10 @@
 "use client";
-import { Dice1 } from "lucide-react";
-import { useState } from "react";
 
 function PitForm() {
-    const frontend = {
-            1: "This is a frontend only form."
-    }     
-    return (
-      <form className="space-y-6">
-        <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-200">
-          Robot Dimensions
-        </h2>
+  return (
+    <form className="space-y-6">
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-gray-200">Robot Dimensions</h2>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
@@ -69,9 +62,7 @@ function PitForm() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-gray-200">
-          Scoring Capabilities
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-200">Scoring Capabilities</h2>
 
         <input
           type="text"
@@ -83,9 +74,7 @@ function PitForm() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-gray-200">
-          Climb Level
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-200">Climb Level</h2>
 
         <div className="flex gap-6">
           {["L1", "L2", "L3"].map((level) => (
@@ -97,9 +86,7 @@ function PitForm() {
         </div>
       </section>
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-gray-200">
-          Robot Build
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-200">Robot Build</h2>
 
         <div className="flex gap-6">
           {["Bump", "Trench"].map((type) => (
@@ -111,7 +98,7 @@ function PitForm() {
         </div>
       </section>
     </form>
-    );
+  );
 }
 
 export default PitForm;

@@ -1,6 +1,6 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import ResultsTable from "@/components/ResultsTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function ResultsPage() {
   const results = [{ team: "Team YETI", match: 1, score: 100, rank: 1, notes: "Good autonomous" }];

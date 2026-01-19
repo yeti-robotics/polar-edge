@@ -1,10 +1,10 @@
 "use client";
+import { Button } from "@repo/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
+import { FormInput } from "lucide-react";
 import { useState } from "react";
 import PitForm from "@/components/PitForms";
 import StandForm from "@/components/StandForms";
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
-import { Button } from "@repo/ui/components/button";
-import { FormInput } from "lucide-react";
 
 type ViewMode = "split" | "pit" | "stand";
 
@@ -15,7 +15,9 @@ export default function FrontendOnlyForm() {
     <div className="min-h-screen p-4">
       <div className="max-w-7xl mx-auto">
         <header className="mb-4">
-          <h1 className="text-4xl font-bold text-center mt-4">Scouting Forms <FormInput className="text-4xl font-bold text-center mt-4"/></h1>
+          <h1 className="text-4xl font-bold text-center mt-4">
+            Scouting Forms <FormInput className="text-4xl font-bold text-center mt-4" />
+          </h1>
         </header>
 
         <div role="tablist" aria-label="Scouting views" className="flex gap-2 mb-4">

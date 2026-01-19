@@ -1,16 +1,17 @@
 "use client";
-import { authClient } from "@/lib/auth-client";
-import Link from "next/link";
+import { Button } from "@repo/ui/components/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@repo/ui/components/card";
-import { Button } from "@repo/ui/components/button";
-import ResultsTable from "@/components/ResultsTable";
+import Link from "next/link";
 import Logo from "@/components/logo";
+import ResultsTable from "@/components/ResultsTable";
+import { authClient } from "@/lib/auth-client";
+import Folder from "@/components/Folder";
 
 export default function FrontendOnlyForm() {
   const { data: session, isPending } = authClient.useSession();
@@ -124,6 +125,16 @@ export default function FrontendOnlyForm() {
             </CardContent>
           </Card>
         </div>
+        <section className="mt-10 mb-4">
+        <Card> 
+        <div className="ml-10 mr-10">
+          <Folder />
+        </div>
+        <div className="ml-10">
+          <Folder />
+          </div>
+          </Card>
+        </section>
       </div>
     </main>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import { useSidebar } from "@repo/ui/components/sidebar";
+import React from "react";
 
 export default function MainContent({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar();
