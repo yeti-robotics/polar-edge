@@ -18,6 +18,7 @@ import { Card } from "@repo/ui/components/card";
 import { usePathname } from "next/navigation";
 import { Avatar } from "@repo/ui/components/avatar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ProfilePage from "../ProfileYETI";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -27,27 +28,52 @@ export function AppSidebar() {
     { href: "/", label: "Home", icon: <Home className="mr-2" /> },
     { href: "/results", label: "Results", icon: <BarChart2 className="mr-2" /> },
     { href: "/frontend", label: "Scouting", icon: <List className="mr-2" /> },
-    { href: "/settings", label: "Settings", icon: <Settings className="mr-2" /> },
+    { href: "/outreach", label: "Outreach", icon: <Settings className="mr-2" /> },
   ];
 
   return (
-    <Sidebar side="left" variant="sidebar" collapsible="icon">
-      {state === "expanded" && <SidebarRail />}
+    <>
+      {/* Floating open-handle when sidebar is collapsed/offcanvas. */}
+      {state === "collapsed" && (
+        <button
+          aria-label="Open sidebar"
+          onClick={() => toggleSidebar()}
+          className="fixed left-3 top-4 z-40 hidden h-9 w-9 items-center justify-center rounded-md bg-background/80 shadow-md ring-1 ring-border backdrop-blur-sm transition-all hover:scale-105 sm:flex"
+        >
+          <ChevronRight size={16} />
+        </button>
+      )}
+
+      <Sidebar side="left" variant="sidebar" collapsible="offcanvas">
+        {state === "expanded" && <SidebarRail />}
       <SidebarContent>
         <SidebarHeader>
           <div className="flex items-center gap-2 w-full justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded bg-muted-foreground/10 flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-primary"><circle cx="12" cy="12" r="8" /></svg>
-              </div>
-              <div className="font-semibold">Polar Edge</div>
-            </div>
+           <div className="flex items-center gap-3">
+  <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className="opacity-90"
+    >
+      <circle cx="12" cy="12" r="8" />
+    </svg>
+  </div>
+
+  <span className="text-m font-semibold tracking-tight text-foreground">
+    Polar Edge
+  </span>
+</div>
             <button
               aria-label={state === "expanded" ? "Collapse sidebar" : "Expand sidebar"}
               onClick={() => toggleSidebar()}
               className="p-1 rounded hover:bg-muted/10"
             >
-              {state === "expanded" ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+              {state === "expanded" ? <ChevronLeft size={19} /> : <ChevronRight size={19} />}
             </button>
           </div>
         </SidebarHeader>
@@ -71,18 +97,29 @@ export function AppSidebar() {
         <SidebarSeparator />
 
         <SidebarFooter>
-          <div className="px-4 py-3 w-full">
+          <div className="px-4 py-3 w-full mt-75">
             <div className="flex items-center gap-3">
-              <Avatar />
+              <ProfilePage />
               <div>
-                <div className="text-sm font-medium">User</div>
-                <div className="text-xs text-muted-foreground">Organization</div>
+                <div className="text-[.93rem] text-muted-foreground mb-2">Team 3506</div>
+               <Link
+                href="/profile"
+                className="inline-flex items-center justify-center rounded-md bg-primary px-2 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                  View Profile
+                    </Link>
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-xs text-muted-foreground">
+                Logged in as <span className="font-medium">User</span>
               </div>
             </div>
           </div>
         </SidebarFooter>
       </SidebarContent>
     </Sidebar>
+    </>
   );
 }
 

@@ -23,17 +23,7 @@ export default function FrontendOnlyForm() {
           <PitForm />
         </CardContent>
       </Card>
-      
-      <section className="ml-10 mt-10">
-        <Folder
-          color="#2c2d33ff"
-          folderBackColor="#232325ff"
-          paper1="#ffffffff"
-          paper2="#f0f0f0ff"
-          paper3="#e0e0e0ff"
-          papers={["Paper 1", "Paper 2", "Paper 3"]}
-        />
-      </section>
+     
           
 
         
