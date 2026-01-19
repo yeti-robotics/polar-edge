@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { AiService } from "../ai/ai.service";
+import { generateText } from "ai";
+import { AiService } from "src/ai/ai.service";
 import { handbookPrompt } from "./handbook.prompt";
 
 @Injectable()
@@ -7,29 +8,21 @@ export class HandbookService {
   constructor(private readonly aiService: AiService) {}
 
   public async askHandbookQuestion(question: string) {
-    const ai = this.aiService.getAiClient();
-    const model = "gemini-2.0-flash";
-    const config = {
-      responseMimeType: "text/plain",
-      systemInstruction: handbookPrompt,
-    };
-    const contents = [
-      {
-        role: "user",
-        parts: [
-          {
-            text: question,
-          },
-        ],
-      },
-    ];
+    const provider = this.aiService.getGradientProvider();
+    const model = provider("openai-gpt-oss-20b");
 
-    const response = await ai.models.generateContent({
+    const result = await generateText({
       model,
-      contents,
-      config,
+      system: handbookPrompt,
+      prompt: question,
+      temperature: 0.2,
+      maxOutputTokens: 500,
     });
 
-    return response.text;
+    return {
+      text: result.text,
+      usage: result.usage,
+      finishReason: result.finishReason,
+    };
   }
 }

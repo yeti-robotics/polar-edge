@@ -1,4 +1,3 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { IntegerOption } from "necord";
 
 export class AttendanceSignInDto {
@@ -16,22 +15,5 @@ export class AttendanceSignOutDto {
     description: "The code to sign out with",
     required: true,
   })
-  code: number;
-}
-
-export class AttendanceOperationDto {
-  @IsString()
-  @IsNotEmpty()
-  discordId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  guildId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  discordName: string;
-
-  @IsNumber()
   code: number;
 }

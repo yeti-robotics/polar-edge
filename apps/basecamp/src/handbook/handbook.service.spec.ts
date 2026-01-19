@@ -1,6 +1,7 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
-import { AiService } from "../ai/ai.service";
+import { AiService } from "src/ai/ai.service";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { HandbookService } from "./handbook.service";
 
 describe("HandbookService", () => {
@@ -13,15 +14,19 @@ describe("HandbookService", () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn(),
+            get: vi.fn((key: string) => {
+              if (key === "DO_MODEL_ID") return "test-model-id";
+              return undefined;
+            }),
           },
         },
         {
           provide: AiService,
           useValue: {
-            models: {
-              getAiClient: jest.fn(),
-            },
+            getGradientProvider: vi.fn(() => (model: string) => ({
+              provider: "gradient",
+              modelId: model,
+            })),
           },
         },
       ],

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/button";
-import { authClient } from "@/lib/auth-client";
 import { CheckCircle2Icon, Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 interface AcceptInvitationFormProps {
   invitationId: string;
@@ -51,7 +51,7 @@ export function AcceptInvitationForm({
         router.push("/");
         router.refresh();
       }, 1500);
-    } catch (err) {
+    } catch (_err) {
       setError("An unexpected error occurred. Please try again.");
       setIsAccepting(false);
     }

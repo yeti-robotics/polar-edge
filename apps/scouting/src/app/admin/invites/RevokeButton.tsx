@@ -34,7 +34,7 @@ export function RevokeButton({ token }: RevokeButtonProps) {
       startTransition(() => {
         router.refresh();
       });
-    } catch (err) {
+    } catch (_err) {
       alert("An unexpected error occurred. Please try again.");
       setIsRevoking(false);
     }

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { Mutex } from "async-mutex";
 import { google, type sheets_v4 } from "googleapis";
 
 export type SheetCredentials = {
@@ -11,6 +12,16 @@ export type SheetCredentials = {
 export class SheetService {
   private sheetsClient: sheets_v4.Sheets;
   private readonly logger = new Logger(SheetService.name);
+  private readonly appendMutexes = new Map<string, Mutex>();
+
+  private getAppendMutex(spreadsheetId: string): Mutex {
+    let mutex = this.appendMutexes.get(spreadsheetId);
+    if (!mutex) {
+      mutex = new Mutex();
+      this.appendMutexes.set(spreadsheetId, mutex);
+    }
+    return mutex;
+  }
 
   constructor(private readonly configService: ConfigService) {
     if (!this.configService.get<string>("GOOGLE_APPLICATION_CREDENTIALS")) {
@@ -56,23 +67,25 @@ export class SheetService {
       valueInputOption?: "USER_ENTERED" | "RAW";
     } = {}
   ) {
-    try {
-      const result = await this.sheetsClient.spreadsheets.values.append({
-        spreadsheetId: spreadsheetId,
-        range,
-        valueInputOption: options.valueInputOption || "USER_ENTERED",
-        requestBody: { values },
-      });
+    return this.getAppendMutex(spreadsheetId).runExclusive(async () => {
+      try {
+        const result = await this.sheetsClient.spreadsheets.values.append({
+          spreadsheetId: spreadsheetId,
+          range,
+          valueInputOption: options.valueInputOption || "USER_ENTERED",
+          requestBody: { values },
+        });
 
-      if (!result.status.toString().startsWith("2")) {
-        this.logger.error(`Failed to append values to sheet: ${result.status}`);
+        if (!result.status.toString().startsWith("2")) {
+          this.logger.error(`Failed to append values to sheet: ${result.status}`);
+          throw new Error("Failed to append values to sheet");
+        }
+
+        return result.data;
+      } catch (error) {
+        this.logger.error(`Failed to append values to sheet: ${error}`);
         throw new Error("Failed to append values to sheet");
       }
-
-      return result.data;
-    } catch (error) {
-      this.logger.error(`Failed to append values to sheet: ${error}`);
-      throw new Error("Failed to append values to sheet");
-    }
+    });
   }
 }

@@ -1,54 +1,52 @@
-# name: Status Checks
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     branches:
-#       - main
+name: Status Checks
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-# permissions:
-#   contents: read
+permissions:
+  contents: read
 
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-#   cancel-in-progress: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
-# jobs:
-#   build:
-#     name: Build and test
-#     runs-on: ubuntu-latest
-#     environment: ci
-#     env:
-#       TURBO_SCM_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
-#     steps:
-#       - name: Check out code
-#         uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0
-#           filter: "blob:none"
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    environment: ci
+    env:
+      TURBO_SCM_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: "blob:none"
 
-#       - name: Install pnpm
-#         uses: pnpm/action-setup@v4
-#         with:
-#           version: 10.10.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
-#       - name: Cache turbo build setup
-#         uses: actions/cache@v4
-#         with:
-#           path: .turbo
-#           key: ${{ runner.os }}-turbo-${{ github.sha }}
-#           restore-keys: |
-#             ${{ runner.os }}-turbo-
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
-#       - name: Setup Node.js environment
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version-file: .nvmrc
-#           cache: pnpm
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
 
-#       - name: Install dependencies
-#         run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-#       - name: Lint, format, test, and build
-#         run: pnpm turbo run lint test build --affected
+      - name: Lint, format, test, and build
+        run: pnpm turbo run lint build test --affected

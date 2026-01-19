@@ -1,11 +1,14 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
+import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { SheetService } from "../sheet/sheet.service";
 import { OutreachService } from "./outreach.service";
 
 describe("OutreachService", () => {
   let service: OutreachService;
-  let sheetService: jest.Mocked<SheetService>;
+  let sheetService: {
+    getSheetValues: MockedFunction<SheetService["getSheetValues"]>;
+  };
 
   const mockSheetData = [
     ["Date", "Name", "Event", "Type", "Hours"],
@@ -24,13 +27,13 @@ describe("OutreachService", () => {
         {
           provide: SheetService,
           useValue: {
-            getSheetValues: jest.fn(),
+            getSheetValues: vi.fn(),
           },
         },
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn().mockReturnValue("1234567890"),
+            get: vi.fn().mockReturnValue("1234567890"),
           },
         },
       ],
@@ -86,11 +89,11 @@ describe("OutreachService", () => {
   });
 
   describe("getTopMembersByHours", () => {
-    let mockGetSheetValues: jest.Mock;
+    let mockGetSheetValues: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
-      mockGetSheetValues = jest.fn();
-      (sheetService.getSheetValues as jest.MockedFunction<typeof sheetService.getSheetValues>) =
+      mockGetSheetValues = vi.fn();
+      (sheetService.getSheetValues as MockedFunction<typeof sheetService.getSheetValues>) =
         mockGetSheetValues;
     });
 

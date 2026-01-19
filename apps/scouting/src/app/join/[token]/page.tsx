@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { organization } from "@/lib/database/auth-schema";
+import { organization } from "@/lib/database/schema/tables";
 import { getInviteLinkByToken } from "@/lib/server/invite-links";
 import { AcceptInviteLinkForm } from "./AcceptInviteLinkForm";
 

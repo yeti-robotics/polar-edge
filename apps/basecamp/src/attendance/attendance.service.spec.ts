@@ -1,12 +1,16 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
+import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { SheetService } from "../sheet/sheet.service";
 import { AttendanceService } from "./attendance.service";
-import { AttendanceTwoFAService } from "./attendance-twofa/attendance-twofa.service";
+import { TwofaService } from "./twofa/twofa.service";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
-  let sheetService: jest.Mocked<Pick<SheetService, "getSheetValues" | "appendSheetValues">>;
+  let sheetService: {
+    getSheetValues: MockedFunction<SheetService["getSheetValues"]>;
+    appendSheetValues: MockedFunction<SheetService["appendSheetValues"]>;
+  };
 
   const mockAttendanceData = [
     ["user1", "YETI Robotics", "Test User 1", "2025-01-01T10:00:00Z", "true"],
@@ -24,14 +28,14 @@ describe("AttendanceService", () => {
         {
           provide: SheetService,
           useValue: {
-            getSheetValues: jest.fn(),
-            appendSheetValues: jest.fn(),
+            getSheetValues: vi.fn(),
+            appendSheetValues: vi.fn(),
           },
         },
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn().mockImplementation((key: string) => {
+            get: vi.fn().mockImplementation((key: string) => {
               switch (key) {
                 case "ATTENDANCE_SPREADSHEET_ID":
                   return "test-sheet-id";
@@ -46,10 +50,9 @@ describe("AttendanceService", () => {
           },
         },
         {
-          provide: AttendanceTwoFAService,
+          provide: TwofaService,
           useValue: {
-            generateCode: jest.fn().mockResolvedValue(123456),
-            verifyCode: jest.fn().mockResolvedValue(true),
+            verifyCode: vi.fn().mockReturnValue(true),
           },
         },
       ],
@@ -60,7 +63,7 @@ describe("AttendanceService", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should be defined", () => {
@@ -118,12 +121,12 @@ describe("AttendanceService", () => {
   });
 
   describe("getTopMembersByHours", () => {
-    let mockGetSheetValues: jest.Mock;
+    let mockGetSheetValues: MockedFunction<SheetService["getSheetValues"]>;
 
     beforeEach(() => {
-      mockGetSheetValues = sheetService.getSheetValues as jest.Mock;
+      mockGetSheetValues = sheetService.getSheetValues;
 
-      jest.spyOn(service, "getUserHours").mockImplementation(async (discordId) => {
+      vi.spyOn(service, "getUserHours").mockImplementation(async (discordId) => {
         const hoursMap: Record<string, number> = {
           user1: 2,
           user2: 3,
@@ -194,7 +197,7 @@ describe("AttendanceService", () => {
     });
 
     it("should handle errors gracefully and return empty array", async () => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       sheetService.getSheetValues.mockRejectedValue(new Error("API Error"));
 
       const result = await service.getTopMembersByHours(5);
@@ -223,7 +226,7 @@ describe("AttendanceService", () => {
     ];
 
     sheetService.getSheetValues.mockResolvedValue(tiedData);
-    jest.spyOn(service, "getUserHours").mockImplementation(() => {
+    vi.spyOn(service, "getUserHours").mockImplementation(() => {
       return Promise.resolve(2);
     });
 
@@ -251,7 +254,7 @@ describe("AttendanceService", () => {
     ];
 
     sheetService.getSheetValues.mockResolvedValue(multipleSessions);
-    jest.spyOn(service, "getUserHours").mockResolvedValue(6);
+    vi.spyOn(service, "getUserHours").mockResolvedValue(6);
 
     const result = await service.getTopMembersByHours(5);
 

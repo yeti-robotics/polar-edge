@@ -1,0 +1,40 @@
+{
+  "name": "@repo/vitest-config",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./base": {
+      "types": "./dist/configs/base-config.d.mts",
+      "import": "./dist/configs/base-config.mjs",
+      "require": "./dist/configs/base-config.cjs"
+    },
+    "./ui": {
+      "types": "./dist/configs/ui-config.d.mts",
+      "import": "./dist/configs/ui-config.mjs",
+      "require": "./dist/configs/ui-config.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch"
+  },
+  "dependencies": {
+    "@vitest/coverage-istanbul": "catalog:",
+    "vitest": "catalog:",
+    "jsdom": "^25.0.1"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "tsdown": "0.19.0",
+    "typescript": "catalog:"
+  }
+}

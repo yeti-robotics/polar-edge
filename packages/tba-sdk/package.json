@@ -1,0 +1,44 @@
+{
+  "name": "@repo/tba-sdk",
+  "version": "0.0.3",
+  "private": "true",
+  "description": "A TypeScript SDK for The Blue Alliance API",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "generate:types": "openapi-typescript https://www.thebluealliance.com/swagger/api_v3.json -o ./src/generated/index.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vitest-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@vitest/coverage-istanbul": "catalog:",
+    "openapi-typescript": "^7.4.2",
+    "tsdown": "0.19.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "dependencies": {
+    "lru-cache": "^11.2.4"
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yeti-Robotics/polar-edge-analytics.git"
+  }
+}

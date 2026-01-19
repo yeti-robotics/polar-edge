@@ -7,48 +7,13 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
-    "@app/web#build": {
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env.development.local",
-        ".env.local",
-        ".env.development",
-        ".env"
-      ],
-      "dependsOn": ["^build"],
-      "env": [
-        "AUTH_DISCORD_ID",
-        "AUTH_DISCORD_SECRET",
-        "DATABASE_URL",
-        "AUTH_SECRET",
-        "TBA_API_KEY",
-        "ADMIN_USERS"
-      ],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
-    },
-    "@app/plus#build": {
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env.development.local",
-        ".env.local",
-        ".env.development",
-        ".env"
-      ],
-      "dependsOn": ["^build"],
-      "env": [
-        "GOOGLE_CREDENTIALS",
-        "ATTENDANCE_SPREADSHEET_ID",
-        "AUTH_SECRET",
-        "AUTH_DISCORD_ID",
-        "AUTH_DISCORD_SECRET"
-      ],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
-    },
     "//#lint": {},
     "//#lint:fix": {
       "cache": false
     },
-    "test": {},
+    "test": {
+      "dependsOn": ["^build", "^test"]
+    },
     "db:start": {
       "cache": false
     },
