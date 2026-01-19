@@ -123,7 +123,7 @@ export function AppSidebar() {
             </div>
             <div className="mt-3">
               <div className="text-xs text-muted-foreground">
-                Logged in as <span className="font-medium">User</span>
+                Logged in as <span className="font-medium"> user </span>
               </div>
             </div>
           </div>

@@ -51,6 +51,7 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen bg-black px-6 py-10">
       <div className="max-w-5xl mx-auto">
+        
         <header className="flex items-center gap-6 mb-8">
           <div className="w-24 h-24 rounded-full bg-black-900 flex items-center justify-center overflow-hidden ">
             {user.image ? (
@@ -64,6 +65,9 @@ export default function ProfilePage() {
               <div className="text-black font-bold">{(user.name || "?").charAt(0)}</div>
             )}
           </div>
+           <button className="mt-4 bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded-md">
+          Log Out
+        </button>
 
           <div>
             <h1 className="text-2xl font-bold">{user.name ?? "Unnamed"}</h1>
@@ -106,6 +110,11 @@ export default function ProfilePage() {
             <span className="text-sm text-sky-100">Enable Email Notifications</span>
           </label>
         </div>
+
+
+        <button className="mt-4 bg-sky-700 hover:bg-sky-600 text-white py-2 px-4 rounded-md">
+          Save Settings
+        </button>
 
       </section>
           
