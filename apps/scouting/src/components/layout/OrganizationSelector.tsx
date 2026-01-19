@@ -16,23 +16,6 @@ export function OrganizationSelector() {
   const router = useRouter();
 
   return (
-    <Select
-      value={currentOrganization?.id}
-      onValueChange={async (value) => {
-        await authClient.organization.setActive({ organizationId: value });
-        router.refresh();
-      }}
-    >
-      <SelectTrigger>
-        <SelectValue placeholder="Select an organization" />
-      </SelectTrigger>
-      <SelectContent>
-        {organizations?.map((organization) => (
-          <SelectItem key={organization.id} value={organization.id}>
-            {organization.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <> </>
   );
 }

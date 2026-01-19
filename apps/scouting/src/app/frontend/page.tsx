@@ -11,11 +11,11 @@ import Folder from "@/components/Folder";
 
 export default function FrontendOnlyForm() {
   return (
-        <div className="flex justify-center p-4">
+        <div className="flex justify-center p-4 justify-content: center;">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            Pit Scouting Form
+          <CardTitle className="text-2xl font-bold text-center" >
+            Scouting Form
           </CardTitle>
         </CardHeader>
 
@@ -26,8 +26,8 @@ export default function FrontendOnlyForm() {
       
       <section className="ml-10 mt-10">
         <Folder
-          color="#174dffff"
-          folderBackColor="#0b2a66ff"
+          color="#2c2d33ff"
+          folderBackColor="#232325ff"
           paper1="#ffffffff"
           paper2="#f0f0f0ff"
           paper3="#e0e0e0ff"

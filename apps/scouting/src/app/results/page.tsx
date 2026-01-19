@@ -9,9 +9,9 @@ function ResultsPage() {
        
     ];
 
-    return (
-        <div className="bg-black">
-        <div className="p-4 border-b mb-4 content-normal ">
+  return (
+    <div className="min-h-screen bg-background py-8">
+    <div className="mx-auto w-full max-w-5xl p-4 border-b mb-6 rounded-md shadow-sm bg-card">
         <Tabs defaultValue="scouting">
           <TabsList>
             <TabsTrigger value="scouting">Scouting</TabsTrigger>
@@ -26,7 +26,7 @@ function ResultsPage() {
           </TabsContent>
           <TabsContent value="results">
             <div className="p-4">
-              <h2 className="text-lg font-semibold mb-4">Results</h2>
+              <h2 className="text-lg font-semibold mb-4 text-center">Results</h2>
               {/* server-rendered table component */}
               <ResultsTable results={results} />
             </div>
