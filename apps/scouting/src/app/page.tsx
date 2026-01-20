@@ -9,7 +9,6 @@ import {
 } from "@repo/ui/components/card";
 import { Button } from "@repo/ui/components/button";
 
-import Folder from "@/components/Folder";
 
 import { authClient } from "@/lib/auth-client";
 
@@ -130,10 +129,9 @@ export default function FrontendOnlyForm() {
         <section className="mt-10 mb-4">
         <Card> 
         <div className="ml-10 mr-10">
-          <Folder />
         </div>
         <div className="ml-10">
-          <Folder />
+          
           </div>
 
           

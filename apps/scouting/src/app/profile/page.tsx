@@ -3,18 +3,7 @@
 import { useMemo, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
-function levelFromPoints(points: number) {
-  if (points >= 2000) return { level: 10, next: 3000 };
-  if (points >= 1500) return { level: 9, next: 2000 };
-  if (points >= 1200) return { level: 8, next: 1500 };
-  if (points >= 900) return { level: 7, next: 1200 };
-  if (points >= 700) return { level: 6, next: 900 };
-  if (points >= 500) return { level: 5, next: 700 };
-  if (points >= 300) return { level: 4, next: 500 };
-  if (points >= 150) return { level: 3, next: 300 };
-  if (points >= 50) return { level: 2, next: 150 };
-  return { level: 1, next: 50 };
-}
+
 
 export default function ProfilePage() {
   const { data: session, isPending } = authClient.useSession();
@@ -25,7 +14,6 @@ export default function ProfilePage() {
   const [xpBonus, setXpBonus] = useState<boolean>(true);
   const [emailNotifications, setEmailNotifications] = useState<boolean>(true);
 
-  const { level, next } = useMemo(() => levelFromPoints(points), [points]);
 
   if (isPending) {
     return (
@@ -68,12 +56,7 @@ export default function ProfilePage() {
             Log Out
           </button>
 
-          <div>
-            <h1 className="text-2xl font-bold">{user.name ?? "Unnamed"}</h1>
-            <p className="text-sm text-white-900">{user.email}</p>
-            <div className="text-sm text-sky-200 mt-1">Level: {level} • Points: {points}</div>
-            <div className="text-sm text-sky-200">Forms filled: {formsFilled}</div>
-          </div>
+        
         </header>
 
         <section className="bg-slate-900 rounded-lg p-6 ring-1 ring-slate-900 mb-8 size-full w-220 h-100 mt-10">

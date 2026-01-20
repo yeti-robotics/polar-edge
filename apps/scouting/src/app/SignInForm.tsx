@@ -23,7 +23,7 @@ export function SignInForm() {
     <form action={signIn}>
       <Button type="submit">Sign in with Discord</Button>
       <br />
-      <div style={{ marginTop: "20px", marginBottom: "10px" }}>
+      <div className="mt-20 mb-10">
         <Link href="/frontend">
           <Button type="button" variant="outline">
             Scouting Form
