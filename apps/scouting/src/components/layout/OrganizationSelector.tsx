@@ -23,7 +23,7 @@ export function OrganizationSelector() {
         router.refresh();
       }}
     >
-      <SelectTrigger className="w-50">
+      <SelectTrigger className="">
         <SelectValue placeholder="Select an organization" />
       </SelectTrigger>
       <SelectContent>

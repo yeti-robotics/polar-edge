@@ -1,6 +1,5 @@
 import { Button } from "@repo/ui/components/button";
 import { headers } from "next/headers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
