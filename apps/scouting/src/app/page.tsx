@@ -9,10 +9,7 @@ import {
 } from "@repo/ui/components/card";
 import { Button } from "@repo/ui/components/button";
 
-
 import { authClient } from "@/lib/auth-client";
-
-
 
 export default function FrontendOnlyForm() {
   const { data: session, isPending } = authClient.useSession();
@@ -62,17 +59,17 @@ export default function FrontendOnlyForm() {
             />{" "}
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Welcome back, {user.name ?? user.email}!</h1>
-            <p className="text-sm text-muted-foreground">
-              Ready to log scouting data or review recent match results?
-            </p>
+            <h1 className="text-2xl font-mono">Welcome back, {user.name ?? user.email}!</h1>
+            <p className="text-xs font-mono mt-3">Welcome to Polar Edge Analytics</p>
+
+           
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
-              <div className="text-center w-full text-lg font-bold text-[1.32rem] text-blue-300">
+              <div className="text-center w-full text-lg font-mono ">
                 <CardTitle>Your Profile</CardTitle>
               </div>
             </CardHeader>
@@ -88,58 +85,7 @@ export default function FrontendOnlyForm() {
               </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="text-center w-full text-lg font-bold text-[1.32rem] text-blue-300">
-                <CardTitle>Quick Actions</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-3">
-                <Link href="/frontend">
-                  <Button variant="ghost">Open Scouting Form</Button>
-                </Link>
-                <Link href="/results">
-                  <Button variant="ghost">View Data </Button>
-                </Link>
-                <Link href="/organization/create">
-                  <Button variant="ghost">Manage Organization</Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <div className="text-center w-full text-lg font-bold text-[1.32rem] text-blue-300">
-                <CardTitle>Recent Matches</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <h1 className="text-m"> Info Will Be Real Time Soon.... </h1>
-              <br />
-              <br />
-              <h2 className="text-sm">
-                {" "}
-                <b> Built By YETI Web Dev Team </b>
-              </h2>
-            </CardContent>
-          </Card>
         </div>
-        <section className="mt-10 mb-4">
-        <Card> 
-        <div className="ml-10 mr-10">
-        </div>
-        <div className="ml-10">
-          
-          </div>
-
-          
-            <h1 className="text-center align-text-top text-[1.32rem]"> Robotics Upcoming Comps</h1>
-           
-          </Card>
-        </section>
-        
       </div>
     </main>
   );
