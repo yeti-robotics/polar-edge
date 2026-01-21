@@ -23,7 +23,7 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-function getRoleBadgeVariant(role: string): "default" | "secondary" | "outline" {
+export function getRoleBadgeVariant(role: string): "default" | "secondary" | "outline" {
   switch (role) {
     case "owner":
       return "default";
@@ -87,7 +87,6 @@ async function MembersContent() {
   if (activeMember?.role !== "admin" && activeMember?.role !== "owner") {
     redirect("/");
   }
-
   // Fetch organization details and members in parallel
   const [_organization, membersResponse] = await Promise.all([
     auth.api.getFullOrganization({
