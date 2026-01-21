@@ -3,7 +3,7 @@ import { Checkbox } from "@repo/ui/components/checkbox";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 
-export function PitForm() {
+export function PitFormP1() {
   return (
     <Card className="p-6">
       <form className="space-y-6 ">
@@ -34,17 +34,6 @@ export function PitForm() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg text-neutral-200">Scoring Capabilities</h2>
-
-          <Input
-            type="text"
-            id="scoring-capabilities"
-            name="scoring-capabilities"
-            placeholder="Enter scoring capabilities"
-          />
-        </section>
-
-        <section className="space-y-3">
           <h2 className="text-lg text-neutral-200">Climb Level</h2>
 
           <div className="flex gap-6">
@@ -71,4 +60,31 @@ export function PitForm() {
       </form>
     </Card>
   );
+}
+
+export function PitFormP2() {
+  <Card>
+    <form action="">
+      <section className="space-y-3">
+        <h2 className="text-lg text-neutral-200">Drivetrain Type</h2>
+        <div className="flex gap-6">
+          {["Tank", "Mecanum", "Swerve", "Other"].map((type) => (
+            <Label key={type}>
+              <input type="checkbox" name="drivetrain" value={type} />
+              {type}
+            </Label>
+          ))}
+        </div>
+      </section>
+      <section className="space-y-3">
+        <h2 className="text-lg text-neutral-200">Scoring Capabilities</h2>
+        <Input
+          type="text"
+          id="scoring-capabilities"
+          name="scoring-capabilities"
+          placeholder="Enter scoring capabilities"
+        />
+      </section>
+    </form>
+  </Card>;
 }
