@@ -8,9 +8,15 @@ async function AdminLink() {
   const requestHeaders = await headers();
   const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
   if (activeMember?.role === "admin" || activeMember?.role === "owner") {
-    return <Link href="/admin">Admin</Link>;
+    return (
+      <Link className="hover:bg-gray-700 px-4 py-2 hover:text-white" href="/admin">
+        Admin
+      </Link>
+    );
   }
 }
+
+//map through array to render the links
 
 export function Header() {
   return (
@@ -20,9 +26,15 @@ export function Header() {
         <OrganizationSelector />
       </div>
       <nav className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
-        <Link href="/">Home</Link>
-        <Link href="/auto-path">Auto Paths</Link>
-        <Link href="/forms/pit">Pit Form</Link>
+        <Link className="hover:bg-gray-700 px-4 py-2 hover:text-white" href="/">
+          Home
+        </Link>
+        <Link className="hover:bg-gray-700 px-4 py-2 hover:text-white" href="/auto-path">
+          Auto Paths
+        </Link>
+        <Link className="hover:bg-gray-700 px-4 py-2 hover:text-white" href="/forms/pit">
+          Pit Form
+        </Link>
         <Suspense>
           <AdminLink />
         </Suspense>
