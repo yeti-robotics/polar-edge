@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
-import { Suspense } from "react";
-// Use shared UI package global styles (exported by @repo/ui)
 import "@repo/ui/globals.css";
-import { SidebarProvider } from "@repo/ui/components/sidebar";
-import AppSidebar from "@/components/app/sidebar";
-import MainContent from "@/components/MainContent";
-import StickyNavbar from "@/components/StickyNavbar";
+import { Toaster } from "@repo/ui/components/toaster";
+import { Suspense } from "react";
+import { Header } from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme";
 
 const libreFranklin = Libre_Franklin({
@@ -19,31 +16,32 @@ export const metadata: Metadata = {
   description: "A NC FRC Scouting Platform",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  // note that suppressHydrationWarning must be added b/c of next-themes
+  // see: https://github.com/pacocoursey/next-themes
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${libreFranklin.variable} bg-background dark:prose-invert min-h-screen font-sans`}
       >
-        <section>
-          <div className=" top-0 z-50 flex justify-center">
-            <StickyNavbar />
+        
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className=""> 
+          <Header />
           </div>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <SidebarProvider>
-              <AppSidebar />
-              {/* MainContent is a client component that reads sidebar state and adjusts page margin */}
-              <MainContent>
-                <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-              </MainContent>
-            </SidebarProvider>
-          </ThemeProvider>
-        </section>
+          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+          <Toaster />
+        </ThemeProvider>
+        
       </body>
     </html>
   );
