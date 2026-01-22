@@ -18,12 +18,12 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
   },
   "dependencies": {
-    "@nestjs/cli": "^11.0.14",
-    "@nestjs/common": "^11.1.11",
+    "@nestjs/cli": "^11.0.16",
+    "@nestjs/common": "^11.1.12",
     "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.11",
+    "@nestjs/core": "^11.1.12",
     "@nestjs/jwt": "^11.0.2",
-    "@nestjs/platform-express": "^11.1.11",
+    "@nestjs/platform-express": "^11.1.12",
     "@repo/ai": "workspace:*",
     "@repo/twofa": "workspace:*",
     "ai": "catalog:",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@nestjs/schematics": "^11.0.9",
-    "@nestjs/testing": "^11.1.11",
+    "@nestjs/testing": "^11.1.12",
     "@repo/typescript-config": "workspace:*",
     "@repo/vitest-config": "workspace:*",
     "@swc/cli": "^0.7.9",
