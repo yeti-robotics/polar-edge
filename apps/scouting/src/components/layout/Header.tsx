@@ -25,7 +25,8 @@ export function Header() {
         <span className="font-mono uppercase text-xs">Polar Edge</span>
         <OrganizationSelector />
       </div>
-      <nav className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
+
+      <nav className="flex items-center gap-4 text-xs font-mono text-muted-foreground mr-90 gap-10">
         <Link className="hover:bg-gray-700 px-4 py-2 hover:text-white" href="/">
           Home
         </Link>
