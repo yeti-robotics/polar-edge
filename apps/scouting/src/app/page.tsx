@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { SignInForm } from "./SignInForm";
+import { Card } from "@repo/ui/components/card";
 
 export default async function Home({
   searchParams,
@@ -30,9 +31,18 @@ export default async function Home({
   }
 
   return (
-    <main className="container mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-4">Welcome to Polar Edge Analytics!</h1>
-      <p>Hello, {session.user.name || session.user.email}!</p>
+    <main className="container mx-auto p-18">
+      <Card>
+        <div className="ml-4">
+          <h1 className="text-2xl font-bold mb-4 ml-4">Welcome to Polar Edge Analytics!</h1>
+          <p className="ml-4">Hello, {session.user.name || session.user.email}!</p>
+        </div>
+      </Card>
+      <div className="gap-4 mt-8">
+        <Card>
+          <h1 className="text-2xl font-bold mb-4 ml-4">Scouting and More </h1>
+        </Card>
+      </div>
     </main>
   );
 }

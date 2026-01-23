@@ -35,7 +35,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+          <Suspense fallback={<div className="text-center"> Loading </div>}>{children}</Suspense>
           <Toaster />
         </ThemeProvider>
       </body>
