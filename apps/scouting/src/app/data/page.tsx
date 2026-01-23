@@ -8,15 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@repo/ui/components/tabs";
-
-
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/tabs";
 
 export function TableDemo() {
   return (
@@ -54,7 +46,7 @@ export function TableDemo() {
           </div>
         </TabsContent>
         <TabsContent value="admin">
-            <Button type="submit">Sign in with Discord</Button>
+          <Button type="submit">Sign in with Discord</Button>
         </TabsContent>
       </Tabs>
     </div>

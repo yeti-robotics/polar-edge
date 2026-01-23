@@ -1,8 +1,8 @@
+import { Card } from "@repo/ui/components/card";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { SignInForm } from "./SignInForm";
-import { Card } from "@repo/ui/components/card";
 
 export default async function Home({
   searchParams,
