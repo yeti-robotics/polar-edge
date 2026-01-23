@@ -5,11 +5,9 @@ import { auth } from "@/lib/auth";
 
 async function signIn() {
   "use server";
-  const callbackURL = "/";
   const response = await auth.api.signInSocial({
     body: {
       provider: "discord",
-      callbackURL,
     },
     headers: await headers(),
   });
@@ -23,6 +21,8 @@ export function SignInForm() {
   return (
     <form action={signIn}>
       <Button type="submit">Sign in with Discord</Button>
+      <br />
+      
     </form>
   );
 }
