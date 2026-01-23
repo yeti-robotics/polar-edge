@@ -51,7 +51,7 @@ export function PitFormP1() {
           <div className="flex gap-6">
             {["Bump", "Trench"].map((type) => (
               <Label key={type}>
-                <input type="checkbox" name="build" value={type} />
+                <Checkbox id={`build-${type}`} name="build" value={type} />
                 {type}
               </Label>
             ))}
@@ -70,7 +70,7 @@ export function PitFormP2() {
         <div className="flex gap-6">
           {["Tank", "Mecanum", "Swerve", "Other"].map((type) => (
             <Label key={type}>
-              <input type="checkbox" name="drivetrain" value={type} />
+              <Checkbox id={`drivetrain-${type}`} name="drivetrain" value={type} />
               {type}
             </Label>
           ))}
