@@ -23,7 +23,7 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-function getRoleBadgeVariant(role: string): "default" | "secondary" | "outline" {
+export function getRoleBadgeVariant(role: string): "default" | "secondary" | "outline" {
   switch (role) {
     case "owner":
       return "default";
