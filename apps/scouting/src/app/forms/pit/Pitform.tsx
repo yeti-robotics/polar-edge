@@ -2,7 +2,6 @@ import { Card } from "@repo/ui/components/card";
 import { Checkbox } from "@repo/ui/components/checkbox";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
-import { Check } from "lucide-react";
 
 export function PitForm() {
   return (
