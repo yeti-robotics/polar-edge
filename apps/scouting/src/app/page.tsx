@@ -1,8 +1,11 @@
+// biome-ignore assist/source/organizeImports: <exlanation>
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Card } from "@repo/ui/components/card";
 import { auth } from "@/lib/auth";
 import { SignInForm } from "./SignInForm";
-import { Card } from "@repo/ui/components/card";
+
+
 
 export default async function Home({
   searchParams,
@@ -32,15 +35,7 @@ export default async function Home({
 
   return (
     <main className="container mx-auto p-8">
-          <div className="h-22 w-22">
-            {" "}
-            <img
-              className="h-18 w-18 text-primary rounded-xl"
-              src="/yeti.png"
-              alt="Yeti Logo"
-            />{" "}
-          </div>
-          <div></div>
+          
       <Card>
         <h1 className="text-2xl font-bold mb-4">Welcome to Polar Edge Analytics!</h1>
         <p>Hello, {session.user.name || session.user.email}!</p>

@@ -21,7 +21,6 @@ export function SignInForm() {
   return (
     <form action={signIn}>
       <Button type="submit">Sign in with Discord</Button>
-      <br />
       
     </form>
   );

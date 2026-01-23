@@ -35,9 +35,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className=""> 
           <Header />
-          </div>
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
           <Toaster />
         </ThemeProvider>
