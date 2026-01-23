@@ -1,57 +1,37 @@
-"use client";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { SignInForm } from "./SignInForm";
+import { Card } from "@repo/ui/components/card";
 
-import { Button } from "@repo/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/card";
-import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect?: string }>;
+}) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const params = await searchParams;
+  const redirectUrl = params.redirect;
 
-
-
-export default function FrontendOnlyForm() {
-  const { data: session, isPending } = authClient.useSession();
-
-  // If still loading, show a simple placeholder
-  if (isPending) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Loading...</div>
-      </div>
-    );
-  }
-
-  // If not signed in, show a prompt to sign in
   if (!session?.user) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8">
-        <Card className="max-w-xl w-full">
-          <CardHeader>
-            <CardTitle className="text-2xl">Welcome to Polar Edge</CardTitle>
-            <CardDescription>Please sign in to access scouting tools and results.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3 justify-center">
-              <Link href="/">
-                <Button variant="ghost">Go to Sign In</Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+        <div className="flex flex-col items-center gap-4">
+          <h1 className="text-2xl font-bold">Welcome to Polar Edge Analytics</h1>
+          <p className="text-muted-foreground">Sign in with Discord to continue</p>
+          <SignInForm />
+        </div>
+      </main>
     );
   }
 
-  const user = session.user;
+  // If there's a redirect URL and user is signed in, redirect them
+  if (redirectUrl) {
+    redirect(decodeURIComponent(redirectUrl));
+  }
 
   return (
-    <main className="min-h-screen p-8">
-      <div className="mx-auto max-w-130xl">
-        <div className="flex items-center gap-4 mb-10">
+    <main className="container mx-auto p-8">
           <div className="h-22 w-22">
             {" "}
             <img
@@ -60,35 +40,11 @@ export default function FrontendOnlyForm() {
               alt="Yeti Logo"
             />{" "}
           </div>
-          <div>
-            <h1 className="text-2xl font-mono">Welcome back, {user.name ?? user.email}!</h1>
-            <p className="text-xs font-mono mt-3">Welcome to Polar Edge Analytics</p>
-
-           
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <div className="text-center w-full text-lg font-mono ">
-                <CardTitle>Your Profile</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-start gap-2">
-                <div className="font-medium">{user.name ?? user.email}</div>
-                <div className="text-sm text-muted-foreground">{user.email}</div>
-                <div className="mt-3 w-full">
-                  <Link href="/profile">
-                    <Button>View Profile</Button>
-                  </Link>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+          <div></div>
+      <Card>
+        <h1 className="text-2xl font-bold mb-4">Welcome to Polar Edge Analytics!</h1>
+        <p>Hello, {session.user.name || session.user.email}!</p>
+      </Card>
     </main>
   );
 }
