@@ -6,9 +6,9 @@ import { Label } from "@repo/ui/components/label";
 export function PitForm() {
   return (
     <Card className="p-6">
-      <form className="space-y-6 ">
+      <form className="space-y-6">
         <section className="space-y-4">
-          <h2 className="text-lg text-neutral-200  ">Robot Dimensions</h2>
+          <h2 className="text-lg text-neutral-200">Robot Dimensions</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1">
@@ -39,7 +39,7 @@ export function PitForm() {
           <div className="flex gap-6">
             {["L1", "L2", "L3"].map((level) => (
               <Label key={level} htmlFor={`climb-${level}`}>
-                <Checkbox id={`climb-${level}`} value={level} />
+                <Checkbox id={`climb-${level}`} name="levels" value={level} />
                 {level}
               </Label>
             ))}
@@ -51,7 +51,7 @@ export function PitForm() {
           <div className="flex gap-6">
             {["Bump", "Trench"].map((type) => (
               <Label key={type}>
-                <Checkbox id={`build-${type}`} name="build" value={type} />
+                <Checkbox id={`build-${type}`} name="bump/trench" value={type} />
                 {type}
               </Label>
             ))}
