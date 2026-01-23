@@ -2,8 +2,9 @@ import { Card } from "@repo/ui/components/card";
 import { Checkbox } from "@repo/ui/components/checkbox";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
+import { Check } from "lucide-react";
 
-export function PitFormP1() {
+export function PitForm() {
   return (
     <Card className="p-6">
       <form className="space-y-6 ">
@@ -60,31 +61,4 @@ export function PitFormP1() {
       </form>
     </Card>
   );
-}
-
-export function PitFormP2() {
-  <Card>
-    <form action="">
-      <section className="space-y-3">
-        <h2 className="text-lg text-neutral-200">Drivetrain Type</h2>
-        <div className="flex gap-6">
-          {["Tank", "Mecanum", "Swerve", "Other"].map((type) => (
-            <Label key={type}>
-              <Checkbox id={`drivetrain-${type}`} name="drivetrain" value={type} />
-              {type}
-            </Label>
-          ))}
-        </div>
-      </section>
-      <section className="space-y-3">
-        <h2 className="text-lg text-neutral-200">Scoring Capabilities</h2>
-        <Input
-          type="text"
-          id="scoring-capabilities"
-          name="scoring-capabilities"
-          placeholder="Enter scoring capabilities"
-        />
-      </section>
-    </form>
-  </Card>;
 }
