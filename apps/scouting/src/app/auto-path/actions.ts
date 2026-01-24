@@ -12,7 +12,6 @@ import { autoPath, event, match, team } from "@/lib/database/schema";
 const createAutoPathSchema = z.object({
   teamNumber: z.number().int().positive(),
   name: z.string().min(1).max(255),
-  matchId: z.string().min(1).max(32),
   pathData: z.object({
     points: z.array(
       z.object({
@@ -49,13 +48,6 @@ export async function createAutoPath(data: z.infer<typeof createAutoPathSchema>)
 
   if (teamExists.length === 0) {
     throw new Error("Team not found");
-  }
-
-  // Verify match exists
-  const matchExists = await db.select().from(match).where(eq(match.id, validated.matchId)).limit(1);
-
-  if (matchExists.length === 0) {
-    throw new Error("Match not found");
   }
 
   const id = nanoid();
