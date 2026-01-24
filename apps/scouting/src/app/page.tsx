@@ -38,11 +38,6 @@ export default async function Home({
           <p className="ml-4">Hello, {session.user.name || session.user.email}!</p>
         </div>
       </Card>
-      <div className="gap-4 mt-8">
-        <Card>
-          <h1 className="text-2xl font-bold mb-4 ml-4">Scouting and More </h1>
-        </Card>
-      </div>
     </main>
   );
 }
