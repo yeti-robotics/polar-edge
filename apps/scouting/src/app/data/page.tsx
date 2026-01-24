@@ -1,56 +1,190 @@
-import { Button } from "@repo/ui/components/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import { Badge } from "@repo/ui/components/badge";
+import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/tabs";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { auth } from "@/lib/auth";
 
-export function TableDemo() {
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+function getRoleBadgeVariant(role: string): "default" | "secondary" | "outline" {
+  switch (role) {
+    case "owner":
+      return "default";
+    case "admin":
+      return "secondary";
+    default:
+      return "outline";
+  }
+}
+
+function formatDate(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+function LoadingTable() {
   return (
-    <div className="justify-center">
-      <Tabs defaultValue="data" className="w-[400px]">
-        <div className="justify-center items-center mt-4 font-mono">
-          <TabsList>
-            <TabsTrigger value="data"> Scouting Data</TabsTrigger>
-            <TabsTrigger value="admin"> Admin Panel </TabsTrigger>
-          </TabsList>
-        </div>
-        <TabsContent value="data">
-          <div className="size-310 mt-6">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[140px]"> Team Name </TableHead>
-                  <TableHead> Balls Scored </TableHead>
-                  <TableHead> Offense or Defense Driven </TableHead>
-                  <TableHead className="text-right"> Alliance? </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium"> </TableCell>
-                </TableRow>
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={3}>Total</TableCell>
-                  <TableCell className="text-right"> </TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </div>
-        </TabsContent>
-        <TabsContent value="admin">
-          <Button type="submit">Sign in with Discord</Button>
-        </TabsContent>
-      </Tabs>
-    </div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Member</TableHead>
+          <TableHead>Role</TableHead>
+          <TableHead>Joined</TableHead>
+          <TableHead> Scouting Form </TableHead>
+        </TableRow>
+      </TableHeader>
+
+      <TableBody>
+        {["a", "b", "c", "d", "e"].map((id) => (
+          <TableRow key={id}>
+            <TableCell>
+              <div className="flex items-center gap-1">
+                <Skeleton className="size-9 rounded-full" />
+                <div className="flex flex-col gap-1">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-48" />
+                </div>
+              </div>
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-5 w-16 rounded-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-24" />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
-export default TableDemo;
+async function MembersContent() {
+  const requestHeaders = await headers();
+
+  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+  const activeOrganization = activeMember?.organizationId;
+
+  // Only admins and owners can view this page
+  if (activeMember?.role !== "admin" && activeMember?.role !== "owner") {
+    redirect("/");
+  }
+
+  // Fetch organization details and members in parallel
+  const [_organization, membersResponse] = await Promise.all([
+    auth.api.getFullOrganization({
+      query: { organizationId: activeOrganization },
+      headers: requestHeaders,
+    }),
+    auth.api.listMembers({
+      query: {
+        organizationId: activeOrganization,
+        sortBy: "createdAt",
+        sortDirection: "asc",
+      },
+      headers: requestHeaders,
+    }),
+  ]);
+
+  const members = membersResponse?.members ?? [];
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Member</TableHead>
+          <TableHead>Role</TableHead>
+          <TableHead>Joined</TableHead>
+          <TableHead> Scouting Form </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {members.map((memberData) => (
+          <TableRow key={memberData.id}>
+            <TableCell>
+              <div className="flex items-center gap-3">
+                <Avatar className="size-9">
+                  <AvatarImage
+                    src={memberData.user.image ?? undefined}
+                    alt={memberData.user.name}
+                  />
+                  <AvatarFallback className="text-xs">
+                    {getInitials(memberData.user.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="font-medium">{memberData.user.name}</span>
+                  <span className="text-sm text-muted-foreground">{memberData.user.email}</span>
+                </div>
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge variant={getRoleBadgeVariant(memberData.role)} className="capitalize">
+                {memberData.role}
+              </Badge>
+            </TableCell>
+            <TableCell className="text-muted-foreground">
+              {formatDate(new Date(memberData.createdAt))}
+            </TableCell>
+            <TableCell> User Form Here </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+export default function MembersPage() {
+  return (
+    <div>
+      <div className="grid grid-cols-[220px_1fr] h-[calc(100vh-64px)] ">
+        <aside className="sticky top-0 border-r z-40">
+          <div className="flex flex-col gap-2 p-4">
+            <span className="text-xs text-muted-foreground uppercase font-mono">Scouting Data</span>
+            <Link className="text-sm" href="/data">
+              Data
+            </Link>
+            <Link className="text-sm" href="/data/graphs">
+              Graphs
+            </Link>
+          </div>
+        </aside>
+
+        <main>
+          <main className="container mx-auto max-w-5xl px-4 py-8">
+            <div className="mb-8">
+              <h1 className="text-3xl tracking-tight"> Scouting Data </h1>
+              <p className="mt-2 text-sm text-muted-foreground">
+                View Scouting Data from past compettitions
+              </p>
+            </div>
+          </main>
+          <Suspense fallback={<LoadingTable />}>
+            <MembersContent />
+          </Suspense>
+        </main>
+      </div>
+    </div>
+  );
+}

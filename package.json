@@ -18,10 +18,5 @@
     "turbo": "^2.7.5",
     "typescript": "catalog:",
     "vitest": "catalog:"
-  },
-  "workspaces": ["apps/*", "packages/*"],
-  "packageManager": "pnpm@10.28.1",
-  "dependencies": {
-    "@changesets/cli": "^2.29.5"
   }
 }
