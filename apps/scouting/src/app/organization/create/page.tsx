@@ -39,8 +39,8 @@ export default function CreateOrganizationPage() {
     <main className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4">
       {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-1/4 -top-1/4 size-[600px] rounded-full bg-linear-to-br from-yeti-400/20 to-transparent blur-3xl" />
-        <div className="absolute -bottom-1/4 -right-1/4 size-[600px] rounded-full bg-linear-to-tl from-yeti-600/15 to-transparent blur-3xl" />
+        <div className="absolute -left-1/4 -top-1/4 size-150 rounded-full bg-linear-to-br from-yeti-400/20 to-transparent blur-3xl" />
+        <div className="absolute -bottom-1/4 -right-1/4 size-150 rounded-full bg-linear-to-tl from-yeti-600/15 to-transparent blur-3xl" />
       </div>
 
       {/* Grid pattern overlay */}
