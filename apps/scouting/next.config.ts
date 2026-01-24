@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     "/": ["lib/database/drizzle/**"],
   },
   cacheComponents: true,
-    images: {
+  images: {
     remotePatterns: [
       {
         protocol: "https",

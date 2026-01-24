@@ -1,8 +1,7 @@
 "use client";
 import { Button } from "@repo/ui/components/button";
-import Image from "next/image"
+import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
-
 
 export default function ProfilePage() {
   function handleLogOut() {
@@ -75,10 +74,7 @@ export default function ProfilePage() {
         <h1 className="text-2xl font-bold mb-4">Settings</h1>
         <div className="flex flex-col gap-4"></div>
 
-        <Button
-        >
-          Save Settings
-        </Button>
+        <Button>Save Settings</Button>
       </section>
     </main>
   );

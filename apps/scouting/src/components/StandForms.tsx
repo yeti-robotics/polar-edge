@@ -13,5 +13,4 @@ function StandForm() {
     </form>
   );
 }
-
 export default StandForm;
