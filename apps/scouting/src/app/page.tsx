@@ -1,11 +1,7 @@
-// biome-ignore assist/source/organizeImports: <exlanation>
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { Card } from "@repo/ui/components/card";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { SignInForm } from "./SignInForm";
-
-
 
 export default async function Home({
   searchParams,
@@ -13,8 +9,6 @@ export default async function Home({
   searchParams: Promise<{ redirect?: string }>;
 }) {
   const session = await auth.api.getSession({ headers: await headers() });
-  const params = await searchParams;
-  const redirectUrl = params.redirect;
 
   if (!session?.user) {
     return (
@@ -28,14 +22,8 @@ export default async function Home({
     );
   }
 
-  // If there's a redirect URL and user is signed in, redirect them
-  if (redirectUrl) {
-    redirect(decodeURIComponent(redirectUrl));
-  }
-
   return (
     <main className="container mx-auto p-8">
-          
       <Card>
         <h1 className="text-2xl font-bold mb-4">Welcome to Polar Edge Analytics!</h1>
         <p>Hello, {session.user.name || session.user.email}!</p>

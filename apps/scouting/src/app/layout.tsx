@@ -28,7 +28,6 @@ export default function RootLayout({
       <body
         className={`${libreFranklin.variable} bg-background dark:prose-invert min-h-screen font-sans`}
       >
-        
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -39,7 +38,6 @@ export default function RootLayout({
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
           <Toaster />
         </ThemeProvider>
-        
       </body>
     </html>
   );
