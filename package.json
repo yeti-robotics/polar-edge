@@ -9,8 +9,8 @@
     "test": "turbo run test",
     "db:start": "turbo run db:start",
     "release": "pnpm build --filter=./packages/* && changeset publish",
-    "dev:scouting": "turbo run dev --filter=@app/web",
-    "dev:attendance": "pnpm turbo run dev --filter=@app/plus"
+    "dev:scouting": "turbo run dev --filter=scouting",
+    "dev:basecamp": "turbo run dev --filter=basecamp --filter=basecamp-fe"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
