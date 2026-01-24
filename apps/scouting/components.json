@@ -12,12 +12,9 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "@/components",
-    "utils": "@repo/ui/lib/utils",
-    "ui": "@repo/ui/components",
+    "hooks": "@/hooks",
     "lib": "@/lib",
-    "hooks": "@/hooks"
-  },
-  "registries": {
-    "@aceternity": "https://ui.aceternity.com/registry/{name}.json"
+    "utils": "@repo/ui/lib/utils",
+    "ui": "@repo/ui/components"
   }
 }

@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 import { headers } from "next/headers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
@@ -110,81 +109,58 @@ async function MembersContent() {
   const members = membersResponse?.members ?? [];
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Member</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Joined</TableHead>
-          <TableHead> Scouting Form </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {members.map((memberData) => (
-          <TableRow key={memberData.id}>
-            <TableCell>
-              <div className="flex items-center gap-3">
-                <Avatar className="size-9">
-                  <AvatarImage
-                    src={memberData.user.image ?? undefined}
-                    alt={memberData.user.name}
-                  />
-                  <AvatarFallback className="text-xs">
-                    {getInitials(memberData.user.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <span className="font-medium">{memberData.user.name}</span>
-                  <span className="text-sm text-muted-foreground">{memberData.user.email}</span>
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant={getRoleBadgeVariant(memberData.role)} className="capitalize">
-                {memberData.role}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-muted-foreground">
-              {formatDate(new Date(memberData.createdAt))}
-            </TableCell>
-            <TableCell> User Form Here </TableCell>
+    <div className="overflow-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Member</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Joined</TableHead>
+            <TableHead> Scouting Form </TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {members.map((memberData) => (
+            <TableRow key={memberData.id}>
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <Avatar className="size-9">
+                    <AvatarImage
+                      src={memberData.user.image ?? undefined}
+                      alt={memberData.user.name}
+                    />
+                    <AvatarFallback className="text-xs">
+                      {getInitials(memberData.user.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{memberData.user.name}</span>
+                    <span className="text-sm text-muted-foreground">{memberData.user.email}</span>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <Badge variant={getRoleBadgeVariant(memberData.role)} className="capitalize">
+                  {memberData.role}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {formatDate(new Date(memberData.createdAt))}
+              </TableCell>
+              <TableCell> Compare Data To Be Added </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
-
 export default function MembersPage() {
   return (
-    <div>
-      <div className="grid grid-cols-[220px_1fr] h-[calc(100vh-64px)] ">
-        <aside className="sticky top-0 border-r z-40">
-          <div className="flex flex-col gap-2 p-4">
-            <span className="text-xs text-muted-foreground uppercase font-mono">Scouting Data</span>
-            <Link className="text-sm" href="/data">
-              Data
-            </Link>
-            <Link className="text-sm" href="/data/graphs">
-              Graphs
-            </Link>
-          </div>
-        </aside>
-
-        <main>
-          <main className="container mx-auto max-w-5xl px-4 py-8">
-            <div className="mb-8">
-              <h1 className="text-3xl tracking-tight"> Scouting Data </h1>
-              <p className="mt-2 text-sm text-muted-foreground">
-                View Scouting Data from past compettitions
-              </p>
-            </div>
-          </main>
-          <Suspense fallback={<LoadingTable />}>
-            <MembersContent />
-          </Suspense>
-        </main>
-      </div>
-    </div>
+    <main className="container mx-auto px-4 py-6 mt-4 overflow-hidden">
+      <Suspense fallback={<LoadingTable />}>
+        <MembersContent />
+      </Suspense>
+    </main>
   );
 }
