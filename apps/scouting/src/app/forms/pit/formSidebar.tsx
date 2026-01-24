@@ -9,7 +9,7 @@ export function FormSidebar() {
           Pit Form
         </Link>
         <Link className="text-sm" href="/form/stand">
-          {/* It will eventually be the stand form page */}
+          {/* It will eventually be the stand form page for now this is empty */}
           Stand Form
         </Link>
       </div>
