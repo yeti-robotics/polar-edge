@@ -79,35 +79,7 @@ function LoadingTable() {
   );
 }
 
-async function MembersContent() {
-  const requestHeaders = await headers();
-
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-  const activeOrganization = activeMember?.organizationId;
-
-  // Only admins and owners can view this page
-  if (activeMember?.role !== "admin" && activeMember?.role !== "owner") {
-    redirect("/");
-  }
-
-  // Fetch organization details and members in parallel
-  const [_organization, membersResponse] = await Promise.all([
-    auth.api.getFullOrganization({
-      query: { organizationId: activeOrganization },
-      headers: requestHeaders,
-    }),
-    auth.api.listMembers({
-      query: {
-        organizationId: activeOrganization,
-        sortBy: "createdAt",
-        sortDirection: "asc",
-      },
-      headers: requestHeaders,
-    }),
-  ]);
-
-  const members = membersResponse?.members ?? [];
-
+async function DataContent() {
   return (
     <div className="overflow-auto">
       <Table>
@@ -119,38 +91,7 @@ async function MembersContent() {
             <TableHead> Scouting Form </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {members.map((memberData) => (
-            <TableRow key={memberData.id}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <Avatar className="size-9">
-                    <AvatarImage
-                      src={memberData.user.image ?? undefined}
-                      alt={memberData.user.name}
-                    />
-                    <AvatarFallback className="text-xs">
-                      {getInitials(memberData.user.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{memberData.user.name}</span>
-                    <span className="text-sm text-muted-foreground">{memberData.user.email}</span>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant={getRoleBadgeVariant(memberData.role)} className="capitalize">
-                  {memberData.role}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {formatDate(new Date(memberData.createdAt))}
-              </TableCell>
-              <TableCell> Compare Data To Be Added </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        <TableBody></TableBody>
       </Table>
     </div>
   );
@@ -159,7 +100,7 @@ export default function MembersPage() {
   return (
     <main className="container mx-auto px-4 py-6 mt-4 overflow-hidden">
       <Suspense fallback={<LoadingTable />}>
-        <MembersContent />
+        <DataContent />
       </Suspense>
     </main>
   );
