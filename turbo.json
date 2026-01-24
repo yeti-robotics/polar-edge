@@ -14,6 +14,10 @@
     "test": {
       "dependsOn": ["^build"]
     },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "cache": true
+    },
     "dev": {
       "persistent": true,
       "cache": false,

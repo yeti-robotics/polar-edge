@@ -20,7 +20,8 @@
     "dev": "tsdown --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "generate:types": "openapi-typescript https://www.thebluealliance.com/swagger/api_v3.json -o ./src/generated/index.ts"
+    "generate:types": "openapi-typescript https://www.thebluealliance.com/swagger/api_v3.json -o ./src/generated/index.ts",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
