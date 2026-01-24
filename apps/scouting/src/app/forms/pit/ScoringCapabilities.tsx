@@ -11,7 +11,7 @@ export function ScoringCapabilities() {
           <h2 className="text-lg text-neutral-200">Drivetrain Type</h2>
           <div className="flex gap-6">
             {["Tank", "Mecanum", "Swerve", "Other"].map((type) => (
-              <Label key={type}>
+              <Label key={type} htmlFor={`drivetrain-${type}`}>
                 <Checkbox id={`drivetrain_${type}`} name={`drivetrain-${type}`} value={type} />
                 {type}
               </Label>
