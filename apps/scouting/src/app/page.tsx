@@ -5,6 +5,18 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { SignInForm } from "./SignInForm";
 
+async function AdminLink() {
+  const requestHeaders = await headers();
+  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+  if (activeMember?.role === "admin" || activeMember?.role === "owner") {
+    return (
+      <Link href="/organization/create">
+        <Button> Create Organization </Button>
+      </Link>
+    );
+  }
+}
+
 export default async function Home({
   searchParams,
 }: {
@@ -36,9 +48,7 @@ export default async function Home({
       <h1 className="text-2xl font-bold mb-4">Welcome to Polar Edge Analytics!</h1>
       <p>Hello, {session.user.name || session.user.email}!</p>
       <div>
-        <Link href="/organization/create">
-          <Button> Create Organization </Button>
-        </Link>
+        <AdminLink />
       </div>
     </main>
   );
