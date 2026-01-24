@@ -2,8 +2,8 @@ import { boolean, index, numeric, pgTable, smallint, timestamp, uuid } from "dri
 import { phaseEnum } from "../types/phase-enum";
 import { standForm } from "./stand_form";
 
-export const climbs = pgTable(
-  "climbs",
+export const climb = pgTable(
+  "climb",
   {
     id: uuid("id").primaryKey().defaultRandom(),
 
@@ -19,7 +19,6 @@ export const climbs = pgTable(
     climbPhase: phaseEnum("climb_phase").notNull(),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (t) => [index("idx_climbs_stand_form").on(t.standFormId)]
 );

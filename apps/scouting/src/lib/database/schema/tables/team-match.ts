@@ -10,7 +10,6 @@ import {
   timestamp,
   unique,
   uuid,
-  varchar,
 } from "drizzle-orm/pg-core";
 import { allianceEnum } from "../types/alliance-enum";
 import { event } from "./event";

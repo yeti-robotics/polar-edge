@@ -18,7 +18,6 @@ export const cycle = pgTable(
     dumpDuration: numeric("dump_duration", { precision: 12, scale: 6 }).notNull(),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (t) => [
     index("idx_cycle_stand_form").on(t.standFormId),
