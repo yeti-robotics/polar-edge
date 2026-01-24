@@ -2,7 +2,7 @@ import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
 import { SignInForm } from "./SignInForm";
@@ -10,8 +10,9 @@ import { SignInForm } from "./SignInForm";
 async function AllowSuperPerms() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user || !isSuperAdmin(session.user.name)) {
-    return <div> </div>;
+    return null;
   }
+
   return (
     <div>
       <Link href="/organization/create">
@@ -21,14 +22,8 @@ async function AllowSuperPerms() {
   );
 }
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ redirect?: string }>;
-}) {
+export default async function Home() {
   const session = await auth.api.getSession({ headers: await headers() });
-  const params = await searchParams;
-  const redirectUrl = params.redirect;
 
   if (!session?.user) {
     return (
@@ -40,11 +35,6 @@ export default async function Home({
         </div>
       </main>
     );
-  }
-
-  // If there's a redirect URL and user is signed in, redirect them
-  if (redirectUrl) {
-    redirect(decodeURIComponent(redirectUrl));
   }
 
   return (
