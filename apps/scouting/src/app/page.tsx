@@ -1,4 +1,6 @@
+import { Button } from "@repo/ui/components/button";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { SignInForm } from "./SignInForm";
@@ -33,6 +35,11 @@ export default async function Home({
     <main className="container mx-auto p-8">
       <h1 className="text-2xl font-bold mb-4">Welcome to Polar Edge Analytics!</h1>
       <p>Hello, {session.user.name || session.user.email}!</p>
+      <div>
+        <Link href="/organization/create">
+          <Button> Create Organization </Button>
+        </Link>
+      </div>
     </main>
   );
 }
