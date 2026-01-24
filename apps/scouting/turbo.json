@@ -1,18 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
-  "globalEnv": ["NODE_ENV"],
+  "extends": ["//"],
   "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
-    },
-    "//#lint": {},
-    "//#lint:fix": {
+    "db:start": {
       "cache": false
     },
-    "test": {
-      "dependsOn": ["^build"]
+    "db:generate": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:studio": {
+      "cache": false
     },
     "dev": {
       "persistent": true,
@@ -23,7 +23,9 @@
         ".env.local",
         ".env.development",
         ".env"
-      ]
+      ],
+      "dependsOn": ["db:start"]
     }
   }
 }
+
