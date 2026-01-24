@@ -35,8 +35,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml', 'turbo.json', '**/package.json') }}
           restore-keys: |
+            ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml') }}-
             ${{ runner.os }}-turbo-
 
       - name: Setup Node.js environment
@@ -49,4 +50,4 @@ jobs:
         run: pnpm install
 
       - name: Lint, format, test, and build
-        run: pnpm turbo run lint build test --affected
+        run: pnpm turbo run lint build test typecheck --affected

@@ -69,7 +69,7 @@ async function AutoPathsContent() {
       <TableHeader>
         <TableRow>
           <TableHead>Team</TableHead>
-          <TableHead>Match</TableHead>
+          <TableHead>Name</TableHead>
           <TableHead>L1 Climb</TableHead>
           <TableHead>Created</TableHead>
           <TableHead>Actions</TableHead>
@@ -86,7 +86,7 @@ async function AutoPathsContent() {
           paths.map((path) => (
             <TableRow key={path.id}>
               <TableCell className="font-medium">Team {path.teamNumber}</TableCell>
-              <TableCell>{path.matchId}</TableCell>
+              <TableCell>{path.name}</TableCell>
               <TableCell>
                 {path.hasL1Climb ? (
                   <Badge variant="default">Yes</Badge>

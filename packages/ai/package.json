@@ -4,27 +4,18 @@
   "description": "",
   "private": true,
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
+    ".": "./src/index.ts"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch"
+    "check-types": "tsc --noEmit",
+    "typecheck": "pnpm check-types"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.28.0",
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
-    "tsdown": "catalog:"
+    "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.13"

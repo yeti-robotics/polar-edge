@@ -1,1 +1,0 @@
-ALTER TABLE "match" ADD CONSTRAINT "match_comp_level_set_number_match_number_event_key_unique" UNIQUE("comp_level","set_number","match_number","event_key");

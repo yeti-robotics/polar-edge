@@ -7,11 +7,11 @@ import { z } from "zod";
 import type { PathData } from "@/components/auto-path/PathCanvas";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { autoPath, match, team } from "@/lib/database/schema";
+import { autoPath, event, match, team } from "@/lib/database/schema";
 
 const createAutoPathSchema = z.object({
   teamNumber: z.number().int().positive(),
-  matchId: z.string().min(1).max(32),
+  name: z.string().min(1).max(255),
   pathData: z.object({
     points: z.array(
       z.object({
@@ -50,24 +50,20 @@ export async function createAutoPath(data: z.infer<typeof createAutoPathSchema>)
     throw new Error("Team not found");
   }
 
-  // Verify match exists
-  const matchExists = await db.select().from(match).where(eq(match.id, validated.matchId)).limit(1);
-
-  if (matchExists.length === 0) {
-    throw new Error("Match not found");
-  }
-
   const id = nanoid();
+
+  if (!activeMember) {
+    throw new Error("No active member");
+  }
 
   await db.insert(autoPath).values({
     id,
+    name: validated.name,
     teamNumber: validated.teamNumber,
-    matchId: validated.matchId,
     pathData: validated.pathData as unknown as Record<string, unknown>,
     hasL1Climb: validated.hasL1Climb,
     fieldImageUrl: validated.fieldImageUrl ?? null,
-    createdById: session.user.id,
-    organizationId: activeOrganization,
+    createdByMemberId: activeMember.id,
   });
 
   return { id };
@@ -89,14 +85,10 @@ export async function getAutoPaths(filters?: {
     throw new Error("No active organization");
   }
 
-  const conditions = [eq(autoPath.organizationId, activeOrganization)];
+  const conditions = [];
 
   if (filters?.teamNumber) {
     conditions.push(eq(autoPath.teamNumber, filters.teamNumber));
-  }
-
-  if (filters?.matchId) {
-    conditions.push(eq(autoPath.matchId, filters.matchId));
   }
 
   const paths = await db
@@ -123,11 +115,7 @@ export async function getAutoPath(id: string) {
     throw new Error("No active organization");
   }
 
-  const paths = await db
-    .select()
-    .from(autoPath)
-    .where(and(eq(autoPath.id, id), eq(autoPath.organizationId, activeOrganization)))
-    .limit(1);
+  const paths = await db.select().from(autoPath).where(eq(autoPath.id, id)).limit(1);
 
   const path = paths[0];
   if (!path) {
@@ -156,11 +144,7 @@ export async function updateAutoPath(
   }
 
   // Verify ownership
-  const existing = await db
-    .select()
-    .from(autoPath)
-    .where(and(eq(autoPath.id, id), eq(autoPath.organizationId, activeOrganization)))
-    .limit(1);
+  const existing = await db.select().from(autoPath).where(eq(autoPath.id, id)).limit(1);
 
   if (existing.length === 0 || !existing[0]) {
     throw new Error("Auto path not found");
@@ -170,9 +154,6 @@ export async function updateAutoPath(
 
   if (data.teamNumber !== undefined) {
     updateData.teamNumber = data.teamNumber;
-  }
-  if (data.matchId !== undefined) {
-    updateData.matchId = data.matchId;
   }
   if (data.pathData !== undefined) {
     updateData.pathData = data.pathData as unknown as Record<string, unknown>;
@@ -201,9 +182,7 @@ export async function deleteAutoPath(id: string) {
     throw new Error("No active organization");
   }
 
-  await db
-    .delete(autoPath)
-    .where(and(eq(autoPath.id, id), eq(autoPath.organizationId, activeOrganization)));
+  await db.delete(autoPath).where(eq(autoPath.id, id));
 
   return { id };
 }
@@ -214,17 +193,26 @@ export async function getTeams() {
   return teams;
 }
 
-export async function getMatches(eventKey?: string) {
-  const conditions = [];
-  if (eventKey) {
-    conditions.push(eq(match.eventKey, eventKey));
+export async function getMatches(eventCode?: string) {
+  if (eventCode) {
+    const matches = await db
+      .select({
+        id: match.id,
+        eventId: match.eventId,
+        matchType: match.matchType,
+        matchNumber: match.matchNumber,
+        redScore: match.redScore,
+        blueScore: match.blueScore,
+      })
+      .from(match)
+      .innerJoin(event, eq(match.eventId, event.id))
+      .where(eq(event.eventCode, eventCode))
+      .orderBy(match.matchNumber);
+
+    return matches;
   }
 
-  const matches = await db
-    .select()
-    .from(match)
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(match.matchNumber);
+  const matches = await db.select().from(match).orderBy(match.matchNumber);
 
   return matches;
 }
