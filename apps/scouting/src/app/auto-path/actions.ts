@@ -115,11 +115,7 @@ export async function getAutoPath(id: string) {
     throw new Error("No active organization");
   }
 
-  const paths = await db
-    .select()
-    .from(autoPath)
-    .where(eq(autoPath.id, id))
-    .limit(1);
+  const paths = await db.select().from(autoPath).where(eq(autoPath.id, id)).limit(1);
 
   const path = paths[0];
   if (!path) {
@@ -148,11 +144,7 @@ export async function updateAutoPath(
   }
 
   // Verify ownership
-  const existing = await db
-    .select()
-    .from(autoPath)
-    .where(eq(autoPath.id, id))
-    .limit(1);
+  const existing = await db.select().from(autoPath).where(eq(autoPath.id, id)).limit(1);
 
   if (existing.length === 0 || !existing[0]) {
     throw new Error("Auto path not found");
@@ -220,10 +212,7 @@ export async function getMatches(eventCode?: string) {
     return matches;
   }
 
-  const matches = await db
-    .select()
-    .from(match)
-    .orderBy(match.matchNumber);
+  const matches = await db.select().from(match).orderBy(match.matchNumber);
 
   return matches;
 }
