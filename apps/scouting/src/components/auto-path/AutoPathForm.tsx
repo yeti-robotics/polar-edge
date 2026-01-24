@@ -16,10 +16,7 @@ import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { z } from "zod";
-import {
-  createAutoPath,
-  type getTeams as GetTeamsType,
-} from "@/app/auto-path/actions";
+import { createAutoPath, type getTeams as GetTeamsType } from "@/app/auto-path/actions";
 import { PathCanvas, type PathData } from "./PathCanvas";
 
 const autoPathSchema = z.object({
@@ -226,5 +223,5 @@ export function AutoPathForm({ teams, onSuccess }: AutoPathFormProps) {
         )}
       </Button>
     </form>
-  )
+  );
 }
