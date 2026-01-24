@@ -14,7 +14,21 @@ import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { OrganizationSelector } from "./OrganizationSelector";
 
-export async function Header() {
+async function AdminLink() {
+  const requestHeaders = await headers();
+  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+  if (activeMember?.role === "admin" || activeMember?.role === "owner") {
+    return (
+      <Link className="hover:bg-gray-700 px-4 py-2 hover:text-white" href="/admin">
+        Admin
+      </Link>
+    );
+  }
+}
+
+//map through array to render the links
+
+export function Header() {
   return (
     <header className="sticky top-0 z-50 h-16 px-4 border-b flex items-center  bg-background">
       <div className="flex items-center gap-4">
