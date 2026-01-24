@@ -12,7 +12,7 @@ export function ScoringCapabilities() {
           <div className="flex gap-6">
             {["Tank", "Mecanum", "Swerve", "Other"].map((type) => (
               <Label key={type}>
-                <Checkbox id="drivetrain" name="drivetrain_type" value={type} />
+                <Checkbox id={`drivetrain_${type}`} name={`drivetrain-${type}`} value={type} />
                 {type}
               </Label>
             ))}
