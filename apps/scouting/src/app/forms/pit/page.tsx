@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 "use client";
 
 import { Button } from "@repo/ui/components/button";
@@ -13,7 +12,7 @@ const PAGES = [
 ];
 export default function PitFormPage() {
   const [currentPage, setCurrentPage] = useState(0);
-  const CurrentPageComponent = PAGES[currentPage]!.component;
+  const CurrentPageComponent = PAGES[currentPage]?.component || (() => null);
   const progressPercentage = ((currentPage + 1) / PAGES.length) * 100;
   return (
     <main className="container mx-auto max-w-5xl space-y-4 py-8">
