@@ -12,6 +12,7 @@
     "db:reset": "pnpm db:start && pnpm db:drop && pnpm db:migrate && pnpm db:seed",
     "db:studio": "drizzle-kit studio",
     "build": "next build",
+    "typecheck": "tsc --noEmit",
     "start": "next start",
     "test": "vitest run --passWithNoTests"
   },

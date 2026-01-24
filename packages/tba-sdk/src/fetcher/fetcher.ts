@@ -180,6 +180,7 @@ export class Fetcher {
   private parseMaxAge(cacheControl?: string): number | undefined {
     if (!cacheControl) return undefined;
     const match = cacheControl.match(/max-age=(\d+)/);
-    return match ? Number.parseInt(match[1], 10) : undefined;
+    if (!match || match[1] === undefined) return undefined;
+    return Number.parseInt(match[1], 10);
   }
 }
