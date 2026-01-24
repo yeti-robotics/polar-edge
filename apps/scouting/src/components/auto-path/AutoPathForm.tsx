@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/ui/components/button";
 import { Checkbox } from "@repo/ui/components/checkbox";
+import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import {
   Select,
@@ -15,16 +16,12 @@ import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { z } from "zod";
-import {
-  createAutoPath,
-  type getMatches as GetMatchesType,
-  type getTeams as GetTeamsType,
-} from "@/app/auto-path/actions";
+import { createAutoPath, type getTeams as GetTeamsType } from "@/app/auto-path/actions";
 import { PathCanvas, type PathData } from "./PathCanvas";
 
 const autoPathSchema = z.object({
   teamNumber: z.number().int().positive("Team number is required"),
-  matchId: z.string().min(1, "Match is required"),
+  name: z.string().min(1, "Name is required"),
   pathData: z.object({
     points: z.array(
       z.object({
@@ -40,11 +37,10 @@ const autoPathSchema = z.object({
 
 interface AutoPathFormProps {
   teams: Awaited<ReturnType<typeof GetTeamsType>>;
-  matches: Awaited<ReturnType<typeof GetMatchesType>>;
   onSuccess?: () => void;
 }
 
-export function AutoPathForm({ teams, matches, onSuccess }: AutoPathFormProps) {
+export function AutoPathForm({ teams, onSuccess }: AutoPathFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +49,7 @@ export function AutoPathForm({ teams, matches, onSuccess }: AutoPathFormProps) {
   const form = useForm({
     defaultValues: {
       teamNumber: 0,
-      matchId: "",
+      name: "",
       pathData: {
         points: [] as Array<{ x: number; y: number; timestamp: number }>,
       },
@@ -82,6 +78,7 @@ export function AutoPathForm({ teams, matches, onSuccess }: AutoPathFormProps) {
 
         await createAutoPath({
           ...value,
+          name: value.name ?? "",
           pathData,
           fieldImageUrl: null,
         });
@@ -158,31 +155,21 @@ export function AutoPathForm({ teams, matches, onSuccess }: AutoPathFormProps) {
       </form.Field>
 
       <form.Field
-        name="matchId"
+        name="name"
         validators={{
-          onBlur: z.string().min(1, "Match is required"),
+          onBlur: z.string().min(1, "Name is required"),
         }}
       >
         {(field) => (
           <div className="space-y-2">
-            <Label htmlFor={field.name}>Match</Label>
-            <Select
+            <Label htmlFor={field.name}>Name</Label>
+            <Input
+              id={field.name}
               value={field.state.value}
-              onValueChange={(value) => {
-                field.handleChange(value);
+              onChange={(e) => {
+                field.handleChange(e.currentTarget.value);
               }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a match" />
-              </SelectTrigger>
-              <SelectContent>
-                {matches.map((match) => (
-                  <SelectItem key={match.id} value={match.id}>
-                    {match.compLevel} {match.matchNumber} (Set {match.setNumber})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            />
             {field.state.meta.errors.length > 0 && (
               <p className="text-sm text-destructive">
                 {typeof field.state.meta.errors[0] === "string"

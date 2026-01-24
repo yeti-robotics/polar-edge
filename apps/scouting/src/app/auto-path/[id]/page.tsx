@@ -26,9 +26,7 @@ async function AutoPathDetail({ id }: { id: string }) {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl tracking-tight">Auto Path Details</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Team {path.teamNumber} - Match {path.matchId}
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">Team {path.teamNumber}</p>
           </div>
           <Button variant="outline" asChild>
             <Link href="/auto-path">
@@ -47,10 +45,6 @@ async function AutoPathDetail({ id }: { id: string }) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Team Number</p>
                 <p className="text-lg font-semibold">Team {path.teamNumber}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Match</p>
-                <p className="text-lg font-semibold">{path.matchId}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">L1 Climb</p>

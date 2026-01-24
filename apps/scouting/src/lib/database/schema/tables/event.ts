@@ -1,8 +1,10 @@
-import { date, pgTable, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const event = pgTable("event", {
-  key: varchar("event_key", { length: 16 }).notNull().primaryKey(),
-  eventName: varchar("event_name", { length: 256 }).notNull(),
-  startDate: date("start_date").notNull(),
-  endDate: date("end_date").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventCode: varchar("event_code", { length: 16 }).notNull().unique(),
+  name: text("name").notNull(),
+  startDate: timestamp("start_date", { withTimezone: true }).notNull(),
+  endDate: timestamp("end_date", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
