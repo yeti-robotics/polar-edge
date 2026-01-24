@@ -1,12 +1,16 @@
 export { account } from "./account";
-export { autoPath } from "./auto-paths";
+export { autoPath } from "./auto-path";
+export { climb } from "./climb";
+export { cycle } from "./cycle";
 export { event } from "./event";
 export { invitation } from "./invitation";
 export { match } from "./match";
 export { member } from "./member";
 export { organization } from "./organization";
 export { organizationInviteLink } from "./organization-invite-link";
+export { pitForm } from "./pit-form";
 export { session } from "./session";
+export { standForm } from "./stand_form";
 export { team } from "./team";
 export { teamMatch } from "./team-match";
 export { user } from "./user";
