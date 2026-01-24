@@ -53,6 +53,9 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.5
         version: 2.29.8(@types/node@24.10.9)
+      next:
+        specifier: 'catalog:'
+        version: 16.1.4(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@biomejs/biome':
         specifier: 2.3.11
