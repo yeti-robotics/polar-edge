@@ -22,20 +22,17 @@ export async function Header() {
         <OrganizationSelector />
       </div>
       <div className="ml-40 mt-3 flex justify-center items-center">
-        <nav className="flex gap-12 text-xs font-mono">
-          <Link
-            className="hover:text-white hover:bg-neutral-800 text-fore hover:w-12 hover:h-5"
-            href="/"
-          >
+        <nav className="gap-14 text-xs font-mono inline-flex mt-6">
+          <Link className="hover:text-foreground hover:bg-muted text-fore " href="/">
             Home
           </Link>
-          <Link className="hover:text-white hover:bg-neutral-800" href="/auto-path">
+          <Link className="hover:text-white hover:bg-muted" href="/auto-path">
             Auto Paths
           </Link>
-          <Link className="hover:text-white hover:bg-neutral-800" href="/scouting">
+          <Link className="hover:text-white hover:bg-muted" href="/scouting">
             Scouting
           </Link>
-          <Link className="hover:text-white hover:bg-neutral-800 hover:w-13" href="/results">
+          <Link className="hover:text-white hover:bg-muted" href="/results">
             Data
           </Link>
           <nav />
