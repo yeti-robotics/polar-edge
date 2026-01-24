@@ -15,9 +15,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.0",
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
-    "tsdown": "catalog:"
+    "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.13"

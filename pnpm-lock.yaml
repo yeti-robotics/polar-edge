@@ -30,9 +30,6 @@ catalogs:
     react-dom:
       specifier: 19.2.3
       version: 19.2.3
-    tsdown:
-      specifier: 0.19.0
-      version: 0.19.0
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
@@ -340,12 +337,6 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.10.9
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.19.0(typescript@5.9.3)
 
   packages/tba-sdk:
     dependencies:
