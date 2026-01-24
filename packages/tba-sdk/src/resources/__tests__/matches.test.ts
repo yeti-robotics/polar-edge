@@ -101,7 +101,10 @@ describe("matchesResource", () => {
 
       const result = await matches.getEventMatches(eventKey);
 
-      expect(result[0].year).toBe(2023);
+      const first = result[0];
+      expect(first).toBeDefined();
+      if (!first) return;
+      expect(first.year).toBe(2023);
     });
 
     it("should pass options to fetcher.get", async () => {
@@ -158,7 +161,10 @@ describe("matchesResource", () => {
 
       const result = await matches.getEventMatchesSimple(eventKey);
 
-      expect(result[0].year).toBe(2023);
+      const first = result[0];
+      expect(first).toBeDefined();
+      if (!first) return;
+      expect(first.year).toBe(2023);
     });
 
     it("should pass options to fetcher.get", async () => {
