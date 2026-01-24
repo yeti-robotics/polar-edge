@@ -100,21 +100,19 @@ function getBucket(skillLevel: SkillLevel): number {
 }
 
 function getDumpDuration(skillLevel: SkillLevel): string {
-  // Higher skill = longer durations (dumping more balls: 20-60 for good teams)
-  // Level 1: 1.0-2.5s (5-15 balls), Level 3: 2.5-4.5s (15-30 balls), Level 5: 4.0-8.0s (20-60 balls)
   const ranges = [
-    [1.0, 2.5], // Level 1 - dumping fewer balls
-    [1.5, 3.5], // Level 2
-    [2.5, 4.5], // Level 3
-    [3.5, 6.0], // Level 4 - dumping more balls
-    [4.0, 8.0], // Level 5 - dumping 20-60 balls
+    [20.0, 30.0], // Level 1
+    [12.0, 18.0], // Level 2
+    [4.0, 8.0], // Level 3
+    [3.0, 6.0], // Level 4
+    [2.0, 5.0], // Level 5
   ];
 
   const range = ranges[skillLevel - 1];
   if (!range) {
     const defaultRange = ranges[2];
     if (!defaultRange) {
-      return faker.number.float({ min: 2.5, max: 4.5, fractionDigits: 2 }).toString();
+      return faker.number.float({ min: 4.0, max: 8.0, fractionDigits: 2 }).toString();
     }
     const [min, max] = defaultRange;
     return faker.number.float({ min, max, fractionDigits: 2 }).toString();
@@ -230,7 +228,12 @@ function getComments(skillLevel: SkillLevel): string {
 
 // Pit form helper functions
 function getDrivetrainType(): "tank" | "swerve" | "mecanum" | "other" {
-  const types: Array<"tank" | "swerve" | "mecanum" | "other"> = ["tank", "swerve", "mecanum", "other"];
+  const types: Array<"tank" | "swerve" | "mecanum" | "other"> = [
+    "tank",
+    "swerve",
+    "mecanum",
+    "other",
+  ];
   // 80% or more will be swerve, then tank, then mecanum, then other
   const weights = [0.1, 0.8, 0.07, 0.03];
   const rand = Math.random();
@@ -275,14 +278,22 @@ function getWeight(skillLevel: SkillLevel): number {
   return faker.number.int({ min: range[0], max: range[1] });
 }
 
-function getClimbType(skillLevel: SkillLevel): "sides" | "center" | "left" | "right" | "any" | null {
+function getClimbType(
+  skillLevel: SkillLevel
+): "sides" | "center" | "left" | "right" | "any" | null {
   // Higher skill = more likely to have climb capability
   const climbRates = [0.3, 0.5, 0.7, 0.85, 0.95]; // Probability of having climb
   const hasClimb = Math.random() < (climbRates[skillLevel - 1] ?? 0.7);
-  
+
   if (!hasClimb) return null;
-  
-  const types: Array<"sides" | "center" | "left" | "right" | "any"> = ["sides", "center", "left", "right", "any"];
+
+  const types: Array<"sides" | "center" | "left" | "right" | "any"> = [
+    "sides",
+    "center",
+    "left",
+    "right",
+    "any",
+  ];
   // "any" is most common for good teams, then "sides", then others
   const weights: Array<Array<number>> = [
     [0.1, 0.2, 0.1, 0.1, 0.5], // Level 1
@@ -291,7 +302,7 @@ function getClimbType(skillLevel: SkillLevel): "sides" | "center" | "left" | "ri
     [0.25, 0.35, 0.15, 0.15, 0.1], // Level 4
     [0.3, 0.4, 0.15, 0.15, 0.0], // Level 5
   ];
-  
+
   const weight = weights[skillLevel - 1] ?? weights[2];
   if (!weight) return "sides";
   const rand = Math.random();
