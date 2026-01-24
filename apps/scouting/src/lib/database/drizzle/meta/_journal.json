@@ -8,6 +8,20 @@
       "when": 1769282793445,
       "tag": "0000_mighty_secret_warriors",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769287895640,
+      "tag": "0001_wet_millenium_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769288521288,
+      "tag": "0002_mute_patriot",
+      "breakpoints": true
     }
   ]
 }

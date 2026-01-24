@@ -14,6 +14,13 @@ export const cycle = pgTable(
     phase: phaseEnum("phase").notNull(),
     cycleNumber: smallint("cycle_number").notNull(),
 
+    // balls per second bucket
+    // 0 = 0 (no shot)
+    // 1 = (0, 1.5]
+    // 2 = (1.5, 3]
+    // 3 = (3, 5]
+    // 4 = (5, 7]
+    // 5 = (7, inf)
     bucket: smallint("bucket").notNull(),
     dumpDuration: numeric("dump_duration", { precision: 12, scale: 6 }).notNull(),
 
