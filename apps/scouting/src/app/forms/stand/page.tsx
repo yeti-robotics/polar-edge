@@ -3,7 +3,7 @@
 import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
 import { useState } from "react";
-import FindMatchPopUp from "../PreForm/page";
+import FindMatchPopUp from "../MatchDetails/page";
 import AfterSubmitComment from "./Comments";
 import { EndGame } from "./EndGame";
 import { FormSidebar } from "./formSidebar";
