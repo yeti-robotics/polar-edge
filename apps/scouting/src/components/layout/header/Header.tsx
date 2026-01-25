@@ -3,6 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
@@ -13,6 +14,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
+import { setDefaultOrganizationIfNeeded } from "@/lib/server/organization/default-organization";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
 import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
@@ -77,6 +79,8 @@ async function OrganizationSelectorWrapper() {
     return null;
   }
 
+  await setDefaultOrganizationIfNeeded();
+
   const isUserSuperAdmin = isSuperAdmin(session.user.name);
   return (
     <>
@@ -87,39 +91,42 @@ async function OrganizationSelectorWrapper() {
 }
 
 async function UserAvatar() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const headerList = await headers();
+  const session = await auth.api.getSession({ headers: headerList });
 
   if (!session?.user) {
     return null;
   }
 
   try {
-    const activeMember = await auth.api.getActiveMember({
-      headers: await headers(),
-    });
+    const activeMember = await auth.api.getActiveMember({ headers: headerList });
     const isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
 
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="size-8">
-            <AvatarImage src={activeMember?.user.image}></AvatarImage>
-            <AvatarFallback> {activeMember?.user.name}</AvatarFallback>
+          <Avatar className="size-8 select-none">
+            <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
+            <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" align="end" className="min-w-36">
+        <DropdownMenuContent side="bottom" align="end" className="min-w-36" sideOffset={6}>
+          <DropdownMenuLabel className="text-xs text-muted-foreground py-1">
+            <span>{session.user.name}</span>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItemLink href="/">
-              <HomeIcon className="size-4 text-current" />
+              <HomeIcon className="size-4 text-current" aria-hidden="true" />
               <span>Home</span>
             </DropdownMenuItemLink>
             <DropdownMenuItemLink href="/profile">
-              <UserIcon className="size-4 text-current" />
+              <UserIcon className="size-4 text-current" aria-hidden="true" />
               <span>Profile</span>
             </DropdownMenuItemLink>
             {isAdminOrOwner && (
               <DropdownMenuItemLink href="/admin">
-                <ShieldCheckIcon className="size-4 text-current" />
+                <ShieldCheckIcon className="size-4 text-current" aria-hidden="true" />
                 <span>Admin</span>
               </DropdownMenuItemLink>
             )}

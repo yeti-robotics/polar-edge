@@ -1,7 +1,7 @@
 "use client";
 
 import { DropdownMenuItem } from "@repo/ui/components/dropdown-menu";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 interface DropdownMenuItemLinkProps {
@@ -10,11 +10,9 @@ interface DropdownMenuItemLinkProps {
 }
 
 export function DropdownMenuItemLink({ href, children }: DropdownMenuItemLinkProps) {
-  const router = useRouter();
-
   return (
-    <DropdownMenuItem onClick={() => router.push(href)}>
-      {children}
+    <DropdownMenuItem asChild>
+      <Link href={href}>{children}</Link>
     </DropdownMenuItem>
   );
 }

@@ -41,11 +41,11 @@ export function OrganizationSelector({ isSuperAdmin = false }: OrganizationSelec
       </div>
       {shouldShowDropdown ? (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="secondary" className="size-6 p-0">
-              <ChevronsUpDownIcon className="size-3.5" />
-            </Button>
-          </DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>
+          <Button variant="secondary" className="size-6 p-0" aria-label="Switch organization">
+            <ChevronsUpDownIcon className="size-3.5" aria-hidden="true" />
+          </Button>
+        </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="start" className="w-48">
             {organizations?.map((organization) => (
               <DropdownMenuItem
@@ -67,7 +67,7 @@ export function OrganizationSelector({ isSuperAdmin = false }: OrganizationSelec
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/organization/create" className="flex items-center gap-2">
-                    <PlusIcon className="size-4" />
+                    <PlusIcon className="size-4" aria-hidden="true" />
                     <span className="text-sm">Create Organization</span>
                   </Link>
                 </DropdownMenuItem>
