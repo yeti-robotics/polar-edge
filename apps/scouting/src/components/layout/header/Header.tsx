@@ -60,10 +60,13 @@ export function Header() {
         <Link className="hover:text-foreground text-muted-foreground" href="/auto-path">
           Auto Paths
         </Link>
-        <Link className="hover:text-foreground text-muted-foreground" href="/scouting">
-          Scouting
+        <Link className="hover:text-foreground text-muted-foreground" href="/forms/pit">
+          Pit Form
         </Link>
-        <Link className="hover:text-foreground text-muted-foreground" href="/results">
+        <Link className="hover:text-foreground text-muted-foreground" href="/forms/stand">
+          Stand Form
+        </Link>
+        <Link className="hover:text-foreground text-muted-foreground" href="/data">
           Data
         </Link>
         <nav />

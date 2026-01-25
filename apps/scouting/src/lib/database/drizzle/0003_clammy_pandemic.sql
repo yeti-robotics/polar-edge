@@ -1,0 +1,2 @@
+CREATE INDEX "idx_stand_form_scout_member_id" ON "stand_form" USING btree ("scout_member_id");--> statement-breakpoint
+CREATE INDEX "idx_stand_form_team_match_member" ON "stand_form" USING btree ("team_match_id","scout_member_id");

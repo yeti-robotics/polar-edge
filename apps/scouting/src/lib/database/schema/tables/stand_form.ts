@@ -23,5 +23,9 @@ export const standForm = pgTable(
       .$onUpdate(() => new Date()),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
-  (t) => [index("idx_scout_report_team_match").on(t.teamMatchId)]
+  (t) => [
+    index("idx_scout_report_team_match").on(t.teamMatchId),
+    index("idx_stand_form_scout_member_id").on(t.scoutMemberId),
+    index("idx_stand_form_team_match_member").on(t.teamMatchId, t.scoutMemberId),
+  ]
 );
