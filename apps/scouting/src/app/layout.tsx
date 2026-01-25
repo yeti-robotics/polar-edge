@@ -3,7 +3,7 @@ import { Libre_Franklin } from "next/font/google";
 import "@repo/ui/globals.css";
 import "./globals.css";
 import { Toaster } from "@repo/ui/components/toaster";
-import { Header } from "@/components/layout/Header";
+import { Header } from "@/components/layout/header/Header";
 import { ThemeProvider } from "@/components/theme";
 
 const libreFranklin = Libre_Franklin({

@@ -3,18 +3,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { HomeIcon, ShieldCheckIcon, UserIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
+import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
+import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
+import { ThemeToggle } from "./ThemeToggle";
 
 function OrganizationSelectorFallback() {
   return (
@@ -95,6 +97,8 @@ async function UserAvatar() {
     const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });
+    const isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
+
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -103,17 +107,31 @@ async function UserAvatar() {
             <AvatarFallback> {activeMember?.user.name}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" align="end">
+        <DropdownMenuContent side="bottom" align="end" className="min-w-36">
           <DropdownMenuGroup>
-            <Link href="/">
-              <DropdownMenuLabel>Home</DropdownMenuLabel>
-            </Link>
-            <Link href="/profile">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItemLink href="/">
+              <HomeIcon className="size-4 text-current" />
+              <span>Home</span>
+            </DropdownMenuItemLink>
+            <DropdownMenuItemLink href="/profile">
+              <UserIcon className="size-4 text-current" />
+              <span>Profile</span>
+            </DropdownMenuItemLink>
+            {isAdminOrOwner && (
+              <DropdownMenuItemLink href="/admin">
+                <ShieldCheckIcon className="size-4 text-current" />
+                <span>Admin</span>
+              </DropdownMenuItemLink>
+            )}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <ThemeToggle />
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <LogoutButton />
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     );
