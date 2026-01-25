@@ -86,11 +86,11 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[120px]">Team Number</TableHead>
+              <TableHead className="w-32">Team Number</TableHead>
               <TableHead>Team Name</TableHead>
             </TableRow>
           </TableHeader>

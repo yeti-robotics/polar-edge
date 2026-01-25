@@ -14,7 +14,7 @@ export function TeamsSearch({ initialSearch }: TeamsSearchProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSearch = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
