@@ -8,76 +8,105 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
+import { Skeleton } from "@repo/ui/components/skeleton";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
+import { isSuperAdmin } from "@/lib/permissions";
 import { OrganizationSelector } from "./OrganizationSelector";
 
-async function AdminLink() {
-  const requestHeaders = await headers();
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-  if (activeMember?.role === "admin" || activeMember?.role === "owner") {
-    return (
-      <Link className="hover:bg-gray-700 px-4 py-2 hover:text-white" href="/admin">
-        Admin
-      </Link>
-    );
-  }
+function OrganizationSelectorFallback() {
+  return (
+    <>
+      <div className="hidden md:block w-px h-6 bg-muted-foreground rotate-15" />
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Skeleton className="size-6 rounded-full" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <Skeleton className="size-6 rounded" />
+      </div>
+    </>
+  );
 }
 
-//map through array to render the links
+function UserAvatarFallback() {
+  return <Skeleton className="size-8 rounded-full" />;
+}
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 h-16 px-4 border-b flex items-center  bg-background">
-      <div className="flex items-center gap-4">
-        <span className="font-mono uppercase text-xs">Polar Edge</span>
-        <OrganizationSelector />
-      </div>
-      <div className="ml-40 mt-3 flex justify-center items-center">
-        <nav className="gap-14 text-xs font-mono inline-flex mt-6">
-          <Link className="hover:text-foreground hover:bg-muted text-fore " href="/">
-            Home
-          </Link>
-          <Link className="hover:text-white hover:bg-muted" href="/auto-path">
-            Auto Paths
-          </Link>
-          <Link className="hover:text-white hover:bg-muted" href="/scouting">
-            Scouting
-          </Link>
-          <Link className="hover:text-white hover:bg-muted" href="/results">
-            Data
-          </Link>
-          <nav />
-          <Suspense>
-            <div className="size-9 ml-90 mt-1 h-12 flex-wrap justify-start">
-              <UserAvatar />
-            </div>
+    <header className="sticky top-0 z-50 py-2 px-6 border-b bg-background h-(--header-height) flex flex-col justify-between">
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-4">
+          <span className="hidden md:block uppercase font-mono text-sm">Polar Edge</span>
+          <Suspense fallback={<OrganizationSelectorFallback />}>
+            <OrganizationSelectorWrapper />
           </Suspense>
-        </nav>
+        </div>
+        <Suspense fallback={<UserAvatarFallback />}>
+          <UserAvatar />
+        </Suspense>
       </div>
+      <nav className="gap-6 text-sm inline-flex">
+        <Link className="hover:text-foreground text-muted-foreground" href="/">
+          Home
+        </Link>
+        <Link className="hover:text-foreground text-muted-foreground" href="/auto-path">
+          Auto Paths
+        </Link>
+        <Link className="hover:text-foreground text-muted-foreground" href="/scouting">
+          Scouting
+        </Link>
+        <Link className="hover:text-foreground text-muted-foreground" href="/results">
+          Data
+        </Link>
+        <nav />
+      </nav>
     </header>
   );
 }
 
+async function OrganizationSelectorWrapper() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return null;
+  }
+
+  const isUserSuperAdmin = isSuperAdmin(session.user.name);
+  return (
+    <>
+      <div className="hidden md:block w-px h-6 bg-muted-foreground rotate-15"></div>
+      <OrganizationSelector isSuperAdmin={isUserSuperAdmin} />
+    </>
+  );
+}
+
 async function UserAvatar() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return null;
+  }
+
   try {
-    const session = await auth.api.getActiveMember({
+    const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar>
-            <AvatarImage src={session?.user.image}></AvatarImage>
-            <AvatarFallback> {session?.user.name}</AvatarFallback>
+          <Avatar className="size-8">
+            <AvatarImage src={activeMember?.user.image}></AvatarImage>
+            <AvatarFallback> {activeMember?.user.name}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent side="bottom" align="end">
           <DropdownMenuGroup>
             <Link href="/">
-              <DropdownMenuLabel> Home </DropdownMenuLabel>
+              <DropdownMenuLabel>Home</DropdownMenuLabel>
             </Link>
             <Link href="/profile">
               <DropdownMenuItem>Profile</DropdownMenuItem>

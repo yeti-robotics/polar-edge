@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
 import "@repo/ui/globals.css";
+import "./globals.css";
 import { Toaster } from "@repo/ui/components/toaster";
-import { Suspense } from "react";
 import { Header } from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme";
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${libreFranklin.variable} bg-background dark:prose-invert min-h-screen font-sans`}
+        className={`${libreFranklin.variable} bg-background dark:prose-invert min-h-screen font-sans overscroll-none`}
       >
         <ThemeProvider
           attribute="class"
@@ -35,7 +35,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+          {children}
           <Toaster />
         </ThemeProvider>
       </body>
