@@ -41,11 +41,11 @@ export function OrganizationSelector({ isSuperAdmin = false }: OrganizationSelec
       </div>
       {shouldShowDropdown ? (
         <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="secondary" className="size-6 p-0" aria-label="Switch organization">
-            <ChevronsUpDownIcon className="size-3.5" aria-hidden="true" />
-          </Button>
-        </DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" className="size-6 p-0" aria-label="Switch organization">
+              <ChevronsUpDownIcon className="size-3.5" aria-hidden="true" />
+            </Button>
+          </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="start" className="w-48">
             {organizations?.map((organization) => (
               <DropdownMenuItem

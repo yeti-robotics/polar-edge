@@ -1,7 +1,5 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
-import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,10 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import type {
-  MatchDetails,
-  MatchHistoryItem,
-} from "@/app/data/(subpage)/teams/[team]/actions";
+import { ChevronDown } from "lucide-react";
+import React, { useState } from "react";
+import type { MatchDetails, MatchHistoryItem } from "@/app/data/(subpage)/teams/[team]/actions";
 import { MatchDetailsExpansion } from "./MatchDetailsExpansion";
 
 interface MatchHistoryTableProps {
@@ -36,10 +33,7 @@ function formatAlliance(alliance: "red" | "blue"): string {
   return alliance === "red" ? "Red" : "Blue";
 }
 
-export function MatchHistoryTable({
-  matches,
-  matchDetails,
-}: MatchHistoryTableProps) {
+export function MatchHistoryTable({ matches, matchDetails }: MatchHistoryTableProps) {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   if (matches.length === 0) {
@@ -92,18 +86,10 @@ export function MatchHistoryTable({
                   <TableCell>{match.eventCode}</TableCell>
                   <TableCell>{formatAlliance(match.alliance)}</TableCell>
                   <TableCell>{match.position}</TableCell>
-                  <TableCell className="text-right">
-                    {match.expFuelActive.toFixed(1)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {match.expTower.toFixed(1)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {match.clank.toFixed(1)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {match.cycleSummary.totalCycles}
-                  </TableCell>
+                  <TableCell className="text-right">{match.expFuelActive.toFixed(1)}</TableCell>
+                  <TableCell className="text-right">{match.expTower.toFixed(1)}</TableCell>
+                  <TableCell className="text-right">{match.clank.toFixed(1)}</TableCell>
+                  <TableCell className="text-right">{match.cycleSummary.totalCycles}</TableCell>
                   <TableCell className="text-right">
                     {match.climbSummary.totalAttempts > 0
                       ? `${match.climbSummary.totalAttempts} (${(match.climbSummary.successRate * 100).toFixed(0)}%)`

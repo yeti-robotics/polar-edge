@@ -3,7 +3,7 @@ import "server-only";
 import { and, asc, desc, eq, inArray, isNotNull, sql } from "drizzle-orm";
 import { db } from "@/lib/database";
 import { climb, cycle, event, match, member, standForm, teamMatch } from "@/lib/database/schema";
-import { vStandFormExpected, vTeamGoblin, vTeamRpMagic } from "@/lib/database/schema/views/metrics";
+import { vStandFormExpected } from "@/lib/database/schema/views/metrics";
 
 export interface TeamStats {
   goblinPerMatch: number;
