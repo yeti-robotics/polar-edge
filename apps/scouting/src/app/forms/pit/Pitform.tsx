@@ -1,11 +1,35 @@
+"use client";
+
 import { Checkbox } from "@repo/ui/components/checkbox";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
+
+//move all the useStates to the Pitform.tsx
 
 export function PitForm() {
   //going to use the Card component in page.tsx to wrap this form (got rid of it here, so that I can make it like 2 pages better)
   return (
     <div className="space-y-6">
+      <section>
+        <h2 className="text-lg text-neutral-200">Team Number</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <Input
+          type="number"
+          id="team_number"
+          name="team_number"
+          placeholder="Enter Team Number"
+        ></Input>
+      </section>
+      <section>
+        <h2 className="text-lg text-neutral-200">Scout Member ID</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <Input
+          type="number"
+          id="scout_member_id"
+          name="scout_member_id"
+          placeholder="Enter Scout Member ID"
+        ></Input>
+      </section>
       <section className="space-y-4">
         <h2 className="text-lg text-neutral-200">Robot Dimensions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
