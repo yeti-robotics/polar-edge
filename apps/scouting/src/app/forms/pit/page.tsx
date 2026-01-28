@@ -1,9 +1,7 @@
-"use client";
-
 import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
 import { useState } from "react";
-import { FormSidebar } from "@/app/forms/pit/formSidebar";
+import { FormSidebar } from "./formSidebar";
 import { PitForm } from "./Pitform";
 import { ScoringCapabilities } from "./ScoringCapabilities";
 

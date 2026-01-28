@@ -17,3 +17,5 @@ export function ScoringCapabilities() {
     </div>
   );
 }
+//add capacity
+//climb type (where on the tower can they climb)
