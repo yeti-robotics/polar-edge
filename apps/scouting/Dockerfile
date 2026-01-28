@@ -10,7 +10,7 @@ COPY . .
 
 # Generate a partial monorepo with a pruned lockfile for a target workspace.
 # Assuming "web" is the name entered in the project's package.json: { name: "web" }
-RUN turbo prune @app/web --docker
+RUN turbo prune scouting --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -26,7 +26,7 @@ RUN pnpm install --frozen-lockfile
 
 # Build the project
 COPY --from=builder /app/out/full/ .
-RUN pnpm dlx turbo run build --filter=@app/web
+RUN pnpm dlx turbo run build --filter=scouting
 
 FROM base AS runner
 WORKDIR /app
@@ -39,8 +39,8 @@ USER nextjs
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # COPY --from=installer --chown=nextjs:nodejs /app/packages/database ./packages/database
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/scouting/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/scouting/.next/static ./apps/scouting/.next/static
 # COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
-CMD node apps/web/server.js
+CMD node apps/scouting/server.js

@@ -8,6 +8,7 @@ export { match } from "./match";
 export { member } from "./member";
 export { organization } from "./organization";
 export { organizationInviteLink } from "./organization-invite-link";
+export { passkey } from "./passkey";
 export { pitForm } from "./pit-form";
 export { session } from "./session";
 export { standForm } from "./stand_form";

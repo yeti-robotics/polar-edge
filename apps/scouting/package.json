@@ -17,11 +17,12 @@
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.13",
+    "@better-auth/passkey": "^1.4.17",
     "@repo/ui": "workspace:*",
     "@tanstack/react-form": "^1.27.7",
     "@tanstack/react-table": "^8.21.3",
     "ai": "catalog:",
-    "better-auth": "^1.4.13",
+    "better-auth": "^1.4.17",
     "drizzle-orm": "^0.44.7",
     "drizzle-seed": "^0.3.1",
     "lucide-react": "^0.525.0",
