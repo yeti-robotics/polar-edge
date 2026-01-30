@@ -1,6 +1,6 @@
 import { Input } from "@repo/ui/components/input";
 
-export function ScoringCapabilities() {
+export function EndGame() {
   return (
     <div className="space-y-6">
       <section className="space-y-3">
