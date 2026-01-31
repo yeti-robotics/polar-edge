@@ -8,9 +8,13 @@ export function FormSidebar() {
         <Link className="text-sm" href="/forms/pit">
           Pit Form
         </Link>
-        <Link className="text-sm" href="/form/stand">
+        <Link className="text-sm" href="/forms/stand">
           {/* It will eventually be the stand form page for now this is empty */}
           Stand Form
+        </Link>
+        <Link className="text-sm" href="/forms/PreForm">
+          {/* this is just there in the case a user wants it this way but we will also make it like a model pop up component  */}
+          Match Details
         </Link>
       </div>
     </aside>

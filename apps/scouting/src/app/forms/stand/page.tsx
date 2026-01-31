@@ -3,6 +3,7 @@
 import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
 import { useState } from "react";
+import FindMatchPopUp from "../PreForm/page";
 import AfterSubmitComment from "./Comments";
 import { EndGame } from "./EndGame";
 import { FormSidebar } from "./formSidebar";
@@ -24,6 +25,11 @@ export default function PitFormPage() {
       <StandFormProvider>
         <main className="container mx-auto max-w-5xl space-y-4 py-8">
           <h1 className="text-3xl tracking-tight "> Stand Form </h1>
+          <Button className="text-[10px] h-6" onClick={() => <FindMatchPopUp />}>
+            Enter Match Details
+          </Button>
+          {/* i ned help with this button above trying to render it  */}
+
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-neutral-400">
               <span>{PAGES[currentPage]?.label}</span>
