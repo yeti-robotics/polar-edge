@@ -7,6 +7,7 @@ export { invitation } from "./invitation";
 export { match } from "./match";
 export { member } from "./member";
 export { organization } from "./organization";
+export { organizationEvent } from "./organization-event";
 export { organizationInviteLink } from "./organization-invite-link";
 export { passkey } from "./passkey";
 export { pitForm } from "./pit-form";
