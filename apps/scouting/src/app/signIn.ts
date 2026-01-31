@@ -3,12 +3,12 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
-export async function signInDiscord() {
+export async function signInDiscord(callbackURL = "/") {
   "use server";
   const response = await auth.api.signInSocial({
     body: {
       provider: "discord",
-      callbackURL: "/",
+      callbackURL,
     },
     headers: await headers(),
   });
