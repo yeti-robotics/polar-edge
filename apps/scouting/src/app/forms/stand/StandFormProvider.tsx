@@ -1,22 +1,30 @@
 "use client";
+import { createContext, useContext, useReducer } from "react";
 
-import React, { createContext, useContext, useReducer } from "react";
+export const STAGES = ["match_selection", "autonomous", "teleop", "comments"] as const;
+type StandFormStage = (typeof STAGES)[number];
 
 type StandFormState = {
   isOofed: boolean;
+  /** Timestamp when current Oof started (ms). Used to derive elapsed seconds across tabs. */
+  oofStartedAt: number | null;
+  /** Total Oof seconds this match (sum of all segments). */
+  oofCumulativeSeconds: number;
+  currentStage: StandFormStage;
 };
-
-export enum StandFormActionTypes {
-  OOF_START = "oof_start",
-  OOF_END = "oof_end",
-}
 
 type StandFormAction =
   | {
-      type: StandFormActionTypes.OOF_START;
+      type: "increment_stage";
     }
   | {
-      type: StandFormActionTypes.OOF_END;
+      type: "decrement_stage";
+    }
+  | {
+      type: "oof_start";
+    }
+  | {
+      type: "oof_end";
     };
 
 const StandFormContext = createContext<{
@@ -30,16 +38,50 @@ function standFormReducer(current: StandFormState, action: StandFormAction) {
       return {
         ...current,
         isOofed: true,
+        oofStartedAt: Date.now(),
       };
-    case "oof_end":
+    case "oof_end": {
+      const segmentSeconds = current.oofStartedAt
+        ? Math.floor((Date.now() - current.oofStartedAt) / 1000)
+        : 0;
       return {
         ...current,
         isOofed: false,
+        oofStartedAt: null,
+        oofCumulativeSeconds: current.oofCumulativeSeconds + segmentSeconds,
+      };
+    }
+    case "increment_stage":
+      return {
+        ...current,
+        currentStage: STAGES[
+          Math.min(STAGES.indexOf(current.currentStage) + 1, STAGES.length - 1)
+        ] as StandFormStage,
+      };
+    case "decrement_stage":
+      return {
+        ...current,
+        currentStage: STAGES[
+          Math.max(STAGES.indexOf(current.currentStage) - 1, 0)
+        ] as StandFormStage,
       };
     default:
       return current;
   }
 }
+
+export const StandFormProvider = ({ children }: { children: React.ReactNode }) => {
+  const [state, dispatch] = useReducer(standFormReducer, {
+    isOofed: false,
+    oofStartedAt: null,
+    oofCumulativeSeconds: 0,
+    currentStage: "match_selection",
+  });
+
+  return (
+    <StandFormContext.Provider value={{ state, dispatch }}>{children}</StandFormContext.Provider>
+  );
+};
 
 export const useStandForm = () => {
   const context = useContext(StandFormContext);
@@ -47,18 +89,4 @@ export const useStandForm = () => {
     throw new Error("useStandForm used outside of StandFormProvider");
   }
   return context;
-};
-
-export const StandFormProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(standFormReducer, { isOofed: false });
-
-  const handleDispatch = (action: StandFormAction) => {
-    dispatch(action);
-  };
-
-  return (
-    <StandFormContext.Provider value={{ state, dispatch: handleDispatch }}>
-      {children}
-    </StandFormContext.Provider>
-  );
 };
