@@ -1577,6 +1577,28 @@ export interface components {
     /** @enum {string} */
     EndGameRobot_2025: "DeepCage" | "None" | "Parked" | "ShallowCage";
     /** @enum {string} */
+    TowerRobot_2026: "Level1" | "Level2" | "Level3" | "None";
+    HubScore_2026: {
+      autoCount: number;
+      autoPoints: number;
+      endgameCount: number;
+      endgamePoints: number;
+      shift1Count: number;
+      shift1Points: number;
+      shift2Count: number;
+      shift2Points: number;
+      shift3Count: number;
+      shift3Points: number;
+      shift4Count: number;
+      shift4Points: number;
+      teleopCount: number;
+      teleopPoints: number;
+      totalCount: number;
+      totalPoints: number;
+      transitionCount: number;
+      transitionPoints: number;
+    };
+    /** @enum {string} */
     EndgameRobot_2018: "Climbing" | "Levitate" | "None" | "Parking" | "Unknown";
     /** @enum {string} */
     EndgameRobot_2019: "HabLevel1" | "HabLevel2" | "HabLevel3" | "None" | "Unknown";
@@ -2738,6 +2760,35 @@ export interface components {
       totalPoints: number;
       wallAlgaeCount: number;
     };
+    /** @description See the 2026 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
+    Match_Score_Breakdown_2026: {
+      blue: components["schemas"]["Match_Score_Breakdown_2026_Alliance"];
+      red: components["schemas"]["Match_Score_Breakdown_2026_Alliance"];
+    };
+    Match_Score_Breakdown_2026_Alliance: {
+      adjustPoints: number;
+      autoTowerPoints: number;
+      autoTowerRobot1: components["schemas"]["TowerRobot_2026"];
+      autoTowerRobot2: components["schemas"]["TowerRobot_2026"];
+      autoTowerRobot3: components["schemas"]["TowerRobot_2026"];
+      endGameTowerPoints: number;
+      endGameTowerRobot1: components["schemas"]["TowerRobot_2026"];
+      endGameTowerRobot2: components["schemas"]["TowerRobot_2026"];
+      endGameTowerRobot3: components["schemas"]["TowerRobot_2026"];
+      energizedAchieved: boolean;
+      foulPoints: number;
+      g206Penalty: boolean;
+      hubScore: components["schemas"]["HubScore_2026"];
+      majorFoulCount: number;
+      minorFoulCount: number;
+      rp: number;
+      superchargedAchieved: boolean;
+      totalAutoPoints: number;
+      totalPoints: number;
+      totalTeleopPoints: number;
+      totalTowerPoints: number;
+      traversalAchieved: boolean;
+    };
     Match_Simple: {
       /** @description TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may append the competition level if more than one match in required per set. */
       key: string;
@@ -2843,7 +2894,7 @@ export interface components {
       red_switch_owned?: number;
     };
     Match_alliance: {
-      /** @description Score for this alliance. Will be null or -1 for an unplayed match. */
+      /** @description Score for this alliance. Will be -1 for an unplayed match. */
       score: number;
       team_keys: string[];
       /** @description TBA team keys (eg `frc254`) of any teams playing as a surrogate. */
