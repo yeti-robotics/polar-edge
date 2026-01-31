@@ -14,6 +14,19 @@ function getSeasonStart(date: Date): Date {
   return new Date(seasonYear, 4, 1);
 }
 
+/** Partial meetings: dates with reduced hours (e.g. weather). */
+const PARTIAL_MEETINGS: Array<{ date: Date; hours: number }> = [
+  { date: new Date(2026, 0, 24), hours: 4 }, // 1/24/2026 ice storm – 9am to 1pm
+];
+
+function getPartialMeetingHours(date: Date): number | null {
+  const normalized = normalizeDate(date);
+  const entry = PARTIAL_MEETINGS.find(
+    (p) => normalizeDate(p.date).getTime() === normalized.getTime()
+  );
+  return entry ? entry.hours : null;
+}
+
 function getNoMeetingDates(seasonYear: number): Date[] {
   return [
     new Date(seasonYear, 6, 1),
@@ -94,6 +107,11 @@ function isRegularMeetingDay(date: Date): boolean {
 function getHoursForMeetingDay(date: Date): number {
   if (!isRegularMeetingDay(date)) {
     return 0;
+  }
+
+  const partialHours = getPartialMeetingHours(date);
+  if (partialHours !== null) {
+    return partialHours;
   }
 
   const month = date.getMonth() + 1;
