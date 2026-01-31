@@ -116,9 +116,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
         .select({ id: match.id, matchNumber: match.matchNumber, matchType: match.matchType })
         .from(match)
         .where(eq(match.eventId, eventId));
-      const matchIdByKey = new Map(
-        matchRows.map((r) => [`${r.matchNumber}:${r.matchType}`, r.id])
-      );
+      const matchIdByKey = new Map(matchRows.map((r) => [`${r.matchNumber}:${r.matchType}`, r.id]));
 
       if (tbaTeams.length > 0) {
         await tx
