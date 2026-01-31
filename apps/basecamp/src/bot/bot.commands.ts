@@ -1,7 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { type ChatInputCommandInteraction, MessageFlags } from "discord.js";
+import { ConfigService } from "@nestjs/config";
+import { type ChatInputCommandInteraction, GuildMember, MessageFlags } from "discord.js";
 import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
-import { AttendanceSignInDto, AttendanceSignOutDto } from "src/attendance/attendance.dto";
+import {
+  AdminAttendanceDto,
+  AttendanceSignInDto,
+  AttendanceSignOutDto,
+} from "src/attendance/attendance.dto";
 import { AttendanceService } from "src/attendance/attendance.service";
 import { HandbookService } from "src/handbook/handbook.service";
 import { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
@@ -20,6 +25,7 @@ interface RateLimitConfig {
 @Injectable()
 export class BotCommands {
   private readonly logger = new Logger(BotCommands.name);
+  private readonly adminRoleId: string;
 
   // Global rate limiting
   private readonly globalRequests: number[] = [];
@@ -31,8 +37,10 @@ export class BotCommands {
   constructor(
     private readonly attendanceService: AttendanceService,
     private readonly outreachService: OutreachService,
-    private readonly handbookService: HandbookService
+    private readonly handbookService: HandbookService,
+    private readonly configService: ConfigService
   ) {
+    this.adminRoleId = this.configService.get<string>("ADMIN_ROLE_ID") || "";
     // Clean up old requests periodically
     setInterval(() => this.cleanupRequests(), 30000); // Every 30 seconds
   }
@@ -173,6 +181,53 @@ export class BotCommands {
     } else {
       return interaction.editReply({
         content: "Failed to sign out!",
+      });
+    }
+  }
+
+  @SlashCommand({
+    name: "admin-attendance",
+    description: "Sign in or out another user (admin only)",
+  })
+  public async onAdminAttendance(
+    @Context() [interaction]: SlashCommandContext,
+    @Options() { user, action }: AdminAttendanceDto
+  ) {
+    await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
+
+    const member = interaction.member as GuildMember;
+    if (!member.roles.cache.has(this.adminRoleId)) {
+      return interaction.editReply({
+        content: "You do not have permission to use this command.",
+      });
+    }
+
+    const targetMember = await interaction.guild?.members.fetch(user.id);
+    const nickname = targetMember?.nickname || null;
+
+    if (!nickname) {
+      return interaction.editReply({
+        content: "User must have a nickname to sign in or out.",
+      });
+    }
+
+    const result =
+      action === "signin"
+        ? await this.attendanceService.signIn(user.id, interaction.guild?.id || "", nickname)
+        : await this.attendanceService.signOut(user.id, interaction.guildId || "", nickname);
+
+    if (result.success) {
+      if (interaction.channel?.isSendable()) {
+        await interaction.channel.send(
+          `<@${user.id}> has been signed ${action === "signin" ? "in" : "out"} by an admin.`
+        );
+      }
+      return interaction.editReply({
+        content: `Successfully signed ${action === "signin" ? "in" : "out"} ${nickname}.`,
+      });
+    } else {
+      return interaction.editReply({
+        content: `Failed to sign ${action === "signin" ? "in" : "out"} ${nickname}.`,
       });
     }
   }
