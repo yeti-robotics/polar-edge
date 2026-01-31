@@ -71,7 +71,7 @@ function OofTimeButton() {
 function ShootEndButton() {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant="secondary" className="w-full h-full">
           Shoot End
         </Button>
