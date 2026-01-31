@@ -7,25 +7,17 @@ import { db } from "@/lib/database";
 import { event, organizationEvent } from "@/lib/database/schema/tables";
 
 export async function getActiveEventForOrganization(organizationId: string) {
-  const row = await db
-    .select({
-      id: event.id,
-      eventCode: event.eventCode,
-      name: event.name,
-      startDate: event.startDate,
-      endDate: event.endDate,
-    })
-    .from(organizationEvent)
-    .innerJoin(event, eq(event.id, organizationEvent.eventId))
-    .where(
-      and(
-        eq(organizationEvent.organizationId, organizationId),
-        eq(organizationEvent.isActive, true)
-      )
-    )
-    .limit(1);
+  const row = await db.query.organizationEvent.findFirst({
+    where: and(
+      eq(organizationEvent.organizationId, organizationId),
+      eq(organizationEvent.isActive, true)
+    ),
+    with: {
+      event: true,
+    },
+  });
 
-  return row[0] ?? null;
+  return row ?? null;
 }
 
 export async function setActiveEventForOrganization(organizationId: string, eventId: string) {
@@ -46,13 +38,11 @@ export async function setActiveEventForOrganization(organizationId: string, even
     throw new Error("Only admins and owners can set the active event");
   }
 
-  const eventExists = await db
-    .select({ id: event.id })
-    .from(event)
-    .where(eq(event.id, eventId))
-    .limit(1);
+  const eventExists = await db.query.event.findFirst({
+    where: eq(event.id, eventId),
+  });
 
-  if (!eventExists[0]) {
+  if (!eventExists) {
     throw new Error("Event not found");
   }
 
