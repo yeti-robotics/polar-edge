@@ -123,7 +123,7 @@ function SubmitPopUp() {
             Cancel
           </Button>
           <Button
-            variant="destructive"
+            variant="default"
             onClick={() => alert("This connects to the backend and goes thorugh to our db")}
           >
             Submit
