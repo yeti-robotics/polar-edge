@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { setActiveEventForOrganization } from "@/lib/server/active-event";
+import { setActiveEventForOrganization } from "@/lib/server/organization/active-event";
 
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {

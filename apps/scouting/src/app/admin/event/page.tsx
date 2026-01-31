@@ -4,10 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
-import {
-  getActiveEventForOrganization,
-  listEvents,
-} from "@/lib/server/active-event";
+import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
 import { ActiveEventForm } from "./ActiveEventForm";
 
 function LoadingForm() {
