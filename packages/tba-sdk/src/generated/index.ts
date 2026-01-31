@@ -4,5984 +4,5973 @@
  */
 
 export interface paths {
-  "/district/{district_abbreviation}/dcmp_history": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of DCMP events and awards for the given district abbreviation. */
-    get: operations["getDistrictDCMPHistory"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_abbreviation}/history": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of District objects with the given district abbreviation. This accounts for district abbreviation changes, such as MAR to FMA. */
-    get: operations["getDistrictHistory"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_abbreviation}/insights": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets insights for a given district. */
-    get: operations["getDistrictInsights"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/advancement": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of advancement information per team in a district. */
-    get: operations["getDistrictAdvancement"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/awards": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of awards in the given district. */
-    get: operations["getDistrictAwards"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/events": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of events in the given district. */
-    get: operations["getDistrictEvents"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/events/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of event keys for events in the given district. */
-    get: operations["getDistrictEventsKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/events/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of events in the given district. */
-    get: operations["getDistrictEventsSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/rankings": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of team district rankings for the given district. */
-    get: operations["getDistrictRankings"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/teams": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of `Team` objects that competed in events in the given district. */
-    get: operations["getDistrictTeams"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/teams/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of `Team` objects that competed in events in the given district. */
-    get: operations["getDistrictTeamsKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/district/{district_key}/teams/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of `Team` objects that competed in events in the given district. */
-    get: operations["getDistrictTeamsSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/districts/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of districts and their corresponding district key, for the given year. */
-    get: operations["getDistrictsByYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets an Event. */
-    get: operations["getEvent"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/advancement_points": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Depending on the type of event (district/regional), this will return either district points or regional CMP points */
-    get: operations["getEventAdvancementPoints"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/alliances": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of Elimination Alliances for the given Event. */
-    get: operations["getEventAlliances"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/awards": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of awards from the given event. */
-    get: operations["getEventAwards"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/coprs": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a set of Event Component OPRs for the given Event. */
-    get: operations["getEventCOPRs"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/district_points": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of district points for the Event. These are always calculated, regardless of event type, and may/may not be actually useful. */
-    get: operations["getEventDistrictPoints"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/insights": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a set of Event-specific insights for the given Event. */
-    get: operations["getEventInsights"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/matches": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of matches for the given event. */
-    get: operations["getEventMatches"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/matches/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of match keys for the given event. */
-    get: operations["getEventMatchesKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/matches/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of matches for the given event. */
-    get: operations["getEventMatchesSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/matches/timeseries": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * @description Gets an array of Match Keys for the given event key that have timeseries data. Returns an empty array if no matches have timeseries data.
-     *     *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
-     *     *WARNING:* This endpoint and corresponding data models are under *active development* and may change at any time, including in breaking ways.
-     */
-    get: operations["getEventMatchTimeseries"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/oprs": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a set of Event OPRs (including OPR, DPR, and CCWM) for the given Event. */
-    get: operations["getEventOPRs"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/predictions": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets information on TBA-generated predictions for the given Event. Contains year-specific information. *WARNING* This endpoint is currently under development and may change at any time. */
-    get: operations["getEventPredictions"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/rankings": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of team rankings for the Event. */
-    get: operations["getEventRankings"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/regional_champs_pool_points": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description For 2025+ Regional events, this will return points towards the Championship qualification pool. */
-    get: operations["getRegionalChampsPoolPoints"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form Event. */
-    get: operations["getEventSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/team_media": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of media objects that correspond to teams at this event. */
-    get: operations["getEventTeamMedia"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/teams": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of `Team` objects that competed in the given event. */
-    get: operations["getEventTeams"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/teams/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of `Team` keys that competed in the given event. */
-    get: operations["getEventTeamsKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/teams/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of `Team` objects that competed in the given event. */
-    get: operations["getEventTeamsSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/event/{event_key}/teams/statuses": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a key-value list of the event statuses for teams competing at the given event. */
-    get: operations["getEventTeamsStatuses"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of events in the given year. */
-    get: operations["getEventsByYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/{year}/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of event keys in the given year. */
-    get: operations["getEventsByYearKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/events/{year}/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of events in the given year. */
-    get: operations["getEventsByYearSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/insights/leaderboards/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of `LeaderboardInsight` objects from a specific year. Use year=0 for overall. */
-    get: operations["getInsightsLeaderboardsYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/insights/notables/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of `NotablesInsight` objects from a specific year. Use year=0 for overall. */
-    get: operations["getInsightsNotablesYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/match/{match_key}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a `Match` object for the given match key. */
-    get: operations["getMatch"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/match/{match_key}/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form `Match` object for the given match key. */
-    get: operations["getMatchSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/match/{match_key}/timeseries": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * @description Gets an array of game-specific Match Timeseries objects for the given match key or an empty array if not available.
-     *     *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
-     *     *WARNING:* This endpoint and corresponding data models are under *active development* and may change at any time, including in breaking ways.
-     */
-    get: operations["getMatchTimeseries"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/match/{match_key}/zebra_motionworks": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets Zebra MotionWorks data for a Match for the given match key. */
-    get: operations["getMatchZebra"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/regional_advancement/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets information about per-team advancement to the FIRST Championship. */
-    get: operations["getRegionalAdvancement"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/regional_advancement/{year}/rankings": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets the team rankings in the regional pool for a specific year. */
-    get: operations["getRegionalRankings"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/search_index": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a large blob of data that is used on the frontend for searching. May change without notice. */
-    get: operations["getSearchIndex"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/status": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Returns API status, and TBA status information. */
-    get: operations["getStatus"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a `Team` object for the team referenced by the given key. */
-    get: operations["getTeam"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/awards": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of awards the given team has won. */
-    get: operations["getTeamAwards"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/awards/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of awards the given team has won in a given year. */
-    get: operations["getTeamAwardsByYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/districts": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets an array of districts representing each year the team was in a district. Will return an empty array if the team was never in a district. */
-    get: operations["getTeamDistricts"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/event/{event_key}/awards": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of awards the given team won at the given event. */
-    get: operations["getTeamEventAwards"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/event/{event_key}/matches": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of matches for the given team and event. */
-    get: operations["getTeamEventMatches"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/event/{event_key}/matches/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of match keys for matches for the given team and event. */
-    get: operations["getTeamEventMatchesKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/event/{event_key}/matches/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of matches for the given team and event. */
-    get: operations["getTeamEventMatchesSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/event/{event_key}/status": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets the competition rank and status of the team at the given event. */
-    get: operations["getTeamEventStatus"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/events": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of all events this team has competed at. */
-    get: operations["getTeamEvents"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/events/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of the event keys for all events this team has competed at. */
-    get: operations["getTeamEventsKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/events/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of all events this team has competed at. */
-    get: operations["getTeamEventsSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/events/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of events this team has competed at in the given year. */
-    get: operations["getTeamEventsByYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/events/{year}/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of the event keys for events this team has competed at in the given year. */
-    get: operations["getTeamEventsByYearKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/events/{year}/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of events this team has competed at in the given year. */
-    get: operations["getTeamEventsByYearSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/events/{year}/statuses": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a key-value list of the event statuses for events this team has competed at in the given year. */
-    get: operations["getTeamEventsStatusesByYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/history": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets the history for the team referenced by the given key, including their events and awards. */
-    get: operations["getTeamHistory"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/matches/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of matches for the given team and year. */
-    get: operations["getTeamMatchesByYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/matches/{year}/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of match keys for matches for the given team and year. */
-    get: operations["getTeamMatchesByYearKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/matches/{year}/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a short-form list of matches for the given team and year. */
-    get: operations["getTeamMatchesByYearSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/media/tag/{media_tag}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of Media (videos / pictures) for the given team and tag. */
-    get: operations["getTeamMediaByTag"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/media/tag/{media_tag}/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of Media (videos / pictures) for the given team, tag and year. */
-    get: operations["getTeamMediaByTagYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/media/{year}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of Media (videos / pictures) for the given team and year. */
-    get: operations["getTeamMediaByYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/robots": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of year and robot name pairs for each year that a robot name was provided. Will return an empty array if the team has never named a robot. */
-    get: operations["getTeamRobots"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a `Team_Simple` object for the team referenced by the given key. */
-    get: operations["getTeamSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/social_media": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of Media (social media) for the given team. */
-    get: operations["getTeamSocialMedia"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/team/{team_key}/years_participated": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of years in which the team participated in at least one competition. */
-    get: operations["getTeamYearsParticipated"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{page_num}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of `Team` objects, paginated in groups of 500. */
-    get: operations["getTeams"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{page_num}/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of Team keys, paginated in groups of 500. (Note, each page will not have 500 teams, but will include the teams within that range of 500.) */
-    get: operations["getTeamsKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{page_num}/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of short form `Team_Simple` objects, paginated in groups of 500. */
-    get: operations["getTeamsSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{year}/{page_num}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of `Team` objects that competed in the given year, paginated in groups of 500. */
-    get: operations["getTeamsByYear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{year}/{page_num}/keys": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list Team Keys that competed in the given year, paginated in groups of 500. */
-    get: operations["getTeamsByYearKeys"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{year}/{page_num}/simple": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Gets a list of short form `Team_Simple` objects that competed in the given year, paginated in groups of 500. */
-    get: operations["getTeamsByYearSimple"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
+    "/district/{district_abbreviation}/dcmp_history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of DCMP events and awards for the given district abbreviation. */
+        get: operations["getDistrictDCMPHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_abbreviation}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of District objects with the given district abbreviation. This accounts for district abbreviation changes, such as MAR to FMA. */
+        get: operations["getDistrictHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_abbreviation}/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets insights for a given district. */
+        get: operations["getDistrictInsights"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/advancement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of advancement information per team in a district. */
+        get: operations["getDistrictAdvancement"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/awards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of awards in the given district. */
+        get: operations["getDistrictAwards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of events in the given district. */
+        get: operations["getDistrictEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/events/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of event keys for events in the given district. */
+        get: operations["getDistrictEventsKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/events/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of events in the given district. */
+        get: operations["getDistrictEventsSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/rankings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of team district rankings for the given district. */
+        get: operations["getDistrictRankings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/teams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of `Team` objects that competed in events in the given district. */
+        get: operations["getDistrictTeams"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/teams/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of `Team` objects that competed in events in the given district. */
+        get: operations["getDistrictTeamsKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/district/{district_key}/teams/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of `Team` objects that competed in events in the given district. */
+        get: operations["getDistrictTeamsSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/districts/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of districts and their corresponding district key, for the given year. */
+        get: operations["getDistrictsByYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets an Event. */
+        get: operations["getEvent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/advancement_points": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Depending on the type of event (district/regional), this will return either district points or regional CMP points */
+        get: operations["getEventAdvancementPoints"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/alliances": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of Elimination Alliances for the given Event. */
+        get: operations["getEventAlliances"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/awards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of awards from the given event. */
+        get: operations["getEventAwards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/coprs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a set of Event Component OPRs for the given Event. */
+        get: operations["getEventCOPRs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/district_points": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of district points for the Event. These are always calculated, regardless of event type, and may/may not be actually useful. */
+        get: operations["getEventDistrictPoints"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a set of Event-specific insights for the given Event. */
+        get: operations["getEventInsights"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/matches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of matches for the given event. */
+        get: operations["getEventMatches"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/matches/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of match keys for the given event. */
+        get: operations["getEventMatchesKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/matches/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of matches for the given event. */
+        get: operations["getEventMatchesSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/matches/timeseries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Gets an array of Match Keys for the given event key that have timeseries data. Returns an empty array if no matches have timeseries data.
+         *     *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
+         *     *WARNING:* This endpoint and corresponding data models are under *active development* and may change at any time, including in breaking ways.
+         */
+        get: operations["getEventMatchTimeseries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/oprs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a set of Event OPRs (including OPR, DPR, and CCWM) for the given Event. */
+        get: operations["getEventOPRs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/predictions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets information on TBA-generated predictions for the given Event. Contains year-specific information. *WARNING* This endpoint is currently under development and may change at any time. */
+        get: operations["getEventPredictions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/rankings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of team rankings for the Event. */
+        get: operations["getEventRankings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/regional_champs_pool_points": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description For 2025+ Regional events, this will return points towards the Championship qualification pool. */
+        get: operations["getRegionalChampsPoolPoints"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form Event. */
+        get: operations["getEventSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/team_media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of media objects that correspond to teams at this event. */
+        get: operations["getEventTeamMedia"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/teams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of `Team` objects that competed in the given event. */
+        get: operations["getEventTeams"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/teams/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of `Team` keys that competed in the given event. */
+        get: operations["getEventTeamsKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/teams/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of `Team` objects that competed in the given event. */
+        get: operations["getEventTeamsSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/event/{event_key}/teams/statuses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a key-value list of the event statuses for teams competing at the given event. */
+        get: operations["getEventTeamsStatuses"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of events in the given year. */
+        get: operations["getEventsByYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{year}/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of event keys in the given year. */
+        get: operations["getEventsByYearKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{year}/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of events in the given year. */
+        get: operations["getEventsByYearSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insights/leaderboards/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of `LeaderboardInsight` objects from a specific year. Use year=0 for overall. */
+        get: operations["getInsightsLeaderboardsYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insights/notables/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of `NotablesInsight` objects from a specific year. Use year=0 for overall. */
+        get: operations["getInsightsNotablesYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/{match_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a `Match` object for the given match key. */
+        get: operations["getMatch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/{match_key}/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form `Match` object for the given match key. */
+        get: operations["getMatchSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/{match_key}/timeseries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Gets an array of game-specific Match Timeseries objects for the given match key or an empty array if not available.
+         *     *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
+         *     *WARNING:* This endpoint and corresponding data models are under *active development* and may change at any time, including in breaking ways.
+         */
+        get: operations["getMatchTimeseries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/{match_key}/zebra_motionworks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets Zebra MotionWorks data for a Match for the given match key. */
+        get: operations["getMatchZebra"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/regional_advancement/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets information about per-team advancement to the FIRST Championship. */
+        get: operations["getRegionalAdvancement"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/regional_advancement/{year}/rankings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets the team rankings in the regional pool for a specific year. */
+        get: operations["getRegionalRankings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/search_index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a large blob of data that is used on the frontend for searching. May change without notice. */
+        get: operations["getSearchIndex"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Returns API status, and TBA status information. */
+        get: operations["getStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a `Team` object for the team referenced by the given key. */
+        get: operations["getTeam"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/awards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of awards the given team has won. */
+        get: operations["getTeamAwards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/awards/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of awards the given team has won in a given year. */
+        get: operations["getTeamAwardsByYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/districts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets an array of districts representing each year the team was in a district. Will return an empty array if the team was never in a district. */
+        get: operations["getTeamDistricts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/event/{event_key}/awards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of awards the given team won at the given event. */
+        get: operations["getTeamEventAwards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/event/{event_key}/matches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of matches for the given team and event. */
+        get: operations["getTeamEventMatches"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/event/{event_key}/matches/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of match keys for matches for the given team and event. */
+        get: operations["getTeamEventMatchesKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/event/{event_key}/matches/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of matches for the given team and event. */
+        get: operations["getTeamEventMatchesSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/event/{event_key}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets the competition rank and status of the team at the given event. */
+        get: operations["getTeamEventStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of all events this team has competed at. */
+        get: operations["getTeamEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/events/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of the event keys for all events this team has competed at. */
+        get: operations["getTeamEventsKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/events/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of all events this team has competed at. */
+        get: operations["getTeamEventsSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/events/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of events this team has competed at in the given year. */
+        get: operations["getTeamEventsByYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/events/{year}/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of the event keys for events this team has competed at in the given year. */
+        get: operations["getTeamEventsByYearKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/events/{year}/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of events this team has competed at in the given year. */
+        get: operations["getTeamEventsByYearSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/events/{year}/statuses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a key-value list of the event statuses for events this team has competed at in the given year. */
+        get: operations["getTeamEventsStatusesByYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets the history for the team referenced by the given key, including their events and awards. */
+        get: operations["getTeamHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/matches/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of matches for the given team and year. */
+        get: operations["getTeamMatchesByYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/matches/{year}/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of match keys for matches for the given team and year. */
+        get: operations["getTeamMatchesByYearKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/matches/{year}/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a short-form list of matches for the given team and year. */
+        get: operations["getTeamMatchesByYearSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/media/tag/{media_tag}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of Media (videos / pictures) for the given team and tag. */
+        get: operations["getTeamMediaByTag"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/media/tag/{media_tag}/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of Media (videos / pictures) for the given team, tag and year. */
+        get: operations["getTeamMediaByTagYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/media/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of Media (videos / pictures) for the given team and year. */
+        get: operations["getTeamMediaByYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/robots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of year and robot name pairs for each year that a robot name was provided. Will return an empty array if the team has never named a robot. */
+        get: operations["getTeamRobots"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a `Team_Simple` object for the team referenced by the given key. */
+        get: operations["getTeamSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/social_media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of Media (social media) for the given team. */
+        get: operations["getTeamSocialMedia"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/team/{team_key}/years_participated": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of years in which the team participated in at least one competition. */
+        get: operations["getTeamYearsParticipated"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{page_num}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of `Team` objects, paginated in groups of 500. */
+        get: operations["getTeams"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{page_num}/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of Team keys, paginated in groups of 500. (Note, each page will not have 500 teams, but will include the teams within that range of 500.) */
+        get: operations["getTeamsKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{page_num}/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of short form `Team_Simple` objects, paginated in groups of 500. */
+        get: operations["getTeamsSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{year}/{page_num}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of `Team` objects that competed in the given year, paginated in groups of 500. */
+        get: operations["getTeamsByYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{year}/{page_num}/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list Team Keys that competed in the given year, paginated in groups of 500. */
+        get: operations["getTeamsByYearKeys"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{year}/{page_num}/simple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Gets a list of short form `Team_Simple` objects that competed in the given year, paginated in groups of 500. */
+        get: operations["getTeamsByYearSimple"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    API_Status: {
-      /** @description Year of the current FRC season. */
-      current_season: number;
-      /** @description Maximum FRC season year for valid queries. */
-      max_season: number;
-      /** @description True if the entire FMS API provided by FIRST is down. */
-      is_datafeed_down: boolean;
-      /** @description An array of strings containing event keys of any active events that are no longer updating. */
-      down_events: string[];
-      ios: components["schemas"]["API_Status_App_Version"];
-      android: components["schemas"]["API_Status_App_Version"];
-      /** @description Maximum team page number for valid queries. */
-      max_team_page: number;
-    };
-    API_Status_App_Version: {
-      /** @description Internal use - Minimum application version required to correctly connect and process data. */
-      min_app_version: number;
-      /** @description Internal use - Latest application version available. */
-      latest_app_version: number;
-    };
-    /** @enum {string} */
-    AutoChargeStationRobot_2023: "Docked" | "None";
-    /** @enum {string} */
-    AutoLineRobot_2024: "No" | "Yes";
-    /** @enum {string} */
-    AutoRobot_2018: "None" | "AutoRun";
-    Award: {
-      /** @description The name of the award as provided by FIRST. May vary for the same award type. */
-      name: string;
-      /** @description Type of award given. See https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/award_type.py#L8 */
-      award_type: number;
-      /** @description The event_key of the event the award was won at. */
-      event_key: string;
-      /** @description A list of recipients of the award at the event. May have either a team_key or an awardee, both, or neither (in the case the award wasn't awarded at the event). */
-      recipient_list: components["schemas"]["Award_Recipient"][];
-      /** @description The year this award was won. */
-      year: number;
-    };
-    /** @description An `Award_Recipient` object represents the team and/or person who received an award at an event. */
-    Award_Recipient: {
-      /** @description The TBA team key for the team that was given the award. May be null. */
-      team_key: string | null;
-      /** @description The name of the individual given the award. May be null. */
-      awardee: string | null;
-    };
-    /** @enum {string} */
-    Bay_2019: "None" | "Panel" | "PanelAndCargo";
-    /** @enum {string} */
-    BridgeState_2023: "Level" | "NotLevel";
-    /**
-     * @description The competition level the match was played at.
-     * @enum {string}
-     */
-    Comp_Level: "qm" | "ef" | "qf" | "sf" | "f";
-    District: {
-      /** @description The short identifier for the district. */
-      abbreviation: string;
-      /** @description The long name for the district. */
-      display_name: string;
-      /** @description Key for this district, e.g. `2016ne`. */
-      key: string;
-      /** @description Year this district participated. */
-      year: number;
-    };
-    DistrictInsightRegionData: {
-      /** @description Map of year to number of active teams */
-      yearly_active_team_count: {
-        [key: string]: number;
-      };
-      /** @description Map of year to number of events */
-      yearly_event_count: {
-        [key: string]: number;
-      };
-      /** @description Map of year to list of team keys gained */
-      yearly_gained_teams: {
-        [key: string]: string[];
-      };
-      /** @description Map of year to list of team keys lost */
-      yearly_lost_teams: {
-        [key: string]: string[];
-      };
-    };
-    /** @description Advancement status of a team in a district. */
-    District_Advancement: {
-      /** @description Whether or not the team qualified for their District Championship */
-      dcmp: boolean;
-      /** @description Whether or not the team qualified for the FIRST Championship */
-      cmp: boolean;
-    };
-    District_Insight: {
-      district_data: {
-        region_data: {
-          [key: string]: components["schemas"]["DistrictInsightRegionData"];
-        } | null;
-        district_wide_data: components["schemas"]["DistrictInsightRegionData"] | null;
-      };
-      team_data: {
-        [key: string]: {
-          district_seasons: number;
-          total_district_points: number;
-          total_pre_dcmp_district_points: number;
-          district_event_wins: number;
-          dcmp_wins: number;
-          team_awards: number;
-          individual_awards: number;
-          quals_record: components["schemas"]["WLT_Record"];
-          elims_record: components["schemas"]["WLT_Record"];
-          in_district_extra_play_count: number;
-          total_matches_played: number;
-          dcmp_appearances: number;
-          cmp_appearances: number;
+    schemas: {
+        API_Status: {
+            /** @description Year of the current FRC season. */
+            current_season: number;
+            /** @description Maximum FRC season year for valid queries. */
+            max_season: number;
+            /** @description True if the entire FMS API provided by FIRST is down. */
+            is_datafeed_down: boolean;
+            /** @description An array of strings containing event keys of any active events that are no longer updating. */
+            down_events: string[];
+            ios: components["schemas"]["API_Status_App_Version"];
+            android: components["schemas"]["API_Status_App_Version"];
+            /** @description Maximum team page number for valid queries. */
+            max_team_page: number;
         };
-      } | null;
-    };
-    /** @description Rank of a team in a district. */
-    District_Ranking: {
-      /** @description TBA team key for the team. */
-      team_key: string;
-      /** @description Numerical rank of the team, 1 being top rank. */
-      rank: number;
-      /** @description Any points added to a team as a result of the rookie bonus. */
-      rookie_bonus: number;
-      /** @description Total district points for the team. */
-      point_total: number;
-      /** @description List of events that contributed to the point total for the team. */
-      event_points: {
-        /** @description `true` if this event is a District Championship event. */
-        district_cmp: boolean;
-        /** @description Total points awarded at this event. */
-        total: number;
-        /** @description Points awarded for alliance selection. */
-        alliance_points: number;
-        /** @description Points awarded for elimination match performance. */
-        elim_points: number;
-        /** @description Points awarded for event awards. */
-        award_points: number;
-        /** @description TBA Event key for this event. */
-        event_key: string;
-        /** @description Points awarded for qualification match performance. */
-        qual_points: number;
-      }[];
-      /** @description Any points adjustments applied to the team. */
-      adjustments?: number;
-      /** @description Any other bonus points awarded to the team. */
-      other_bonus?: number;
-    };
-    /**
-     * @description Double elimination round, if applicable.
-     * @enum {string}
-     */
-    Double_Elim_Round: "Finals" | "Round 1" | "Round 2" | "Round 3" | "Round 4" | "Round 5";
-    Elimination_Alliance: {
-      /** @description Alliance name. */
-      name?: string;
-      /** @description Backup team called in, may be null. */
-      backup?: {
-        /** @description Team key that was called in as the backup. */
-        in: string;
-        /** @description Team key that was replaced by the backup team. */
-        out: string;
-      } | null;
-      /** @description List of teams that declined the alliance. */
-      declines: string[];
-      /** @description List of team keys picked for the alliance. First pick is captain. */
-      picks: string[];
-      status?: {
-        /**
-         * Format: double
-         * @description Average match score during playoffs. Year specific. May be null.
-         */
-        playoff_average?: number | null;
-        /**
-         * Format: int64
-         * @description Playoff type, may be null.
-         */
-        playoff_type: number | null;
-        /** @description Match level, qm/ef/qf/sf/f. */
-        level: components["schemas"]["Comp_Level"];
-        /** @description W-L-T record for the alliance, may be null. */
-        record: components["schemas"]["WLT_Record"];
-        /** @description W-L-T record for the alliance at the current level, may be null. */
-        current_level_record: components["schemas"]["WLT_Record"];
-        /**
-         * @description Status of the alliance.
-         * @enum {string}
-         */
-        status: "eliminated" | "playing" | "won";
-        /** @description Whether the alliance advanced to round robin finals. */
-        advanced_to_round_robin_finals?: boolean;
-        double_elim_round?: components["schemas"]["Double_Elim_Round"];
-        /** @description Rank in round robin play. */
-        round_robin_rank?: number;
-      };
-    };
-    /** @enum {string} */
-    EndGameChargeStationRobot_2023: "Docked" | "None" | "Park" | "Parked";
-    /** @enum {string} */
-    EndGameRobot_2024: "CenterStage" | "None" | "Parked" | "StageLeft" | "StageRight";
-    /** @enum {string} */
-    EndGameRobot_2025: "DeepCage" | "None" | "Parked" | "ShallowCage";
-    /** @enum {string} */
-    EndgameRobot_2018: "Climbing" | "Levitate" | "None" | "Parking" | "Unknown";
-    /** @enum {string} */
-    EndgameRobot_2019: "HabLevel1" | "HabLevel2" | "HabLevel3" | "None" | "Unknown";
-    /** @enum {string} */
-    EndgameRobot_2020: "Hang" | "None" | "Park";
-    /** @enum {string} */
-    EndgameRobot_2022: "High" | "Low" | "Mid" | "None" | "Traversal";
-    /** @enum {string} */
-    EndgameRungIsLevel_2020: "IsLevel" | "NotLevel";
-    Event: {
-      /** @description TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
-      key: string;
-      /** @description Official name of event on record either provided by FIRST or organizers of offseason event. */
-      name: string;
-      /** @description Event short code, as provided by FIRST. */
-      event_code: string;
-      /** @description Event Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/event_type.py#L8 */
-      event_type: number;
-      district: components["schemas"]["District"];
-      /** @description City, town, village, etc. the event is located in. */
-      city: string | null;
-      /** @description State or Province the event is located in. */
-      state_prov: string | null;
-      /** @description Country the event is located in. */
-      country: string | null;
-      /**
-       * Format: date
-       * @description Event start date in `yyyy-mm-dd` format.
-       */
-      start_date: string;
-      /**
-       * Format: date
-       * @description Event end date in `yyyy-mm-dd` format.
-       */
-      end_date: string;
-      /** @description Year the event data is for. */
-      year: number;
-      /** @description Same as `name` but doesn't include event specifiers, such as 'Regional' or 'District'. May be null. */
-      short_name: string | null;
-      /** @description Event Type, eg Regional, District, or Offseason. */
-      event_type_string: string;
-      /** @description Week of the event relative to the first official season event, zero-indexed. Only valid for Regionals, Districts, and District Championships. Null otherwise. (Eg. A season with a week 0 'preseason' event does not count, and week 1 events will show 0 here. Seasons with a week 0.5 regional event will show week 0 for those event(s) and week 1 for week 1 events and so on.) */
-      week: number | null;
-      /** @description Address of the event's venue, if available. */
-      address: string | null;
-      /** @description Postal code from the event address. */
-      postal_code: string | null;
-      /** @description Google Maps Place ID for the event address. Will be NULL, for future development. */
-      gmaps_place_id: string | null;
-      /**
-       * Format: url
-       * @description Link to address location on Google Maps. Will be NULL, for future development.
-       */
-      gmaps_url: string | null;
-      /**
-       * Format: double
-       * @description Latitude for the event address. Will be NULL, for future development.
-       */
-      lat: number | null;
-      /**
-       * Format: double
-       * @description Longitude for the event address. Will be NULL, for future development.
-       */
-      lng: number | null;
-      /** @description Name of the location at the address for the event, eg. Blue Alliance High School. */
-      location_name: string | null;
-      /** @description IANA Timezone identifier. */
-      timezone: string | null;
-      /** @description The event's website, if any. */
-      website: string | null;
-      /** @description The FIRST internal Event ID, used to link to the event on the FRC webpage. */
-      first_event_id: string | null;
-      /** @description Public facing event code used by FIRST (on frc-events.firstinspires.org, for example) */
-      first_event_code: string | null;
-      webcasts: components["schemas"]["Webcast"][];
-      /** @description An array of event keys for the divisions at this event. */
-      division_keys: string[];
-      /** @description The TBA Event key that represents the event's parent. Used to link back to the event from a division event. It is also the inverse relation of `divison_keys`. */
-      parent_event_key: string | null;
-      /** @description Playoff Type, as defined under `PlayoffType`: https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/playoff_type.py#L37, or null. */
-      playoff_type: number | null;
-      /** @description String representation of the `playoff_type`, or null. */
-      playoff_type_string: string | null;
-      /** @description Map of temporary "off-season demo" team numbers to pre-rookie and B teams. Both keys and values are team keys in the format 'frc####'. Key is the old team key ('frc' + numeric only), value is the new team key ('frc' + numeric + may include a letter suffix). */
-      remap_teams: {
-        [key: string]: string;
-      } | null;
-    };
-    /** @description Component OPRs for teams at the event. */
-    Event_COPRs: {
-      [key: string]: {
-        [key: string]: number;
-      };
-    };
-    Event_District_Points: {
-      /** @description Points gained for each team at the event. Stored as a key-value pair with the team key as the key, and an object describing the points as its value. */
-      points: {
-        [key: string]: {
-          /** @description Total points awarded at this event. */
-          total: number;
-          /** @description Points awarded for alliance selection */
-          alliance_points: number;
-          /** @description Points awarded for elimination match performance. */
-          elim_points: number;
-          /** @description Points awarded for event awards. */
-          award_points: number;
-          /** @description Points awarded for qualification match performance. */
-          qual_points: number;
+        API_Status_App_Version: {
+            /** @description Internal use - Minimum application version required to correctly connect and process data. */
+            min_app_version: number;
+            /** @description Internal use - Latest application version available. */
+            latest_app_version: number;
         };
-      };
-      /** @description Tiebreaker values for each team at the event. Stored as a key-value pair with the team key as the key, and an object describing the tiebreaker elements as its value. */
-      tiebreakers?: {
-        [key: string]: {
-          highest_qual_scores?: number[];
-          qual_wins?: number;
-        };
-      };
-    };
-    /** @description A year-specific event insight object expressed as a JSON string, separated in to `qual` and `playoff` fields. See also Event_Insights_2016, Event_Insights_2017, etc. */
-    Event_Insights: {
-      /** @description Inights for the qualification round of an event */
-      qual?: Record<string, never>;
-      /** @description Insights for the playoff round of an event */
-      playoff?: Record<string, never>;
-    };
-    /** @description Insights for FIRST Stronghold qualification and elimination matches. */
-    Event_Insights_2016: {
-      /** @description For the Low Bar - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      LowBar: number[];
-      /** @description For the Cheval De Frise - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      A_ChevalDeFrise: number[];
-      /** @description For the Portcullis - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      A_Portcullis: number[];
-      /** @description For the Ramparts - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      B_Ramparts: number[];
-      /** @description For the Moat - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      B_Moat: number[];
-      /** @description For the Sally Port - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      C_SallyPort: number[];
-      /** @description For the Drawbridge - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      C_Drawbridge: number[];
-      /** @description For the Rough Terrain - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      D_RoughTerrain: number[];
-      /** @description For the Rock Wall - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
-      D_RockWall: number[];
-      /**
-       * Format: float
-       * @description Average number of high goals scored.
-       */
-      average_high_goals: number;
-      /**
-       * Format: float
-       * @description Average number of low goals scored.
-       */
-      average_low_goals: number;
-      /** @description An array with three values, number of times breached, number of opportunities to breach, and percentage. */
-      breaches: number[];
-      /** @description An array with three values, number of times scaled, number of opportunities to scale, and percentage. */
-      scales: number[];
-      /** @description An array with three values, number of times challenged, number of opportunities to challenge, and percentage. */
-      challenges: number[];
-      /** @description An array with three values, number of times captured, number of opportunities to capture, and percentage. */
-      captures: number[];
-      /**
-       * Format: float
-       * @description Average winning score.
-       */
-      average_win_score: number;
-      /**
-       * Format: float
-       * @description Average margin of victory.
-       */
-      average_win_margin: number;
-      /**
-       * Format: float
-       * @description Average total score.
-       */
-      average_score: number;
-      /**
-       * Format: float
-       * @description Average autonomous score.
-       */
-      average_auto_score: number;
-      /**
-       * Format: float
-       * @description Average crossing score.
-       */
-      average_crossing_score: number;
-      /**
-       * Format: float
-       * @description Average boulder score.
-       */
-      average_boulder_score: number;
-      /**
-       * Format: float
-       * @description Average tower score.
-       */
-      average_tower_score: number;
-      /**
-       * Format: float
-       * @description Average foul score.
-       */
-      average_foul_score: number;
-      /** @description An array with three values, high score, match key from the match with the high score, and the name of the match. */
-      high_score: string[];
-    };
-    /** @description Insights for FIRST STEAMWORKS qualification and elimination matches. */
-    Event_Insights_2017: {
-      /**
-       * Format: float
-       * @description Average foul score.
-       */
-      average_foul_score: number;
-      /**
-       * Format: float
-       * @description Average fuel points scored.
-       */
-      average_fuel_points: number;
-      /**
-       * Format: float
-       * @description Average fuel points scored during auto.
-       */
-      average_fuel_points_auto: number;
-      /**
-       * Format: float
-       * @description Average fuel points scored during teleop.
-       */
-      average_fuel_points_teleop: number;
-      /**
-       * Format: float
-       * @description Average points scored in the high goal.
-       */
-      average_high_goals: number;
-      /**
-       * Format: float
-       * @description Average points scored in the high goal during auto.
-       */
-      average_high_goals_auto: number;
-      /**
-       * Format: float
-       * @description Average points scored in the high goal during teleop.
-       */
-      average_high_goals_teleop: number;
-      /**
-       * Format: float
-       * @description Average points scored in the low goal.
-       */
-      average_low_goals: number;
-      /**
-       * Format: float
-       * @description Average points scored in the low goal during auto.
-       */
-      average_low_goals_auto: number;
-      /**
-       * Format: float
-       * @description Average points scored in the low goal during teleop.
-       */
-      average_low_goals_teleop: number;
-      /**
-       * Format: float
-       * @description Average mobility points scored during auto.
-       */
-      average_mobility_points_auto: number;
-      /**
-       * Format: float
-       * @description Average points scored during auto.
-       */
-      average_points_auto: number;
-      /**
-       * Format: float
-       * @description Average points scored during teleop.
-       */
-      average_points_teleop: number;
-      /**
-       * Format: float
-       * @description Average rotor points scored.
-       */
-      average_rotor_points: number;
-      /**
-       * Format: float
-       * @description Average rotor points scored during auto.
-       */
-      average_rotor_points_auto: number;
-      /**
-       * Format: float
-       * @description Average rotor points scored during teleop.
-       */
-      average_rotor_points_teleop: number;
-      /**
-       * Format: float
-       * @description Average score.
-       */
-      average_score: number;
-      /**
-       * Format: float
-       * @description Average takeoff points scored during teleop.
-       */
-      average_takeoff_points_teleop: number;
-      /**
-       * Format: float
-       * @description Average margin of victory.
-       */
-      average_win_margin: number;
-      /**
-       * Format: float
-       * @description Average winning score.
-       */
-      average_win_score: number;
-      /** @description An array with three values, kPa scored, match key from the match with the high kPa, and the name of the match */
-      high_kpa: string[];
-      /** @description An array with three values, high score, match key from the match with the high score, and the name of the match */
-      high_score: string[];
-      /** @description An array with three values, number of times kPa bonus achieved, number of opportunities to bonus, and percentage. */
-      kpa_achieved: number[];
-      /** @description An array with three values, number of times mobility bonus achieved, number of opportunities to bonus, and percentage. */
-      mobility_counts: number[];
-      /** @description An array with three values, number of times rotor 1 engaged, number of opportunities to engage, and percentage. */
-      rotor_1_engaged: number[];
-      /** @description An array with three values, number of times rotor 1 engaged in auto, number of opportunities to engage in auto, and percentage. */
-      rotor_1_engaged_auto: number[];
-      /** @description An array with three values, number of times rotor 2 engaged, number of opportunities to engage, and percentage. */
-      rotor_2_engaged: number[];
-      /** @description An array with three values, number of times rotor 2 engaged in auto, number of opportunities to engage in auto, and percentage. */
-      rotor_2_engaged_auto: number[];
-      /** @description An array with three values, number of times rotor 3 engaged, number of opportunities to engage, and percentage. */
-      rotor_3_engaged: number[];
-      /** @description An array with three values, number of times rotor 4 engaged, number of opportunities to engage, and percentage. */
-      rotor_4_engaged: number[];
-      /** @description An array with three values, number of times takeoff was counted, number of opportunities to takeoff, and percentage. */
-      takeoff_counts: number[];
-      /** @description An array with three values, number of times a unicorn match (Win + kPa & Rotor Bonuses) occured, number of opportunities to have a unicorn match, and percentage. */
-      unicorn_matches: number[];
-    };
-    /** @description Insights for FIRST Power Up qualification and elimination matches. */
-    Event_Insights_2018: {
-      /** @description An array with three values, number of times auto quest was completed, number of opportunities to complete the auto quest, and percentage. */
-      auto_quest_achieved: number[];
-      /**
-       * Format: float
-       * @description Average number of boost power up scored (out of 3).
-       */
-      average_boost_played: number;
-      /**
-       * Format: float
-       * @description Average endgame points.
-       */
-      average_endgame_points: number;
-      /**
-       * Format: float
-       * @description Average number of force power up scored (out of 3).
-       */
-      average_force_played: number;
-      /**
-       * Format: float
-       * @description Average foul score.
-       */
-      average_foul_score: number;
-      /**
-       * Format: float
-       * @description Average points scored during auto.
-       */
-      average_points_auto: number;
-      /**
-       * Format: float
-       * @description Average points scored during teleop.
-       */
-      average_points_teleop: number;
-      /**
-       * Format: float
-       * @description Average mobility points scored during auto.
-       */
-      average_run_points_auto: number;
-      /**
-       * Format: float
-       * @description Average scale ownership points scored.
-       */
-      average_scale_ownership_points: number;
-      /**
-       * Format: float
-       * @description Average scale ownership points scored during auto.
-       */
-      average_scale_ownership_points_auto: number;
-      /**
-       * Format: float
-       * @description Average scale ownership points scored during teleop.
-       */
-      average_scale_ownership_points_teleop: number;
-      /**
-       * Format: float
-       * @description Average score.
-       */
-      average_score: number;
-      /**
-       * Format: float
-       * @description Average switch ownership points scored.
-       */
-      average_switch_ownership_points: number;
-      /**
-       * Format: float
-       * @description Average switch ownership points scored during auto.
-       */
-      average_switch_ownership_points_auto: number;
-      /**
-       * Format: float
-       * @description Average switch ownership points scored during teleop.
-       */
-      average_switch_ownership_points_teleop: number;
-      /**
-       * Format: float
-       * @description Average value points scored.
-       */
-      average_vault_points: number;
-      /**
-       * Format: float
-       * @description Average margin of victory.
-       */
-      average_win_margin: number;
-      /**
-       * Format: float
-       * @description Average winning score.
-       */
-      average_win_score: number;
-      /** @description An array with three values, number of times a boost power up was played, number of opportunities to play a boost power up, and percentage. */
-      boost_played_counts: number[];
-      /** @description An array with three values, number of times a climb occurred, number of opportunities to climb, and percentage. */
-      climb_counts: number[];
-      /** @description An array with three values, number of times an alliance faced the boss, number of opportunities to face the boss, and percentage. */
-      face_the_boss_achieved: number[];
-      /** @description An array with three values, number of times a force power up was played, number of opportunities to play a force power up, and percentage. */
-      force_played_counts: number[];
-      /** @description An array with three values, high score, match key from the match with the high score, and the name of the match */
-      high_score: string[];
-      /** @description An array with three values, number of times a levitate power up was played, number of opportunities to play a levitate power up, and percentage. */
-      levitate_played_counts: number[];
-      /** @description An array with three values, number of times a team scored mobility points in auto, number of opportunities to score mobility points in auto, and percentage. */
-      run_counts_auto: number[];
-      /**
-       * Format: float
-       * @description Average scale neutral percentage.
-       */
-      scale_neutral_percentage: number;
-      /**
-       * Format: float
-       * @description Average scale neutral percentage during auto.
-       */
-      scale_neutral_percentage_auto: number;
-      /**
-       * Format: float
-       * @description Average scale neutral percentage during teleop.
-       */
-      scale_neutral_percentage_teleop: number;
-      /** @description An array with three values, number of times a switch was owned during auto, number of opportunities to own a switch during auto, and percentage. */
-      switch_owned_counts_auto: number[];
-      /** @description An array with three values, number of times a unicorn match (Win + Auto Quest + Face the Boss) occurred, number of opportunities to have a unicorn match, and percentage. */
-      unicorn_matches: number[];
-      /**
-       * Format: float
-       * @description Average opposing switch denail percentage for the winning alliance during teleop.
-       */
-      winning_opp_switch_denial_percentage_teleop: number;
-      /**
-       * Format: float
-       * @description Average own switch ownership percentage for the winning alliance.
-       */
-      winning_own_switch_ownership_percentage: number;
-      /**
-       * Format: float
-       * @description Average own switch ownership percentage for the winning alliance during auto.
-       */
-      winning_own_switch_ownership_percentage_auto: number;
-      /**
-       * Format: float
-       * @description Average own switch ownership percentage for the winning alliance during teleop.
-       */
-      winning_own_switch_ownership_percentage_teleop: number;
-      /**
-       * Format: float
-       * @description Average scale ownership percentage for the winning alliance.
-       */
-      winning_scale_ownership_percentage: number;
-      /**
-       * Format: float
-       * @description Average scale ownership percentage for the winning alliance during auto.
-       */
-      winning_scale_ownership_percentage_auto: number;
-      /**
-       * Format: float
-       * @description Average scale ownership percentage for the winning alliance during teleop.
-       */
-      winning_scale_ownership_percentage_teleop: number;
-    };
-    /** @description OPR, DPR, and CCWM for teams at the event. */
-    Event_OPRs: {
-      /** @description A key-value pair with team key (eg `frc254`) as key and OPR as value. */
-      oprs?: {
-        [key: string]: number;
-      };
-      /** @description A key-value pair with team key (eg `frc254`) as key and DPR as value. */
-      dprs?: {
-        [key: string]: number;
-      };
-      /** @description A key-value pair with team key (eg `frc254`) as key and CCWM as value. */
-      ccwms?: {
-        [key: string]: number;
-      };
-    };
-    /** @description JSON Object containing prediction information for the event. Contains year-specific information and is subject to change. */
-    Event_Predictions: Record<string, never>;
-    Event_Ranking: {
-      /** @description List of rankings at the event. */
-      rankings: {
-        /** @description Number of matches played by this team. */
-        matches_played: number;
-        /** @description The average match score during qualifications. Year specific. May be null if not relevant for a given year. */
-        qual_average: number | null;
-        /** @description Additional special data on the team's performance calculated by TBA. */
-        extra_stats: number[];
-        /** @description Additional year-specific information. See parent `sort_order_info` for details. */
-        sort_orders: number[];
-        record: components["schemas"]["WLT_Record"];
-        /** @description The team's rank at the event as provided by FIRST. */
-        rank: number;
-        /** @description Number of times disqualified. */
-        dq: number;
-        /** @description The team with this rank. */
-        team_key: string;
-      }[];
-      /** @description List of special TBA-generated values provided in the `extra_stats` array for each item. */
-      extra_stats_info: {
-        /** @description Integer expressing the number of digits of precision in the number provided in `sort_orders`. */
-        precision: number;
-        /** @description Name of the field used in the `extra_stats` array. */
-        name: string;
-      }[];
-      /** @description List of year-specific values provided in the `sort_orders` array for each team. */
-      sort_order_info:
-        | {
-            /** @description Integer expressing the number of digits of precision in the number provided in `sort_orders`. */
-            precision: number;
-            /** @description Name of the field used in the `sort_order` array. */
+        /** @enum {string} */
+        AutoChargeStationRobot_2023: "Docked" | "None";
+        /** @enum {string} */
+        AutoLineRobot_2024: "No" | "Yes";
+        /** @enum {string} */
+        AutoRobot_2018: "None" | "AutoRun";
+        Award: {
+            /** @description The name of the award as provided by FIRST. May vary for the same award type. */
             name: string;
-          }[]
-        | null;
-    };
-    Event_Simple: {
-      /** @description TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
-      key: string;
-      /** @description Official name of event on record either provided by FIRST or organizers of offseason event. */
-      name: string;
-      /** @description Event short code, as provided by FIRST. */
-      event_code: string;
-      /** @description Event Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/event_type.py#L8 */
-      event_type: number;
-      district: components["schemas"]["District"];
-      /** @description City, town, village, etc. the event is located in. */
-      city: string | null;
-      /** @description State or Province the event is located in. */
-      state_prov: string | null;
-      /** @description Country the event is located in. */
-      country: string | null;
-      /**
-       * Format: date
-       * @description Event start date in `yyyy-mm-dd` format.
-       */
-      start_date: string;
-      /**
-       * Format: date
-       * @description Event end date in `yyyy-mm-dd` format.
-       */
-      end_date: string;
-      /** @description Year the event data is for. */
-      year: number;
-    };
-    /** @enum {string} */
-    HabLine_2019: "CrossedHabLineInSandstorm" | "CrossedHabLineInTeleop" | "None" | "Unknown";
-    History: {
-      events: components["schemas"]["Event"][];
-      awards: components["schemas"]["Award"][];
-    };
-    /** @enum {string} */
-    InitLineRobot_2020: "Exited" | "None";
-    LeaderboardInsight: {
-      data: {
-        rankings: {
-          /** @description Value of the insight that the corresponding team/event/matches have, e.g. number of blue banners, or number of matches played. */
-          value: number;
-          /** @description Team/Event/Match keys that have the corresponding value. */
-          keys: string[];
-        }[];
+            /** @description Type of award given. See https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/award_type.py#L8 */
+            award_type: number;
+            /** @description The event_key of the event the award was won at. */
+            event_key: string;
+            /** @description A list of recipients of the award at the event. May have either a team_key or an awardee, both, or neither (in the case the award wasn't awarded at the event). */
+            recipient_list: components["schemas"]["Award_Recipient"][];
+            /** @description The year this award was won. */
+            year: number;
+        };
+        /** @description An `Award_Recipient` object represents the team and/or person who received an award at an event. */
+        Award_Recipient: {
+            /** @description The TBA team key for the team that was given the award. May be null. */
+            team_key: string | null;
+            /** @description The name of the individual given the award. May be null. */
+            awardee: string | null;
+        };
+        /** @enum {string} */
+        Bay_2019: "None" | "Panel" | "PanelAndCargo";
+        /** @enum {string} */
+        BridgeState_2023: "Level" | "NotLevel";
         /**
-         * @description What type of key is used in the rankings; either 'team', 'event', or 'match'.
+         * @description The competition level the match was played at.
          * @enum {string}
          */
-        key_type: "team" | "event" | "match";
-      };
-      /** @description Name of the insight. */
-      name: string;
-      /** @description Year the insight was measured in (year=0 for overall insights). */
-      year: number;
-    };
-    Match: {
-      /** @description TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may be appended to the competition level if more than one match in required per set. */
-      key: string;
-      comp_level: components["schemas"]["Comp_Level"];
-      /** @description The set number in a series of matches where more than one match is required in the match series. */
-      set_number: number;
-      /** @description The match number of the match in the competition level. */
-      match_number: number;
-      /** @description A list of alliances, the teams on the alliances, and their score. */
-      alliances: {
-        red: components["schemas"]["Match_alliance"];
-        blue: components["schemas"]["Match_alliance"];
-      };
-      /**
-       * @description The color (red/blue) of the winning alliance. Will contain an empty string in the event of no winner, or a tie.
-       * @enum {string}
-       */
-      winning_alliance: "red" | "blue" | "";
-      /** @description Event key of the event the match was played at. */
-      event_key: string;
-      /**
-       * Format: int64
-       * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the scheduled match time, as taken from the published schedule.
-       */
-      time: number | null;
-      /**
-       * Format: int64
-       * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of actual match start time.
-       */
-      actual_time: number | null;
-      /**
-       * Format: int64
-       * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the TBA predicted match start time.
-       */
-      predicted_time: number | null;
-      /**
-       * Format: int64
-       * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) when the match result was posted.
-       */
-      post_result_time: number | null;
-      /** @description Score breakdown for auto, teleop, etc. points. Varies from year to year. May be null. */
-      score_breakdown: (Record<string, never> | null) &
-        (
-          | components["schemas"]["Match_Score_Breakdown_2015"]
-          | components["schemas"]["Match_Score_Breakdown_2016"]
-          | components["schemas"]["Match_Score_Breakdown_2017"]
-          | components["schemas"]["Match_Score_Breakdown_2018"]
-          | components["schemas"]["Match_Score_Breakdown_2019"]
-          | components["schemas"]["Match_Score_Breakdown_2020"]
-          | components["schemas"]["Match_Score_Breakdown_2022"]
-          | components["schemas"]["Match_Score_Breakdown_2023"]
-          | components["schemas"]["Match_Score_Breakdown_2024"]
-          | components["schemas"]["Match_Score_Breakdown_2025"]
-        );
-      /** @description Array of video objects associated with this match. */
-      videos: {
-        /** @description Can be one of 'youtube' or 'tba' */
-        type: string;
-        /** @description Unique key representing this video */
-        key: string;
-      }[];
-    };
-    /** @description See the 2015 FMS API documentation for a description of each value */
-    Match_Score_Breakdown_2015: {
-      blue: components["schemas"]["Match_Score_Breakdown_2015_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2015_Alliance"];
-      /** @enum {string} */
-      coopertition: "None" | "Unknown" | "Stack";
-      coopertition_points: number;
-    };
-    Match_Score_Breakdown_2015_Alliance: {
-      auto?: string | null;
-      auto_points?: number | null;
-      teleop_points?: number;
-      container_points?: number;
-      tote_points?: number;
-      litter_points?: number;
-      foul?: string | null;
-      foul_points?: number | null;
-      adjust_points?: number;
-      total_points?: number;
-      foul_count?: number;
-      tote_count_far?: number;
-      tote_count_near?: number;
-      tote_set?: boolean;
-      tote_stack?: boolean;
-      container_count_level1?: number;
-      container_count_level2?: number;
-      container_count_level3?: number;
-      container_count_level4?: number;
-      container_count_level5?: number;
-      container_count_level6?: number;
-      container_set?: boolean;
-      litter_count_container?: number;
-      litter_count_landfill?: number;
-      litter_count_unprocessed?: number;
-      robot_set?: boolean;
-    };
-    /** @description See the 2016 FMS API documentation for a description of each value. */
-    Match_Score_Breakdown_2016: {
-      blue: components["schemas"]["Match_Score_Breakdown_2016_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2016_Alliance"];
-    };
-    Match_Score_Breakdown_2016_Alliance: {
-      autoPoints: number;
-      teleopPoints?: number;
-      breachPoints: number;
-      foulPoints: number;
-      capturePoints: number;
-      adjustPoints?: number;
-      totalPoints: number;
-      tba_rpEarned: number | null;
-      robot1Auto?: components["schemas"]["RobotAuto_2016_WithUnknown"];
-      robot2Auto?: components["schemas"]["RobotAuto_2016_WithoutUnknown"];
-      robot3Auto?: components["schemas"]["RobotAuto_2016_WithUnknown"];
-      autoReachPoints: number;
-      autoCrossingPoints: number;
-      autoBouldersLow?: number;
-      autoBouldersHigh?: number;
-      autoBoulderPoints: number;
-      teleopCrossingPoints: number;
-      teleopBouldersLow: number;
-      teleopBouldersHigh: number;
-      teleopBoulderPoints: number;
-      teleopDefensesBreached: boolean;
-      teleopChallengePoints: number;
-      teleopScalePoints: number;
-      teleopTowerCaptured: boolean;
-      towerFaceA?: components["schemas"]["TowerFace_2016"];
-      towerFaceB?: components["schemas"]["TowerFace_2016"];
-      towerFaceC?: components["schemas"]["TowerFace_2016"];
-      towerEndStrength?: number;
-      techFoulCount?: number;
-      foulCount?: number;
-      position2: components["schemas"]["Position_2016"];
-      position3: components["schemas"]["Position_2016"];
-      position4: components["schemas"]["Position_2016"];
-      position5: components["schemas"]["Position_2016"];
-      position1crossings: number;
-      position2crossings: number;
-      position3crossings: number;
-      position4crossings: number;
-      position5crossings: number;
-    };
-    /** @description See the 2017 FMS API documentation for a description of each value. */
-    Match_Score_Breakdown_2017: {
-      blue: components["schemas"]["Match_Score_Breakdown_2017_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2017_Alliance"];
-    };
-    Match_Score_Breakdown_2017_Alliance: {
-      autoPoints: number;
-      teleopPoints: number;
-      foulPoints: number;
-      adjustPoints?: number;
-      totalPoints: number;
-      robot1Auto?: components["schemas"]["RobotAuto_2017"];
-      robot2Auto?: components["schemas"]["RobotAuto_2017"];
-      robot3Auto?: components["schemas"]["RobotAuto_2017"];
-      rotor1Auto: boolean;
-      rotor2Auto: boolean;
-      autoFuelLow: number;
-      autoFuelHigh: number;
-      autoMobilityPoints: number;
-      autoRotorPoints: number;
-      autoFuelPoints: number;
-      teleopFuelPoints: number;
-      teleopFuelLow: number;
-      teleopFuelHigh: number;
-      teleopRotorPoints: number;
-      kPaRankingPointAchieved: boolean;
-      teleopTakeoffPoints: number;
-      kPaBonusPoints: number;
-      rotorBonusPoints: number;
-      rotor1Engaged: boolean;
-      rotor2Engaged: boolean;
-      rotor3Engaged: boolean;
-      rotor4Engaged: boolean;
-      rotorRankingPointAchieved: boolean;
-      tba_rpEarned?: number | null;
-      techFoulCount?: number;
-      foulCount?: number;
-      touchpadNear?: components["schemas"]["Touchpad_2017"];
-      touchpadMiddle?: components["schemas"]["Touchpad_2017"];
-      touchpadFar?: components["schemas"]["Touchpad_2017"];
-    };
-    /** @description See the 2018 FMS API documentation for a description of each value. https://frcevents2.docs.apiary.io/#/reference/match-results/score-details */
-    Match_Score_Breakdown_2018: {
-      blue: components["schemas"]["Match_Score_Breakdown_2018_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2018_Alliance"];
-    };
-    Match_Score_Breakdown_2018_Alliance: {
-      adjustPoints?: number;
-      autoOwnershipPoints: number;
-      autoPoints: number;
-      autoQuestRankingPoint?: boolean;
-      autoRobot1?: components["schemas"]["AutoRobot_2018"];
-      autoRobot2?: components["schemas"]["AutoRobot_2018"];
-      autoRobot3?: components["schemas"]["AutoRobot_2018"];
-      autoRunPoints: number;
-      autoScaleOwnershipSec: number;
-      autoSwitchAtZero?: boolean;
-      autoSwitchOwnershipSec: number;
-      endgamePoints: number;
-      endgameRobot1?: components["schemas"]["EndgameRobot_2018"];
-      endgameRobot2?: components["schemas"]["EndgameRobot_2018"];
-      endgameRobot3?: components["schemas"]["EndgameRobot_2018"];
-      faceTheBossRankingPoint: boolean;
-      foulCount?: number;
-      foulPoints: number;
-      rp: number;
-      techFoulCount?: number;
-      teleopOwnershipPoints: number;
-      teleopPoints: number;
-      teleopScaleBoostSec: number;
-      teleopScaleForceSec?: number;
-      teleopScaleOwnershipSec: number;
-      teleopSwitchBoostSec: number;
-      teleopSwitchForceSec?: number;
-      teleopSwitchOwnershipSec: number;
-      totalPoints: number;
-      vaultBoostPlayed: number;
-      vaultBoostTotal: number;
-      vaultForcePlayed: number;
-      vaultForceTotal: number;
-      vaultLevitatePlayed: number;
-      vaultLevitateTotal: number;
-      vaultPoints: number;
-      /**
-       * @description Unofficial TBA-computed value of the FMS provided GameData given to the alliance teams at the start of the match. 3 Character String containing `L` and `R` only. The first character represents the near switch, the 2nd the scale, and the 3rd the far, opposing, switch from the alliance's perspective. An `L` in a position indicates the platform on the left will be lit for the alliance while an `R` will indicate the right platform will be lit for the alliance. See also [WPI Screen Steps](https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details).
-       * @enum {string}
-       */
-      tba_gameData?: "" | "LLL" | "LRL" | "RLR" | "RRR";
-    };
-    /** @description See the 2019 FMS API documentation for a description of each value. https://frcevents2.docs.apiary.io/#/reference/match-results/score-details */
-    Match_Score_Breakdown_2019: {
-      blue: components["schemas"]["Match_Score_Breakdown_2019_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2019_Alliance"];
-    };
-    Match_Score_Breakdown_2019_Alliance: {
-      adjustPoints?: number;
-      autoPoints?: number;
-      bay1: components["schemas"]["Bay_2019"];
-      bay2: components["schemas"]["Bay_2019"];
-      bay3: components["schemas"]["Bay_2019"];
-      bay4: components["schemas"]["Bay_2019"];
-      bay5: components["schemas"]["Bay_2019"];
-      bay6: components["schemas"]["Bay_2019"];
-      bay7: components["schemas"]["Bay_2019"];
-      bay8: components["schemas"]["Bay_2019"];
-      cargoPoints: number;
-      completeRocketRankingPoint: boolean;
-      completedRocketFar?: boolean;
-      completedRocketNear?: boolean;
-      endgameRobot1: components["schemas"]["EndgameRobot_2019"];
-      endgameRobot2: components["schemas"]["EndgameRobot_2019"];
-      endgameRobot3: components["schemas"]["EndgameRobot_2019"];
-      foulCount?: number;
-      foulPoints: number;
-      habClimbPoints: number;
-      habDockingRankingPoint: boolean;
-      habLineRobot1: components["schemas"]["HabLine_2019"];
-      habLineRobot2: components["schemas"]["HabLine_2019"];
-      habLineRobot3: components["schemas"]["HabLine_2019"];
-      hatchPanelPoints: number;
-      lowLeftRocketFar: components["schemas"]["Bay_2019"];
-      lowLeftRocketNear: components["schemas"]["Bay_2019"];
-      lowRightRocketFar: components["schemas"]["Bay_2019"];
-      lowRightRocketNear: components["schemas"]["Bay_2019"];
-      midLeftRocketFar: components["schemas"]["Bay_2019"];
-      midLeftRocketNear: components["schemas"]["Bay_2019"];
-      midRightRocketFar: components["schemas"]["Bay_2019"];
-      midRightRocketNear: components["schemas"]["Bay_2019"];
-      preMatchBay1: components["schemas"]["PreMatchBay_2019"];
-      preMatchBay2: components["schemas"]["PreMatchBay_2019"];
-      preMatchBay3: components["schemas"]["PreMatchBay_2019"];
-      preMatchBay6: components["schemas"]["PreMatchBay_2019"];
-      preMatchBay7: components["schemas"]["PreMatchBay_2019"];
-      preMatchBay8: components["schemas"]["PreMatchBay_2019"];
-      preMatchLevelRobot1: components["schemas"]["EndgameRobot_2019"];
-      preMatchLevelRobot2: components["schemas"]["EndgameRobot_2019"];
-      preMatchLevelRobot3: components["schemas"]["EndgameRobot_2019"];
-      rp: number;
-      sandStormBonusPoints: number;
-      techFoulCount?: number;
-      teleopPoints: number;
-      topLeftRocketFar: components["schemas"]["Bay_2019"];
-      topLeftRocketNear: components["schemas"]["Bay_2019"];
-      topRightRocketFar: components["schemas"]["Bay_2019"];
-      topRightRocketNear: components["schemas"]["Bay_2019"];
-      totalPoints: number;
-    };
-    /** @description See the 2020 FMS API documentation for a description of each value. https://frcevents2.docs.apiary.io/#/reference/match-results/score-details */
-    Match_Score_Breakdown_2020: {
-      blue: components["schemas"]["Match_Score_Breakdown_2020_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2020_Alliance"];
-    };
-    Match_Score_Breakdown_2020_Alliance: {
-      initLineRobot1: components["schemas"]["InitLineRobot_2020"];
-      endgameRobot1: components["schemas"]["EndgameRobot_2020"];
-      initLineRobot2: components["schemas"]["InitLineRobot_2020"];
-      endgameRobot2: components["schemas"]["EndgameRobot_2020"];
-      initLineRobot3: components["schemas"]["InitLineRobot_2020"];
-      endgameRobot3: components["schemas"]["EndgameRobot_2020"];
-      autoCellsBottom: number;
-      autoCellsOuter: number;
-      autoCellsInner: number;
-      teleopCellsBottom: number;
-      teleopCellsOuter: number;
-      teleopCellsInner: number;
-      stage1Activated: boolean;
-      stage2Activated: boolean;
-      stage3Activated: boolean;
-      stage3TargetColor: components["schemas"]["Stage3TargetColor_2020"];
-      endgameRungIsLevel: components["schemas"]["EndgameRungIsLevel_2020"];
-      autoInitLinePoints: number;
-      autoCellPoints: number;
-      autoPoints: number;
-      teleopCellPoints: number;
-      controlPanelPoints: number;
-      endgamePoints: number;
-      teleopPoints: number;
-      shieldOperationalRankingPoint: boolean;
-      shieldEnergizedRankingPoint: boolean;
-      /** @description Unofficial TBA-computed value that indicates whether the shieldEnergizedRankingPoint was earned normally or awarded due to a foul. */
-      tba_shieldEnergizedRankingPointFromFoul?: boolean;
-      /** @description Unofficial TBA-computed value that counts the number of robots who were hanging at the end of the match. */
-      tba_numRobotsHanging?: number;
-      foulCount: number;
-      techFoulCount: number;
-      adjustPoints?: number;
-      foulPoints: number;
-      rp?: number;
-      totalPoints: number;
-    };
-    /** @description See the 2022 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
-    Match_Score_Breakdown_2022: {
-      blue: components["schemas"]["Match_Score_Breakdown_2022_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2022_Alliance"];
-    };
-    Match_Score_Breakdown_2022_Alliance: {
-      taxiRobot1?: components["schemas"]["TaxiRobot_2022"];
-      endgameRobot1?: components["schemas"]["EndgameRobot_2022"];
-      taxiRobot2?: components["schemas"]["TaxiRobot_2022"];
-      endgameRobot2?: components["schemas"]["EndgameRobot_2022"];
-      taxiRobot3?: components["schemas"]["TaxiRobot_2022"];
-      endgameRobot3?: components["schemas"]["EndgameRobot_2022"];
-      autoCargoLowerNear?: number;
-      autoCargoLowerFar?: number;
-      autoCargoLowerBlue?: number;
-      autoCargoLowerRed?: number;
-      autoCargoUpperNear?: number;
-      autoCargoUpperFar?: number;
-      autoCargoUpperBlue?: number;
-      autoCargoUpperRed?: number;
-      autoCargoTotal?: number;
-      teleopCargoLowerNear?: number;
-      teleopCargoLowerFar?: number;
-      teleopCargoLowerBlue?: number;
-      teleopCargoLowerRed?: number;
-      teleopCargoUpperNear?: number;
-      teleopCargoUpperFar?: number;
-      teleopCargoUpperBlue?: number;
-      teleopCargoUpperRed?: number;
-      teleopCargoTotal?: number;
-      matchCargoTotal?: number;
-      autoTaxiPoints?: number;
-      autoCargoPoints?: number;
-      autoPoints?: number;
-      quintetAchieved?: boolean;
-      teleopCargoPoints?: number;
-      endgamePoints?: number;
-      teleopPoints?: number;
-      cargoBonusRankingPoint?: boolean;
-      hangarBonusRankingPoint?: boolean;
-      foulCount?: number;
-      techFoulCount?: number;
-      adjustPoints?: number;
-      foulPoints?: number;
-      rp?: number | null;
-      totalPoints?: number;
-    };
-    /** @description See the 2023 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
-    Match_Score_Breakdown_2023: {
-      blue: components["schemas"]["Match_Score_Breakdown_2023_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2023_Alliance"];
-    };
-    Match_Score_Breakdown_2023_Alliance: {
-      activationBonusAchieved?: boolean;
-      adjustPoints?: number;
-      autoBridgeState?: components["schemas"]["BridgeState_2023"];
-      autoChargeStationPoints?: number;
-      autoChargeStationRobot1?: components["schemas"]["AutoChargeStationRobot_2023"];
-      autoChargeStationRobot2?: components["schemas"]["AutoChargeStationRobot_2023"];
-      autoChargeStationRobot3?: components["schemas"]["AutoChargeStationRobot_2023"];
-      autoDocked?: boolean;
-      autoCommunity?: {
-        B: ("None" | "Cone" | "Cube")[];
-        M: ("None" | "Cone" | "Cube")[];
-        T: ("None" | "Cone" | "Cube")[];
-      };
-      autoGamePieceCount?: number;
-      autoGamePiecePoints?: number;
-      autoMobilityPoints: number;
-      mobilityRobot1: components["schemas"]["MobilityRobot_2023"];
-      mobilityRobot2: components["schemas"]["MobilityRobot_2023"];
-      mobilityRobot3: components["schemas"]["MobilityRobot_2023"];
-      autoPoints: number;
-      coopGamePieceCount?: number;
-      coopertitionCriteriaMet?: boolean;
-      endGameBridgeState?: components["schemas"]["BridgeState_2023"];
-      endGameChargeStationPoints?: number;
-      endGameChargeStationRobot1?: components["schemas"]["EndGameChargeStationRobot_2023"];
-      endGameChargeStationRobot2?: components["schemas"]["EndGameChargeStationRobot_2023"];
-      endGameChargeStationRobot3?: components["schemas"]["EndGameChargeStationRobot_2023"];
-      endGameParkPoints?: number;
-      extraGamePieceCount?: number;
-      foulCount: number;
-      foulPoints: number;
-      techFoulCount: number;
-      linkPoints?: number;
-      links?:
-        | {
-            nodes: ("None" | "Cone" | "Cube")[];
-            /** @enum {string} */
-            row: "Bottom" | "Mid" | "Top";
-          }[]
-        | null;
-      sustainabilityBonusAchieved?: boolean;
-      teleopCommunity?: {
-        B: ("None" | "Cone" | "Cube")[];
-        M: ("None" | "Cone" | "Cube")[];
-        T: ("None" | "Cone" | "Cube")[];
-      };
-      teleopGamePieceCount?: number;
-      teleopGamePiecePoints?: number;
-      totalChargeStationPoints?: number;
-      teleopPoints: number;
-      rp: number;
-      totalPoints: number;
-    };
-    /** @description See the 2024 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
-    Match_Score_Breakdown_2024: {
-      blue: components["schemas"]["Match_Score_Breakdown_2024_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2024_Alliance"];
-    };
-    Match_Score_Breakdown_2024_Alliance: {
-      adjustPoints?: number;
-      autoAmpNoteCount?: number;
-      autoAmpNotePoints?: number;
-      autoLeavePoints?: number;
-      autoLineRobot1?: components["schemas"]["AutoLineRobot_2024"];
-      autoLineRobot2?: components["schemas"]["AutoLineRobot_2024"];
-      autoLineRobot3?: components["schemas"]["AutoLineRobot_2024"];
-      autoPoints?: number;
-      autoSpeakerNoteCount?: number;
-      autoSpeakerNotePoints?: number;
-      autoTotalNotePoints?: number;
-      coopNotePlayed?: boolean;
-      coopertitionBonusAchieved?: boolean;
-      coopertitionCriteriaMet?: boolean;
-      endGameHarmonyPoints?: number;
-      endGameNoteInTrapPoints?: number;
-      endGameOnStagePoints?: number;
-      endGameParkPoints?: number;
-      endGameRobot1?: components["schemas"]["EndGameRobot_2024"];
-      endGameRobot2?: components["schemas"]["EndGameRobot_2024"];
-      endGameRobot3?: components["schemas"]["EndGameRobot_2024"];
-      endGameSpotLightBonusPoints?: number;
-      endGameTotalStagePoints?: number;
-      ensembleBonusAchieved?: boolean;
-      ensembleBonusOnStageRobotsThreshold?: number;
-      ensembleBonusStagePointsThreshold?: number;
-      foulCount?: number;
-      foulPoints?: number;
-      g206Penalty?: boolean;
-      g408Penalty?: boolean;
-      g424Penalty?: boolean;
-      melodyBonusAchieved?: boolean;
-      melodyBonusThreshold?: number;
-      melodyBonusThresholdCoop?: number;
-      melodyBonusThresholdNonCoop?: number;
-      micCenterStage?: boolean;
-      micStageLeft?: boolean;
-      micStageRight?: boolean;
-      rp: number;
-      techFoulCount?: number;
-      teleopAmpNoteCount?: number;
-      teleopAmpNotePoints?: number;
-      teleopPoints?: number;
-      teleopSpeakerNoteAmplifiedCount?: number;
-      teleopSpeakerNoteAmplifiedPoints?: number;
-      teleopSpeakerNoteCount?: number;
-      teleopSpeakerNotePoints?: number;
-      teleopTotalNotePoints?: number;
-      totalPoints: number;
-      trapCenterStage?: boolean;
-      trapStageLeft?: boolean;
-      trapStageRight?: boolean;
-    };
-    /** @description See the 2025 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
-    Match_Score_Breakdown_2025: {
-      blue: components["schemas"]["Match_Score_Breakdown_2025_Alliance"];
-      red: components["schemas"]["Match_Score_Breakdown_2025_Alliance"];
-    };
-    Match_Score_Breakdown_2025_Alliance: {
-      adjustPoints?: number;
-      algaePoints: number;
-      autoBonusAchieved?: boolean;
-      autoCoralCount: number;
-      autoCoralPoints: number;
-      autoLineRobot1: components["schemas"]["AutoLineRobot_2024"];
-      autoLineRobot2: components["schemas"]["AutoLineRobot_2024"];
-      autoLineRobot3: components["schemas"]["AutoLineRobot_2024"];
-      autoMobilityPoints: number;
-      autoPoints: number;
-      autoReef: {
-        topRow: components["schemas"]["ReefRow_2025"];
-        midRow: components["schemas"]["ReefRow_2025"];
-        botRow: components["schemas"]["ReefRow_2025"];
-        trough: number;
-        /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the botRow object. */
-        tba_botRowCount?: number;
-        /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the midRow object. */
-        tba_midRowCount?: number;
-        /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the topRow object. */
-        tba_topRowCount?: number;
-      };
-      bargeBonusAchieved?: boolean;
-      coopertitionCriteriaMet?: boolean;
-      coralBonusAchieved?: boolean;
-      endGameBargePoints: number;
-      endGameRobot1: components["schemas"]["EndGameRobot_2025"];
-      endGameRobot2: components["schemas"]["EndGameRobot_2025"];
-      endGameRobot3: components["schemas"]["EndGameRobot_2025"];
-      foulCount: number;
-      foulPoints: number;
-      g206Penalty: boolean;
-      g410Penalty: boolean;
-      g418Penalty: boolean;
-      g428Penalty: boolean;
-      netAlgaeCount: number;
-      rp: number;
-      techFoulCount: number;
-      teleopCoralCount: number;
-      teleopCoralPoints: number;
-      teleopPoints: number;
-      teleopReef: {
-        topRow: components["schemas"]["ReefRow_2025"];
-        midRow: components["schemas"]["ReefRow_2025"];
-        botRow: components["schemas"]["ReefRow_2025"];
-        trough: number;
-        /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the botRow object. */
-        tba_botRowCount?: number;
-        /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the midRow object. */
-        tba_midRowCount?: number;
-        /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the topRow object. */
-        tba_topRowCount?: number;
-      };
-      totalPoints: number;
-      wallAlgaeCount: number;
-    };
-    Match_Simple: {
-      /** @description TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may append the competition level if more than one match in required per set. */
-      key: string;
-      comp_level: components["schemas"]["Comp_Level"];
-      /** @description The set number in a series of matches where more than one match is required in the match series. */
-      set_number: number;
-      /** @description The match number of the match in the competition level. */
-      match_number: number;
-      /** @description A list of alliances, the teams on the alliances, and their score. */
-      alliances: {
-        red: components["schemas"]["Match_alliance"];
-        blue: components["schemas"]["Match_alliance"];
-      };
-      /**
-       * @description The color (red/blue) of the winning alliance. Will contain an empty string in the event of no winner, or a tie.
-       * @enum {string}
-       */
-      winning_alliance: "red" | "blue" | "";
-      /** @description Event key of the event the match was played at. */
-      event_key: string;
-      /**
-       * Format: int64
-       * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the scheduled match time, as taken from the published schedule.
-       */
-      time: number | null;
-      /**
-       * Format: int64
-       * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the TBA predicted match start time.
-       */
-      predicted_time: number | null;
-      /**
-       * Format: int64
-       * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of actual match start time.
-       */
-      actual_time: number | null;
-    };
-    /**
-     * @description Timeseries data for the 2018 game *FIRST* POWER UP.
-     *     *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
-     *     *WARNING:* This model is currently under active development and may change at any time, including in breaking ways.
-     */
-    Match_Timeseries_2018: {
-      /** @description TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
-      event_key?: string;
-      /** @description Match ID consisting of the level, match number, and set number, eg `qm45` or `f1m1`. */
-      match_id?: string;
-      /** @description Current mode of play, can be `pre_match`, `auto`, `telop`, or `post_match`. */
-      mode?: string;
-      play?: number;
-      /** @description Amount of time remaining in the match, only valid during `auto` and `teleop` modes. */
-      time_remaining?: number;
-      /** @description 1 if the blue alliance is credited with the AUTO QUEST, 0 if not. */
-      blue_auto_quest?: number;
-      /** @description Number of POWER CUBES in the BOOST section of the blue alliance VAULT. */
-      blue_boost_count?: number;
-      /** @description Returns 1 if the blue alliance BOOST was played, or 0 if not played. */
-      blue_boost_played?: number;
-      /** @description Name of the current blue alliance POWER UP being played, or `null`. */
-      blue_current_powerup?: string;
-      /** @description 1 if the blue alliance is credited with FACING THE BOSS, 0 if not. */
-      blue_face_the_boss?: number;
-      /** @description Number of POWER CUBES in the FORCE section of the blue alliance VAULT. */
-      blue_force_count?: number;
-      /** @description Returns 1 if the blue alliance FORCE was played, or 0 if not played. */
-      blue_force_played?: number;
-      /** @description Number of POWER CUBES in the LEVITATE section of the blue alliance VAULT. */
-      blue_levitate_count?: number;
-      /** @description Returns 1 if the blue alliance LEVITATE was played, or 0 if not played. */
-      blue_levitate_played?: number;
-      /** @description Number of seconds remaining in the blue alliance POWER UP time, or 0 if none is active. */
-      blue_powerup_time_remaining?: string;
-      /** @description 1 if the blue alliance owns the SCALE, 0 if not. */
-      blue_scale_owned?: number;
-      /** @description Current score for the blue alliance. */
-      blue_score?: number;
-      /** @description 1 if the blue alliance owns their SWITCH, 0 if not. */
-      blue_switch_owned?: number;
-      /** @description 1 if the red alliance is credited with the AUTO QUEST, 0 if not. */
-      red_auto_quest?: number;
-      /** @description Number of POWER CUBES in the BOOST section of the red alliance VAULT. */
-      red_boost_count?: number;
-      /** @description Returns 1 if the red alliance BOOST was played, or 0 if not played. */
-      red_boost_played?: number;
-      /** @description Name of the current red alliance POWER UP being played, or `null`. */
-      red_current_powerup?: string;
-      /** @description 1 if the red alliance is credited with FACING THE BOSS, 0 if not. */
-      red_face_the_boss?: number;
-      /** @description Number of POWER CUBES in the FORCE section of the red alliance VAULT. */
-      red_force_count?: number;
-      /** @description Returns 1 if the red alliance FORCE was played, or 0 if not played. */
-      red_force_played?: number;
-      /** @description Number of POWER CUBES in the LEVITATE section of the red alliance VAULT. */
-      red_levitate_count?: number;
-      /** @description Returns 1 if the red alliance LEVITATE was played, or 0 if not played. */
-      red_levitate_played?: number;
-      /** @description Number of seconds remaining in the red alliance POWER UP time, or 0 if none is active. */
-      red_powerup_time_remaining?: string;
-      /** @description 1 if the red alliance owns the SCALE, 0 if not. */
-      red_scale_owned?: number;
-      /** @description Current score for the red alliance. */
-      red_score?: number;
-      /** @description 1 if the red alliance owns their SWITCH, 0 if not. */
-      red_switch_owned?: number;
-    };
-    Match_alliance: {
-      /** @description Score for this alliance. Will be null or -1 for an unplayed match. */
-      score: number;
-      team_keys: string[];
-      /** @description TBA team keys (eg `frc254`) of any teams playing as a surrogate. */
-      surrogate_team_keys: string[];
-      /** @description TBA team keys (eg `frc254`) of any disqualified teams. */
-      dq_team_keys: string[];
-    };
-    /** @description The `Media` object contains a reference for most any media associated with a team or event on TBA. */
-    Media: {
-      /**
-       * @description String type of the media element.
-       * @enum {string}
-       */
-      type:
-        | "youtube"
-        | "cdphotothread"
-        | "imgur"
-        | "facebook-profile"
-        | "youtube-channel"
-        | "twitter-profile"
-        | "github-profile"
-        | "instagram-profile"
-        | "periscope-profile"
-        | "gitlab-profile"
-        | "grabcad"
-        | "instagram-image"
-        | "external-link"
-        | "avatar"
-        | "onshape"
-        | "cd-thread";
-      /** @description The key used to identify this media on the media site. */
-      foreign_key: string;
-      /** @description If required, a JSON dict of additional media information. */
-      details?:
-        | Record<string, never>
-        | {
-            base64Image: string;
-          }
-        | {
-            author_id: number;
-            author_name: string;
-            /** Format: uri */
-            author_url: string;
-            height: number | null;
-            html: string;
-            media_id: string;
-            provider_name: string;
-            /** Format: uri */
-            provider_url: string;
-            thumbnail_height: number;
-            /** Format: uri */
-            thumbnail_url: string;
-            thumbnail_width: number;
-            title: string;
-            type: string;
-            version: string;
-            width: number;
-          }
-        | {
-            /** Format: date-time */
-            model_created: string;
-            model_description: string | null;
-            /** Format: uri */
-            model_image: string;
-            model_name: string;
-          }
-        | {
-            image_partial: string;
-          }
-        | {
-            thread_title: string;
-            image_url: string | null;
-          };
-      /** @description True if the media is of high quality. */
-      preferred?: boolean;
-      /** @description List of teams that this media belongs to. Most likely length 1. */
-      team_keys: string[];
-      /** @description Direct URL to the media. */
-      direct_url?: string;
-      /** @description The URL that leads to the full web page for the media, if one exists. */
-      view_url?: string;
-    };
-    /** @enum {string} */
-    MobilityRobot_2023: "No" | "Yes";
-    NotablesInsight: {
-      data: {
-        entries: {
-          /** @description A list of events this team achieved the notable at. This type may change over time. */
-          context: string[];
-          team_key: string;
-        }[];
-      };
-      name: string;
-      year: number;
-    };
-    /** @enum {string} */
-    Position_2016:
-      | ""
-      | "A_ChevalDeFrise"
-      | "A_Portcullis"
-      | "B_Moat"
-      | "B_Ramparts"
-      | "C_Drawbridge"
-      | "C_SallyPort"
-      | "D_RockWall"
-      | "D_RoughTerrain"
-      | "NotSpecified";
-    /** @enum {string} */
-    PreMatchBay_2019: "Cargo" | "Panel" | "Unknown";
-    ReefRow_2025: {
-      nodeA: boolean;
-      nodeB: boolean;
-      nodeC: boolean;
-      nodeD: boolean;
-      nodeE: boolean;
-      nodeF: boolean;
-      nodeG: boolean;
-      nodeH: boolean;
-      nodeI: boolean;
-      nodeJ: boolean;
-      nodeK: boolean;
-      nodeL: boolean;
-    };
-    /** @description Information about how a regional team qualified for FIRST Championship. */
-    Regional_Advancement: {
-      /** @description Whether or not the team qualified for Championship. */
-      cmp: boolean;
-      /** @enum {string} */
-      cmp_status: "NotInvited" | "PreQualified" | "EventQualified" | "PoolQualified" | "Declined";
-      /** @description The event key at which the team qualified */
-      qualifying_event?: string;
-      /** @description The name of the award which qualified the team */
-      qualifying_award_name?: string;
-      /** @description Which week number's regional pool invitation the team got */
-      qualifying_pool_week?: number;
-    };
-    /** @description Rank of a team in the regional pool. */
-    Regional_Ranking: {
-      /** @description TBA team key for the team. */
-      team_key: string;
-      /** @description Numerical rank of the team, 1 being top rank. */
-      rank: number;
-      /** @description Any points added to a team as a result of the rookie bonus. */
-      rookie_bonus?: number;
-      /** @description Additional points awarded in lieu of a second event, based on first event performance */
-      single_event_bonus?: number;
-      /** @description Total district points for the team. */
-      point_total: number;
-      /** @description List of events that contributed to the point total for the team. */
-      event_points?: {
-        /** @description Total points awarded at this event. */
-        total: number;
-        /** @description Points awarded for alliance selection. */
-        alliance_points: number;
-        /** @description Points awarded for elimination match performance. */
-        elim_points: number;
-        /** @description Points awarded for event awards. */
-        award_points: number;
-        /** @description TBA Event key for this event. */
-        event_key: string;
-        /** @description Points awarded for qualification match performance. */
-        qual_points: number;
-      }[];
-    };
-    /** @enum {string} */
-    RobotAuto_2016_WithUnknown: "Crossed" | "None" | "Reached" | "Unknown";
-    /** @enum {string} */
-    RobotAuto_2016_WithoutUnknown: "Crossed" | "Reached" | "None";
-    /** @enum {string} */
-    RobotAuto_2017: "Mobility" | "None" | "Unknown";
-    SearchIndex: {
-      teams: {
-        key: string;
-        nickname: string;
-      }[];
-      events: {
-        key: string;
-        name: string;
-      }[];
-    };
-    /** @enum {string} */
-    Stage3TargetColor_2020: "Blue" | "Green" | "Red" | "Unknown" | "Yellow";
-    /** @enum {string} */
-    TaxiRobot_2022: "No" | "Yes";
-    Team: {
-      /** @description TBA team key with the format `frcXXXX` with `XXXX` representing the team number. */
-      key: string;
-      /** @description Official team number issued by FIRST. */
-      team_number: number;
-      /** @description Team nickname provided by FIRST. */
-      nickname: string;
-      /** @description Official long name registered with FIRST. */
-      name: string;
-      /** @description Name of team school or affilited group registered with FIRST. */
-      school_name: string | null;
-      /** @description City of team derived from parsing the address registered with FIRST. */
-      city: string | null;
-      /** @description State of team derived from parsing the address registered with FIRST. */
-      state_prov: string | null;
-      /** @description Country of team derived from parsing the address registered with FIRST. */
-      country: string | null;
-      /** @description Will be NULL, for future development. */
-      address: string | null;
-      /** @description Postal code from the team address. */
-      postal_code: string | null;
-      /** @description Will be NULL, for future development. */
-      gmaps_place_id: string | null;
-      /**
-       * Format: url
-       * @description Will be NULL, for future development.
-       */
-      gmaps_url: string | null;
-      /**
-       * Format: double
-       * @description Will be NULL, for future development.
-       */
-      lat: number | null;
-      /**
-       * Format: double
-       * @description Will be NULL, for future development.
-       */
-      lng: number | null;
-      /** @description Will be NULL, for future development. */
-      location_name: string | null;
-      /**
-       * Format: url
-       * @description Official website associated with the team.
-       */
-      website: string | null;
-      /** @description First year the team officially competed. */
-      rookie_year: number | null;
-      /** @description Team's motto or tagline. */
-      motto: string | null;
-    };
-    Team_Event_Status: {
-      qual?: components["schemas"]["Team_Event_Status_rank"];
-      alliance?: components["schemas"]["Team_Event_Status_alliance"];
-      playoff?: components["schemas"]["Team_Event_Status_playoff"];
-      /** @description An HTML formatted string suitable for display to the user containing the team's alliance pick status. */
-      alliance_status_str?: string;
-      /** @description An HTML formatter string suitable for display to the user containing the team's playoff status. */
-      playoff_status_str?: string;
-      /** @description An HTML formatted string suitable for display to the user containing the team's overall status summary of the event. */
-      overall_status_str?: string;
-      /** @description TBA match key for the next match the team is scheduled to play in at this event, or null. */
-      next_match_key?: string | null;
-      /** @description TBA match key for the last match the team played in at this event, or null. */
-      last_match_key?: string | null;
-    };
-    Team_Event_Status_alliance: {
-      /** @description Alliance name, may be null. */
-      name?: string | null;
-      /** @description Alliance number. */
-      number: number;
-      backup?: components["schemas"]["Team_Event_Status_alliance_backup"];
-      /** @description Order the team was picked in the alliance from 0-2, with 0 being alliance captain. */
-      pick: number;
-    };
-    /** @description Backup status, may be null. */
-    Team_Event_Status_alliance_backup: null | {
-      /** @description TBA key for the team replaced by the backup. */
-      out?: string;
-      /** @description TBA key for the backup team called in. */
-      in?: string;
-    };
-    /** @description Playoff status for this team, may be null if the team did not make playoffs, or playoffs have not begun. */
-    Team_Event_Status_playoff: null | {
-      level?: components["schemas"]["Comp_Level"];
-      current_level_record?: components["schemas"]["WLT_Record"];
-      record?: components["schemas"]["WLT_Record"];
-      /**
-       * @description Current competition status for the playoffs.
-       * @enum {string}
-       */
-      status?: "won" | "eliminated" | "playing";
-      /**
-       * Format: double
-       * @description The average match score during playoffs. Year specific. May be null if not relevant for a given year.
-       */
-      playoff_average?: null | number;
-    };
-    Team_Event_Status_rank: {
-      /** @description Number of teams ranked. */
-      num_teams?: number;
-      ranking?: {
-        /** @description Number of matches played. */
-        matches_played?: number;
-        /**
-         * Format: double
-         * @description For some years, average qualification score. Can be null.
-         */
-        qual_average?: number | null;
-        /** @description Ordered list of values used to determine the rank. See the `sort_order_info` property for the name of each value. */
-        sort_orders?: number[] | null;
-        record?: components["schemas"]["WLT_Record"];
-        /** @description Relative rank of this team. */
-        rank?: number | null;
-        /** @description Number of matches the team was disqualified for. */
-        dq?: number | null;
-        /** @description TBA team key for this rank. */
-        team_key?: string;
-      } | null;
-      /** @description Ordered list of names corresponding to the elements of the `sort_orders` array. */
-      sort_order_info?:
-        | {
-            /** @description The number of digits of precision used for this value, eg `2` would correspond to a value of `101.11` while `0` would correspond to `101`. */
-            precision?: number;
-            /** @description The descriptive name of the value used to sort the ranking. */
-            name?: string;
-          }[]
-        | null;
-      status?: string;
-    };
-    Team_Robot: {
-      /** @description Year this robot competed in. */
-      year: number;
-      /** @description Name of the robot as provided by the team. */
-      robot_name: string;
-      /** @description Internal TBA identifier for this robot. */
-      key: string;
-      /** @description TBA team key for this robot. */
-      team_key: string;
-    };
-    Team_Simple: {
-      /** @description TBA team key with the format `frcXXXX` with `XXXX` representing the team number. */
-      key: string;
-      /** @description Official team number issued by FIRST. */
-      team_number: number;
-      /** @description Team nickname provided by FIRST. */
-      nickname: string;
-      /** @description Official long name registered with FIRST. */
-      name: string;
-      /** @description City of team derived from parsing the address registered with FIRST. */
-      city: string | null;
-      /** @description State of team derived from parsing the address registered with FIRST. */
-      state_prov: string | null;
-      /** @description Country of team derived from parsing the address registered with FIRST. */
-      country: string | null;
-    };
-    /** @enum {string} */
-    Touchpad_2017: "None" | "ReadyForTakeoff";
-    /** @enum {string} */
-    TowerFace_2016: "Both" | "Challenged" | "None" | "Scaled" | "Unknown";
-    /** @description A Win-Loss-Tie record for a team, or an alliance. */
-    WLT_Record: {
-      /** @description Number of losses. */
-      losses: number;
-      /** @description Number of wins. */
-      wins: number;
-      /** @description Number of ties. */
-      ties: number;
-    };
-    Webcast: {
-      /**
-       * @description Type of webcast, typically descriptive of the streaming provider.
-       * @enum {string}
-       */
-      type:
-        | "youtube"
-        | "twitch"
-        | "ustream"
-        | "iframe"
-        | "html5"
-        | "rtmp"
-        | "livestream"
-        | "direct_link"
-        | "mms"
-        | "justin"
-        | "stemtv"
-        | "dacast";
-      /** @description Type specific channel information. May be the YouTube stream, or Twitch channel name. In the case of iframe types, contains HTML to embed the stream in an HTML iframe. */
-      channel: string;
-      /** @description The date for the webcast in `yyyy-mm-dd` format. May be null. */
-      date?: string | null;
-      /** @description File identification as may be required for some types. May be null. */
-      file?: string | null;
-    };
-    Zebra: {
-      /** @description TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may be appended to the competition level if more than one match in required per set. */
-      key: string;
-      /** @description A list of relative timestamps for each data point. Each timestamp will correspond to the X and Y value at the same index in a team xs and ys arrays. `times`, all teams `xs` and all teams `ys` are guarenteed to be the same length. */
-      times: number[];
-      alliances: {
-        /** @description Zebra MotionWorks data for teams on the red alliance */
-        red?: components["schemas"]["Zebra_team"][];
-        /** @description Zebra data for teams on the blue alliance */
-        blue?: components["schemas"]["Zebra_team"][];
-      };
-    };
-    Zebra_team: {
-      /**
-       * @description The TBA team key for the Zebra MotionWorks data.
-       * @example frc7332
-       */
-      team_key: string;
-      /** @description A list containing doubles and nulls representing a teams X position in feet at the corresponding timestamp. A null value represents no tracking data for a given timestamp. */
-      xs: number[];
-      /** @description A list containing doubles and nulls representing a teams Y position in feet at the corresponding timestamp. A null value represents no tracking data for a given timestamp. */
-      ys: number[];
-    };
-  };
-  responses: {
-    /** @description Authorization information is missing or invalid. */
-    Unauthorized: {
-      headers: {
-        [name: string]: unknown;
-      };
-      content: {
-        "application/json": {
-          /** @description Authorization error description. */
-          Error: string;
+        Comp_Level: "qm" | "ef" | "qf" | "sf" | "f";
+        District: {
+            /** @description The short identifier for the district. */
+            abbreviation: string;
+            /** @description The long name for the district. */
+            display_name: string;
+            /** @description Key for this district, e.g. `2016ne`. */
+            key: string;
+            /** @description Year this district participated. */
+            year: number;
         };
-      };
+        DistrictInsightRegionData: {
+            /** @description Map of year to number of active teams */
+            yearly_active_team_count: {
+                [key: string]: number;
+            };
+            /** @description Map of year to number of events */
+            yearly_event_count: {
+                [key: string]: number;
+            };
+            /** @description Map of year to list of team keys gained */
+            yearly_gained_teams: {
+                [key: string]: string[];
+            };
+            /** @description Map of year to list of team keys lost */
+            yearly_lost_teams: {
+                [key: string]: string[];
+            };
+        };
+        /** @description Advancement status of a team in a district. */
+        District_Advancement: {
+            /** @description Whether or not the team qualified for their District Championship */
+            dcmp: boolean;
+            /** @description Whether or not the team qualified for the FIRST Championship */
+            cmp: boolean;
+        };
+        District_Insight: {
+            district_data: {
+                region_data: {
+                    [key: string]: components["schemas"]["DistrictInsightRegionData"];
+                } | null;
+                district_wide_data: components["schemas"]["DistrictInsightRegionData"] | null;
+            };
+            team_data: {
+                [key: string]: {
+                    district_seasons: number;
+                    total_district_points: number;
+                    total_pre_dcmp_district_points: number;
+                    district_event_wins: number;
+                    dcmp_wins: number;
+                    team_awards: number;
+                    individual_awards: number;
+                    quals_record: components["schemas"]["WLT_Record"];
+                    elims_record: components["schemas"]["WLT_Record"];
+                    in_district_extra_play_count: number;
+                    total_matches_played: number;
+                    dcmp_appearances: number;
+                    cmp_appearances: number;
+                };
+            } | null;
+        };
+        /** @description Rank of a team in a district. */
+        District_Ranking: {
+            /** @description TBA team key for the team. */
+            team_key: string;
+            /** @description Numerical rank of the team, 1 being top rank. */
+            rank: number;
+            /** @description Any points added to a team as a result of the rookie bonus. */
+            rookie_bonus: number;
+            /** @description Total district points for the team. */
+            point_total: number;
+            /** @description List of events that contributed to the point total for the team. */
+            event_points: {
+                /** @description `true` if this event is a District Championship event. */
+                district_cmp: boolean;
+                /** @description Total points awarded at this event. */
+                total: number;
+                /** @description Points awarded for alliance selection. */
+                alliance_points: number;
+                /** @description Points awarded for elimination match performance. */
+                elim_points: number;
+                /** @description Points awarded for event awards. */
+                award_points: number;
+                /** @description TBA Event key for this event. */
+                event_key: string;
+                /** @description Points awarded for qualification match performance. */
+                qual_points: number;
+            }[];
+            /** @description Any points adjustments applied to the team. */
+            adjustments?: number;
+            /** @description Any other bonus points awarded to the team. */
+            other_bonus?: number;
+        };
+        /**
+         * @description Double elimination round, if applicable.
+         * @enum {string}
+         */
+        Double_Elim_Round: "Finals" | "Round 1" | "Round 2" | "Round 3" | "Round 4" | "Round 5";
+        Elimination_Alliance: {
+            /** @description Alliance name. */
+            name?: string;
+            /** @description Backup team called in, may be null. */
+            backup?: {
+                /** @description Team key that was called in as the backup. */
+                in: string;
+                /** @description Team key that was replaced by the backup team. */
+                out: string;
+            } | null;
+            /** @description List of teams that declined the alliance. */
+            declines: string[];
+            /** @description List of team keys picked for the alliance. First pick is captain. */
+            picks: string[];
+            status?: {
+                /**
+                 * Format: double
+                 * @description Average match score during playoffs. Year specific. May be null.
+                 */
+                playoff_average?: number | null;
+                /**
+                 * Format: int64
+                 * @description Playoff type, may be null.
+                 */
+                playoff_type: number | null;
+                /** @description Match level, qm/ef/qf/sf/f. */
+                level: components["schemas"]["Comp_Level"];
+                /** @description W-L-T record for the alliance, may be null. */
+                record: components["schemas"]["WLT_Record"];
+                /** @description W-L-T record for the alliance at the current level, may be null. */
+                current_level_record: components["schemas"]["WLT_Record"];
+                /**
+                 * @description Status of the alliance.
+                 * @enum {string}
+                 */
+                status: "eliminated" | "playing" | "won";
+                /** @description Whether the alliance advanced to round robin finals. */
+                advanced_to_round_robin_finals?: boolean;
+                double_elim_round?: components["schemas"]["Double_Elim_Round"];
+                /** @description Rank in round robin play. */
+                round_robin_rank?: number;
+            };
+        };
+        /** @enum {string} */
+        EndGameChargeStationRobot_2023: "Docked" | "None" | "Park" | "Parked";
+        /** @enum {string} */
+        EndGameRobot_2024: "CenterStage" | "None" | "Parked" | "StageLeft" | "StageRight";
+        /** @enum {string} */
+        EndGameRobot_2025: "DeepCage" | "None" | "Parked" | "ShallowCage";
+        /** @enum {string} */
+        TowerRobot_2026: "Level1" | "Level2" | "Level3" | "None";
+        HubScore_2026: {
+            autoCount: number;
+            autoPoints: number;
+            endgameCount: number;
+            endgamePoints: number;
+            shift1Count: number;
+            shift1Points: number;
+            shift2Count: number;
+            shift2Points: number;
+            shift3Count: number;
+            shift3Points: number;
+            shift4Count: number;
+            shift4Points: number;
+            teleopCount: number;
+            teleopPoints: number;
+            totalCount: number;
+            totalPoints: number;
+            transitionCount: number;
+            transitionPoints: number;
+        };
+        /** @enum {string} */
+        EndgameRobot_2018: "Climbing" | "Levitate" | "None" | "Parking" | "Unknown";
+        /** @enum {string} */
+        EndgameRobot_2019: "HabLevel1" | "HabLevel2" | "HabLevel3" | "None" | "Unknown";
+        /** @enum {string} */
+        EndgameRobot_2020: "Hang" | "None" | "Park";
+        /** @enum {string} */
+        EndgameRobot_2022: "High" | "Low" | "Mid" | "None" | "Traversal";
+        /** @enum {string} */
+        EndgameRungIsLevel_2020: "IsLevel" | "NotLevel";
+        Event: {
+            /** @description TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
+            key: string;
+            /** @description Official name of event on record either provided by FIRST or organizers of offseason event. */
+            name: string;
+            /** @description Event short code, as provided by FIRST. */
+            event_code: string;
+            /** @description Event Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/event_type.py#L8 */
+            event_type: number;
+            district: components["schemas"]["District"];
+            /** @description City, town, village, etc. the event is located in. */
+            city: string | null;
+            /** @description State or Province the event is located in. */
+            state_prov: string | null;
+            /** @description Country the event is located in. */
+            country: string | null;
+            /**
+             * Format: date
+             * @description Event start date in `yyyy-mm-dd` format.
+             */
+            start_date: string;
+            /**
+             * Format: date
+             * @description Event end date in `yyyy-mm-dd` format.
+             */
+            end_date: string;
+            /** @description Year the event data is for. */
+            year: number;
+            /** @description Same as `name` but doesn't include event specifiers, such as 'Regional' or 'District'. May be null. */
+            short_name: string | null;
+            /** @description Event Type, eg Regional, District, or Offseason. */
+            event_type_string: string;
+            /** @description Week of the event relative to the first official season event, zero-indexed. Only valid for Regionals, Districts, and District Championships. Null otherwise. (Eg. A season with a week 0 'preseason' event does not count, and week 1 events will show 0 here. Seasons with a week 0.5 regional event will show week 0 for those event(s) and week 1 for week 1 events and so on.) */
+            week: number | null;
+            /** @description Address of the event's venue, if available. */
+            address: string | null;
+            /** @description Postal code from the event address. */
+            postal_code: string | null;
+            /** @description Google Maps Place ID for the event address. Will be NULL, for future development. */
+            gmaps_place_id: string | null;
+            /**
+             * Format: url
+             * @description Link to address location on Google Maps. Will be NULL, for future development.
+             */
+            gmaps_url: string | null;
+            /**
+             * Format: double
+             * @description Latitude for the event address. Will be NULL, for future development.
+             */
+            lat: number | null;
+            /**
+             * Format: double
+             * @description Longitude for the event address. Will be NULL, for future development.
+             */
+            lng: number | null;
+            /** @description Name of the location at the address for the event, eg. Blue Alliance High School. */
+            location_name: string | null;
+            /** @description IANA Timezone identifier. */
+            timezone: string | null;
+            /** @description The event's website, if any. */
+            website: string | null;
+            /** @description The FIRST internal Event ID, used to link to the event on the FRC webpage. */
+            first_event_id: string | null;
+            /** @description Public facing event code used by FIRST (on frc-events.firstinspires.org, for example) */
+            first_event_code: string | null;
+            webcasts: components["schemas"]["Webcast"][];
+            /** @description An array of event keys for the divisions at this event. */
+            division_keys: string[];
+            /** @description The TBA Event key that represents the event's parent. Used to link back to the event from a division event. It is also the inverse relation of `divison_keys`. */
+            parent_event_key: string | null;
+            /** @description Playoff Type, as defined under `PlayoffType`: https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/playoff_type.py#L37, or null. */
+            playoff_type: number | null;
+            /** @description String representation of the `playoff_type`, or null. */
+            playoff_type_string: string | null;
+            /** @description Map of temporary "off-season demo" team numbers to pre-rookie and B teams. Both keys and values are team keys in the format 'frc####'. Key is the old team key ('frc' + numeric only), value is the new team key ('frc' + numeric + may include a letter suffix). */
+            remap_teams: {
+                [key: string]: string;
+            } | null;
+        };
+        /** @description Component OPRs for teams at the event. */
+        Event_COPRs: {
+            [key: string]: {
+                [key: string]: number;
+            };
+        };
+        Event_District_Points: {
+            /** @description Points gained for each team at the event. Stored as a key-value pair with the team key as the key, and an object describing the points as its value. */
+            points: {
+                [key: string]: {
+                    /** @description Total points awarded at this event. */
+                    total: number;
+                    /** @description Points awarded for alliance selection */
+                    alliance_points: number;
+                    /** @description Points awarded for elimination match performance. */
+                    elim_points: number;
+                    /** @description Points awarded for event awards. */
+                    award_points: number;
+                    /** @description Points awarded for qualification match performance. */
+                    qual_points: number;
+                };
+            };
+            /** @description Tiebreaker values for each team at the event. Stored as a key-value pair with the team key as the key, and an object describing the tiebreaker elements as its value. */
+            tiebreakers?: {
+                [key: string]: {
+                    highest_qual_scores?: number[];
+                    qual_wins?: number;
+                };
+            };
+        };
+        /** @description A year-specific event insight object expressed as a JSON string, separated in to `qual` and `playoff` fields. See also Event_Insights_2016, Event_Insights_2017, etc. */
+        Event_Insights: {
+            /** @description Inights for the qualification round of an event */
+            qual?: Record<string, never>;
+            /** @description Insights for the playoff round of an event */
+            playoff?: Record<string, never>;
+        };
+        /** @description Insights for FIRST Stronghold qualification and elimination matches. */
+        Event_Insights_2016: {
+            /** @description For the Low Bar - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            LowBar: number[];
+            /** @description For the Cheval De Frise - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            A_ChevalDeFrise: number[];
+            /** @description For the Portcullis - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            A_Portcullis: number[];
+            /** @description For the Ramparts - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            B_Ramparts: number[];
+            /** @description For the Moat - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            B_Moat: number[];
+            /** @description For the Sally Port - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            C_SallyPort: number[];
+            /** @description For the Drawbridge - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            C_Drawbridge: number[];
+            /** @description For the Rough Terrain - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            D_RoughTerrain: number[];
+            /** @description For the Rock Wall - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
+            D_RockWall: number[];
+            /**
+             * Format: float
+             * @description Average number of high goals scored.
+             */
+            average_high_goals: number;
+            /**
+             * Format: float
+             * @description Average number of low goals scored.
+             */
+            average_low_goals: number;
+            /** @description An array with three values, number of times breached, number of opportunities to breach, and percentage. */
+            breaches: number[];
+            /** @description An array with three values, number of times scaled, number of opportunities to scale, and percentage. */
+            scales: number[];
+            /** @description An array with three values, number of times challenged, number of opportunities to challenge, and percentage. */
+            challenges: number[];
+            /** @description An array with three values, number of times captured, number of opportunities to capture, and percentage. */
+            captures: number[];
+            /**
+             * Format: float
+             * @description Average winning score.
+             */
+            average_win_score: number;
+            /**
+             * Format: float
+             * @description Average margin of victory.
+             */
+            average_win_margin: number;
+            /**
+             * Format: float
+             * @description Average total score.
+             */
+            average_score: number;
+            /**
+             * Format: float
+             * @description Average autonomous score.
+             */
+            average_auto_score: number;
+            /**
+             * Format: float
+             * @description Average crossing score.
+             */
+            average_crossing_score: number;
+            /**
+             * Format: float
+             * @description Average boulder score.
+             */
+            average_boulder_score: number;
+            /**
+             * Format: float
+             * @description Average tower score.
+             */
+            average_tower_score: number;
+            /**
+             * Format: float
+             * @description Average foul score.
+             */
+            average_foul_score: number;
+            /** @description An array with three values, high score, match key from the match with the high score, and the name of the match. */
+            high_score: string[];
+        };
+        /** @description Insights for FIRST STEAMWORKS qualification and elimination matches. */
+        Event_Insights_2017: {
+            /**
+             * Format: float
+             * @description Average foul score.
+             */
+            average_foul_score: number;
+            /**
+             * Format: float
+             * @description Average fuel points scored.
+             */
+            average_fuel_points: number;
+            /**
+             * Format: float
+             * @description Average fuel points scored during auto.
+             */
+            average_fuel_points_auto: number;
+            /**
+             * Format: float
+             * @description Average fuel points scored during teleop.
+             */
+            average_fuel_points_teleop: number;
+            /**
+             * Format: float
+             * @description Average points scored in the high goal.
+             */
+            average_high_goals: number;
+            /**
+             * Format: float
+             * @description Average points scored in the high goal during auto.
+             */
+            average_high_goals_auto: number;
+            /**
+             * Format: float
+             * @description Average points scored in the high goal during teleop.
+             */
+            average_high_goals_teleop: number;
+            /**
+             * Format: float
+             * @description Average points scored in the low goal.
+             */
+            average_low_goals: number;
+            /**
+             * Format: float
+             * @description Average points scored in the low goal during auto.
+             */
+            average_low_goals_auto: number;
+            /**
+             * Format: float
+             * @description Average points scored in the low goal during teleop.
+             */
+            average_low_goals_teleop: number;
+            /**
+             * Format: float
+             * @description Average mobility points scored during auto.
+             */
+            average_mobility_points_auto: number;
+            /**
+             * Format: float
+             * @description Average points scored during auto.
+             */
+            average_points_auto: number;
+            /**
+             * Format: float
+             * @description Average points scored during teleop.
+             */
+            average_points_teleop: number;
+            /**
+             * Format: float
+             * @description Average rotor points scored.
+             */
+            average_rotor_points: number;
+            /**
+             * Format: float
+             * @description Average rotor points scored during auto.
+             */
+            average_rotor_points_auto: number;
+            /**
+             * Format: float
+             * @description Average rotor points scored during teleop.
+             */
+            average_rotor_points_teleop: number;
+            /**
+             * Format: float
+             * @description Average score.
+             */
+            average_score: number;
+            /**
+             * Format: float
+             * @description Average takeoff points scored during teleop.
+             */
+            average_takeoff_points_teleop: number;
+            /**
+             * Format: float
+             * @description Average margin of victory.
+             */
+            average_win_margin: number;
+            /**
+             * Format: float
+             * @description Average winning score.
+             */
+            average_win_score: number;
+            /** @description An array with three values, kPa scored, match key from the match with the high kPa, and the name of the match */
+            high_kpa: string[];
+            /** @description An array with three values, high score, match key from the match with the high score, and the name of the match */
+            high_score: string[];
+            /** @description An array with three values, number of times kPa bonus achieved, number of opportunities to bonus, and percentage. */
+            kpa_achieved: number[];
+            /** @description An array with three values, number of times mobility bonus achieved, number of opportunities to bonus, and percentage. */
+            mobility_counts: number[];
+            /** @description An array with three values, number of times rotor 1 engaged, number of opportunities to engage, and percentage. */
+            rotor_1_engaged: number[];
+            /** @description An array with three values, number of times rotor 1 engaged in auto, number of opportunities to engage in auto, and percentage. */
+            rotor_1_engaged_auto: number[];
+            /** @description An array with three values, number of times rotor 2 engaged, number of opportunities to engage, and percentage. */
+            rotor_2_engaged: number[];
+            /** @description An array with three values, number of times rotor 2 engaged in auto, number of opportunities to engage in auto, and percentage. */
+            rotor_2_engaged_auto: number[];
+            /** @description An array with three values, number of times rotor 3 engaged, number of opportunities to engage, and percentage. */
+            rotor_3_engaged: number[];
+            /** @description An array with three values, number of times rotor 4 engaged, number of opportunities to engage, and percentage. */
+            rotor_4_engaged: number[];
+            /** @description An array with three values, number of times takeoff was counted, number of opportunities to takeoff, and percentage. */
+            takeoff_counts: number[];
+            /** @description An array with three values, number of times a unicorn match (Win + kPa & Rotor Bonuses) occured, number of opportunities to have a unicorn match, and percentage. */
+            unicorn_matches: number[];
+        };
+        /** @description Insights for FIRST Power Up qualification and elimination matches. */
+        Event_Insights_2018: {
+            /** @description An array with three values, number of times auto quest was completed, number of opportunities to complete the auto quest, and percentage. */
+            auto_quest_achieved: number[];
+            /**
+             * Format: float
+             * @description Average number of boost power up scored (out of 3).
+             */
+            average_boost_played: number;
+            /**
+             * Format: float
+             * @description Average endgame points.
+             */
+            average_endgame_points: number;
+            /**
+             * Format: float
+             * @description Average number of force power up scored (out of 3).
+             */
+            average_force_played: number;
+            /**
+             * Format: float
+             * @description Average foul score.
+             */
+            average_foul_score: number;
+            /**
+             * Format: float
+             * @description Average points scored during auto.
+             */
+            average_points_auto: number;
+            /**
+             * Format: float
+             * @description Average points scored during teleop.
+             */
+            average_points_teleop: number;
+            /**
+             * Format: float
+             * @description Average mobility points scored during auto.
+             */
+            average_run_points_auto: number;
+            /**
+             * Format: float
+             * @description Average scale ownership points scored.
+             */
+            average_scale_ownership_points: number;
+            /**
+             * Format: float
+             * @description Average scale ownership points scored during auto.
+             */
+            average_scale_ownership_points_auto: number;
+            /**
+             * Format: float
+             * @description Average scale ownership points scored during teleop.
+             */
+            average_scale_ownership_points_teleop: number;
+            /**
+             * Format: float
+             * @description Average score.
+             */
+            average_score: number;
+            /**
+             * Format: float
+             * @description Average switch ownership points scored.
+             */
+            average_switch_ownership_points: number;
+            /**
+             * Format: float
+             * @description Average switch ownership points scored during auto.
+             */
+            average_switch_ownership_points_auto: number;
+            /**
+             * Format: float
+             * @description Average switch ownership points scored during teleop.
+             */
+            average_switch_ownership_points_teleop: number;
+            /**
+             * Format: float
+             * @description Average value points scored.
+             */
+            average_vault_points: number;
+            /**
+             * Format: float
+             * @description Average margin of victory.
+             */
+            average_win_margin: number;
+            /**
+             * Format: float
+             * @description Average winning score.
+             */
+            average_win_score: number;
+            /** @description An array with three values, number of times a boost power up was played, number of opportunities to play a boost power up, and percentage. */
+            boost_played_counts: number[];
+            /** @description An array with three values, number of times a climb occurred, number of opportunities to climb, and percentage. */
+            climb_counts: number[];
+            /** @description An array with three values, number of times an alliance faced the boss, number of opportunities to face the boss, and percentage. */
+            face_the_boss_achieved: number[];
+            /** @description An array with three values, number of times a force power up was played, number of opportunities to play a force power up, and percentage. */
+            force_played_counts: number[];
+            /** @description An array with three values, high score, match key from the match with the high score, and the name of the match */
+            high_score: string[];
+            /** @description An array with three values, number of times a levitate power up was played, number of opportunities to play a levitate power up, and percentage. */
+            levitate_played_counts: number[];
+            /** @description An array with three values, number of times a team scored mobility points in auto, number of opportunities to score mobility points in auto, and percentage. */
+            run_counts_auto: number[];
+            /**
+             * Format: float
+             * @description Average scale neutral percentage.
+             */
+            scale_neutral_percentage: number;
+            /**
+             * Format: float
+             * @description Average scale neutral percentage during auto.
+             */
+            scale_neutral_percentage_auto: number;
+            /**
+             * Format: float
+             * @description Average scale neutral percentage during teleop.
+             */
+            scale_neutral_percentage_teleop: number;
+            /** @description An array with three values, number of times a switch was owned during auto, number of opportunities to own a switch during auto, and percentage. */
+            switch_owned_counts_auto: number[];
+            /** @description An array with three values, number of times a unicorn match (Win + Auto Quest + Face the Boss) occurred, number of opportunities to have a unicorn match, and percentage. */
+            unicorn_matches: number[];
+            /**
+             * Format: float
+             * @description Average opposing switch denail percentage for the winning alliance during teleop.
+             */
+            winning_opp_switch_denial_percentage_teleop: number;
+            /**
+             * Format: float
+             * @description Average own switch ownership percentage for the winning alliance.
+             */
+            winning_own_switch_ownership_percentage: number;
+            /**
+             * Format: float
+             * @description Average own switch ownership percentage for the winning alliance during auto.
+             */
+            winning_own_switch_ownership_percentage_auto: number;
+            /**
+             * Format: float
+             * @description Average own switch ownership percentage for the winning alliance during teleop.
+             */
+            winning_own_switch_ownership_percentage_teleop: number;
+            /**
+             * Format: float
+             * @description Average scale ownership percentage for the winning alliance.
+             */
+            winning_scale_ownership_percentage: number;
+            /**
+             * Format: float
+             * @description Average scale ownership percentage for the winning alliance during auto.
+             */
+            winning_scale_ownership_percentage_auto: number;
+            /**
+             * Format: float
+             * @description Average scale ownership percentage for the winning alliance during teleop.
+             */
+            winning_scale_ownership_percentage_teleop: number;
+        };
+        /** @description OPR, DPR, and CCWM for teams at the event. */
+        Event_OPRs: {
+            /** @description A key-value pair with team key (eg `frc254`) as key and OPR as value. */
+            oprs?: {
+                [key: string]: number;
+            };
+            /** @description A key-value pair with team key (eg `frc254`) as key and DPR as value. */
+            dprs?: {
+                [key: string]: number;
+            };
+            /** @description A key-value pair with team key (eg `frc254`) as key and CCWM as value. */
+            ccwms?: {
+                [key: string]: number;
+            };
+        };
+        /** @description JSON Object containing prediction information for the event. Contains year-specific information and is subject to change. */
+        Event_Predictions: Record<string, never>;
+        Event_Ranking: {
+            /** @description List of rankings at the event. */
+            rankings: {
+                /** @description Number of matches played by this team. */
+                matches_played: number;
+                /** @description The average match score during qualifications. Year specific. May be null if not relevant for a given year. */
+                qual_average: number | null;
+                /** @description Additional special data on the team's performance calculated by TBA. */
+                extra_stats: number[];
+                /** @description Additional year-specific information. See parent `sort_order_info` for details. */
+                sort_orders: number[];
+                record: components["schemas"]["WLT_Record"];
+                /** @description The team's rank at the event as provided by FIRST. */
+                rank: number;
+                /** @description Number of times disqualified. */
+                dq: number;
+                /** @description The team with this rank. */
+                team_key: string;
+            }[];
+            /** @description List of special TBA-generated values provided in the `extra_stats` array for each item. */
+            extra_stats_info: {
+                /** @description Integer expressing the number of digits of precision in the number provided in `sort_orders`. */
+                precision: number;
+                /** @description Name of the field used in the `extra_stats` array. */
+                name: string;
+            }[];
+            /** @description List of year-specific values provided in the `sort_orders` array for each team. */
+            sort_order_info: {
+                /** @description Integer expressing the number of digits of precision in the number provided in `sort_orders`. */
+                precision: number;
+                /** @description Name of the field used in the `sort_order` array. */
+                name: string;
+            }[] | null;
+        };
+        Event_Simple: {
+            /** @description TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
+            key: string;
+            /** @description Official name of event on record either provided by FIRST or organizers of offseason event. */
+            name: string;
+            /** @description Event short code, as provided by FIRST. */
+            event_code: string;
+            /** @description Event Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/event_type.py#L8 */
+            event_type: number;
+            district: components["schemas"]["District"];
+            /** @description City, town, village, etc. the event is located in. */
+            city: string | null;
+            /** @description State or Province the event is located in. */
+            state_prov: string | null;
+            /** @description Country the event is located in. */
+            country: string | null;
+            /**
+             * Format: date
+             * @description Event start date in `yyyy-mm-dd` format.
+             */
+            start_date: string;
+            /**
+             * Format: date
+             * @description Event end date in `yyyy-mm-dd` format.
+             */
+            end_date: string;
+            /** @description Year the event data is for. */
+            year: number;
+        };
+        /** @enum {string} */
+        HabLine_2019: "CrossedHabLineInSandstorm" | "CrossedHabLineInTeleop" | "None" | "Unknown";
+        History: {
+            events: components["schemas"]["Event"][];
+            awards: components["schemas"]["Award"][];
+        };
+        /** @enum {string} */
+        InitLineRobot_2020: "Exited" | "None";
+        LeaderboardInsight: {
+            data: {
+                rankings: {
+                    /** @description Value of the insight that the corresponding team/event/matches have, e.g. number of blue banners, or number of matches played. */
+                    value: number;
+                    /** @description Team/Event/Match keys that have the corresponding value. */
+                    keys: string[];
+                }[];
+                /**
+                 * @description What type of key is used in the rankings; either 'team', 'event', or 'match'.
+                 * @enum {string}
+                 */
+                key_type: "team" | "event" | "match";
+            };
+            /** @description Name of the insight. */
+            name: string;
+            /** @description Year the insight was measured in (year=0 for overall insights). */
+            year: number;
+        };
+        Match: {
+            /** @description TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may be appended to the competition level if more than one match in required per set. */
+            key: string;
+            comp_level: components["schemas"]["Comp_Level"];
+            /** @description The set number in a series of matches where more than one match is required in the match series. */
+            set_number: number;
+            /** @description The match number of the match in the competition level. */
+            match_number: number;
+            /** @description A list of alliances, the teams on the alliances, and their score. */
+            alliances: {
+                red: components["schemas"]["Match_alliance"];
+                blue: components["schemas"]["Match_alliance"];
+            };
+            /**
+             * @description The color (red/blue) of the winning alliance. Will contain an empty string in the event of no winner, or a tie.
+             * @enum {string}
+             */
+            winning_alliance: "red" | "blue" | "";
+            /** @description Event key of the event the match was played at. */
+            event_key: string;
+            /**
+             * Format: int64
+             * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the scheduled match time, as taken from the published schedule.
+             */
+            time: number | null;
+            /**
+             * Format: int64
+             * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of actual match start time.
+             */
+            actual_time: number | null;
+            /**
+             * Format: int64
+             * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the TBA predicted match start time.
+             */
+            predicted_time: number | null;
+            /**
+             * Format: int64
+             * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) when the match result was posted.
+             */
+            post_result_time: number | null;
+            /** @description Score breakdown for auto, teleop, etc. points. Varies from year to year. May be null. */
+            score_breakdown: (Record<string, never> | null) & (components["schemas"]["Match_Score_Breakdown_2015"] | components["schemas"]["Match_Score_Breakdown_2016"] | components["schemas"]["Match_Score_Breakdown_2017"] | components["schemas"]["Match_Score_Breakdown_2018"] | components["schemas"]["Match_Score_Breakdown_2019"] | components["schemas"]["Match_Score_Breakdown_2020"] | components["schemas"]["Match_Score_Breakdown_2022"] | components["schemas"]["Match_Score_Breakdown_2023"] | components["schemas"]["Match_Score_Breakdown_2024"] | components["schemas"]["Match_Score_Breakdown_2025"]);
+            /** @description Array of video objects associated with this match. */
+            videos: {
+                /** @description Can be one of 'youtube' or 'tba' */
+                type: string;
+                /** @description Unique key representing this video */
+                key: string;
+            }[];
+        };
+        /** @description See the 2015 FMS API documentation for a description of each value */
+        Match_Score_Breakdown_2015: {
+            blue: components["schemas"]["Match_Score_Breakdown_2015_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2015_Alliance"];
+            /** @enum {string} */
+            coopertition: "None" | "Unknown" | "Stack";
+            coopertition_points: number;
+        };
+        Match_Score_Breakdown_2015_Alliance: {
+            auto?: string | null;
+            auto_points?: number | null;
+            teleop_points?: number;
+            container_points?: number;
+            tote_points?: number;
+            litter_points?: number;
+            foul?: string | null;
+            foul_points?: number | null;
+            adjust_points?: number;
+            total_points?: number;
+            foul_count?: number;
+            tote_count_far?: number;
+            tote_count_near?: number;
+            tote_set?: boolean;
+            tote_stack?: boolean;
+            container_count_level1?: number;
+            container_count_level2?: number;
+            container_count_level3?: number;
+            container_count_level4?: number;
+            container_count_level5?: number;
+            container_count_level6?: number;
+            container_set?: boolean;
+            litter_count_container?: number;
+            litter_count_landfill?: number;
+            litter_count_unprocessed?: number;
+            robot_set?: boolean;
+        };
+        /** @description See the 2016 FMS API documentation for a description of each value. */
+        Match_Score_Breakdown_2016: {
+            blue: components["schemas"]["Match_Score_Breakdown_2016_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2016_Alliance"];
+        };
+        Match_Score_Breakdown_2016_Alliance: {
+            autoPoints: number;
+            teleopPoints?: number;
+            breachPoints: number;
+            foulPoints: number;
+            capturePoints: number;
+            adjustPoints?: number;
+            totalPoints: number;
+            tba_rpEarned: number | null;
+            robot1Auto?: components["schemas"]["RobotAuto_2016_WithUnknown"];
+            robot2Auto?: components["schemas"]["RobotAuto_2016_WithoutUnknown"];
+            robot3Auto?: components["schemas"]["RobotAuto_2016_WithUnknown"];
+            autoReachPoints: number;
+            autoCrossingPoints: number;
+            autoBouldersLow?: number;
+            autoBouldersHigh?: number;
+            autoBoulderPoints: number;
+            teleopCrossingPoints: number;
+            teleopBouldersLow: number;
+            teleopBouldersHigh: number;
+            teleopBoulderPoints: number;
+            teleopDefensesBreached: boolean;
+            teleopChallengePoints: number;
+            teleopScalePoints: number;
+            teleopTowerCaptured: boolean;
+            towerFaceA?: components["schemas"]["TowerFace_2016"];
+            towerFaceB?: components["schemas"]["TowerFace_2016"];
+            towerFaceC?: components["schemas"]["TowerFace_2016"];
+            towerEndStrength?: number;
+            techFoulCount?: number;
+            foulCount?: number;
+            position2: components["schemas"]["Position_2016"];
+            position3: components["schemas"]["Position_2016"];
+            position4: components["schemas"]["Position_2016"];
+            position5: components["schemas"]["Position_2016"];
+            position1crossings: number;
+            position2crossings: number;
+            position3crossings: number;
+            position4crossings: number;
+            position5crossings: number;
+        };
+        /** @description See the 2017 FMS API documentation for a description of each value. */
+        Match_Score_Breakdown_2017: {
+            blue: components["schemas"]["Match_Score_Breakdown_2017_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2017_Alliance"];
+        };
+        Match_Score_Breakdown_2017_Alliance: {
+            autoPoints: number;
+            teleopPoints: number;
+            foulPoints: number;
+            adjustPoints?: number;
+            totalPoints: number;
+            robot1Auto?: components["schemas"]["RobotAuto_2017"];
+            robot2Auto?: components["schemas"]["RobotAuto_2017"];
+            robot3Auto?: components["schemas"]["RobotAuto_2017"];
+            rotor1Auto: boolean;
+            rotor2Auto: boolean;
+            autoFuelLow: number;
+            autoFuelHigh: number;
+            autoMobilityPoints: number;
+            autoRotorPoints: number;
+            autoFuelPoints: number;
+            teleopFuelPoints: number;
+            teleopFuelLow: number;
+            teleopFuelHigh: number;
+            teleopRotorPoints: number;
+            kPaRankingPointAchieved: boolean;
+            teleopTakeoffPoints: number;
+            kPaBonusPoints: number;
+            rotorBonusPoints: number;
+            rotor1Engaged: boolean;
+            rotor2Engaged: boolean;
+            rotor3Engaged: boolean;
+            rotor4Engaged: boolean;
+            rotorRankingPointAchieved: boolean;
+            tba_rpEarned?: number | null;
+            techFoulCount?: number;
+            foulCount?: number;
+            touchpadNear?: components["schemas"]["Touchpad_2017"];
+            touchpadMiddle?: components["schemas"]["Touchpad_2017"];
+            touchpadFar?: components["schemas"]["Touchpad_2017"];
+        };
+        /** @description See the 2018 FMS API documentation for a description of each value. https://frcevents2.docs.apiary.io/#/reference/match-results/score-details */
+        Match_Score_Breakdown_2018: {
+            blue: components["schemas"]["Match_Score_Breakdown_2018_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2018_Alliance"];
+        };
+        Match_Score_Breakdown_2018_Alliance: {
+            adjustPoints?: number;
+            autoOwnershipPoints: number;
+            autoPoints: number;
+            autoQuestRankingPoint?: boolean;
+            autoRobot1?: components["schemas"]["AutoRobot_2018"];
+            autoRobot2?: components["schemas"]["AutoRobot_2018"];
+            autoRobot3?: components["schemas"]["AutoRobot_2018"];
+            autoRunPoints: number;
+            autoScaleOwnershipSec: number;
+            autoSwitchAtZero?: boolean;
+            autoSwitchOwnershipSec: number;
+            endgamePoints: number;
+            endgameRobot1?: components["schemas"]["EndgameRobot_2018"];
+            endgameRobot2?: components["schemas"]["EndgameRobot_2018"];
+            endgameRobot3?: components["schemas"]["EndgameRobot_2018"];
+            faceTheBossRankingPoint: boolean;
+            foulCount?: number;
+            foulPoints: number;
+            rp: number;
+            techFoulCount?: number;
+            teleopOwnershipPoints: number;
+            teleopPoints: number;
+            teleopScaleBoostSec: number;
+            teleopScaleForceSec?: number;
+            teleopScaleOwnershipSec: number;
+            teleopSwitchBoostSec: number;
+            teleopSwitchForceSec?: number;
+            teleopSwitchOwnershipSec: number;
+            totalPoints: number;
+            vaultBoostPlayed: number;
+            vaultBoostTotal: number;
+            vaultForcePlayed: number;
+            vaultForceTotal: number;
+            vaultLevitatePlayed: number;
+            vaultLevitateTotal: number;
+            vaultPoints: number;
+            /**
+             * @description Unofficial TBA-computed value of the FMS provided GameData given to the alliance teams at the start of the match. 3 Character String containing `L` and `R` only. The first character represents the near switch, the 2nd the scale, and the 3rd the far, opposing, switch from the alliance's perspective. An `L` in a position indicates the platform on the left will be lit for the alliance while an `R` will indicate the right platform will be lit for the alliance. See also [WPI Screen Steps](https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details).
+             * @enum {string}
+             */
+            tba_gameData?: "" | "LLL" | "LRL" | "RLR" | "RRR";
+        };
+        /** @description See the 2019 FMS API documentation for a description of each value. https://frcevents2.docs.apiary.io/#/reference/match-results/score-details */
+        Match_Score_Breakdown_2019: {
+            blue: components["schemas"]["Match_Score_Breakdown_2019_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2019_Alliance"];
+        };
+        Match_Score_Breakdown_2019_Alliance: {
+            adjustPoints?: number;
+            autoPoints?: number;
+            bay1: components["schemas"]["Bay_2019"];
+            bay2: components["schemas"]["Bay_2019"];
+            bay3: components["schemas"]["Bay_2019"];
+            bay4: components["schemas"]["Bay_2019"];
+            bay5: components["schemas"]["Bay_2019"];
+            bay6: components["schemas"]["Bay_2019"];
+            bay7: components["schemas"]["Bay_2019"];
+            bay8: components["schemas"]["Bay_2019"];
+            cargoPoints: number;
+            completeRocketRankingPoint: boolean;
+            completedRocketFar?: boolean;
+            completedRocketNear?: boolean;
+            endgameRobot1: components["schemas"]["EndgameRobot_2019"];
+            endgameRobot2: components["schemas"]["EndgameRobot_2019"];
+            endgameRobot3: components["schemas"]["EndgameRobot_2019"];
+            foulCount?: number;
+            foulPoints: number;
+            habClimbPoints: number;
+            habDockingRankingPoint: boolean;
+            habLineRobot1: components["schemas"]["HabLine_2019"];
+            habLineRobot2: components["schemas"]["HabLine_2019"];
+            habLineRobot3: components["schemas"]["HabLine_2019"];
+            hatchPanelPoints: number;
+            lowLeftRocketFar: components["schemas"]["Bay_2019"];
+            lowLeftRocketNear: components["schemas"]["Bay_2019"];
+            lowRightRocketFar: components["schemas"]["Bay_2019"];
+            lowRightRocketNear: components["schemas"]["Bay_2019"];
+            midLeftRocketFar: components["schemas"]["Bay_2019"];
+            midLeftRocketNear: components["schemas"]["Bay_2019"];
+            midRightRocketFar: components["schemas"]["Bay_2019"];
+            midRightRocketNear: components["schemas"]["Bay_2019"];
+            preMatchBay1: components["schemas"]["PreMatchBay_2019"];
+            preMatchBay2: components["schemas"]["PreMatchBay_2019"];
+            preMatchBay3: components["schemas"]["PreMatchBay_2019"];
+            preMatchBay6: components["schemas"]["PreMatchBay_2019"];
+            preMatchBay7: components["schemas"]["PreMatchBay_2019"];
+            preMatchBay8: components["schemas"]["PreMatchBay_2019"];
+            preMatchLevelRobot1: components["schemas"]["EndgameRobot_2019"];
+            preMatchLevelRobot2: components["schemas"]["EndgameRobot_2019"];
+            preMatchLevelRobot3: components["schemas"]["EndgameRobot_2019"];
+            rp: number;
+            sandStormBonusPoints: number;
+            techFoulCount?: number;
+            teleopPoints: number;
+            topLeftRocketFar: components["schemas"]["Bay_2019"];
+            topLeftRocketNear: components["schemas"]["Bay_2019"];
+            topRightRocketFar: components["schemas"]["Bay_2019"];
+            topRightRocketNear: components["schemas"]["Bay_2019"];
+            totalPoints: number;
+        };
+        /** @description See the 2020 FMS API documentation for a description of each value. https://frcevents2.docs.apiary.io/#/reference/match-results/score-details */
+        Match_Score_Breakdown_2020: {
+            blue: components["schemas"]["Match_Score_Breakdown_2020_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2020_Alliance"];
+        };
+        Match_Score_Breakdown_2020_Alliance: {
+            initLineRobot1: components["schemas"]["InitLineRobot_2020"];
+            endgameRobot1: components["schemas"]["EndgameRobot_2020"];
+            initLineRobot2: components["schemas"]["InitLineRobot_2020"];
+            endgameRobot2: components["schemas"]["EndgameRobot_2020"];
+            initLineRobot3: components["schemas"]["InitLineRobot_2020"];
+            endgameRobot3: components["schemas"]["EndgameRobot_2020"];
+            autoCellsBottom: number;
+            autoCellsOuter: number;
+            autoCellsInner: number;
+            teleopCellsBottom: number;
+            teleopCellsOuter: number;
+            teleopCellsInner: number;
+            stage1Activated: boolean;
+            stage2Activated: boolean;
+            stage3Activated: boolean;
+            stage3TargetColor: components["schemas"]["Stage3TargetColor_2020"];
+            endgameRungIsLevel: components["schemas"]["EndgameRungIsLevel_2020"];
+            autoInitLinePoints: number;
+            autoCellPoints: number;
+            autoPoints: number;
+            teleopCellPoints: number;
+            controlPanelPoints: number;
+            endgamePoints: number;
+            teleopPoints: number;
+            shieldOperationalRankingPoint: boolean;
+            shieldEnergizedRankingPoint: boolean;
+            /** @description Unofficial TBA-computed value that indicates whether the shieldEnergizedRankingPoint was earned normally or awarded due to a foul. */
+            tba_shieldEnergizedRankingPointFromFoul?: boolean;
+            /** @description Unofficial TBA-computed value that counts the number of robots who were hanging at the end of the match. */
+            tba_numRobotsHanging?: number;
+            foulCount: number;
+            techFoulCount: number;
+            adjustPoints?: number;
+            foulPoints: number;
+            rp?: number;
+            totalPoints: number;
+        };
+        /** @description See the 2022 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
+        Match_Score_Breakdown_2022: {
+            blue: components["schemas"]["Match_Score_Breakdown_2022_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2022_Alliance"];
+        };
+        Match_Score_Breakdown_2022_Alliance: {
+            taxiRobot1?: components["schemas"]["TaxiRobot_2022"];
+            endgameRobot1?: components["schemas"]["EndgameRobot_2022"];
+            taxiRobot2?: components["schemas"]["TaxiRobot_2022"];
+            endgameRobot2?: components["schemas"]["EndgameRobot_2022"];
+            taxiRobot3?: components["schemas"]["TaxiRobot_2022"];
+            endgameRobot3?: components["schemas"]["EndgameRobot_2022"];
+            autoCargoLowerNear?: number;
+            autoCargoLowerFar?: number;
+            autoCargoLowerBlue?: number;
+            autoCargoLowerRed?: number;
+            autoCargoUpperNear?: number;
+            autoCargoUpperFar?: number;
+            autoCargoUpperBlue?: number;
+            autoCargoUpperRed?: number;
+            autoCargoTotal?: number;
+            teleopCargoLowerNear?: number;
+            teleopCargoLowerFar?: number;
+            teleopCargoLowerBlue?: number;
+            teleopCargoLowerRed?: number;
+            teleopCargoUpperNear?: number;
+            teleopCargoUpperFar?: number;
+            teleopCargoUpperBlue?: number;
+            teleopCargoUpperRed?: number;
+            teleopCargoTotal?: number;
+            matchCargoTotal?: number;
+            autoTaxiPoints?: number;
+            autoCargoPoints?: number;
+            autoPoints?: number;
+            quintetAchieved?: boolean;
+            teleopCargoPoints?: number;
+            endgamePoints?: number;
+            teleopPoints?: number;
+            cargoBonusRankingPoint?: boolean;
+            hangarBonusRankingPoint?: boolean;
+            foulCount?: number;
+            techFoulCount?: number;
+            adjustPoints?: number;
+            foulPoints?: number;
+            rp?: number | null;
+            totalPoints?: number;
+        };
+        /** @description See the 2023 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
+        Match_Score_Breakdown_2023: {
+            blue: components["schemas"]["Match_Score_Breakdown_2023_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2023_Alliance"];
+        };
+        Match_Score_Breakdown_2023_Alliance: {
+            activationBonusAchieved?: boolean;
+            adjustPoints?: number;
+            autoBridgeState?: components["schemas"]["BridgeState_2023"];
+            autoChargeStationPoints?: number;
+            autoChargeStationRobot1?: components["schemas"]["AutoChargeStationRobot_2023"];
+            autoChargeStationRobot2?: components["schemas"]["AutoChargeStationRobot_2023"];
+            autoChargeStationRobot3?: components["schemas"]["AutoChargeStationRobot_2023"];
+            autoDocked?: boolean;
+            autoCommunity?: {
+                B: ("None" | "Cone" | "Cube")[];
+                M: ("None" | "Cone" | "Cube")[];
+                T: ("None" | "Cone" | "Cube")[];
+            };
+            autoGamePieceCount?: number;
+            autoGamePiecePoints?: number;
+            autoMobilityPoints: number;
+            mobilityRobot1: components["schemas"]["MobilityRobot_2023"];
+            mobilityRobot2: components["schemas"]["MobilityRobot_2023"];
+            mobilityRobot3: components["schemas"]["MobilityRobot_2023"];
+            autoPoints: number;
+            coopGamePieceCount?: number;
+            coopertitionCriteriaMet?: boolean;
+            endGameBridgeState?: components["schemas"]["BridgeState_2023"];
+            endGameChargeStationPoints?: number;
+            endGameChargeStationRobot1?: components["schemas"]["EndGameChargeStationRobot_2023"];
+            endGameChargeStationRobot2?: components["schemas"]["EndGameChargeStationRobot_2023"];
+            endGameChargeStationRobot3?: components["schemas"]["EndGameChargeStationRobot_2023"];
+            endGameParkPoints?: number;
+            extraGamePieceCount?: number;
+            foulCount: number;
+            foulPoints: number;
+            techFoulCount: number;
+            linkPoints?: number;
+            links?: {
+                nodes: ("None" | "Cone" | "Cube")[];
+                /** @enum {string} */
+                row: "Bottom" | "Mid" | "Top";
+            }[] | null;
+            sustainabilityBonusAchieved?: boolean;
+            teleopCommunity?: {
+                B: ("None" | "Cone" | "Cube")[];
+                M: ("None" | "Cone" | "Cube")[];
+                T: ("None" | "Cone" | "Cube")[];
+            };
+            teleopGamePieceCount?: number;
+            teleopGamePiecePoints?: number;
+            totalChargeStationPoints?: number;
+            teleopPoints: number;
+            rp: number;
+            totalPoints: number;
+        };
+        /** @description See the 2024 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
+        Match_Score_Breakdown_2024: {
+            blue: components["schemas"]["Match_Score_Breakdown_2024_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2024_Alliance"];
+        };
+        Match_Score_Breakdown_2024_Alliance: {
+            adjustPoints?: number;
+            autoAmpNoteCount?: number;
+            autoAmpNotePoints?: number;
+            autoLeavePoints?: number;
+            autoLineRobot1?: components["schemas"]["AutoLineRobot_2024"];
+            autoLineRobot2?: components["schemas"]["AutoLineRobot_2024"];
+            autoLineRobot3?: components["schemas"]["AutoLineRobot_2024"];
+            autoPoints?: number;
+            autoSpeakerNoteCount?: number;
+            autoSpeakerNotePoints?: number;
+            autoTotalNotePoints?: number;
+            coopNotePlayed?: boolean;
+            coopertitionBonusAchieved?: boolean;
+            coopertitionCriteriaMet?: boolean;
+            endGameHarmonyPoints?: number;
+            endGameNoteInTrapPoints?: number;
+            endGameOnStagePoints?: number;
+            endGameParkPoints?: number;
+            endGameRobot1?: components["schemas"]["EndGameRobot_2024"];
+            endGameRobot2?: components["schemas"]["EndGameRobot_2024"];
+            endGameRobot3?: components["schemas"]["EndGameRobot_2024"];
+            endGameSpotLightBonusPoints?: number;
+            endGameTotalStagePoints?: number;
+            ensembleBonusAchieved?: boolean;
+            ensembleBonusOnStageRobotsThreshold?: number;
+            ensembleBonusStagePointsThreshold?: number;
+            foulCount?: number;
+            foulPoints?: number;
+            g206Penalty?: boolean;
+            g408Penalty?: boolean;
+            g424Penalty?: boolean;
+            melodyBonusAchieved?: boolean;
+            melodyBonusThreshold?: number;
+            melodyBonusThresholdCoop?: number;
+            melodyBonusThresholdNonCoop?: number;
+            micCenterStage?: boolean;
+            micStageLeft?: boolean;
+            micStageRight?: boolean;
+            rp: number;
+            techFoulCount?: number;
+            teleopAmpNoteCount?: number;
+            teleopAmpNotePoints?: number;
+            teleopPoints?: number;
+            teleopSpeakerNoteAmplifiedCount?: number;
+            teleopSpeakerNoteAmplifiedPoints?: number;
+            teleopSpeakerNoteCount?: number;
+            teleopSpeakerNotePoints?: number;
+            teleopTotalNotePoints?: number;
+            totalPoints: number;
+            trapCenterStage?: boolean;
+            trapStageLeft?: boolean;
+            trapStageRight?: boolean;
+        };
+        /** @description See the 2025 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
+        Match_Score_Breakdown_2025: {
+            blue: components["schemas"]["Match_Score_Breakdown_2025_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2025_Alliance"];
+        };
+        Match_Score_Breakdown_2025_Alliance: {
+            adjustPoints?: number;
+            algaePoints: number;
+            autoBonusAchieved?: boolean;
+            autoCoralCount: number;
+            autoCoralPoints: number;
+            autoLineRobot1: components["schemas"]["AutoLineRobot_2024"];
+            autoLineRobot2: components["schemas"]["AutoLineRobot_2024"];
+            autoLineRobot3: components["schemas"]["AutoLineRobot_2024"];
+            autoMobilityPoints: number;
+            autoPoints: number;
+            autoReef: {
+                topRow: components["schemas"]["ReefRow_2025"];
+                midRow: components["schemas"]["ReefRow_2025"];
+                botRow: components["schemas"]["ReefRow_2025"];
+                trough: number;
+                /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the botRow object. */
+                tba_botRowCount?: number;
+                /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the midRow object. */
+                tba_midRowCount?: number;
+                /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the topRow object. */
+                tba_topRowCount?: number;
+            };
+            bargeBonusAchieved?: boolean;
+            coopertitionCriteriaMet?: boolean;
+            coralBonusAchieved?: boolean;
+            endGameBargePoints: number;
+            endGameRobot1: components["schemas"]["EndGameRobot_2025"];
+            endGameRobot2: components["schemas"]["EndGameRobot_2025"];
+            endGameRobot3: components["schemas"]["EndGameRobot_2025"];
+            foulCount: number;
+            foulPoints: number;
+            g206Penalty: boolean;
+            g410Penalty: boolean;
+            g418Penalty: boolean;
+            g428Penalty: boolean;
+            netAlgaeCount: number;
+            rp: number;
+            techFoulCount: number;
+            teleopCoralCount: number;
+            teleopCoralPoints: number;
+            teleopPoints: number;
+            teleopReef: {
+                topRow: components["schemas"]["ReefRow_2025"];
+                midRow: components["schemas"]["ReefRow_2025"];
+                botRow: components["schemas"]["ReefRow_2025"];
+                trough: number;
+                /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the botRow object. */
+                tba_botRowCount?: number;
+                /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the midRow object. */
+                tba_midRowCount?: number;
+                /** @description Unofficial TBA-computed value that sums the total number of game pieces scored in the topRow object. */
+                tba_topRowCount?: number;
+            };
+            totalPoints: number;
+            wallAlgaeCount: number;
+        };
+        /** @description See the 2026 FMS API documentation for a description of each value. https://frc-api-docs.firstinspires.org */
+        Match_Score_Breakdown_2026: {
+            blue: components["schemas"]["Match_Score_Breakdown_2026_Alliance"];
+            red: components["schemas"]["Match_Score_Breakdown_2026_Alliance"];
+        };
+        Match_Score_Breakdown_2026_Alliance: {
+            adjustPoints: number;
+            autoTowerPoints: number;
+            autoTowerRobot1: components["schemas"]["TowerRobot_2026"];
+            autoTowerRobot2: components["schemas"]["TowerRobot_2026"];
+            autoTowerRobot3: components["schemas"]["TowerRobot_2026"];
+            endGameTowerPoints: number;
+            endGameTowerRobot1: components["schemas"]["TowerRobot_2026"];
+            endGameTowerRobot2: components["schemas"]["TowerRobot_2026"];
+            endGameTowerRobot3: components["schemas"]["TowerRobot_2026"];
+            energizedAchieved: boolean;
+            foulPoints: number;
+            g206Penalty: boolean;
+            hubScore: components["schemas"]["HubScore_2026"];
+            majorFoulCount: number;
+            minorFoulCount: number;
+            rp: number;
+            superchargedAchieved: boolean;
+            totalAutoPoints: number;
+            totalPoints: number;
+            totalTeleopPoints: number;
+            totalTowerPoints: number;
+            traversalAchieved: boolean;
+        };
+        Match_Simple: {
+            /** @description TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may append the competition level if more than one match in required per set. */
+            key: string;
+            comp_level: components["schemas"]["Comp_Level"];
+            /** @description The set number in a series of matches where more than one match is required in the match series. */
+            set_number: number;
+            /** @description The match number of the match in the competition level. */
+            match_number: number;
+            /** @description A list of alliances, the teams on the alliances, and their score. */
+            alliances: {
+                red: components["schemas"]["Match_alliance"];
+                blue: components["schemas"]["Match_alliance"];
+            };
+            /**
+             * @description The color (red/blue) of the winning alliance. Will contain an empty string in the event of no winner, or a tie.
+             * @enum {string}
+             */
+            winning_alliance: "red" | "blue" | "";
+            /** @description Event key of the event the match was played at. */
+            event_key: string;
+            /**
+             * Format: int64
+             * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the scheduled match time, as taken from the published schedule.
+             */
+            time: number | null;
+            /**
+             * Format: int64
+             * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the TBA predicted match start time.
+             */
+            predicted_time: number | null;
+            /**
+             * Format: int64
+             * @description UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of actual match start time.
+             */
+            actual_time: number | null;
+        };
+        /**
+         * @description Timeseries data for the 2018 game *FIRST* POWER UP.
+         *     *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
+         *     *WARNING:* This model is currently under active development and may change at any time, including in breaking ways.
+         */
+        Match_Timeseries_2018: {
+            /** @description TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
+            event_key?: string;
+            /** @description Match ID consisting of the level, match number, and set number, eg `qm45` or `f1m1`. */
+            match_id?: string;
+            /** @description Current mode of play, can be `pre_match`, `auto`, `telop`, or `post_match`. */
+            mode?: string;
+            play?: number;
+            /** @description Amount of time remaining in the match, only valid during `auto` and `teleop` modes. */
+            time_remaining?: number;
+            /** @description 1 if the blue alliance is credited with the AUTO QUEST, 0 if not. */
+            blue_auto_quest?: number;
+            /** @description Number of POWER CUBES in the BOOST section of the blue alliance VAULT. */
+            blue_boost_count?: number;
+            /** @description Returns 1 if the blue alliance BOOST was played, or 0 if not played. */
+            blue_boost_played?: number;
+            /** @description Name of the current blue alliance POWER UP being played, or `null`. */
+            blue_current_powerup?: string;
+            /** @description 1 if the blue alliance is credited with FACING THE BOSS, 0 if not. */
+            blue_face_the_boss?: number;
+            /** @description Number of POWER CUBES in the FORCE section of the blue alliance VAULT. */
+            blue_force_count?: number;
+            /** @description Returns 1 if the blue alliance FORCE was played, or 0 if not played. */
+            blue_force_played?: number;
+            /** @description Number of POWER CUBES in the LEVITATE section of the blue alliance VAULT. */
+            blue_levitate_count?: number;
+            /** @description Returns 1 if the blue alliance LEVITATE was played, or 0 if not played. */
+            blue_levitate_played?: number;
+            /** @description Number of seconds remaining in the blue alliance POWER UP time, or 0 if none is active. */
+            blue_powerup_time_remaining?: string;
+            /** @description 1 if the blue alliance owns the SCALE, 0 if not. */
+            blue_scale_owned?: number;
+            /** @description Current score for the blue alliance. */
+            blue_score?: number;
+            /** @description 1 if the blue alliance owns their SWITCH, 0 if not. */
+            blue_switch_owned?: number;
+            /** @description 1 if the red alliance is credited with the AUTO QUEST, 0 if not. */
+            red_auto_quest?: number;
+            /** @description Number of POWER CUBES in the BOOST section of the red alliance VAULT. */
+            red_boost_count?: number;
+            /** @description Returns 1 if the red alliance BOOST was played, or 0 if not played. */
+            red_boost_played?: number;
+            /** @description Name of the current red alliance POWER UP being played, or `null`. */
+            red_current_powerup?: string;
+            /** @description 1 if the red alliance is credited with FACING THE BOSS, 0 if not. */
+            red_face_the_boss?: number;
+            /** @description Number of POWER CUBES in the FORCE section of the red alliance VAULT. */
+            red_force_count?: number;
+            /** @description Returns 1 if the red alliance FORCE was played, or 0 if not played. */
+            red_force_played?: number;
+            /** @description Number of POWER CUBES in the LEVITATE section of the red alliance VAULT. */
+            red_levitate_count?: number;
+            /** @description Returns 1 if the red alliance LEVITATE was played, or 0 if not played. */
+            red_levitate_played?: number;
+            /** @description Number of seconds remaining in the red alliance POWER UP time, or 0 if none is active. */
+            red_powerup_time_remaining?: string;
+            /** @description 1 if the red alliance owns the SCALE, 0 if not. */
+            red_scale_owned?: number;
+            /** @description Current score for the red alliance. */
+            red_score?: number;
+            /** @description 1 if the red alliance owns their SWITCH, 0 if not. */
+            red_switch_owned?: number;
+        };
+        Match_alliance: {
+            /** @description Score for this alliance. Will be -1 for an unplayed match. */
+            score: number;
+            team_keys: string[];
+            /** @description TBA team keys (eg `frc254`) of any teams playing as a surrogate. */
+            surrogate_team_keys: string[];
+            /** @description TBA team keys (eg `frc254`) of any disqualified teams. */
+            dq_team_keys: string[];
+        };
+        /** @description The `Media` object contains a reference for most any media associated with a team or event on TBA. */
+        Media: {
+            /**
+             * @description String type of the media element.
+             * @enum {string}
+             */
+            type: "youtube" | "cdphotothread" | "imgur" | "facebook-profile" | "youtube-channel" | "twitter-profile" | "github-profile" | "instagram-profile" | "periscope-profile" | "gitlab-profile" | "grabcad" | "instagram-image" | "external-link" | "avatar" | "onshape" | "cd-thread";
+            /** @description The key used to identify this media on the media site. */
+            foreign_key: string;
+            /** @description If required, a JSON dict of additional media information. */
+            details?: Record<string, never> | {
+                base64Image: string;
+            } | {
+                author_id: number;
+                author_name: string;
+                /** Format: uri */
+                author_url: string;
+                height: number | null;
+                html: string;
+                media_id: string;
+                provider_name: string;
+                /** Format: uri */
+                provider_url: string;
+                thumbnail_height: number;
+                /** Format: uri */
+                thumbnail_url: string;
+                thumbnail_width: number;
+                title: string;
+                type: string;
+                version: string;
+                width: number;
+            } | {
+                /** Format: date-time */
+                model_created: string;
+                model_description: string | null;
+                /** Format: uri */
+                model_image: string;
+                model_name: string;
+            } | {
+                image_partial: string;
+            } | {
+                thread_title: string;
+                image_url: string | null;
+            };
+            /** @description True if the media is of high quality. */
+            preferred?: boolean;
+            /** @description List of teams that this media belongs to. Most likely length 1. */
+            team_keys: string[];
+            /** @description Direct URL to the media. */
+            direct_url?: string;
+            /** @description The URL that leads to the full web page for the media, if one exists. */
+            view_url?: string;
+        };
+        /** @enum {string} */
+        MobilityRobot_2023: "No" | "Yes";
+        NotablesInsight: {
+            data: {
+                entries: {
+                    /** @description A list of events this team achieved the notable at. This type may change over time. */
+                    context: string[];
+                    team_key: string;
+                }[];
+            };
+            name: string;
+            year: number;
+        };
+        /** @enum {string} */
+        Position_2016: "" | "A_ChevalDeFrise" | "A_Portcullis" | "B_Moat" | "B_Ramparts" | "C_Drawbridge" | "C_SallyPort" | "D_RockWall" | "D_RoughTerrain" | "NotSpecified";
+        /** @enum {string} */
+        PreMatchBay_2019: "Cargo" | "Panel" | "Unknown";
+        ReefRow_2025: {
+            nodeA: boolean;
+            nodeB: boolean;
+            nodeC: boolean;
+            nodeD: boolean;
+            nodeE: boolean;
+            nodeF: boolean;
+            nodeG: boolean;
+            nodeH: boolean;
+            nodeI: boolean;
+            nodeJ: boolean;
+            nodeK: boolean;
+            nodeL: boolean;
+        };
+        /** @description Information about how a regional team qualified for FIRST Championship. */
+        Regional_Advancement: {
+            /** @description Whether or not the team qualified for Championship. */
+            cmp: boolean;
+            /** @enum {string} */
+            cmp_status: "NotInvited" | "PreQualified" | "EventQualified" | "PoolQualified" | "Declined";
+            /** @description The event key at which the team qualified */
+            qualifying_event?: string;
+            /** @description The name of the award which qualified the team */
+            qualifying_award_name?: string;
+            /** @description Which week number's regional pool invitation the team got */
+            qualifying_pool_week?: number;
+        };
+        /** @description Rank of a team in the regional pool. */
+        Regional_Ranking: {
+            /** @description TBA team key for the team. */
+            team_key: string;
+            /** @description Numerical rank of the team, 1 being top rank. */
+            rank: number;
+            /** @description Any points added to a team as a result of the rookie bonus. */
+            rookie_bonus?: number;
+            /** @description Additional points awarded in lieu of a second event, based on first event performance */
+            single_event_bonus?: number;
+            /** @description Total district points for the team. */
+            point_total: number;
+            /** @description List of events that contributed to the point total for the team. */
+            event_points?: {
+                /** @description Total points awarded at this event. */
+                total: number;
+                /** @description Points awarded for alliance selection. */
+                alliance_points: number;
+                /** @description Points awarded for elimination match performance. */
+                elim_points: number;
+                /** @description Points awarded for event awards. */
+                award_points: number;
+                /** @description TBA Event key for this event. */
+                event_key: string;
+                /** @description Points awarded for qualification match performance. */
+                qual_points: number;
+            }[];
+        };
+        /** @enum {string} */
+        RobotAuto_2016_WithUnknown: "Crossed" | "None" | "Reached" | "Unknown";
+        /** @enum {string} */
+        RobotAuto_2016_WithoutUnknown: "Crossed" | "Reached" | "None";
+        /** @enum {string} */
+        RobotAuto_2017: "Mobility" | "None" | "Unknown";
+        SearchIndex: {
+            teams: {
+                key: string;
+                nickname: string;
+            }[];
+            events: {
+                key: string;
+                name: string;
+            }[];
+        };
+        /** @enum {string} */
+        Stage3TargetColor_2020: "Blue" | "Green" | "Red" | "Unknown" | "Yellow";
+        /** @enum {string} */
+        TaxiRobot_2022: "No" | "Yes";
+        Team: {
+            /** @description TBA team key with the format `frcXXXX` with `XXXX` representing the team number. */
+            key: string;
+            /** @description Official team number issued by FIRST. */
+            team_number: number;
+            /** @description Team nickname provided by FIRST. */
+            nickname: string;
+            /** @description Official long name registered with FIRST. */
+            name: string;
+            /** @description Name of team school or affilited group registered with FIRST. */
+            school_name: string | null;
+            /** @description City of team derived from parsing the address registered with FIRST. */
+            city: string | null;
+            /** @description State of team derived from parsing the address registered with FIRST. */
+            state_prov: string | null;
+            /** @description Country of team derived from parsing the address registered with FIRST. */
+            country: string | null;
+            /** @description Will be NULL, for future development. */
+            address: string | null;
+            /** @description Postal code from the team address. */
+            postal_code: string | null;
+            /** @description Will be NULL, for future development. */
+            gmaps_place_id: string | null;
+            /**
+             * Format: url
+             * @description Will be NULL, for future development.
+             */
+            gmaps_url: string | null;
+            /**
+             * Format: double
+             * @description Will be NULL, for future development.
+             */
+            lat: number | null;
+            /**
+             * Format: double
+             * @description Will be NULL, for future development.
+             */
+            lng: number | null;
+            /** @description Will be NULL, for future development. */
+            location_name: string | null;
+            /**
+             * Format: url
+             * @description Official website associated with the team.
+             */
+            website: string | null;
+            /** @description First year the team officially competed. */
+            rookie_year: number | null;
+            /** @description Team's motto or tagline. */
+            motto: string | null;
+        };
+        Team_Event_Status: {
+            qual?: components["schemas"]["Team_Event_Status_rank"];
+            alliance?: components["schemas"]["Team_Event_Status_alliance"];
+            playoff?: components["schemas"]["Team_Event_Status_playoff"];
+            /** @description An HTML formatted string suitable for display to the user containing the team's alliance pick status. */
+            alliance_status_str?: string;
+            /** @description An HTML formatter string suitable for display to the user containing the team's playoff status. */
+            playoff_status_str?: string;
+            /** @description An HTML formatted string suitable for display to the user containing the team's overall status summary of the event. */
+            overall_status_str?: string;
+            /** @description TBA match key for the next match the team is scheduled to play in at this event, or null. */
+            next_match_key?: string | null;
+            /** @description TBA match key for the last match the team played in at this event, or null. */
+            last_match_key?: string | null;
+        };
+        Team_Event_Status_alliance: {
+            /** @description Alliance name, may be null. */
+            name?: string | null;
+            /** @description Alliance number. */
+            number: number;
+            backup?: components["schemas"]["Team_Event_Status_alliance_backup"];
+            /** @description Order the team was picked in the alliance from 0-2, with 0 being alliance captain. */
+            pick: number;
+        };
+        /** @description Backup status, may be null. */
+        Team_Event_Status_alliance_backup: null | {
+            /** @description TBA key for the team replaced by the backup. */
+            out?: string;
+            /** @description TBA key for the backup team called in. */
+            in?: string;
+        };
+        /** @description Playoff status for this team, may be null if the team did not make playoffs, or playoffs have not begun. */
+        Team_Event_Status_playoff: null | {
+            level?: components["schemas"]["Comp_Level"];
+            current_level_record?: components["schemas"]["WLT_Record"];
+            record?: components["schemas"]["WLT_Record"];
+            /**
+             * @description Current competition status for the playoffs.
+             * @enum {string}
+             */
+            status?: "won" | "eliminated" | "playing";
+            /**
+             * Format: double
+             * @description The average match score during playoffs. Year specific. May be null if not relevant for a given year.
+             */
+            playoff_average?: null | number;
+        };
+        Team_Event_Status_rank: {
+            /** @description Number of teams ranked. */
+            num_teams?: number;
+            ranking?: {
+                /** @description Number of matches played. */
+                matches_played?: number;
+                /**
+                 * Format: double
+                 * @description For some years, average qualification score. Can be null.
+                 */
+                qual_average?: number | null;
+                /** @description Ordered list of values used to determine the rank. See the `sort_order_info` property for the name of each value. */
+                sort_orders?: number[] | null;
+                record?: components["schemas"]["WLT_Record"];
+                /** @description Relative rank of this team. */
+                rank?: number | null;
+                /** @description Number of matches the team was disqualified for. */
+                dq?: number | null;
+                /** @description TBA team key for this rank. */
+                team_key?: string;
+            } | null;
+            /** @description Ordered list of names corresponding to the elements of the `sort_orders` array. */
+            sort_order_info?: {
+                /** @description The number of digits of precision used for this value, eg `2` would correspond to a value of `101.11` while `0` would correspond to `101`. */
+                precision?: number;
+                /** @description The descriptive name of the value used to sort the ranking. */
+                name?: string;
+            }[] | null;
+            status?: string;
+        };
+        Team_Robot: {
+            /** @description Year this robot competed in. */
+            year: number;
+            /** @description Name of the robot as provided by the team. */
+            robot_name: string;
+            /** @description Internal TBA identifier for this robot. */
+            key: string;
+            /** @description TBA team key for this robot. */
+            team_key: string;
+        };
+        Team_Simple: {
+            /** @description TBA team key with the format `frcXXXX` with `XXXX` representing the team number. */
+            key: string;
+            /** @description Official team number issued by FIRST. */
+            team_number: number;
+            /** @description Team nickname provided by FIRST. */
+            nickname: string;
+            /** @description Official long name registered with FIRST. */
+            name: string;
+            /** @description City of team derived from parsing the address registered with FIRST. */
+            city: string | null;
+            /** @description State of team derived from parsing the address registered with FIRST. */
+            state_prov: string | null;
+            /** @description Country of team derived from parsing the address registered with FIRST. */
+            country: string | null;
+        };
+        /** @enum {string} */
+        Touchpad_2017: "None" | "ReadyForTakeoff";
+        /** @enum {string} */
+        TowerFace_2016: "Both" | "Challenged" | "None" | "Scaled" | "Unknown";
+        /** @description A Win-Loss-Tie record for a team, or an alliance. */
+        WLT_Record: {
+            /** @description Number of losses. */
+            losses: number;
+            /** @description Number of wins. */
+            wins: number;
+            /** @description Number of ties. */
+            ties: number;
+        };
+        Webcast: {
+            /**
+             * @description Type of webcast, typically descriptive of the streaming provider.
+             * @enum {string}
+             */
+            type: "youtube" | "twitch" | "ustream" | "iframe" | "html5" | "rtmp" | "livestream" | "direct_link" | "mms" | "justin" | "stemtv" | "dacast";
+            /** @description Type specific channel information. May be the YouTube stream, or Twitch channel name. In the case of iframe types, contains HTML to embed the stream in an HTML iframe. */
+            channel: string;
+            /** @description The date for the webcast in `yyyy-mm-dd` format. May be null. */
+            date?: string | null;
+            /** @description File identification as may be required for some types. May be null. */
+            file?: string | null;
+        };
+        Zebra: {
+            /** @description TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may be appended to the competition level if more than one match in required per set. */
+            key: string;
+            /** @description A list of relative timestamps for each data point. Each timestamp will correspond to the X and Y value at the same index in a team xs and ys arrays. `times`, all teams `xs` and all teams `ys` are guarenteed to be the same length. */
+            times: number[];
+            alliances: {
+                /** @description Zebra MotionWorks data for teams on the red alliance */
+                red?: components["schemas"]["Zebra_team"][];
+                /** @description Zebra data for teams on the blue alliance */
+                blue?: components["schemas"]["Zebra_team"][];
+            };
+        };
+        Zebra_team: {
+            /**
+             * @description The TBA team key for the Zebra MotionWorks data.
+             * @example frc7332
+             */
+            team_key: string;
+            /** @description A list containing doubles and nulls representing a teams X position in feet at the corresponding timestamp. A null value represents no tracking data for a given timestamp. */
+            xs: number[];
+            /** @description A list containing doubles and nulls representing a teams Y position in feet at the corresponding timestamp. A null value represents no tracking data for a given timestamp. */
+            ys: number[];
+        };
     };
-    /** @description Not Found */
-    NotFound: {
-      headers: {
-        [name: string]: unknown;
-      };
-      content?: never;
+    responses: {
+        /** @description Authorization information is missing or invalid. */
+        Unauthorized: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @description Authorization error description. */
+                    Error: string;
+                };
+            };
+        };
+        /** @description Not Found */
+        NotFound: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content?: never;
+        };
+        /** @description Not Modified - Use Local Cached Value */
+        NotModified: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content?: never;
+        };
     };
-    /** @description Not Modified - Use Local Cached Value */
-    NotModified: {
-      headers: {
-        [name: string]: unknown;
-      };
-      content?: never;
+    parameters: {
+        /** @description Value of the `ETag` header in the most recently cached response by the client. */
+        "If-None-Match": string;
+        /** @description District abbreviation, eg `ne` or `fim` */
+        district_abbreviation: string;
+        /** @description TBA District Key, eg `2016fim` */
+        district_key: string;
+        /** @description TBA Event Key, eg `2016nytr` */
+        event_key: string;
+        /** @description TBA Match Key, eg `2016nytr_qm1` */
+        match_key: string;
+        /** @description Media Tag which describes the Media. */
+        media_tag: string;
+        /** @description Page number of results to return, zero-indexed */
+        page_num: number;
+        /** @description TBA Team Key, eg `frc254` */
+        team_key: string;
+        /** @description Competition Year (or Season). Must be 4 digits. */
+        year: number;
     };
-  };
-  parameters: {
-    /** @description Value of the `ETag` header in the most recently cached response by the client. */
-    "If-None-Match": string;
-    /** @description District abbreviation, eg `ne` or `fim` */
-    district_abbreviation: string;
-    /** @description TBA District Key, eg `2016fim` */
-    district_key: string;
-    /** @description TBA Event Key, eg `2016nytr` */
-    event_key: string;
-    /** @description TBA Match Key, eg `2016nytr_qm1` */
-    match_key: string;
-    /** @description Media Tag which describes the Media. */
-    media_tag: string;
-    /** @description Page number of results to return, zero-indexed */
-    page_num: number;
-    /** @description TBA Team Key, eg `frc254` */
-    team_key: string;
-    /** @description Competition Year (or Season). Must be 4 digits. */
-    year: number;
-  };
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  getDistrictDCMPHistory: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description District abbreviation, eg `ne` or `fim` */
-        district_abbreviation: components["parameters"]["district_abbreviation"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            awards?: components["schemas"]["Award"][];
-            event?: components["schemas"]["Event"];
-          }[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictHistory: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description District abbreviation, eg `ne` or `fim` */
-        district_abbreviation: components["parameters"]["district_abbreviation"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["District"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictInsights: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description District abbreviation, eg `ne` or `fim` */
-        district_abbreviation: components["parameters"]["district_abbreviation"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["District_Insight"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictAdvancement: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: components["parameters"]["district_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": null | {
-            [key: string]: components["schemas"]["District_Advancement"];
-          };
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictAwards: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: components["parameters"]["district_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Award"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictEvents: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: components["parameters"]["district_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictEventsKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: components["parameters"]["district_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictEventsSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictRankings: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: components["parameters"]["district_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": null | components["schemas"]["District_Ranking"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictTeams: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: components["parameters"]["district_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictTeamsKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: components["parameters"]["district_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictTeamsSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA District Key, eg `2016fim` */
-        district_key: components["parameters"]["district_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getDistrictsByYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["District"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEvent: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventAdvancementPoints: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_District_Points"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventAlliances: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": null | components["schemas"]["Elimination_Alliance"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventAwards: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Award"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventCOPRs: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_COPRs"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventDistrictPoints: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_District_Points"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventInsights: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_Insights"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventMatches: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Match"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventMatchesKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventMatchesSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Match_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventMatchTimeseries: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventOPRs: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_OPRs"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventPredictions: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_Predictions"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventRankings: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_Ranking"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getRegionalChampsPoolPoints: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_District_Points"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_Simple"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventTeamMedia: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Media"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventTeams: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventTeamsKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventTeamsSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventTeamsStatuses: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            [key: string]: components["schemas"]["Team_Event_Status"];
-          };
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventsByYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventsByYearKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getEventsByYearSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getInsightsLeaderboardsYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["LeaderboardInsight"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getInsightsNotablesYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotablesInsight"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getMatch: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Match Key, eg `2016nytr_qm1` */
-        match_key: components["parameters"]["match_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Match"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getMatchSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Match Key, eg `2016nytr_qm1` */
-        match_key: components["parameters"]["match_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Match_Simple"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getMatchTimeseries: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Match Key, eg `2016nytr_qm1` */
-        match_key: components["parameters"]["match_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": Record<string, never>[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getMatchZebra: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Match Key, eg `2016nytr_qm1` */
-        match_key: components["parameters"]["match_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Zebra"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getRegionalAdvancement: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": null | {
-            [key: string]: components["schemas"]["Regional_Advancement"];
-          };
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getRegionalRankings: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": null | components["schemas"]["Regional_Ranking"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getSearchIndex: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["SearchIndex"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getStatus: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["API_Status"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeam: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamAwards: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Award"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamAwardsByYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Award"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamDistricts: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["District"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventAwards: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Award"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventMatches: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Match"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventMatchesKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventMatchesSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Match"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventStatus: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description TBA Event Key, eg `2016nytr` */
-        event_key: components["parameters"]["event_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team_Event_Status"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEvents: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventsKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventsSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventsByYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventsByYearKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventsByYearSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Event_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamEventsStatusesByYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            [key: string]: components["schemas"]["Team_Event_Status"];
-          };
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamHistory: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response with team's history including events and awards. */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["History"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamMatchesByYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Match"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamMatchesByYearKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamMatchesByYearSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Match_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamMediaByTag: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Media Tag which describes the Media. */
-        media_tag: components["parameters"]["media_tag"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Media"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamMediaByTagYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Media Tag which describes the Media. */
-        media_tag: components["parameters"]["media_tag"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Media"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamMediaByYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Media"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamRobots: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team_Robot"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team_Simple"];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamSocialMedia: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Media"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamYearsParticipated: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description TBA Team Key, eg `frc254` */
-        team_key: components["parameters"]["team_key"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": number[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeams: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Page number of results to return, zero-indexed */
-        page_num: components["parameters"]["page_num"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamsKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Page number of results to return, zero-indexed */
-        page_num: components["parameters"]["page_num"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamsSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Page number of results to return, zero-indexed */
-        page_num: components["parameters"]["page_num"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamsByYear: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-        /** @description Page number of results to return, zero-indexed */
-        page_num: components["parameters"]["page_num"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamsByYearKeys: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-        /** @description Page number of results to return, zero-indexed */
-        page_num: components["parameters"]["page_num"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string[];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getTeamsByYearSimple: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Value of the `ETag` header in the most recently cached response by the client. */
-        "If-None-Match"?: components["parameters"]["If-None-Match"];
-      };
-      path: {
-        /** @description Competition Year (or Season). Must be 4 digits. */
-        year: components["parameters"]["year"];
-        /** @description Page number of results to return, zero-indexed */
-        page_num: components["parameters"]["page_num"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful response */
-      200: {
-        headers: {
-          /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
-          "Cache-Control"?: string;
-          /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
-          ETag?: string;
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Team_Simple"][];
-        };
-      };
-      304: components["responses"]["NotModified"];
-      401: components["responses"]["Unauthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
+    getDistrictDCMPHistory: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description District abbreviation, eg `ne` or `fim` */
+                district_abbreviation: components["parameters"]["district_abbreviation"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        awards?: components["schemas"]["Award"][];
+                        event?: components["schemas"]["Event"];
+                    }[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictHistory: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description District abbreviation, eg `ne` or `fim` */
+                district_abbreviation: components["parameters"]["district_abbreviation"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["District"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictInsights: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description District abbreviation, eg `ne` or `fim` */
+                district_abbreviation: components["parameters"]["district_abbreviation"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["District_Insight"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictAdvancement: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: components["parameters"]["district_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": null | {
+                        [key: string]: components["schemas"]["District_Advancement"];
+                    };
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictAwards: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: components["parameters"]["district_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Award"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictEvents: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: components["parameters"]["district_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictEventsKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: components["parameters"]["district_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictEventsSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictRankings: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: components["parameters"]["district_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": null | components["schemas"]["District_Ranking"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictTeams: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: components["parameters"]["district_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictTeamsKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: components["parameters"]["district_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictTeamsSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA District Key, eg `2016fim` */
+                district_key: components["parameters"]["district_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getDistrictsByYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["District"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEvent: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventAdvancementPoints: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_District_Points"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventAlliances: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": null | components["schemas"]["Elimination_Alliance"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventAwards: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Award"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventCOPRs: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_COPRs"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventDistrictPoints: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_District_Points"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventInsights: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_Insights"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventMatches: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Match"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventMatchesKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventMatchesSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Match_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventMatchTimeseries: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventOPRs: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_OPRs"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventPredictions: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_Predictions"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventRankings: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_Ranking"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getRegionalChampsPoolPoints: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_District_Points"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_Simple"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventTeamMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Media"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventTeams: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventTeamsKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventTeamsSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventTeamsStatuses: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: components["schemas"]["Team_Event_Status"];
+                    };
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventsByYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventsByYearKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEventsByYearSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getInsightsLeaderboardsYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeaderboardInsight"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getInsightsNotablesYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotablesInsight"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getMatch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Match Key, eg `2016nytr_qm1` */
+                match_key: components["parameters"]["match_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Match"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getMatchSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Match Key, eg `2016nytr_qm1` */
+                match_key: components["parameters"]["match_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Match_Simple"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getMatchTimeseries: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Match Key, eg `2016nytr_qm1` */
+                match_key: components["parameters"]["match_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getMatchZebra: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Match Key, eg `2016nytr_qm1` */
+                match_key: components["parameters"]["match_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Zebra"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getRegionalAdvancement: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": null | {
+                        [key: string]: components["schemas"]["Regional_Advancement"];
+                    };
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getRegionalRankings: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": null | components["schemas"]["Regional_Ranking"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getSearchIndex: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchIndex"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getStatus: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["API_Status"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeam: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamAwards: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Award"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamAwardsByYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Award"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamDistricts: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["District"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventAwards: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Award"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventMatches: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Match"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventMatchesKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventMatchesSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Match"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventStatus: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description TBA Event Key, eg `2016nytr` */
+                event_key: components["parameters"]["event_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team_Event_Status"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEvents: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventsKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventsSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventsByYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventsByYearKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventsByYearSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamEventsStatusesByYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: components["schemas"]["Team_Event_Status"];
+                    };
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamHistory: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response with team's history including events and awards. */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["History"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamMatchesByYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Match"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamMatchesByYearKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamMatchesByYearSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Match_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamMediaByTag: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Media Tag which describes the Media. */
+                media_tag: components["parameters"]["media_tag"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Media"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamMediaByTagYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Media Tag which describes the Media. */
+                media_tag: components["parameters"]["media_tag"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Media"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamMediaByYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Media"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamRobots: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team_Robot"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team_Simple"];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamSocialMedia: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Media"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamYearsParticipated: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description TBA Team Key, eg `frc254` */
+                team_key: components["parameters"]["team_key"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": number[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeams: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Page number of results to return, zero-indexed */
+                page_num: components["parameters"]["page_num"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamsKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Page number of results to return, zero-indexed */
+                page_num: components["parameters"]["page_num"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamsSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Page number of results to return, zero-indexed */
+                page_num: components["parameters"]["page_num"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamsByYear: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+                /** @description Page number of results to return, zero-indexed */
+                page_num: components["parameters"]["page_num"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamsByYearKeys: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+                /** @description Page number of results to return, zero-indexed */
+                page_num: components["parameters"]["page_num"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTeamsByYearSimple: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Value of the `ETag` header in the most recently cached response by the client. */
+                "If-None-Match"?: components["parameters"]["If-None-Match"];
+            };
+            path: {
+                /** @description Competition Year (or Season). Must be 4 digits. */
+                year: components["parameters"]["year"];
+                /** @description Page number of results to return, zero-indexed */
+                page_num: components["parameters"]["page_num"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    /** @description The `Cache-Control` header, in particular the `max-age` value, contains the number of seconds the result should be considered valid for. During this time subsequent calls should return from the local cache directly. */
+                    "Cache-Control"?: string;
+                    /** @description Specifies the version of the most recent response. Used by clients in the `If-None-Match` request header. */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Team_Simple"][];
+                };
+            };
+            304: components["responses"]["NotModified"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
 }
