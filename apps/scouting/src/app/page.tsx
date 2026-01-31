@@ -30,7 +30,7 @@ export default async function Home() {
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-2xl font-bold">Welcome to Polar Edge Analytics</h1>
-          <p className="text-muted-foreground">Sign in with Discord to continue</p>
+          <p className="text-muted-foreground">Sign in to continue</p>
           <SignInForm />
         </div>
       </main>

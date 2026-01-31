@@ -1,8 +1,14 @@
+import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
 import { db } from "@/lib/database";
+
+const url = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : (process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3000}`);
+const hostname = new URL(url).hostname;
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -27,5 +33,9 @@ export const auth = betterAuth({
       },
     }),
     nextCookies(),
+    passkey({
+      rpID: hostname,
+    }),
   ],
+  trustedOrigins: [url],
 });

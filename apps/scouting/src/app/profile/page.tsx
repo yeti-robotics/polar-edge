@@ -2,6 +2,7 @@
 import { Button } from "@repo/ui/components/button";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
+import PasskeyManager from "./passkey/PasskeyManager";
 
 export default function ProfilePage() {
   function handleLogOut() {
@@ -52,8 +53,11 @@ export default function ProfilePage() {
           </div>
           <Button onClick={handleLogOut}>Log Out</Button>
         </header>
-
-        <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full w-220 h-100 mt-10">
+        <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full mt-10">
+          <h3 className="text-2xl font-semibold text-foreground-white mb-3">Account</h3>
+          <PasskeyManager />
+        </section>
+        <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full mt-10">
           <h3 className="text-2xl font-semibold text-foreground-white mb-3"> Recent activity</h3>
           <ul>
             <li className="py-3 flex items-start justify-between">
