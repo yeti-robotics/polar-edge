@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
 import { ActiveEventForm } from "./ActiveEventForm";
+import { SyncFromTBAForm } from "./SyncFromTBAForm";
 
 function LoadingForm() {
   return (
@@ -33,17 +34,20 @@ async function EventContent() {
   ]);
 
   return (
-    <ActiveEventForm
-      organizationId={organizationId}
-      events={events.map((e) => ({
-        id: e.id,
-        eventCode: e.eventCode,
-        name: e.name,
-        startDate: e.startDate,
-        endDate: e.endDate,
-      }))}
-      activeEventId={activeEvent?.id ?? null}
-    />
+    <div className="space-y-6">
+      <ActiveEventForm
+        organizationId={organizationId}
+        events={events.map((e) => ({
+          id: e.id,
+          eventCode: e.eventCode,
+          name: e.name,
+          startDate: e.startDate,
+          endDate: e.endDate,
+        }))}
+        activeEventId={activeEvent?.eventId ?? null}
+      />
+      <SyncFromTBAForm organizationId={organizationId} />
+    </div>
   );
 }
 
