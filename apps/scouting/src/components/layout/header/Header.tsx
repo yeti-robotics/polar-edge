@@ -7,14 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import {
-  HomeIcon,
-  HomeIcon,
-  ShieldCheckIcon,
-  ShieldCheckIcon,
-  UserIcon,
-  UserIcon,
-} from "lucide-react";
+import { HomeIcon, ShieldCheckIcon, UserIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -23,7 +16,7 @@ import { isSuperAdmin } from "@/lib/permissions";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
 import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
-import { ThemeToggle, ThemeToggle } from "./ThemeToggle";
+import { ThemeToggle } from "./ThemeToggle";
 
 function OrganizationSelectorFallback() {
   return (
@@ -86,9 +79,6 @@ async function OrganizationSelectorWrapper() {
   if (!session?.user) {
     return null;
   }
-
-  await setDefaultOrganizationIfNeeded();
-
   const isUserSuperAdmin = isSuperAdmin(session.user.name);
   return (
     <>
