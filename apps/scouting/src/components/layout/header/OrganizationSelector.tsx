@@ -23,7 +23,26 @@ export function OrganizationSelector({ isSuperAdmin = false }: OrganizationSelec
   const { data: currentOrganization } = authClient.useActiveOrganization();
   const router = useRouter();
 
+  const hasOrganizations = (organizations?.length ?? 0) > 0;
   const shouldShowDropdown = (organizations?.length ?? 0) > 1 || isSuperAdmin;
+
+  if (!hasOrganizations) {
+    return (
+      <div className="flex items-center">
+        {isSuperAdmin ? (
+          <Link
+            href="/organization/create"
+            className="flex items-center text-sm text-foreground hover:text-foreground/80 transition-colors gap-1"
+          >
+            <PlusIcon className="size-3.5" aria-hidden="true" />
+            Create Organization
+          </Link>
+        ) : (
+          <span className="text-sm text-muted-foreground">No organization</span>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-3">
