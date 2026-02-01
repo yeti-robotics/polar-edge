@@ -3,7 +3,8 @@ import { ConfigService } from "@nestjs/config";
 import { type ChatInputCommandInteraction, GuildMember, MessageFlags } from "discord.js";
 import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
 import {
-  AdminAttendanceDto,
+  AdminSignInDto,
+  AdminSignOutDto,
   AttendanceSignInDto,
   AttendanceSignOutDto,
 } from "src/attendance/attendance.dto";
@@ -186,12 +187,12 @@ export class BotCommands {
   }
 
   @SlashCommand({
-    name: "admin-attendance",
-    description: "Sign in or out another user (admin only)",
+    name: "admin-signin",
+    description: "Sign in another user (admin only)",
   })
-  public async onAdminAttendance(
+  public async onAdminSignIn(
     @Context() [interaction]: SlashCommandContext,
-    @Options() { user, action }: AdminAttendanceDto
+    @Options() { user }: AdminSignInDto
   ) {
     await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
@@ -207,27 +208,76 @@ export class BotCommands {
 
     if (!nickname) {
       return interaction.editReply({
-        content: "User must have a nickname to sign in or out.",
+        content: "User must have a nickname to sign in.",
       });
     }
 
-    const result =
-      action === "signin"
-        ? await this.attendanceService.signIn(user.id, interaction.guild?.id || "", nickname)
-        : await this.attendanceService.signOut(user.id, interaction.guildId || "", nickname);
+    const result = await this.attendanceService.signIn(
+      user.id,
+      interaction.guild?.id || "",
+      nickname,
+      undefined,
+      true
+    );
 
     if (result.success) {
       if (interaction.channel?.isSendable()) {
-        await interaction.channel.send(
-          `<@${user.id}> has been signed ${action === "signin" ? "in" : "out"} by an admin.`
-        );
+        await interaction.channel.send(`<@${user.id}> has been signed in by an admin.`);
       }
       return interaction.editReply({
-        content: `Successfully signed ${action === "signin" ? "in" : "out"} ${nickname}.`,
+        content: `Successfully signed in ${nickname}.`,
       });
     } else {
       return interaction.editReply({
-        content: `Failed to sign ${action === "signin" ? "in" : "out"} ${nickname}.`,
+        content: `Failed to sign in ${nickname}.`,
+      });
+    }
+  }
+
+  @SlashCommand({
+    name: "admin-signout",
+    description: "Sign out another user (admin only)",
+  })
+  public async onAdminSignOut(
+    @Context() [interaction]: SlashCommandContext,
+    @Options() { user }: AdminSignOutDto
+  ) {
+    await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
+
+    const member = interaction.member as GuildMember;
+    if (!member.roles.cache.has(this.adminRoleId)) {
+      return interaction.editReply({
+        content: "You do not have permission to use this command.",
+      });
+    }
+
+    const targetMember = await interaction.guild?.members.fetch(user.id);
+    const nickname = targetMember?.nickname || null;
+
+    if (!nickname) {
+      return interaction.editReply({
+        content: "User must have a nickname to sign out.",
+      });
+    }
+
+    const result = await this.attendanceService.signOut(
+      user.id,
+      interaction.guildId || "",
+      nickname,
+      undefined,
+      true
+    );
+
+    if (result.success) {
+      if (interaction.channel?.isSendable()) {
+        await interaction.channel.send(`<@${user.id}> has been signed out by an admin.`);
+      }
+      return interaction.editReply({
+        content: `Successfully signed out ${nickname}.`,
+      });
+    } else {
+      return interaction.editReply({
+        content: `Failed to sign out ${nickname}.`,
       });
     }
   }
