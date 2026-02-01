@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +47,9 @@ export function Header() {
     <header className="sticky top-0 z-50 py-2 px-6 border-b bg-background h-(--header-height) flex flex-col justify-between">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-4">
-          <span className="hidden md:block uppercase font-mono text-sm">Polar Edge</span>
+          <span className="hidden md:block uppercase font-mono text-sm">
+            Polar Edge
+          </span>
           <Suspense fallback={<OrganizationSelectorFallback />}>
             <OrganizationSelectorWrapper />
           </Suspense>
@@ -56,16 +62,28 @@ export function Header() {
         <Link className="hover:text-foreground text-muted-foreground" href="/">
           Home
         </Link>
-        <Link className="hover:text-foreground text-muted-foreground" href="/auto-path">
+        <Link
+          className="hover:text-foreground text-muted-foreground"
+          href="/auto-path"
+        >
           Auto Paths
         </Link>
-        <Link className="hover:text-foreground text-muted-foreground" href="/forms/pit">
+        <Link
+          className="hover:text-foreground text-muted-foreground"
+          href="/forms/pit"
+        >
           Pit Form
         </Link>
-        <Link className="hover:text-foreground text-muted-foreground" href="/forms/stand">
+        <Link
+          className="hover:text-foreground text-muted-foreground"
+          href="/forms/stand"
+        >
           Stand Form
         </Link>
-        <Link className="hover:text-foreground text-muted-foreground" href="/data">
+        <Link
+          className="hover:text-foreground text-muted-foreground"
+          href="/data"
+        >
           Data
         </Link>
         <nav />
@@ -104,14 +122,20 @@ async function UserAvatar() {
     const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });
-    const isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
+    const isAdminOrOwner =
+      activeMember?.role === "admin" || activeMember?.role === "owner";
 
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="size-8 select-none">
-            <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
-            <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
+            <AvatarImage
+              src={session.user.image ?? ""}
+              alt={session.user.name ?? ""}
+            ></AvatarImage>
+            <AvatarFallback>
+              {session.user.name?.charAt(0) ?? ""}
+            </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="end" className="min-w-36">
@@ -137,9 +161,6 @@ async function UserAvatar() {
             <ThemeToggle />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <LogoutButton />
-          </DropdownMenuGroup>
           <DropdownMenuGroup>
             <LogoutButton />
           </DropdownMenuGroup>
