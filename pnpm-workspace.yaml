@@ -18,6 +18,10 @@ catalog:
   zod: ^4.3.6
 
 onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@swc/core'
+  - esbuild
+  - necord
   - sharp
 
 overrides:
