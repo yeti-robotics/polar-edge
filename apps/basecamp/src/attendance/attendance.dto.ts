@@ -1,4 +1,5 @@
-import { IntegerOption } from "necord";
+import { User } from "discord.js";
+import { IntegerOption, UserOption } from "necord";
 
 export class AttendanceSignInDto {
   @IntegerOption({
@@ -16,4 +17,22 @@ export class AttendanceSignOutDto {
     required: true,
   })
   code: number;
+}
+
+export class AdminSignInDto {
+  @UserOption({
+    name: "user",
+    description: "The user to sign in",
+    required: true,
+  })
+  user: User;
+}
+
+export class AdminSignOutDto {
+  @UserOption({
+    name: "user",
+    description: "The user to sign out",
+    required: true,
+  })
+  user: User;
 }
