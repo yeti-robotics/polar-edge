@@ -117,7 +117,7 @@ export class OutreachService {
 
       // Convert to array and sort by total hours (descending)
       const leaderboard = Array.from(userHoursMap.entries())
-        .map(([userName, totalHours]) => ({ userName, totalHours }))
+        .map(([userName, totalHours]) => ({ userName, totalHours: Math.round(totalHours * 10) / 10 }))
         .sort((a, b) => b.totalHours - a.totalHours)
         .slice(0, limit);
 

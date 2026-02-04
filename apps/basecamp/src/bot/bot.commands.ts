@@ -299,7 +299,7 @@ export class BotCommands {
       return interaction.reply("No outreach found for you");
     }
 
-    const hourTotal = outreach.reduce((acc, curr) => acc + curr.hours, 0);
+    const hourTotal = Math.round(outreach.reduce((acc, curr) => acc + curr.hours, 0) * 10) / 10;
 
     let outreachString = `:snowflake: Outreach for ${nickname} :snowflake:\n\n**Total hours:** ${hourTotal}`;
 
