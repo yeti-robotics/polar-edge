@@ -12,6 +12,7 @@ import { AttendanceService } from "src/attendance/attendance.service";
 import { HandbookService } from "src/handbook/handbook.service";
 import { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
 import { OutreachService } from "src/outreach/outreach.service";
+import { roundToTenth } from "src/utils/math.utils";
 
 // Percentage requirements based on hours to date
 const MEMBER_REQUIRED_PERCENTAGE = 0.75; // 75% of hours to date
@@ -299,7 +300,7 @@ export class BotCommands {
       return interaction.reply("No outreach found for you");
     }
 
-    const hourTotal = Math.round(outreach.reduce((acc, curr) => acc + curr.hours, 0) * 10) / 10;
+    const hourTotal = roundToTenth(outreach.reduce((acc, curr) => acc + curr.hours, 0));
 
     let outreachString = `:snowflake: Outreach for ${nickname} :snowflake:\n\n**Total hours:** ${hourTotal}`;
 

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { SheetService } from "src/sheet/sheet.service";
+import { roundToTenth } from "src/utils/math.utils";
 import { z } from "zod";
 
 const OutreachColumnSchema = z.object({
@@ -117,7 +118,7 @@ export class OutreachService {
 
       // Convert to array and sort by total hours (descending)
       const leaderboard = Array.from(userHoursMap.entries())
-        .map(([userName, totalHours]) => ({ userName, totalHours: Math.round(totalHours * 10) / 10 }))
+        .map(([userName, totalHours]) => ({ userName, totalHours: roundToTenth(totalHours) }))
         .sort((a, b) => b.totalHours - a.totalHours)
         .slice(0, limit);
 
