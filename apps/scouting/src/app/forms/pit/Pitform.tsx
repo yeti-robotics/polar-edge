@@ -6,8 +6,9 @@ import { Field, FieldError, FieldLabel, FieldLegend, FieldSet } from "@repo/ui/c
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
+import { toast } from "@repo/ui/components/sonner";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { submitPitForm } from "./action";
 import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
 
@@ -20,6 +21,15 @@ export function PitForm() {
       onSubmit: FormSchema,
     },
   });
+
+  const lastHandledSuccess = useRef<typeof state | null>(null);
+  if ("_success" in state && state !== lastHandledSuccess.current) {
+    lastHandledSuccess.current = state;
+
+    form.reset();
+    toast.success("Pit form submitted successfully.");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   return (
     <form action={action} onSubmit={form.handleSubmit} className="space-y-6">

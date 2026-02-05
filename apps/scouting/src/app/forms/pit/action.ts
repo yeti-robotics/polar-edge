@@ -1,6 +1,10 @@
 "use server";
 
-import { createServerValidate, ServerValidateError } from "@tanstack/react-form-nextjs";
+import {
+  createServerValidate,
+  initialFormState,
+  ServerValidateError,
+} from "@tanstack/react-form-nextjs";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
@@ -47,4 +51,9 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
     }
     throw error;
   }
+
+  return {
+    ...initialFormState,
+    _success: true,
+  };
 }
