@@ -1,56 +1,30 @@
 "use client";
 
+import { Button } from "@repo/ui/components/button";
 import { Checkbox } from "@repo/ui/components/checkbox";
 import { Field, FieldError, FieldLabel, FieldLegend, FieldSet } from "@repo/ui/components/field";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
-import { useForm } from "@tanstack/react-form";
-import * as z from "zod";
-
-const DRIVETRAIN_OPTIONS = ["tank", "swerve", "mecanum", "other"] as const;
-const CLIMB_TYPE_OPTIONS = ["sides", "center", "left", "right", "any", "none"] as const;
-
-const formSchema = z.object({
-  teamNumber: z.number().int().positive("Team number is required"),
-  drivetrainType: z.enum(DRIVETRAIN_OPTIONS, {
-    error: "Drivetrain type is required",
-  }),
-  canTrench: z.boolean(),
-  canBump: z.boolean(),
-  canShuttle: z.boolean(),
-  capacity: z.number().int().positive("Capacity is required"),
-  weight: z.number().int().positive("Weight is required"),
-  climbType: z.enum(CLIMB_TYPE_OPTIONS, {
-    error: "Climb type is required",
-  }),
-});
+import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
+import { useActionState } from "react";
+import { submitPitForm } from "./action";
+import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
 
 export function PitForm() {
+  const [state, action, isPending] = useActionState(submitPitForm, initialFormState);
   const form = useForm({
-    defaultValues: {
-      teamNumber: 0,
-      drivetrainType: "tank",
-      canTrench: false,
-      canBump: false,
-      canShuttle: false,
-      capacity: 0,
-      weight: 0,
-      climbType: "none",
-    },
+    ...formOpts,
+    transform: useTransform((baseForm) => mergeForm(baseForm, state ?? {}), [state]),
     validators: {
-      onSubmit: formSchema,
-    },
-    onSubmit: async ({ value }) => {
-      console.log(value);
+      onSubmit: FormSchema,
     },
   });
 
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      action={action}
+      onSubmit={() => {
         form.handleSubmit();
       }}
       className="space-y-6"
@@ -258,6 +232,9 @@ export function PitForm() {
           );
         }}
       </form.Field>
+      <Button type="submit" disabled={form.state.isSubmitting || isPending} className="w-full">
+        {form.state.isSubmitting || isPending ? "Submitting..." : "Submit"}
+      </Button>
     </form>
   );
 }
