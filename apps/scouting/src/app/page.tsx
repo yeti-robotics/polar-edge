@@ -9,7 +9,7 @@ import { SignInForm } from "./SignInForm";
 
 async function AllowSuperPerms() {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user || !isSuperAdmin(session.user.name)) {
+  if (!session?.user || !isSuperAdmin(session.user.email)) {
     return null;
   }
 
@@ -22,16 +22,26 @@ async function AllowSuperPerms() {
   );
 }
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ signup?: string; redirect?: string }>;
+}) {
   const session = await auth.api.getSession({ headers: await headers() });
+  const { signup: signupParam, redirect: redirectParam } = await searchParams;
 
   if (!session?.user) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-2xl font-bold">Welcome to Polar Edge Analytics</h1>
-          <p className="text-muted-foreground">Sign in with Discord to continue</p>
-          <SignInForm />
+          {signupParam === "restricted" && (
+            <p className="rounded-md bg-destructive/15 px-4 py-2 text-sm text-destructive">
+              Sign-up is invite-only. Use an invite link from your organization or contact an admin.
+            </p>
+          )}
+          <p className="text-muted-foreground">Sign in to continue</p>
+          <SignInForm redirectUrl={redirectParam} />
         </div>
       </main>
     );

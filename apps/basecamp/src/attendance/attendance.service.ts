@@ -225,11 +225,14 @@ export class AttendanceService {
     discordId: string,
     guildId: string,
     discordName: string,
-    code?: number
+    code?: number,
+    skipTwofa?: boolean
   ): Promise<AttendanceOperationResult> {
-    const codeError = this.validateTwofaCode(code);
-    if (codeError) {
-      return codeError;
+    if (!skipTwofa) {
+      const codeError = this.validateTwofaCode(code);
+      if (codeError) {
+        return codeError;
+      }
     }
 
     const lastOperation = await this.getLastAttendanceRecord(discordId);
@@ -252,11 +255,14 @@ export class AttendanceService {
     discordId: string,
     guildId: string,
     discordName: string,
-    code?: number
+    code?: number,
+    skipTwofa?: boolean
   ): Promise<AttendanceOperationResult> {
-    const codeError = this.validateTwofaCode(code);
-    if (codeError) {
-      return codeError;
+    if (!skipTwofa) {
+      const codeError = this.validateTwofaCode(code);
+      if (codeError) {
+        return codeError;
+      }
     }
 
     const lastOperation = await this.getLastAttendanceRecord(discordId);

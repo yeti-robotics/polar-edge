@@ -109,7 +109,7 @@ async function MembersContent() {
   const members = membersResponse?.members ?? [];
 
   return (
-    <div className="overflow-auto">
+    <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>

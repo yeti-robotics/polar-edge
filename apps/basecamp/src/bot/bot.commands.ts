@@ -1,11 +1,18 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { type ChatInputCommandInteraction, MessageFlags } from "discord.js";
+import { ConfigService } from "@nestjs/config";
+import { type ChatInputCommandInteraction, GuildMember, MessageFlags } from "discord.js";
 import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
-import { AttendanceSignInDto, AttendanceSignOutDto } from "src/attendance/attendance.dto";
+import {
+  AdminSignInDto,
+  AdminSignOutDto,
+  AttendanceSignInDto,
+  AttendanceSignOutDto,
+} from "src/attendance/attendance.dto";
 import { AttendanceService } from "src/attendance/attendance.service";
 import { HandbookService } from "src/handbook/handbook.service";
 import { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
 import { OutreachService } from "src/outreach/outreach.service";
+import { roundToTenth } from "src/utils/math.utils";
 
 // Percentage requirements based on hours to date
 const MEMBER_REQUIRED_PERCENTAGE = 0.75; // 75% of hours to date
@@ -20,6 +27,7 @@ interface RateLimitConfig {
 @Injectable()
 export class BotCommands {
   private readonly logger = new Logger(BotCommands.name);
+  private readonly adminRoleId: string;
 
   // Global rate limiting
   private readonly globalRequests: number[] = [];
@@ -31,8 +39,10 @@ export class BotCommands {
   constructor(
     private readonly attendanceService: AttendanceService,
     private readonly outreachService: OutreachService,
-    private readonly handbookService: HandbookService
+    private readonly handbookService: HandbookService,
+    private readonly configService: ConfigService
   ) {
+    this.adminRoleId = this.configService.get<string>("ADMIN_ROLE_ID") || "";
     // Clean up old requests periodically
     setInterval(() => this.cleanupRequests(), 30000); // Every 30 seconds
   }
@@ -178,6 +188,102 @@ export class BotCommands {
   }
 
   @SlashCommand({
+    name: "admin-signin",
+    description: "Sign in another user (admin only)",
+  })
+  public async onAdminSignIn(
+    @Context() [interaction]: SlashCommandContext,
+    @Options() { user }: AdminSignInDto
+  ) {
+    await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
+
+    const member = interaction.member as GuildMember;
+    if (!member.roles.cache.has(this.adminRoleId)) {
+      return interaction.editReply({
+        content: "You do not have permission to use this command.",
+      });
+    }
+
+    const targetMember = await interaction.guild?.members.fetch(user.id);
+    const nickname = targetMember?.nickname || null;
+
+    if (!nickname) {
+      return interaction.editReply({
+        content: "User must have a nickname to sign in.",
+      });
+    }
+
+    const result = await this.attendanceService.signIn(
+      user.id,
+      interaction.guild?.id || "",
+      nickname,
+      undefined,
+      true
+    );
+
+    if (result.success) {
+      if (interaction.channel?.isSendable()) {
+        await interaction.channel.send(`<@${user.id}> has been signed in by an admin.`);
+      }
+      return interaction.editReply({
+        content: `Successfully signed in ${nickname}.`,
+      });
+    } else {
+      return interaction.editReply({
+        content: `Failed to sign in ${nickname}.`,
+      });
+    }
+  }
+
+  @SlashCommand({
+    name: "admin-signout",
+    description: "Sign out another user (admin only)",
+  })
+  public async onAdminSignOut(
+    @Context() [interaction]: SlashCommandContext,
+    @Options() { user }: AdminSignOutDto
+  ) {
+    await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
+
+    const member = interaction.member as GuildMember;
+    if (!member.roles.cache.has(this.adminRoleId)) {
+      return interaction.editReply({
+        content: "You do not have permission to use this command.",
+      });
+    }
+
+    const targetMember = await interaction.guild?.members.fetch(user.id);
+    const nickname = targetMember?.nickname || null;
+
+    if (!nickname) {
+      return interaction.editReply({
+        content: "User must have a nickname to sign out.",
+      });
+    }
+
+    const result = await this.attendanceService.signOut(
+      user.id,
+      interaction.guildId || "",
+      nickname,
+      undefined,
+      true
+    );
+
+    if (result.success) {
+      if (interaction.channel?.isSendable()) {
+        await interaction.channel.send(`<@${user.id}> has been signed out by an admin.`);
+      }
+      return interaction.editReply({
+        content: `Successfully signed out ${nickname}.`,
+      });
+    } else {
+      return interaction.editReply({
+        content: `Failed to sign out ${nickname}.`,
+      });
+    }
+  }
+
+  @SlashCommand({
     name: "outreach",
     description: "Get your current outreach progress",
   })
@@ -194,7 +300,7 @@ export class BotCommands {
       return interaction.reply("No outreach found for you");
     }
 
-    const hourTotal = outreach.reduce((acc, curr) => acc + curr.hours, 0);
+    const hourTotal = roundToTenth(outreach.reduce((acc, curr) => acc + curr.hours, 0));
 
     let outreachString = `:snowflake: Outreach for ${nickname} :snowflake:\n\n**Total hours:** ${hourTotal}`;
 

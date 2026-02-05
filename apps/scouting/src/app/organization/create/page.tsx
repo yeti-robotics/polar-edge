@@ -27,7 +27,7 @@ function LoadingCard() {
 async function CreateOrganizationContent() {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  if (!session?.user || !isSuperAdmin(session.user.name)) {
+  if (!session?.user || !isSuperAdmin(session.user.email)) {
     unauthorized();
   }
 

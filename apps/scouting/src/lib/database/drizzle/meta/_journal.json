@@ -22,6 +22,27 @@
       "when": 1769288521288,
       "tag": "0002_mute_patriot",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1769373197683,
+      "tag": "0003_clammy_pandemic",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1769465377160,
+      "tag": "0004_gifted_dust",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1769872396158,
+      "tag": "0005_spicy_spyke",
+      "breakpoints": true
     }
   ]
 }
