@@ -1,6 +1,4 @@
-import { Checkbox } from "@repo/ui/components/checkbox";
 import { Input } from "@repo/ui/components/input";
-import { Label } from "@repo/ui/components/label";
 
 export function ScoringCapabilities() {
   return (

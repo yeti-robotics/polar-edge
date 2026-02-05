@@ -74,8 +74,7 @@ export const auth = betterAuth({
   },
   plugins: [
     organization({
-      allowUserToCreateOrganization: (user) =>
-        isSuperAdmin(user.email) || false,
+      allowUserToCreateOrganization: (user) => isSuperAdmin(user.email) || false,
       // No-op email function - we use invite URLs instead
       sendInvitationEmail: async () => {
         // Invitations are handled via shareable URLs, not email
