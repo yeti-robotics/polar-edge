@@ -22,13 +22,7 @@ export function PitForm() {
   });
 
   return (
-    <form
-      action={action}
-      onSubmit={() => {
-        form.handleSubmit();
-      }}
-      className="space-y-6"
-    >
+    <form action={action} onSubmit={form.handleSubmit} className="space-y-6">
       <form.Field name="teamNumber">
         {(field) => {
           const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
@@ -65,7 +59,7 @@ export function PitForm() {
                 onBlur={field.handleBlur}
                 aria-invalid={isInvalid}
                 value={field.state.value}
-                onValueChange={(v) => field.handleChange(v)}
+                onValueChange={(v) => field.handleChange(v as (typeof DRIVETRAIN_OPTIONS)[number])}
               >
                 {DRIVETRAIN_OPTIONS.map((type) => (
                   <Label
@@ -216,7 +210,7 @@ export function PitForm() {
                 onBlur={field.handleBlur}
                 aria-invalid={isInvalid}
                 value={field.state.value}
-                onValueChange={(v) => field.handleChange(v)}
+                onValueChange={(v) => field.handleChange(v as (typeof CLIMB_TYPE_OPTIONS)[number])}
                 className="flex flex-col gap-3"
               >
                 {CLIMB_TYPE_OPTIONS.map((type) => (
