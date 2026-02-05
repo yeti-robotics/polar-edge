@@ -21,7 +21,10 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
     const activeMember = await auth.api.getActiveMember({ headers: await headers() });
 
     if (!activeMember) {
-      throw new Error("Unauthorized: no active member");
+      return {
+        ...initialFormState,
+        _error: "You must be signed in to submit the pit form.",
+      };
     }
 
     const validated = await serverValidate(formData, (entry) => {
@@ -49,7 +52,11 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
     if (error instanceof ServerValidateError) {
       return error.formState;
     }
-    throw error;
+
+    return {
+      ...initialFormState,
+      _error: "Something went wrong. Please try again.",
+    };
   }
 
   return {
