@@ -4,11 +4,7 @@ import * as z from "zod";
 export const DRIVETRAIN_OPTIONS = ["tank", "swerve", "mecanum", "other"] as const;
 export const CLIMB_TYPE_OPTIONS = ["sides", "center", "left", "right", "any", "none"] as const;
 
-export type DrivetrainType = (typeof DRIVETRAIN_OPTIONS)[number];
-export type ClimbType = (typeof CLIMB_TYPE_OPTIONS)[number];
-type FormValues = z.infer<typeof FormSchema>;
-
-const defaultValues: FormValues = {
+const defaultValues: z.infer<typeof FormSchema> = {
   teamNumber: 0,
   drivetrainType: "tank",
   canTrench: false,
