@@ -39,6 +39,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.454.0",
+    "radix-ui": "^1.4.3",
     "react": "catalog:",
     "react-day-picker": "^9.8.1",
     "react-dom": "catalog:",
