@@ -21,7 +21,6 @@
     "@better-auth/passkey": "^1.4.17",
     "@repo/tba-sdk": "workspace:*",
     "@repo/ui": "workspace:*",
-    "@tanstack/react-form": "^1.27.7",
     "@tanstack/react-form-nextjs": "^1.28.0",
     "@tanstack/react-table": "^8.21.3",
     "ai": "catalog:",
