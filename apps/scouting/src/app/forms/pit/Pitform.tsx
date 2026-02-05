@@ -95,6 +95,7 @@ export function PitForm() {
                   <Label htmlFor="can_trench" className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       id="can_trench"
+                      name="canTrench"
                       checked={field.state.value}
                       onBlur={field.handleBlur}
                       onCheckedChange={(checked) => field.handleChange(checked === true)}
@@ -115,6 +116,7 @@ export function PitForm() {
                   <Label htmlFor="can_bump" className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       id="can_bump"
+                      name="canBump"
                       checked={field.state.value}
                       onBlur={field.handleBlur}
                       onCheckedChange={(checked) => field.handleChange(checked === true)}
@@ -135,6 +137,7 @@ export function PitForm() {
                   <Label htmlFor="can_shuttle" className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       id="can_shuttle"
+                      name="canShuttle"
                       checked={field.state.value}
                       onBlur={field.handleBlur}
                       onCheckedChange={(checked) => field.handleChange(checked === true)}
