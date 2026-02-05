@@ -1,13 +1,7 @@
 "use client";
 
 import { Checkbox } from "@repo/ui/components/checkbox";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-  FieldLegend,
-  FieldSet,
-} from "@repo/ui/components/field";
+import { Field, FieldError, FieldLabel, FieldLegend, FieldSet } from "@repo/ui/components/field";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
@@ -124,10 +118,7 @@ export function PitForm() {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <div className="space-y-1">
-                  <Label
-                    htmlFor="can_trench"
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
+                  <Label htmlFor="can_trench" className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       id="can_trench"
                       checked={field.state.value}
@@ -147,10 +138,7 @@ export function PitForm() {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <div className="space-y-1">
-                  <Label
-                    htmlFor="can_bump"
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
+                  <Label htmlFor="can_bump" className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       id="can_bump"
                       checked={field.state.value}
@@ -170,10 +158,7 @@ export function PitForm() {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <div className="space-y-1">
-                  <Label
-                    htmlFor="can_shuttle"
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
+                  <Label htmlFor="can_shuttle" className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       id="can_shuttle"
                       checked={field.state.value}

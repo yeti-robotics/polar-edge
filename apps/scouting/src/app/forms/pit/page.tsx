@@ -1,6 +1,5 @@
 "use client";
 import { Card } from "@repo/ui/components/card";
-import { FormSidebar } from "./FormSidebar";
 import { PitForm } from "./PitForm";
 
 export default function PitFormPage() {
