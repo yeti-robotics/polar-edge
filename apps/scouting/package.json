@@ -19,9 +19,9 @@
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.13",
     "@better-auth/passkey": "^1.4.17",
-    "@repo/ui": "workspace:*",
     "@repo/tba-sdk": "workspace:*",
-    "@tanstack/react-form": "^1.27.7",
+    "@repo/ui": "workspace:*",
+    "@tanstack/react-form-nextjs": "^1.28.0",
     "@tanstack/react-table": "^8.21.3",
     "ai": "catalog:",
     "better-auth": "^1.4.17",
