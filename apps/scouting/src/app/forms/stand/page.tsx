@@ -1,5 +1,5 @@
 import { Card, CardContent, CardFooter } from "@repo/ui/components/card";
-import { FormSidebar } from "./formSidebar";
+import { FormSidebar } from "./StandFormNavbar";
 import { StandFormNavigation, StandFormProgress } from "./StandFormNavigation";
 import { StandFormProvider } from "./StandFormProvider";
 import { StandFormTabs } from "./StandFormTabs";
