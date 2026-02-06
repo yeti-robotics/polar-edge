@@ -20,16 +20,22 @@ async function signInPasskey() {
   });
 }
 
-export function SignInForm() {
+interface SignInFormProps {
+  redirectUrl?: string;
+}
+
+export function SignInForm({ redirectUrl }: SignInFormProps) {
   const [hasPasskeySupport, setHasPasskeySupport] = useState(true);
 
   useEffect(() => {
     setHasPasskeySupport(typeof window !== "undefined" && "PublicKeyCredential" in window);
   }, [hasPasskeySupport]);
 
+  const callbackURL = redirectUrl ?? "/";
+
   return (
     <div className="relative flex flex-col items-center justify-center my-4">
-      <Button onClick={signInDiscord}>
+      <Button onClick={() => signInDiscord(callbackURL)}>
         <Discord /> Sign in With Discord
       </Button>
       {true && (

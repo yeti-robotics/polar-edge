@@ -101,7 +101,7 @@ async function OrganizationSelectorWrapper() {
 
   await setDefaultOrganizationIfNeeded();
 
-  const isUserSuperAdmin = isSuperAdmin(session.user.name);
+  const isUserSuperAdmin = isSuperAdmin(session.user.email);
   return (
     <>
       <div className="hidden md:block w-px h-6 bg-muted-foreground rotate-15"></div>
