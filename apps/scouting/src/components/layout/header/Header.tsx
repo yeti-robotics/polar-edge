@@ -158,7 +158,6 @@ async function UserAvatar() {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <ThemeToggle />
-            <ThemeToggle />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>

@@ -35,7 +35,9 @@ export function StandFormProgress() {
       <div className="flex-1 h-2 bg-neutral-800">
         <div
           className="h-2 rounded-full bg-primary transition-all duration-500"
-          style={{ width: `${(STAGES.indexOf(currentStage) / (STAGES.length - 1)) * 100}%` }}
+          style={{
+            width: `${(STAGES.indexOf(currentStage) / (STAGES.length - 1)) * 100}%`,
+          }}
         />
       </div>
     </div>
