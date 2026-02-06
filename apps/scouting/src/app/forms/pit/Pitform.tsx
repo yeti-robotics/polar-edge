@@ -36,7 +36,11 @@ export function PitForm() {
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    if ("_error" in state && state !== lastHandledError.current && typeof state._error === "string") {
+    if (
+      "_error" in state &&
+      state !== lastHandledError.current &&
+      typeof state._error === "string"
+    ) {
       lastHandledError.current = state;
       toast.error(state._error, {
         position: "top-right",
