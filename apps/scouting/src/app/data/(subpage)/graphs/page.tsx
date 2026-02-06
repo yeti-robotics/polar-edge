@@ -1,7 +1,17 @@
 "use client";
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/chart";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@repo/ui/components/combobox";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { db } from "@/lib/database";
+import { team } from "@/lib/database/schema/tables/team";
 
 function GraphData() {
   const data = [{ teamNumber: 254, auto: 12, teleop: 48, climb: 15 }];
@@ -17,6 +27,11 @@ function GraphData() {
   const data3 = [{ team: "254", cycles: 8.4 }];
 
   const data4 = [{ team: "254", success: 0.92 }];
+
+  async function getTeamsData() {
+    const teams = db.select().from(team);
+    return teams;
+  }
 
   function ConsistencyChart() {
     return (
@@ -52,6 +67,25 @@ function GraphData() {
     );
   }
 
+  async function TeamsComboBox() {
+    const teams = await getTeamsData();
+    return (
+      <Combobox items={teams}>
+        <ComboboxInput placeholder="Select a team" />
+        <ComboboxContent>
+          <ComboboxEmpty>No items found.</ComboboxEmpty>
+          <ComboboxList>
+            {(item) => (
+              <ComboboxItem key={item.teamNumber} value={item.teamNumber}>
+                {item.teamNumber}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+    );
+  }
+
   function ClimbSuccessChart() {
     return (
       <ChartContainer config={{ success: { label: "Climb Success" } }} className="h-[300px]">
@@ -76,10 +110,10 @@ function GraphData() {
     <div>
       <div className="container p-6">
         <h1 className="text-3xl font-bold mb-6">Team Performance Analytics</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="space-y-2">
             <h2 className="text-xl font-semibold">Points Breakdown</h2>
-
+            <TeamsComboBox />
             <ChartContainer
               config={{
                 auto: { label: "Auto" },
