@@ -43,6 +43,13 @@
       "when": 1769872396158,
       "tag": "0005_spicy_spyke",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1770417390906,
+      "tag": "0006_clumsy_crusher_hogan",
+      "breakpoints": true
     }
   ]
 }
