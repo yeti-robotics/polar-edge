@@ -48,7 +48,9 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       climbType:
         validated.climbType === "none"
           ? null
-          : validated.climbType === "" ? null : validated.climbType,
+          : validated.climbType === ""
+            ? null
+            : validated.climbType,
       scoutMemberId: activeMember.id,
     });
   } catch (error) {
