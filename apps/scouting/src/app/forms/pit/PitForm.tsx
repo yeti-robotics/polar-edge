@@ -110,6 +110,7 @@ export function PitForm() {
       <Card>
         <CardHeader>
           <CardTitle>Drivetrain Type</CardTitle>
+          <CardDescription>Select the drivetrain type of the robot.</CardDescription>
         </CardHeader>
         <CardContent>
           <form.Field name="drivetrainType">
@@ -192,7 +193,8 @@ export function PitForm() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Specs</CardTitle>
+          <CardTitle>Specifications</CardTitle>
+          <CardDescription>Quantitative measurements of the robot.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
