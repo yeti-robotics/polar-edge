@@ -1,4 +1,4 @@
-import { bigint, boolean, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { bigint, index, pgTable, smallint, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { member } from "./member";
 import { teamMatch } from "./team-match";
 
@@ -14,7 +14,7 @@ export const standForm = pgTable(
     scoutMemberId: text("scout_member_id").references(() => member.id, { onDelete: "cascade" }),
 
     comments: text("comments").notNull().default(""),
-    didBreak: boolean("did_break").notNull().default(false),
+    oofTimeSeconds: smallint("oof_time_seconds").notNull().default(0),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
