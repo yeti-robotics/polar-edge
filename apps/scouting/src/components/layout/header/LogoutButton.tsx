@@ -2,12 +2,16 @@
 
 import { DropdownMenuItem } from "@repo/ui/components/dropdown-menu";
 import { LogOutIcon } from "lucide-react";
-import { signOut } from "@/lib/actions/auth/sign-out";
+import { authClient } from "@/lib/auth-client";
 
 export function LogoutButton() {
+  function handleLogout() {
+    authClient.signOut();
+  }
+
   return (
-    <DropdownMenuItem variant="destructive" onClick={() => signOut()}>
-      <LogOutIcon className="size-4 text-current" aria-hidden="true" />
+    <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+      <LogOutIcon className="size-4 text-current" />
       <span>Logout</span>
     </DropdownMenuItem>
   );

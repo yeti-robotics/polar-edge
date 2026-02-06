@@ -3,7 +3,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
@@ -102,7 +101,9 @@ async function UserAvatar() {
   }
 
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: headerList });
+    const activeMember = await auth.api.getActiveMember({
+      headers: await headers(),
+    });
     const isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
 
     return (
@@ -113,23 +114,19 @@ async function UserAvatar() {
             <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" align="end" className="min-w-36" sideOffset={6}>
-          <DropdownMenuLabel className="text-xs text-muted-foreground py-1">
-            <span>{session.user.name}</span>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
+        <DropdownMenuContent side="bottom" align="end" className="min-w-36">
           <DropdownMenuGroup>
             <DropdownMenuItemLink href="/">
-              <HomeIcon className="size-4 text-current" aria-hidden="true" />
+              <HomeIcon className="size-4 text-current" />
               <span>Home</span>
             </DropdownMenuItemLink>
             <DropdownMenuItemLink href="/profile">
-              <UserIcon className="size-4 text-current" aria-hidden="true" />
+              <UserIcon className="size-4 text-current" />
               <span>Profile</span>
             </DropdownMenuItemLink>
             {isAdminOrOwner && (
               <DropdownMenuItemLink href="/admin">
-                <ShieldCheckIcon className="size-4 text-current" aria-hidden="true" />
+                <ShieldCheckIcon className="size-4 text-current" />
                 <span>Admin</span>
               </DropdownMenuItemLink>
             )}
