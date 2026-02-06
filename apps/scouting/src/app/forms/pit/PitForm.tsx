@@ -1,8 +1,15 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/card";
 import { Checkbox } from "@repo/ui/components/checkbox";
-import { Field, FieldError, FieldLabel, FieldLegend, FieldSet } from "@repo/ui/components/field";
+import { Field, FieldError, FieldLabel } from "@repo/ui/components/field";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
@@ -11,6 +18,12 @@ import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/re
 import { useActionState, useEffect, useRef } from "react";
 import { submitPitForm } from "./action";
 import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
+
+const DRIVING_ABILITIES = [
+  { name: "canTrench", id: "can_trench", label: "Can Trench" },
+  { name: "canBump", id: "can_bump", label: "Can Bump" },
+  { name: "canShuttle", id: "can_shuttle", label: "Can Shuttle" },
+] as const;
 
 export function PitForm() {
   const [state, action, isPending] = useActionState(submitPitForm, initialFormState);
@@ -48,217 +61,250 @@ export function PitForm() {
     }
   }, [state, form]);
 
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (form.state.isDirty) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [form.state.isDirty]);
+
   return (
-    <form action={action} onSubmit={form.handleSubmit} className="space-y-6">
-      <form.Field name="teamNumber">
-        {(field) => {
-          const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-          return (
-            <Field>
-              <FieldLabel>Team Number</FieldLabel>
-              <Input
-                type="number"
-                id="team_number"
-                name={field.name}
-                value={field.state.value === 0 ? "" : field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) =>
-                  field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
-                }
-                placeholder="Enter Team Number"
-                aria-invalid={isInvalid}
-              />
-              {isInvalid && <FieldError errors={field.state.meta.errors} />}
-            </Field>
-          );
-        }}
-      </form.Field>
+    <form action={action} onSubmit={form.handleSubmit} className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Team Number</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form.Field name="teamNumber">
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field>
+                  <FieldLabel className="sr-only">Team Number</FieldLabel>
+                  <Input
+                    type="number"
+                    id="team_number"
+                    name={field.name}
+                    value={field.state.value === 0 ? "" : field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
+                    }
+                    placeholder="e.g. 3506"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoFocus
+                    aria-invalid={isInvalid}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+        </CardContent>
+      </Card>
 
-      <form.Field name="drivetrainType">
-        {(field) => {
-          const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-          return (
-            <Field orientation="vertical">
-              <FieldLabel>Drivetrain Type</FieldLabel>
-              <RadioGroup
-                id={field.name}
-                name={field.name}
-                onBlur={field.handleBlur}
-                aria-invalid={isInvalid}
-                value={field.state.value}
-                onValueChange={(v) => field.handleChange(v as (typeof DRIVETRAIN_OPTIONS)[number])}
-              >
-                {DRIVETRAIN_OPTIONS.map((type) => (
-                  <Label
-                    key={type}
-                    htmlFor={`drivetrain-${type}`}
-                    className="flex items-center gap-2 cursor-pointer"
+      <Card>
+        <CardHeader>
+          <CardTitle>Drivetrain Type</CardTitle>
+          <CardDescription>Select the drivetrain type of the robot.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form.Field name="drivetrainType">
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <div>
+                  <RadioGroup
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    aria-invalid={isInvalid}
+                    aria-label="Drivetrain Type"
+                    value={field.state.value}
+                    onValueChange={(v) =>
+                      field.handleChange(v as (typeof DRIVETRAIN_OPTIONS)[number])
+                    }
+                    className="flex flex-wrap gap-2.5"
                   >
-                    <RadioGroupItem id={`drivetrain-${type}`} value={type} />
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Label>
-                ))}
-              </RadioGroup>
-              {isInvalid && <FieldError errors={field.state.meta.errors} />}
-            </Field>
-          );
-        }}
-      </form.Field>
+                    {DRIVETRAIN_OPTIONS.map((type) => (
+                      <div key={type}>
+                        <RadioGroupItem
+                          id={`drivetrain-${type}`}
+                          value={type}
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor={`drivetrain-${type}`}
+                          className="cursor-pointer select-none rounded-lg border border-border bg-muted/50 px-[18px] py-3 text-sm whitespace-nowrap transition-colors hover:bg-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 peer-data-[state=checked]:text-primary peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:border-ring"
+                        >
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </div>
+              );
+            }}
+          </form.Field>
+        </CardContent>
+      </Card>
 
-      <FieldSet>
-        <FieldLegend>Robot Driving Ability</FieldLegend>
-        <div data-slot="checkbox-group" className="flex flex-col gap-3">
-          <form.Field name="canTrench">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <div className="space-y-1">
-                  <Label htmlFor="can_trench" className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      id="can_trench"
-                      name="canTrench"
-                      checked={field.state.value}
-                      onBlur={field.handleBlur}
-                      onCheckedChange={(checked) => field.handleChange(checked === true)}
-                      aria-invalid={isInvalid}
-                    />
-                    Can Trench
-                  </Label>
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </div>
-              );
-            }}
-          </form.Field>
-          <form.Field name="canBump">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <div className="space-y-1">
-                  <Label htmlFor="can_bump" className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      id="can_bump"
-                      name="canBump"
-                      checked={field.state.value}
-                      onBlur={field.handleBlur}
-                      onCheckedChange={(checked) => field.handleChange(checked === true)}
-                      aria-invalid={isInvalid}
-                    />
-                    Can Bump
-                  </Label>
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </div>
-              );
-            }}
-          </form.Field>
-          <form.Field name="canShuttle">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <div className="space-y-1">
-                  <Label htmlFor="can_shuttle" className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      id="can_shuttle"
-                      name="canShuttle"
-                      checked={field.state.value}
-                      onBlur={field.handleBlur}
-                      onCheckedChange={(checked) => field.handleChange(checked === true)}
-                      aria-invalid={isInvalid}
-                    />
-                    Can Shuttle
-                  </Label>
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </div>
-              );
-            }}
-          </form.Field>
-        </div>
-      </FieldSet>
+      <Card>
+        <CardHeader>
+          <CardTitle>Driving Ability</CardTitle>
+          <CardDescription>Select all capabilities that apply to this robot.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-2">
+            {DRIVING_ABILITIES.map(({ name, id, label }) => (
+              <form.Field key={name} name={name}>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <div>
+                      <Label
+                        htmlFor={id}
+                        className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-border bg-muted/50 px-3.5 py-2.5 text-sm transition-colors hover:bg-accent has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5"
+                      >
+                        <Checkbox
+                          id={id}
+                          name={name}
+                          checked={field.state.value}
+                          onBlur={field.handleBlur}
+                          onCheckedChange={(checked) => field.handleChange(checked === true)}
+                          aria-invalid={isInvalid}
+                        />
+                        {label}
+                      </Label>
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </div>
+                  );
+                }}
+              </form.Field>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <form.Field name="capacity">
-          {(field) => {
-            const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-            return (
-              <Field>
-                <FieldLabel>Capacity</FieldLabel>
-                <Input
-                  type="number"
-                  id="capacity"
-                  name={field.name}
-                  value={field.state.value === 0 ? "" : field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) =>
-                    field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
-                  }
-                  placeholder="0"
-                  min={0}
-                  aria-invalid={isInvalid}
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        </form.Field>
-        <form.Field name="weight">
-          {(field) => {
-            const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-            return (
-              <Field>
-                <FieldLabel>Weight (lbs)</FieldLabel>
-                <Input
-                  type="number"
-                  id="weight"
-                  name={field.name}
-                  value={field.state.value === 0 ? "" : field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) =>
-                    field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
-                  }
-                  placeholder="0"
-                  min={0}
-                  aria-invalid={isInvalid}
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        </form.Field>
+      <Card>
+        <CardHeader>
+          <CardTitle>Specifications</CardTitle>
+          <CardDescription>Quantitative measurements of the robot.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <form.Field name="capacity">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field>
+                    <FieldLabel>Capacity (pieces)</FieldLabel>
+                    <Input
+                      type="number"
+                      id="capacity"
+                      name={field.name}
+                      value={field.state.value === 0 ? "" : field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) =>
+                        field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
+                      }
+                      placeholder="e.g. 4"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      min={0}
+                      aria-invalid={isInvalid}
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                );
+              }}
+            </form.Field>
+            <form.Field name="weight">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field>
+                    <FieldLabel>Weight (lbs)</FieldLabel>
+                    <Input
+                      type="number"
+                      id="weight"
+                      name={field.name}
+                      value={field.state.value === 0 ? "" : field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) =>
+                        field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
+                      }
+                      placeholder="e.g. 120"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      min={0}
+                      aria-invalid={isInvalid}
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                );
+              }}
+            </form.Field>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Climb Type</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form.Field name="climbType">
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <div>
+                  <RadioGroup
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    aria-invalid={isInvalid}
+                    aria-label="Climb Type"
+                    value={field.state.value}
+                    onValueChange={(v) =>
+                      field.handleChange(v as (typeof CLIMB_TYPE_OPTIONS)[number])
+                    }
+                    className="flex flex-wrap gap-2.5"
+                  >
+                    {CLIMB_TYPE_OPTIONS.map((type) => (
+                      <div key={type}>
+                        <RadioGroupItem
+                          id={`climb-${type}`}
+                          value={type}
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor={`climb-${type}`}
+                          className="cursor-pointer select-none rounded-lg border border-border bg-muted/50 px-[18px] py-3 text-sm whitespace-nowrap transition-colors hover:bg-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 peer-data-[state=checked]:text-primary peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:border-ring"
+                        >
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </div>
+              );
+            }}
+          </form.Field>
+        </CardContent>
+      </Card>
+
+      <div className="sticky bottom-0 bg-background pb-5 pt-3">
+        <Button type="submit" disabled={form.state.isSubmitting || isPending} className="w-full">
+          {form.state.isSubmitting || isPending ? "Submitting..." : "Submit"}
+        </Button>
       </div>
-
-      <form.Field name="climbType">
-        {(field) => {
-          const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-          return (
-            <Field>
-              <FieldLabel>Climb Type </FieldLabel>
-              <RadioGroup
-                id={field.name}
-                name={field.name}
-                onBlur={field.handleBlur}
-                aria-invalid={isInvalid}
-                value={field.state.value}
-                onValueChange={(v) => field.handleChange(v as (typeof CLIMB_TYPE_OPTIONS)[number])}
-                className="flex flex-col gap-3"
-              >
-                {CLIMB_TYPE_OPTIONS.map((type) => (
-                  <Label
-                    key={type}
-                    htmlFor={`climb-${type}`}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <RadioGroupItem id={`climb-${type}`} value={type} />
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Label>
-                ))}
-              </RadioGroup>
-              {isInvalid && <FieldError errors={field.state.meta.errors} />}
-            </Field>
-          );
-        }}
-      </form.Field>
-      <Button type="submit" disabled={form.state.isSubmitting || isPending} className="w-full">
-        {form.state.isSubmitting || isPending ? "Submitting..." : "Submit"}
-      </Button>
     </form>
   );
 }

@@ -39,13 +39,16 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
 
     await db.insert(pitForm).values({
       teamNumber: validated.teamNumber,
-      drivetrainType: validated.drivetrainType,
+      drivetrainType: validated.drivetrainType === "" ? "other" : validated.drivetrainType,
       canTrench: validated.canTrench ?? false,
       canBump: validated.canBump ?? false,
       canShuttle: validated.canShuttle ?? false,
       capacity: validated.capacity,
       weight: validated.weight,
-      climbType: validated.climbType === "none" ? null : validated.climbType,
+      climbType:
+        validated.climbType === "none"
+          ? null
+          : validated.climbType === "" ? null : validated.climbType,
       scoutMemberId: activeMember.id,
     });
   } catch (error) {
