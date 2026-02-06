@@ -1,6 +1,6 @@
 import { boolean, index, numeric, pgTable, smallint, timestamp, uuid } from "drizzle-orm/pg-core";
 import { phaseEnum } from "../types/phase-enum";
-import { standForm } from "./stand_form";
+import { standForm } from "./stand-form";
 
 export const climb = pgTable(
   "climb",

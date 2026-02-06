@@ -9,7 +9,7 @@ import * as schemaTables from "../src/lib/database/schema/tables";
 import { climb } from "../src/lib/database/schema/tables/climb";
 import { cycle } from "../src/lib/database/schema/tables/cycle";
 import { pitForm } from "../src/lib/database/schema/tables/pit-form";
-import { standForm } from "../src/lib/database/schema/tables/stand_form";
+import { standForm } from "../src/lib/database/schema/tables/stand-form";
 
 // Get the app root directory by going up one level from the scripts directory
 const __filename = fileURLToPath(import.meta.url);

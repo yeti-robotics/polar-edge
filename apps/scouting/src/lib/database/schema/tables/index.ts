@@ -12,7 +12,7 @@ export { organizationInviteLink } from "./organization-invite-link";
 export { passkey } from "./passkey";
 export { pitForm } from "./pit-form";
 export { session } from "./session";
-export { standForm } from "./stand_form";
+export { standForm } from "./stand-form";
 export { team } from "./team";
 export { teamMatch } from "./team-match";
 export { user } from "./user";
