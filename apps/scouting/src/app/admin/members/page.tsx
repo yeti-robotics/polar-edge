@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
-import { Badge } from "@repo/ui/components/badge";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
@@ -13,6 +12,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
+import { RoleSelect } from "./RoleSelect";
 
 function getInitials(name: string): string {
   return name
@@ -21,17 +21,6 @@ function getInitials(name: string): string {
     .join("")
     .toUpperCase()
     .slice(0, 2);
-}
-
-function getRoleBadgeVariant(role: string): "default" | "secondary" | "outline" {
-  switch (role) {
-    case "owner":
-      return "default";
-    case "admin":
-      return "secondary";
-    default:
-      return "outline";
-  }
 }
 
 function formatDate(date: Date): string {
@@ -136,9 +125,11 @@ async function MembersContent() {
               </div>
             </TableCell>
             <TableCell>
-              <Badge variant={getRoleBadgeVariant(memberData.role)} className="capitalize">
-                {memberData.role}
-              </Badge>
+              <RoleSelect
+                memberId={memberData.id}
+                memberName={memberData.user.name}
+                currentRole={memberData.role}
+              />
             </TableCell>
             <TableCell className="text-muted-foreground">
               {formatDate(new Date(memberData.createdAt))}
