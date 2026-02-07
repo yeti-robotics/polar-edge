@@ -274,10 +274,10 @@ export class AttendanceService {
       };
     }
 
-    // If session expired, treat as new sign-in
+    // If session expired, treat as new sign-in (admin bypasses this check)
     const lastDate = new Date(lastOperation.date);
-    if (Date.now() - lastDate.getTime() > EXPIRED_SESSION_THRESHOLD_MS) {
-      return this.signIn(discordId, guildId, discordName, code);
+    if (!skipTwofa && Date.now() - lastDate.getTime() > EXPIRED_SESSION_THRESHOLD_MS) {
+      return this.signIn(discordId, guildId, discordName, code, skipTwofa);
     }
 
     return this.recordSignOut(discordId, discordName, guildId);
