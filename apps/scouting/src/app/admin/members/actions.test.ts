@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+/** biome-ignore-all lint/suspicious/noExplicitAny: this is a test file, so we can use any */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
@@ -61,7 +61,7 @@ describe("removeMember", () => {
       role: "member",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     const result = await removeMember("member-456");
 
@@ -78,9 +78,9 @@ describe("removeMember", () => {
       role: "owner",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
-    vi.mocked(db.query.member.findFirst).mockResolvedValue(null);
+    vi.mocked(db.query.member.findFirst).mockResolvedValue(undefined);
 
     const result = await removeMember("member-456");
 
@@ -97,7 +97,7 @@ describe("removeMember", () => {
       role: "owner",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue({
       id: "member-456",
@@ -122,7 +122,7 @@ describe("removeMember", () => {
       role: "owner",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue({
       id: "member-456",
@@ -130,7 +130,7 @@ describe("removeMember", () => {
       userId: "user-456",
       role: "owner",
       createdAt: new Date(),
-    });
+    } as any);
 
     const result = await removeMember("member-456");
 
@@ -147,7 +147,7 @@ describe("removeMember", () => {
       role: "admin",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue({
       id: "member-456",
@@ -155,7 +155,7 @@ describe("removeMember", () => {
       userId: "user-456",
       role: "admin",
       createdAt: new Date(),
-    });
+    } as any);
 
     const result = await removeMember("member-456");
 
@@ -172,7 +172,7 @@ describe("removeMember", () => {
       role: "owner",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue({
       id: "active-member-123",
@@ -180,7 +180,7 @@ describe("removeMember", () => {
       userId: "user-123",
       role: "owner",
       createdAt: new Date(),
-    });
+    } as any);
 
     const result = await removeMember("active-member-123");
 
@@ -198,7 +198,7 @@ describe("removeMember", () => {
       role: "admin",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue({
       id: "active-member-123",
@@ -224,7 +224,7 @@ describe("removeMember", () => {
       role: "member",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue({
       id: "active-member-123",
@@ -232,7 +232,7 @@ describe("removeMember", () => {
       userId: "user-123",
       role: "member",
       createdAt: new Date(),
-    });
+    } as any);
 
     const result = await removeMember("active-member-123");
 
@@ -250,7 +250,7 @@ describe("removeMember", () => {
       role: "owner",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     const memberToRemove = {
       id: "member-456",
@@ -264,9 +264,9 @@ describe("removeMember", () => {
 
     // Mock transaction to execute callbacks
     const mockDelete = vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) });
-    const mockUpdate = vi
-      .fn()
-      .mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }) });
+    const mockUpdate = vi.fn().mockReturnValue({
+      set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }),
+    });
 
     const mockTx = {
       delete: mockDelete,
@@ -314,7 +314,7 @@ describe("removeMember", () => {
       role: "owner",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     const memberToRemove = {
       id: "member-456",
@@ -328,9 +328,9 @@ describe("removeMember", () => {
 
     // Mock transaction
     const mockDelete = vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) });
-    const mockUpdate = vi
-      .fn()
-      .mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }) });
+    const mockUpdate = vi.fn().mockReturnValue({
+      set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }),
+    });
 
     const mockTx = {
       delete: mockDelete,
@@ -370,7 +370,7 @@ describe("removeMember", () => {
       role: "owner",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     const memberToRemove = {
       id: "member-456",
@@ -378,14 +378,14 @@ describe("removeMember", () => {
       userId: "user-456",
       role: "admin",
       createdAt: new Date(),
-    };
+    } as any;
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue(memberToRemove);
 
     const mockDelete = vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) });
-    const mockUpdate = vi
-      .fn()
-      .mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }) });
+    const mockUpdate = vi.fn().mockReturnValue({
+      set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }),
+    });
 
     const mockTx = {
       delete: mockDelete,
@@ -416,7 +416,7 @@ describe("removeMember", () => {
       role: "admin",
       userId: "user-123",
       createdAt: new Date(),
-    });
+    } as any);
 
     const memberToRemove = {
       id: "member-456",
@@ -424,14 +424,14 @@ describe("removeMember", () => {
       userId: "user-456",
       role: "member",
       createdAt: new Date(),
-    };
+    } as any;
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue(memberToRemove);
 
     const mockDelete = vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) });
-    const mockUpdate = vi
-      .fn()
-      .mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }) });
+    const mockUpdate = vi.fn().mockReturnValue({
+      set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }),
+    });
 
     const mockTx = {
       delete: mockDelete,
