@@ -19,7 +19,7 @@
       "changelog-path": "CHANGELOG.md",
       "include-component-in-tag": true,
       "prerelease": true,
-      "prerelease-suffix": "alpha"
+      "prerelease-type": "alpha"
     }
   },
   "bootstrap-sha": "5b48f3f0186f7114cde1fa1cb7bb16f2053ba7ba",
