@@ -29,7 +29,7 @@ export function DefaultActionLayout() {
         <Button
           variant="secondary"
           size="lg"
-          className="h-full"
+          className="h-full w-full"
           onClick={() => startAction("climbing")}
         >
           Start Climb

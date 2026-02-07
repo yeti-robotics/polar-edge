@@ -3,9 +3,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @source "../**/*.{ts,tsx}";
-@source "../../../../apps/**/*.{ts,tsx}";
-
-@custom-variant dark (&:is(.dark *));
 
 :root {
   --yeti-50: oklch(0.978 0.0092 232.36);
