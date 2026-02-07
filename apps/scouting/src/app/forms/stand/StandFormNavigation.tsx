@@ -1,25 +1,40 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
-import { STAGES, useStandForm } from "./StandFormProvider";
+import { useFormData } from "./contexts/FormDataContext";
+import { useNavigation } from "./contexts/NavigationContext";
+import { useStandFormActions } from "./hooks/useStandFormActions";
+import { STAGES } from "./types";
 
 export function StandFormNavigation() {
-  const {
-    state: { currentStage },
-    dispatch,
-  } = useStandForm();
+  const { state, dispatch } = useNavigation();
+  const { state: formData } = useFormData();
+  const { prepareForPhaseTransition } = useStandFormActions();
 
-  const isOnComments = currentStage === "comments";
+  const isOnComments = state.currentStage === "comments";
+  const isOnMatchSelection = state.currentStage === "match_selection";
+
+  // Disable next button on match selection if no teamMatchId
+  const isNextDisabled = isOnMatchSelection && formData.teamMatchId === null;
+
+  const handleNext = () => {
+    // When transitioning from auto to teleop, prepare for phase transition
+    if (state.currentStage === "autonomous") {
+      prepareForPhaseTransition();
+    }
+    dispatch({ type: "increment_stage" });
+  };
+
   return (
     <div className="flex w-full justify-between">
       <Button
         variant="secondary"
         onClick={() => dispatch({ type: "decrement_stage" })}
-        disabled={currentStage === "match_selection"}
+        disabled={isOnMatchSelection}
       >
         Back
       </Button>
-      <Button onClick={() => dispatch({ type: "increment_stage" })}>
+      <Button onClick={handleNext} disabled={isNextDisabled}>
         {isOnComments ? "Submit" : "Next"}
       </Button>
     </div>
@@ -27,16 +42,14 @@ export function StandFormNavigation() {
 }
 
 export function StandFormProgress() {
-  const {
-    state: { currentStage },
-  } = useStandForm();
+  const { state } = useNavigation();
   return (
-    <div className="flex justify-between">
-      <div className="flex-1 h-2 bg-neutral-800">
+    <div className="mb-4">
+      <div className="h-2 bg-muted rounded-full overflow-hidden">
         <div
-          className="h-2 rounded-full bg-primary transition-all duration-500"
+          className="h-full bg-primary transition-all duration-200 ease-in-out"
           style={{
-            width: `${(STAGES.indexOf(currentStage) / (STAGES.length - 1)) * 100}%`,
+            width: `${(STAGES.indexOf(state.currentStage) / (STAGES.length - 1)) * 100}%`,
           }}
         />
       </div>
