@@ -50,6 +50,13 @@
       "when": 1770417390906,
       "tag": "0006_clumsy_crusher_hogan",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1770507063762,
+      "tag": "0007_productive_starjammers",
+      "breakpoints": true
     }
   ]
 }
