@@ -15,7 +15,7 @@ import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
-import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState, startTransition } from "react";
 import { submitPitForm } from "./action";
 import { PitPhotoUpload, type PitPhotoUploadRef } from "./PitPhotoUpload";
 import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
@@ -72,7 +72,7 @@ export function PitForm() {
   }, [state, form]);
 
   const handleSubmitWithPhotos = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
+    async (e: React.SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       // Validate form first
@@ -90,10 +90,32 @@ export function PitForm() {
       // Get pending photos
       const pendingFiles = photoUploadRef.current?.getPendingFiles() ?? [];
 
+      // Build FormData from form values
+      const buildFormData = (photoKeys?: string[]) => {
+        const formData = new FormData();
+        const values = form.state.values;
+
+        formData.append("teamNumber", String(values.teamNumber));
+        formData.append("drivetrainType", values.drivetrainType);
+        formData.append("canTrench", values.canTrench ? "on" : "off");
+        formData.append("canBump", values.canBump ? "on" : "off");
+        formData.append("canShuttle", values.canShuttle ? "on" : "off");
+        formData.append("capacity", String(values.capacity));
+        formData.append("weight", String(values.weight));
+        formData.append("climbType", values.climbType);
+
+        if (photoKeys && photoKeys.length > 0) {
+          formData.append("photoKeys", JSON.stringify(photoKeys));
+        }
+
+        return formData;
+      };
+
       if (pendingFiles.length === 0) {
         // No photos, submit normally
-        const formData = new FormData(e.currentTarget);
-        action(formData);
+        startTransition(() => {
+          action(buildFormData());
+        });
         return;
       }
 
@@ -158,34 +180,50 @@ export function PitForm() {
             throw new Error(`Missing URL for photo ${index + 1}`);
           }
           const { url, key } = urlData;
-          const response = await fetch(url, {
-            method: "PUT",
-            body: file,
-            headers: {
-              "Content-Type": "image/jpeg",
-            },
-          });
 
-          if (!response.ok) {
-            throw new Error(`Upload failed for photo ${index + 1}`);
+          try {
+            const response = await fetch(url, {
+              method: "PUT",
+              body: file,
+              headers: {
+                "Content-Type": "image/jpeg",
+              },
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text().catch(() => "No error details");
+              console.error(`Upload failed for photo ${index + 1}:`, {
+                status: response.status,
+                statusText: response.statusText,
+                errorText,
+                url: url.split("?")[0], // Log URL without query params
+              });
+              throw new Error(
+                `Upload failed for photo ${index + 1}: ${response.status} ${response.statusText}`
+              );
+            }
+
+            setPhotoUploadState((prev) => ({
+              ...prev,
+              uploadProgress: { current: index + 1, total: compressedFiles.length },
+            }));
+
+            return key;
+          } catch (error) {
+            console.error(`Network error uploading photo ${index + 1}:`, error);
+            throw error;
           }
-
-          setPhotoUploadState((prev) => ({
-            ...prev,
-            uploadProgress: { current: index + 1, total: compressedFiles.length },
-          }));
-
-          return key;
         });
 
         const photoKeys = await Promise.all(uploadPromises);
 
         // Build FormData with form fields and photo keys
-        const formData = new FormData(e.currentTarget);
-        formData.append("photoKeys", JSON.stringify(photoKeys));
+        const formData = buildFormData(photoKeys);
 
         setPhotoUploadState({ status: "idle" });
-        action(formData);
+        startTransition(() => {
+          action(formData);
+        });
       } catch (error) {
         console.error("Photo upload error:", error);
         const errorMessage = error instanceof Error ? error.message : "Failed to upload photos";
