@@ -12,11 +12,7 @@ import { TwofaService } from "./twofa/twofa.service";
 
 const MS_PER_HOUR = 1000 * 60 * 60;
 
-function makeRow(
-  discordId: string,
-  dateISO: string,
-  isSigningIn: boolean
-): string[] {
+function makeRow(discordId: string, dateISO: string, isSigningIn: boolean): string[] {
   return [discordId, "YETI Robotics", "Test User 1", dateISO, String(isSigningIn)];
 }
 
@@ -200,9 +196,7 @@ describe("AttendanceService", () => {
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      const signInTime = new Date(
-        now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1
-      ).toISOString();
+      const signInTime = new Date(now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1).toISOString();
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
       sheetService.appendSheetValues.mockResolvedValue(successResult());
 
@@ -218,9 +212,7 @@ describe("AttendanceService", () => {
       expect(firstCallRow[4]).toBe("false"); // isSigningIn = false (sign-out)
       const creditedDate = new Date(firstCallRow[3]);
       const originalSignIn = new Date(signInTime);
-      expect(creditedDate.getTime()).toBe(
-        originalSignIn.getTime() + FORGOT_SIGNOUT_CREDIT_MS
-      );
+      expect(creditedDate.getTime()).toBe(originalSignIn.getTime() + FORGOT_SIGNOUT_CREDIT_MS);
 
       // Second call: new sign-in at "now"
       const secondCallRow = sheetService.appendSheetValues.mock.calls[1][2][0];
@@ -232,9 +224,7 @@ describe("AttendanceService", () => {
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      const signInTime = new Date(
-        now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1
-      ).toISOString();
+      const signInTime = new Date(now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1).toISOString();
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
       sheetService.appendSheetValues.mockResolvedValue(failResult());
 
@@ -248,9 +238,7 @@ describe("AttendanceService", () => {
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      const signInTime = new Date(
-        now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1
-      ).toISOString();
+      const signInTime = new Date(now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1).toISOString();
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
       sheetService.appendSheetValues
         .mockResolvedValueOnce(successResult())
@@ -365,9 +353,7 @@ describe("AttendanceService", () => {
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      const signInTime = new Date(
-        now.getTime() - EXPIRED_SESSION_THRESHOLD_MS - 1
-      ).toISOString();
+      const signInTime = new Date(now.getTime() - EXPIRED_SESSION_THRESHOLD_MS - 1).toISOString();
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
       sheetService.appendSheetValues.mockResolvedValue(successResult());
 
@@ -397,9 +383,7 @@ describe("AttendanceService", () => {
       expect(firstCallRow[4]).toBe("false"); // sign-out
       const creditedDate = new Date(firstCallRow[3]);
       const originalSignIn = new Date(signInTime);
-      expect(creditedDate.getTime()).toBe(
-        originalSignIn.getTime() + FORGOT_SIGNOUT_CREDIT_MS
-      );
+      expect(creditedDate.getTime()).toBe(originalSignIn.getTime() + FORGOT_SIGNOUT_CREDIT_MS);
     });
 
     it("15h overnight session signs out normally (below threshold)", async () => {
