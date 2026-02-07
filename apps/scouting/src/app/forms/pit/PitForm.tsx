@@ -15,8 +15,9 @@ import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import { submitPitForm } from "./action";
+import { PitPhotoUpload, type PitPhotoUploadRef } from "./PitPhotoUpload";
 import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
 
 const DRIVING_ABILITIES = [
@@ -37,6 +38,13 @@ export function PitForm() {
 
   const lastHandledSuccess = useRef<typeof state | null>(null);
   const lastHandledError = useRef<typeof state | null>(null);
+  const photoUploadRef = useRef<PitPhotoUploadRef>(null);
+
+  const [photoUploadState, setPhotoUploadState] = useState<{
+    status: "idle" | "compressing" | "uploading";
+    uploadProgress?: { current: number; total: number };
+    error?: string;
+  }>({ status: "idle" });
 
   useEffect(() => {
     if ("_success" in state && state !== lastHandledSuccess.current) {
@@ -44,6 +52,7 @@ export function PitForm() {
       if (typeof form.reset === "function") {
         form.reset();
       }
+      setPhotoUploadState({ status: "idle" });
       toast.success("Pit form submitted successfully.", {
         position: "top-right",
       });
@@ -55,11 +64,137 @@ export function PitForm() {
       typeof state._error === "string"
     ) {
       lastHandledError.current = state;
+      setPhotoUploadState({ status: "idle" });
       toast.error(state._error, {
         position: "top-right",
       });
     }
   }, [state, form]);
+
+  const handleSubmitWithPhotos = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      // Validate form first
+      await form.handleSubmit(e);
+      if (!form.state.isValid) {
+        return;
+      }
+
+      const teamNumber = form.state.values.teamNumber;
+      if (!teamNumber) {
+        toast.error("Team number is required");
+        return;
+      }
+
+      // Get pending photos
+      const pendingFiles = photoUploadRef.current?.getPendingFiles() ?? [];
+
+      if (pendingFiles.length === 0) {
+        // No photos, submit normally
+        const formData = new FormData(e.currentTarget);
+        action(formData);
+        return;
+      }
+
+      try {
+        setPhotoUploadState({ status: "compressing" });
+
+        // Dynamically import compression utility
+        const { compressImage } = await import("@/lib/compress-image");
+
+        // Compress all photos in parallel
+        const compressionResults = await Promise.all(
+          pendingFiles.map((file) => compressImage(file))
+        );
+
+        // Check for compression errors
+        const firstError = compressionResults.find((r) => "error" in r);
+        if (firstError && "error" in firstError) {
+          setPhotoUploadState({ status: "idle", error: firstError.error });
+          toast.error(firstError.error);
+          return;
+        }
+
+        // Extract compressed files
+        const compressedFiles = compressionResults
+          .filter((r): r is { file: File } => "file" in r)
+          .map((r) => r.file);
+
+        setPhotoUploadState({
+          status: "uploading",
+          uploadProgress: { current: 0, total: compressedFiles.length },
+        });
+
+        // Get all presigned URLs in parallel
+        const { getPhotoUploadUrl } = await import("./photo-actions");
+        const urlPromises = compressedFiles.map((_, index) =>
+          getPhotoUploadUrl({
+            teamNumber,
+            index,
+            contentType: "image/jpeg",
+          })
+        );
+
+        const urlResults = await Promise.all(urlPromises);
+
+        // Check for URL generation errors
+        const firstUrlError = urlResults.find((r) => "error" in r);
+        if (firstUrlError && "error" in firstUrlError) {
+          setPhotoUploadState({ status: "idle", error: firstUrlError.error });
+          toast.error(firstUrlError.error);
+          return;
+        }
+
+        // Extract URLs and keys
+        const urlsAndKeys = urlResults.filter(
+          (r): r is { url: string; key: string } => "url" in r && "key" in r
+        );
+
+        // Upload all photos in parallel
+        const uploadPromises = compressedFiles.map(async (file, index) => {
+          const urlData = urlsAndKeys[index];
+          if (!urlData) {
+            throw new Error(`Missing URL for photo ${index + 1}`);
+          }
+          const { url, key } = urlData;
+          const response = await fetch(url, {
+            method: "PUT",
+            body: file,
+            headers: {
+              "Content-Type": "image/jpeg",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Upload failed for photo ${index + 1}`);
+          }
+
+          setPhotoUploadState((prev) => ({
+            ...prev,
+            uploadProgress: { current: index + 1, total: compressedFiles.length },
+          }));
+
+          return key;
+        });
+
+        const photoKeys = await Promise.all(uploadPromises);
+
+        // Build FormData with form fields and photo keys
+        const formData = new FormData(e.currentTarget);
+        formData.append("photoKeys", JSON.stringify(photoKeys));
+
+        setPhotoUploadState({ status: "idle" });
+        action(formData);
+      } catch (error) {
+        console.error("Photo upload error:", error);
+        const errorMessage = error instanceof Error ? error.message : "Failed to upload photos";
+        setPhotoUploadState({ status: "idle", error: errorMessage });
+        toast.error(errorMessage);
+      }
+    },
+    [form, action]
+  );
 
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
@@ -72,7 +207,7 @@ export function PitForm() {
   }, [form.state.isDirty]);
 
   return (
-    <form action={action} onSubmit={form.handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmitWithPhotos} className="space-y-4">
       <Card>
         <CardHeader>
           <CardTitle>Team Number</CardTitle>
@@ -300,9 +435,26 @@ export function PitForm() {
         </CardContent>
       </Card>
 
+      <PitPhotoUpload
+        ref={photoUploadRef}
+        status={photoUploadState.status}
+        uploadProgress={photoUploadState.uploadProgress}
+        error={photoUploadState.error}
+      />
+
       <div className="sticky bottom-0 bg-background pb-5 pt-3">
-        <Button type="submit" disabled={form.state.isSubmitting || isPending} className="w-full">
-          {form.state.isSubmitting || isPending ? "Submitting..." : "Submit"}
+        <Button
+          type="submit"
+          disabled={form.state.isSubmitting || isPending || photoUploadState.status !== "idle"}
+          className="w-full"
+        >
+          {photoUploadState.status === "compressing"
+            ? "Compressing photos..."
+            : photoUploadState.status === "uploading"
+              ? "Uploading photos..."
+              : form.state.isSubmitting || isPending
+                ? "Submitting..."
+                : "Submit"}
         </Button>
       </div>
     </form>

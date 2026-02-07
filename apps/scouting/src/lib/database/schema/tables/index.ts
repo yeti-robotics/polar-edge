@@ -11,6 +11,7 @@ export { organizationEvent } from "./organization-event";
 export { organizationInviteLink } from "./organization-invite-link";
 export { passkey } from "./passkey";
 export { pitForm } from "./pit-form";
+export { pitPhoto } from "./pit-photo";
 export { session } from "./session";
 export { standForm } from "./stand-form";
 export { team } from "./team";
