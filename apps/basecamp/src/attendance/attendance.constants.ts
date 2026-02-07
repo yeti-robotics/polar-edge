@@ -1,4 +1,4 @@
-/** Time after which a "forgot to sign out" gets auto-resolved (3.5 hours) */
+/** Time after which a "forgot to sign out" gets auto-resolved (18 hours) */
 export const STALE_SIGNIN_THRESHOLD_MS = 1000 * 60 * 60 * 18;
 
 /** Default credit given when user forgot to sign out (1.5 hours) */
