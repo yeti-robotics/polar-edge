@@ -47,7 +47,6 @@ jobs:
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
                   tags: |
-                      type=raw,value=latest
                       type=ref,event=branch
 
             - name: Build and push
@@ -84,7 +83,6 @@ jobs:
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
                   tags: |
-                      type=raw,value=latest
                       type=ref,event=branch
 
             - name: Build and push
