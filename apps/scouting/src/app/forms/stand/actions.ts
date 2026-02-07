@@ -43,20 +43,28 @@ export async function lookupTeamMatch(matchNumber: number, teamNumber: number) {
       return { error: `Match ${matchNumber} not found in active event` };
     }
 
-    const matchId = matchResult[0]!.id;
+    const matchRecord = matchResult[0];
+    if (!matchRecord) {
+      return { error: `Match ${matchNumber} not found in active event` };
+    }
 
     // Find team_match record
     const teamMatchResult = await db
       .select({ id: teamMatch.id })
       .from(teamMatch)
-      .where(and(eq(teamMatch.matchId, matchId), eq(teamMatch.teamNumber, teamNumber)))
+      .where(and(eq(teamMatch.matchId, matchRecord.id), eq(teamMatch.teamNumber, teamNumber)))
       .limit(1);
 
     if (teamMatchResult.length === 0) {
       return { error: `Team ${teamNumber} not found in match ${matchNumber}` };
     }
 
-    return { teamMatchId: teamMatchResult[0]!.id };
+    const teamMatchRecord = teamMatchResult[0];
+    if (!teamMatchRecord) {
+      return { error: `Team ${teamNumber} not found in match ${matchNumber}` };
+    }
+
+    return { teamMatchId: teamMatchRecord.id };
   } catch (error) {
     console.error("Lookup team match error:", error);
     return { error: "Failed to lookup match" };
