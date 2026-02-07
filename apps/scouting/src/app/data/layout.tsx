@@ -23,6 +23,11 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
                 Teams
               </Link>
             </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link className="text-sm w-full justify-start" href="/data/analysis">
+                Analysis
+              </Link>
+            </Button>
           </div>
         </aside>
         <div className="h-full overflow-y-auto overflow-x-hidden">{children}</div>
