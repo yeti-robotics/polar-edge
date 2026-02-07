@@ -5,9 +5,7 @@
       "component": "basecamp",
       "release-type": "node",
       "changelog-path": "CHANGELOG.md",
-      "include-component-in-tag": true,
-      "prerelease": true,
-      "prerelease-suffix": "alpha"
+      "include-component-in-tag": true
     },
     "apps/basecamp-fe": {
       "component": "basecamp-fe",
@@ -19,7 +17,9 @@
       "component": "scouting",
       "release-type": "node",
       "changelog-path": "CHANGELOG.md",
-      "include-component-in-tag": true
+      "include-component-in-tag": true,
+      "prerelease": true,
+      "prerelease-suffix": "alpha"
     }
   },
   "bootstrap-sha": "5b48f3f0186f7114cde1fa1cb7bb16f2053ba7ba",
