@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
-import "@repo/ui/globals.css";
 import "./globals.css";
 import { Toaster } from "@repo/ui/components/sonner";
 import { Header } from "@/components/layout/header/Header";

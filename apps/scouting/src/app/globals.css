@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@import "@repo/ui/globals.css";
+
 :root {
   --header-height: 5rem;
 }
