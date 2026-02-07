@@ -28,15 +28,15 @@ import {
   useForm,
   useTransform,
 } from "@tanstack/react-form-nextjs";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { submitPitForm } from "./action";
 import * as shared from "./shared";
 
 // this under is for now jsut given data but we should make it absed off the compettons
 
-export type TeamData = {
-  teamNumber: number;
+type mockteams = {
   teamName: string;
+  teamNumber: number;
 };
 
 const teams = ["3506 Yeti"] as const;
@@ -49,12 +49,6 @@ const DRIVING_ABILITIES = [
   { name: "canShuttle", id: "can_shuttle", label: "Can Shuttle" },
 ] as const;
 
-export async function getActiveEventTeam(): Promise<TeamData[]> {
-  return [
-    { teamNumber: 3506, teamName: "YETI Robotics" },
-    { teamNumber: 2059, teamName: "Hitchhikers" },
-  ];
-}
 export function PitForm() {
   const [state, action, isPending] = useActionState(
     submitPitForm,
@@ -73,19 +67,6 @@ export function PitForm() {
 
   const lastHandledSuccess = useRef<typeof state | null>(null);
   const lastHandledError = useRef<typeof state | null>(null);
-
-  // hooks for new code to maket this load and have state
-  const [teams, setTeams] = useState<TeamData[]>([]);
-  const [loadingTeams, setLoadingTeams] = useState(true);
-
-  // useeffect hpook
-  // the getactive event team should be the async function
-  useEffect(() => {
-    getActiveEventTeam().then((data) => {
-      setTeams(data);
-      setLoadingTeams(false);
-    });
-  }, []);
 
   useEffect(() => {
     if ("_success" in state && state !== lastHandledSuccess.current) {
