@@ -2,7 +2,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
 import { Textarea } from "@repo/ui/components/textarea";
-import { AlertCircleIcon, InfoIcon } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import { useFormData } from "../contexts/FormDataContext";
 
 /**
