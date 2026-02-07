@@ -2,8 +2,31 @@ import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { SheetService } from "../sheet/sheet.service";
+import {
+  EXPIRED_SESSION_THRESHOLD_MS,
+  FORGOT_SIGNOUT_CREDIT_MS,
+  STALE_SIGNIN_THRESHOLD_MS,
+} from "./attendance.constants";
 import { AttendanceService } from "./attendance.service";
 import { TwofaService } from "./twofa/twofa.service";
+
+const MS_PER_HOUR = 1000 * 60 * 60;
+
+function makeRow(
+  discordId: string,
+  dateISO: string,
+  isSigningIn: boolean
+): string[] {
+  return [discordId, "YETI Robotics", "Test User 1", dateISO, String(isSigningIn)];
+}
+
+function successResult() {
+  return { updates: { updatedRows: 1 } };
+}
+
+function failResult() {
+  return { updates: { updatedRows: 0 } };
+}
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -63,6 +86,7 @@ describe("AttendanceService", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.clearAllMocks();
   });
 
@@ -117,6 +141,497 @@ describe("AttendanceService", () => {
       sheetService.getSheetValues.mockResolvedValue([]);
       const result = await service.getUserHours("nonexistent-user");
       expect(result).toBe(0);
+    });
+  });
+
+  describe("signIn", () => {
+    it("signs in successfully when no prior records", async () => {
+      sheetService.getSheetValues.mockResolvedValue([]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: true });
+      expect(sheetService.appendSheetValues).toHaveBeenCalledTimes(1);
+    });
+
+    it("signs in successfully when last record is a sign-out", async () => {
+      sheetService.getSheetValues.mockResolvedValue([
+        makeRow("user1", "2025-01-01T10:00:00Z", true),
+        makeRow("user1", "2025-01-01T12:00:00Z", false),
+      ]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: true });
+    });
+
+    it("returns 'You are currently signed in.' shortly after sign-in", async () => {
+      const now = new Date("2025-01-01T12:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(now.getTime() - 1 * MS_PER_HOUR).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: false, message: "You are currently signed in." });
+      expect(sheetService.appendSheetValues).not.toHaveBeenCalled();
+    });
+
+    it("returns 'You are currently signed in.' at exactly the stale threshold", async () => {
+      const now = new Date("2025-01-02T04:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      // Exactly 18h ago — uses > not >=, so should NOT be stale
+      const signInTime = new Date(now.getTime() - STALE_SIGNIN_THRESHOLD_MS).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: false, message: "You are currently signed in." });
+    });
+
+    it("auto-credits 1.5h and signs in when session is stale", async () => {
+      const now = new Date("2025-01-02T05:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(
+        now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1
+      ).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result.success).toBe(true);
+      expect(result.message).toContain("credited with 1.5 hours");
+      // Two appends: sign-out at signIn+1.5h, then new sign-in at "now"
+      expect(sheetService.appendSheetValues).toHaveBeenCalledTimes(2);
+
+      // First call: sign-out with credited time
+      const firstCallRow = sheetService.appendSheetValues.mock.calls[0][2][0];
+      expect(firstCallRow[4]).toBe("false"); // isSigningIn = false (sign-out)
+      const creditedDate = new Date(firstCallRow[3]);
+      const originalSignIn = new Date(signInTime);
+      expect(creditedDate.getTime()).toBe(
+        originalSignIn.getTime() + FORGOT_SIGNOUT_CREDIT_MS
+      );
+
+      // Second call: new sign-in at "now"
+      const secondCallRow = sheetService.appendSheetValues.mock.calls[1][2][0];
+      expect(secondCallRow[4]).toBe("true"); // isSigningIn = true
+    });
+
+    it("returns failure when auto sign-out append fails", async () => {
+      const now = new Date("2025-01-02T05:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(
+        now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1
+      ).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(failResult());
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result.success).toBe(false);
+    });
+
+    it("returns failure when new sign-in append fails after successful auto sign-out", async () => {
+      const now = new Date("2025-01-02T05:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(
+        now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1
+      ).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues
+        .mockResolvedValueOnce(successResult())
+        .mockResolvedValueOnce(failResult());
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result.success).toBe(false);
+    });
+
+    it("returns 'Failed to sign in.' when append returns 0 updated rows", async () => {
+      sheetService.getSheetValues.mockResolvedValue([]);
+      sheetService.appendSheetValues.mockResolvedValue(failResult());
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: false, message: "Failed to sign in." });
+    });
+
+    it("returns 'Failed to sign in.' when append throws", async () => {
+      sheetService.getSheetValues.mockResolvedValue([]);
+      sheetService.appendSheetValues.mockRejectedValue(new Error("Sheet API error"));
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: false, message: "Failed to sign in." });
+    });
+
+    it("maps YETI guild to 'YETI Robotics'", async () => {
+      sheetService.getSheetValues.mockResolvedValue([]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      const row = sheetService.appendSheetValues.mock.calls[0][2][0];
+      expect(row[1]).toBe("YETI Robotics");
+    });
+
+    it("maps Dev guild to 'Dev'", async () => {
+      sheetService.getSheetValues.mockResolvedValue([]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      await service.signIn("user1", "dev-guild-id", "Test User 1");
+
+      const row = sheetService.appendSheetValues.mock.calls[0][2][0];
+      expect(row[1]).toBe("Dev");
+    });
+
+    it("maps unknown guild to empty string", async () => {
+      sheetService.getSheetValues.mockResolvedValue([]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      await service.signIn("user1", "unknown-guild-id", "Test User 1");
+
+      const row = sheetService.appendSheetValues.mock.calls[0][2][0];
+      expect(row[1]).toBe("");
+    });
+  });
+
+  describe("signOut", () => {
+    it("returns 'You are not signed in.' when no records", async () => {
+      sheetService.getSheetValues.mockResolvedValue([]);
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: false, message: "You are not signed in." });
+    });
+
+    it("returns 'You are not signed in.' when last record is sign-out", async () => {
+      sheetService.getSheetValues.mockResolvedValue([
+        makeRow("user1", "2025-01-01T10:00:00Z", true),
+        makeRow("user1", "2025-01-01T12:00:00Z", false),
+      ]);
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: false, message: "You are not signed in." });
+    });
+
+    it("signs out successfully after a 2h session", async () => {
+      const now = new Date("2025-01-01T12:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(now.getTime() - 2 * MS_PER_HOUR).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: true });
+      expect(sheetService.appendSheetValues).toHaveBeenCalledTimes(1);
+    });
+
+    it("signs out at exactly the expired threshold (boundary)", async () => {
+      const now = new Date("2025-01-02T04:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      // Exactly 18h — uses > not >=, so should still sign out normally
+      const signInTime = new Date(now.getTime() - EXPIRED_SESSION_THRESHOLD_MS).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: true });
+    });
+
+    it("regular user at 18h+1ms gets 1.5h credit (expired session)", async () => {
+      const now = new Date("2025-01-02T04:00:01Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(
+        now.getTime() - EXPIRED_SESSION_THRESHOLD_MS - 1
+      ).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      // Redirects to signIn → handleForgotToSignOut → 1.5h credit
+      expect(result.success).toBe(true);
+      expect(result.message).toContain("credited with 1.5 hours");
+    });
+
+    it("regular user at 19h gets 1.5h credit, NOT full 19h (anti-gaming)", async () => {
+      const now = new Date("2025-01-02T05:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(now.getTime() - 19 * MS_PER_HOUR).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      expect(result.success).toBe(true);
+      expect(result.message).toContain("credited with 1.5 hours");
+
+      // Verify sign-out was recorded at signIn+1.5h, NOT at "now" (19h later)
+      const firstCallRow = sheetService.appendSheetValues.mock.calls[0][2][0];
+      expect(firstCallRow[4]).toBe("false"); // sign-out
+      const creditedDate = new Date(firstCallRow[3]);
+      const originalSignIn = new Date(signInTime);
+      expect(creditedDate.getTime()).toBe(
+        originalSignIn.getTime() + FORGOT_SIGNOUT_CREDIT_MS
+      );
+    });
+
+    it("15h overnight session signs out normally (below threshold)", async () => {
+      const now = new Date("2025-01-02T09:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(now.getTime() - 15 * MS_PER_HOUR).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: true });
+    });
+
+    it("admin signOut at 19h bypasses expired check and records full hours", async () => {
+      const now = new Date("2025-01-02T05:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(now.getTime() - 19 * MS_PER_HOUR).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signOut(
+        "user1",
+        "yeti-server-id",
+        "Test User 1",
+        undefined,
+        true // skipTwofa = admin
+      );
+
+      expect(result).toEqual({ success: true });
+      // Only one append: the sign-out itself (no redirect to signIn)
+      expect(sheetService.appendSheetValues).toHaveBeenCalledTimes(1);
+      const row = sheetService.appendSheetValues.mock.calls[0][2][0];
+      expect(row[4]).toBe("false"); // sign-out record
+    });
+
+    it("admin signOut at 25h bypasses expired check and records full hours", async () => {
+      const now = new Date("2025-01-02T11:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(now.getTime() - 25 * MS_PER_HOUR).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+      const result = await service.signOut(
+        "user1",
+        "yeti-server-id",
+        "Test User 1",
+        undefined,
+        true // skipTwofa = admin
+      );
+
+      expect(result).toEqual({ success: true });
+      expect(sheetService.appendSheetValues).toHaveBeenCalledTimes(1);
+    });
+
+    it("returns 'Failed to sign out.' when append returns 0 updated rows", async () => {
+      const now = new Date("2025-01-01T12:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(now.getTime() - 2 * MS_PER_HOUR).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockResolvedValue(failResult());
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: false, message: "Failed to sign out." });
+    });
+
+    it("returns 'Failed to sign out.' when append throws", async () => {
+      const now = new Date("2025-01-01T12:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const signInTime = new Date(now.getTime() - 2 * MS_PER_HOUR).toISOString();
+      sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      sheetService.appendSheetValues.mockRejectedValue(new Error("Sheet API error"));
+
+      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+      expect(result).toEqual({ success: false, message: "Failed to sign out." });
+    });
+  });
+
+  describe("with 2FA enabled", () => {
+    let twofaService: { verifyCode: MockedFunction<TwofaService["verifyCode"]> };
+
+    beforeEach(async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          AttendanceService,
+          {
+            provide: SheetService,
+            useValue: {
+              getSheetValues: vi.fn(),
+              appendSheetValues: vi.fn(),
+            },
+          },
+          {
+            provide: ConfigService,
+            useValue: {
+              get: vi.fn().mockImplementation((key: string, defaultValue?: unknown) => {
+                switch (key) {
+                  case "ATTENDANCE_SPREADSHEET_ID":
+                    return "test-sheet-id";
+                  case "YETI_SERVER_ID":
+                    return "yeti-server-id";
+                  case "DEV_GUILD_ID":
+                    return "dev-guild-id";
+                  case "ATTENDANCE_2FA_ENABLED":
+                    return true;
+                  default:
+                    return defaultValue ?? null;
+                }
+              }),
+            },
+          },
+          {
+            provide: TwofaService,
+            useValue: {
+              verifyCode: vi.fn().mockReturnValue(true),
+            },
+          },
+        ],
+      }).compile();
+
+      service = module.get<AttendanceService>(AttendanceService);
+      sheetService = module.get(SheetService);
+      twofaService = module.get(TwofaService);
+    });
+
+    describe("signIn 2FA", () => {
+      it("succeeds with valid code", async () => {
+        sheetService.getSheetValues.mockResolvedValue([]);
+        sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+        const result = await service.signIn("user1", "yeti-server-id", "Test User 1", 123456);
+
+        expect(result).toEqual({ success: true });
+        expect(twofaService.verifyCode).toHaveBeenCalledWith(123456);
+      });
+
+      it("rejects when no code provided", async () => {
+        const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+        expect(result).toEqual({
+          success: false,
+          message: "A code is required to sign in/out.",
+        });
+      });
+
+      it("rejects with invalid code", async () => {
+        twofaService.verifyCode.mockReturnValue(false);
+
+        const result = await service.signIn("user1", "yeti-server-id", "Test User 1", 999999);
+
+        expect(result).toEqual({ success: false, message: "Invalid code." });
+      });
+
+      it("bypasses 2FA when skipTwofa=true", async () => {
+        sheetService.getSheetValues.mockResolvedValue([]);
+        sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+        const result = await service.signIn(
+          "user1",
+          "yeti-server-id",
+          "Test User 1",
+          undefined,
+          true
+        );
+
+        expect(result).toEqual({ success: true });
+        expect(twofaService.verifyCode).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("signOut 2FA", () => {
+      beforeEach(() => {
+        const now = new Date("2025-01-01T12:00:00Z");
+        vi.useFakeTimers();
+        vi.setSystemTime(now);
+
+        const signInTime = new Date(now.getTime() - 2 * MS_PER_HOUR).toISOString();
+        sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
+      });
+
+      it("succeeds with valid code", async () => {
+        sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+        const result = await service.signOut("user1", "yeti-server-id", "Test User 1", 123456);
+
+        expect(result).toEqual({ success: true });
+        expect(twofaService.verifyCode).toHaveBeenCalledWith(123456);
+      });
+
+      it("rejects when no code provided", async () => {
+        const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+
+        expect(result).toEqual({
+          success: false,
+          message: "A code is required to sign in/out.",
+        });
+      });
+
+      it("rejects with invalid code", async () => {
+        twofaService.verifyCode.mockReturnValue(false);
+
+        const result = await service.signOut("user1", "yeti-server-id", "Test User 1", 999999);
+
+        expect(result).toEqual({ success: false, message: "Invalid code." });
+      });
+
+      it("bypasses 2FA when skipTwofa=true", async () => {
+        sheetService.appendSheetValues.mockResolvedValue(successResult());
+
+        const result = await service.signOut(
+          "user1",
+          "yeti-server-id",
+          "Test User 1",
+          undefined,
+          true
+        );
+
+        expect(result).toEqual({ success: true });
+        expect(twofaService.verifyCode).not.toHaveBeenCalled();
+      });
     });
   });
 
