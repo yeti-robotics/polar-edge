@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
+import { XIcon } from "lucide-react";
 import { useActionState } from "../contexts/ActionStateContext";
 import { useElapsedTime } from "../hooks/useElapsedTime";
 import { useStandFormActions } from "../hooks/useStandFormActions";
@@ -22,10 +23,11 @@ export function ShootingActiveLayout() {
         <div className="text-lg text-muted-foreground">Shooting</div>
       </div>
       <div className="grid grid-cols-2 gap-4 w-full h-24">
-        <EndShootDialog onComplete={completeShootingCycle} />
-        <Button variant="destructive" className="h-full" onClick={cancelAction}>
+        <Button variant="outline" className="h-full" onClick={cancelAction}>
+          <XIcon className="mr-2 h-4 w-4" />
           Cancel
         </Button>
+        <EndShootDialog onComplete={completeShootingCycle} />
       </div>
     </div>
   );

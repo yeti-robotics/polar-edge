@@ -11,6 +11,7 @@ import {
 } from "@repo/ui/components/dialog";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
+import { CheckCircleIcon } from "lucide-react";
 import { useState } from "react";
 
 type EndClimbDialogProps = {
@@ -60,8 +61,9 @@ export function EndClimbDialog({ onComplete, disabled = false }: EndClimbDialogP
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="w-full h-full" disabled={disabled}>
-          Climb End
+        <Button variant="default" className="w-full h-full" disabled={disabled}>
+          <CheckCircleIcon className="mr-2 h-5 w-5" />
+          End Climb
         </Button>
       </DialogTrigger>
       <DialogContent>

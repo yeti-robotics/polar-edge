@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
+import { CheckCircleIcon } from "lucide-react";
 import { useActionState } from "../contexts/ActionStateContext";
 import { useElapsedTime } from "../hooks/useElapsedTime";
 
@@ -25,7 +26,8 @@ export function OofActiveLayout() {
         </div>
         <div className="text-lg text-muted-foreground">Total: {totalSeconds}s</div>
       </div>
-      <Button variant="destructive" className="w-full h-24" onClick={handleEndOof}>
+      <Button variant="default" className="w-full h-24" onClick={handleEndOof}>
+        <CheckCircleIcon className="mr-2 h-5 w-5" />
         End Oof Time
       </Button>
     </div>

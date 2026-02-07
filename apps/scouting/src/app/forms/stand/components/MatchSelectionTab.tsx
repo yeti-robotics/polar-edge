@@ -3,8 +3,8 @@
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { useState } from "react";
-import { useFormData } from "../contexts/FormDataContext";
 import { lookupTeamMatch } from "../actions";
+import { useFormData } from "../contexts/FormDataContext";
 
 /**
  * Match selection tab with team match lookup.
@@ -46,7 +46,7 @@ export function MatchSelectionTab() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-foreground">Match Selection</h2>
+      <h2 className="text-lg text-foreground">Match Selection</h2>
       <div className="space-y-4">
         <Input
           type="number"
@@ -76,9 +76,7 @@ export function MatchSelectionTab() {
         {error && <p className="text-sm text-destructive">{error}</p>}
 
         {state.teamMatchId && (
-          <p className="text-sm text-green-600">
-            ✓ Match found (ID: {state.teamMatchId})
-          </p>
+          <p className="text-sm text-green-600">✓ Match found (ID: {state.teamMatchId})</p>
         )}
       </div>
     </div>
