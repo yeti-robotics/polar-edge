@@ -6,7 +6,13 @@ export type ActionType = "shooting" | "climbing";
 export type Phase = "auto" | "teleop";
 export type StandFormStage = "match_selection" | "autonomous" | "teleop" | "comments" | "submit";
 
-export const STAGES: StandFormStage[] = ["match_selection", "autonomous", "teleop", "comments", "submit"];
+export const STAGES: StandFormStage[] = [
+  "match_selection",
+  "autonomous",
+  "teleop",
+  "comments",
+  "submit",
+];
 
 export type ActiveAction = {
   type: ActionType;

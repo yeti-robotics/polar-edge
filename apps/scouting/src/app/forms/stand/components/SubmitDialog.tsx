@@ -1,19 +1,14 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/ui/components/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@repo/ui/components/dialog";
 import { toast } from "@repo/ui/components/sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { submitStandForm } from "../actions";
 import { useActionState } from "../contexts/ActionStateContext";
 import { useFormData } from "../contexts/FormDataContext";
 import { useNavigation } from "../contexts/NavigationContext";
-import { submitStandForm } from "../actions";
 
 /**
  * Final submission dialog with server action call.

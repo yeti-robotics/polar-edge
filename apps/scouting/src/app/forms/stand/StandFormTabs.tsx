@@ -1,10 +1,10 @@
 "use client";
 
-import { useNavigation } from "./contexts/NavigationContext";
 import { ActionPhaseTab } from "./components/ActionPhaseTab";
 import { CommentsTab } from "./components/CommentsTab";
 import { MatchSelectionTab } from "./components/MatchSelectionTab";
 import { SubmitDialog } from "./components/SubmitDialog";
+import { useNavigation } from "./contexts/NavigationContext";
 
 /**
  * Main tab switcher for stand form.
