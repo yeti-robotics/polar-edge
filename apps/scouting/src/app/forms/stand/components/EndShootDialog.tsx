@@ -58,11 +58,7 @@ export function EndShootDialog({ onComplete, disabled = false }: EndShootDialogP
         </DialogHeader>
         <div className="space-y-4">
           <Label htmlFor="bucket-select">Balls/Second Estimate</Label>
-          <RadioGroup
-            id="bucket-select"
-            value={selectedBucket}
-            onValueChange={setSelectedBucket}
-          >
+          <RadioGroup id="bucket-select" value={selectedBucket} onValueChange={setSelectedBucket}>
             <div className="flex items-center gap-2">
               <RadioGroupItem value="0" id="bucket-0" />
               <Label htmlFor="bucket-0" className="cursor-pointer">

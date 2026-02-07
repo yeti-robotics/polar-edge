@@ -70,7 +70,9 @@ export function FormDataProvider({ children }: { children: React.ReactNode }) {
     comments: "",
   });
 
-  return <FormDataContext.Provider value={{ state, dispatch }}>{children}</FormDataContext.Provider>;
+  return (
+    <FormDataContext.Provider value={{ state, dispatch }}>{children}</FormDataContext.Provider>
+  );
 }
 
 // ===== HOOK =====
