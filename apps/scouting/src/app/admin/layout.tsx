@@ -15,6 +15,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link className="text-sm" href="/admin/event">
             Active Event
           </Link>
+          <Link className="text-sm" href="/admin/settings">
+            Settings
+          </Link>
         </div>
       </aside>
       <main>{children}</main>
