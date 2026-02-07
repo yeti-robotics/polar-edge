@@ -1,23 +1,20 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { CardContent, CardFooter } from "@repo/ui/components/card";
+import { FormSidebar } from "./formSidebar";
 import { PitForm } from "./PitForm";
 
 export default async function PitFormPage() {
-  try {
-    const member = await auth.api.getActiveMember({ headers: await headers() });
-    if (!member) {
-      redirect("/");
-    }
-  } catch (error) {
-    console.error(error);
-    redirect("/");
-  }
-
   return (
-    <main className="container mx-auto max-w-3xl px-5 py-8">
-      <h1 className="mb-6 text-3xl tracking-tight">Pit Scout</h1>
-      <PitForm />
-    </main>
+    <div className="grid grid-cols-[220px_1fr] h-full">
+      <FormSidebar />
+      <div className="flex flex-col items-center justify-center">
+        <main className="w-full max-w-md">
+          <h1 className="text-3xl font-mono mb-3 text-center">Pit Form</h1>
+          <CardContent>
+            <PitForm />
+          </CardContent>
+          <CardFooter className="flex w-full justify-between"></CardFooter>
+        </main>
+      </div>
+    </div>
   );
 }
