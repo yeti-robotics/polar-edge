@@ -1,5 +1,5 @@
 {
-  "apps/basecamp": "1.0.0",
-  "apps/basecamp-fe": "1.0.0",
-  "apps/scouting": "2026.1.0-alpha.0"
+  "apps/basecamp": "1.0.1",
+  "apps/basecamp-fe": "1.0.1",
+  "apps/scouting": "2026.1.1-alpha.0"
 }
