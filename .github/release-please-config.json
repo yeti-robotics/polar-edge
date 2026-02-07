@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    "apps/basecamp": {
+      "component": "basecamp",
+      "release-type": "node",
+      "changelog-path": "CHANGELOG.md",
+      "include-component-in-tag": true,
+      "prerelease": true,
+      "prerelease-suffix": "alpha"
+    },
+    "apps/basecamp-fe": {
+      "component": "basecamp-fe",
+      "release-type": "node",
+      "changelog-path": "CHANGELOG.md",
+      "include-component-in-tag": true
+    },
+    "apps/scouting": {
+      "component": "scouting",
+      "release-type": "node",
+      "changelog-path": "CHANGELOG.md",
+      "include-component-in-tag": true
+    }
+  },
+  "bootstrap-sha": "5b48f3f0186f7114cde1fa1cb7bb16f2053ba7ba",
+  "changelog-sections": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "perf", "section": "Performance Improvements" },
+    { "type": "revert", "section": "Reverts" },
+    { "type": "chore", "section": "Miscellaneous", "hidden": true },
+    { "type": "docs", "section": "Documentation", "hidden": true },
+    { "type": "style", "section": "Styles", "hidden": true },
+    { "type": "refactor", "section": "Code Refactoring", "hidden": true },
+    { "type": "test", "section": "Tests", "hidden": true },
+    { "type": "ci", "section": "CI", "hidden": true }
+  ]
+}
