@@ -1,0 +1,33 @@
+"use client";
+
+import { Button } from "@repo/ui/components/button";
+import { useActionState } from "../contexts/ActionStateContext";
+import { useElapsedTime } from "../hooks/useElapsedTime";
+
+/**
+ * Active oof layout with large timer, cumulative total, and end button.
+ * Displayed when oof time is being tracked.
+ */
+export function OofActiveLayout() {
+  const { state: actionState, dispatch } = useActionState();
+  const elapsedSeconds = useElapsedTime(actionState.oofStartedAt);
+  const totalSeconds = actionState.oofCumulativeSeconds + elapsedSeconds;
+
+  const handleEndOof = () => {
+    dispatch({ type: "oof_end" });
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-4 py-4 min-h-[280px]">
+      <div className="flex flex-col items-center justify-center gap-2">
+        <div>
+          <div className="text-6xl font-bold tabular-nums animate-pulse">{elapsedSeconds}s</div>
+        </div>
+        <div className="text-lg text-muted-foreground">Total: {totalSeconds}s</div>
+      </div>
+      <Button variant="destructive" className="w-full h-24" onClick={handleEndOof}>
+        End Oof Time
+      </Button>
+    </div>
+  );
+}

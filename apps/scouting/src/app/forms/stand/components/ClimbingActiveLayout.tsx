@@ -1,0 +1,32 @@
+"use client";
+
+import { Button } from "@repo/ui/components/button";
+import { useActionState } from "../contexts/ActionStateContext";
+import { useElapsedTime } from "../hooks/useElapsedTime";
+import { useStandFormActions } from "../hooks/useStandFormActions";
+import { EndClimbDialog } from "./EndClimbDialog";
+
+/**
+ * Active climbing layout with large timer and end/cancel buttons.
+ * Displayed when a climbing action is in progress.
+ */
+export function ClimbingActiveLayout() {
+  const { state: actionState } = useActionState();
+  const { cancelAction, completeClimb } = useStandFormActions();
+  const elapsedSeconds = useElapsedTime(actionState.activeAction?.startedAt ?? null);
+
+  return (
+    <div className="flex flex-col items-center gap-4 py-4 min-h-[280px]">
+      <div className="flex flex-col items-center justify-center gap-2">
+        <div className="text-6xl font-bold tabular-nums animate-pulse">{elapsedSeconds}s</div>
+        <div className="text-lg text-muted-foreground">Climbing</div>
+      </div>
+      <div className="grid grid-cols-2 gap-4 w-full h-24">
+        <EndClimbDialog onComplete={completeClimb} />
+        <Button variant="destructive" className="h-full" onClick={cancelAction}>
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
