@@ -9,6 +9,7 @@ import {
 } from "@/lib/server/storage";
 
 const ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
 /**
  * Generate a presigned PUT URL for uploading a robot photo.
@@ -18,6 +19,7 @@ export async function getPhotoUploadUrl(params: {
   teamNumber: number;
   index: number;
   contentType: string;
+  fileSize: number;
 }): Promise<{ url: string; key: string } | { error: string }> {
   try {
     // Authenticate
@@ -41,6 +43,14 @@ export async function getPhotoUploadUrl(params: {
       return { error: "Invalid file type. Only JPEG, PNG, and WebP are allowed." };
     }
 
+    // Validate file size
+    if (!Number.isInteger(params.fileSize) || params.fileSize <= 0) {
+      return { error: "Invalid file size" };
+    }
+    if (params.fileSize > MAX_FILE_SIZE_BYTES) {
+      return { error: `File size exceeds maximum limit of ${MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB` };
+    }
+
     // Validate team number
     if (!Number.isInteger(params.teamNumber) || params.teamNumber <= 0) {
       return { error: "Invalid team number" };
@@ -60,8 +70,7 @@ export async function getPhotoUploadUrl(params: {
       extension,
     });
 
-    // Generate presigned URL
-    const result = await createPresignedUploadUrl(key, params.contentType);
+    const result = await createPresignedUploadUrl(key, params.contentType, params.fileSize);
     return result;
   } catch (error) {
     console.error("Get photo upload URL error:", error);

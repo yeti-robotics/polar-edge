@@ -57,7 +57,8 @@ export function robotPhotoKey(params: {
 
 export async function createPresignedUploadUrl(
   objectKey: string,
-  contentType: string
+  contentType: string,
+  maxSizeBytes?: number
 ): Promise<{ url: string; key: string }> {
   const config = getStorageConfig();
   const client = getClient();
@@ -66,6 +67,7 @@ export async function createPresignedUploadUrl(
     Bucket: config.bucket,
     Key: objectKey,
     ContentType: contentType,
+    ContentLength: maxSizeBytes, // Enforce maximum upload size at S3 level
   });
 
   const url = await getSignedUrl(client, command, {

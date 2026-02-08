@@ -26,14 +26,12 @@ export interface PitPhotoUploadRef {
 }
 
 interface PitPhotoUploadProps {
-  compressionProgress?: number;
-  uploadProgress?: { current: number; total: number };
-  status?: "idle" | "compressing" | "uploading";
-  error?: string;
+  disabled?: boolean;
+  children?: React.ReactNode;
 }
 
 export const PitPhotoUpload = forwardRef<PitPhotoUploadRef, PitPhotoUploadProps>(
-  ({ compressionProgress, uploadProgress, status = "idle", error }, ref) => {
+  ({ disabled = false, children }, ref) => {
     const [photos, setPhotos] = useState<PhotoFile[]>([]);
 
     // Expose getPendingFiles method to parent
@@ -89,7 +87,7 @@ export const PitPhotoUpload = forwardRef<PitPhotoUploadRef, PitPhotoUploadProps>
                   key={photo.id}
                   photo={photo}
                   onRemove={handleRemove}
-                  disabled={status !== "idle"}
+                  disabled={disabled}
                 />
               ))}
             </div>
@@ -105,7 +103,7 @@ export const PitPhotoUpload = forwardRef<PitPhotoUploadRef, PitPhotoUploadProps>
                 capture="environment"
                 multiple
                 onChange={handleFileSelect}
-                disabled={status !== "idle"}
+                disabled={disabled}
                 className="sr-only"
                 aria-label="Select photos"
               />
@@ -114,7 +112,7 @@ export const PitPhotoUpload = forwardRef<PitPhotoUploadRef, PitPhotoUploadProps>
                 variant="outline"
                 className="w-full min-h-[44px]"
                 onClick={() => document.getElementById("photo-input")?.click()}
-                disabled={status !== "idle"}
+                disabled={disabled}
               >
                 <Camera className="mr-2 h-5 w-5" />
                 {photos.length === 0 ? "Add Photos" : `Add More (${photos.length}/${MAX_PHOTOS})`}
@@ -122,29 +120,8 @@ export const PitPhotoUpload = forwardRef<PitPhotoUploadRef, PitPhotoUploadProps>
             </div>
           ) : null}
 
-          {/* Progress indicator */}
-          {status === "compressing" ? (
-            <div className="space-y-2">
-              <div className="text-sm text-muted-foreground">Compressing images…</div>
-              {compressionProgress !== undefined ? <Progress value={compressionProgress} /> : null}
-            </div>
-          ) : null}
-
-          {status === "uploading" && uploadProgress ? (
-            <div className="space-y-2">
-              <div className="text-sm text-muted-foreground">
-                Uploading {uploadProgress.current} of {uploadProgress.total}…
-              </div>
-              <Progress value={(uploadProgress.current / uploadProgress.total) * 100} />
-            </div>
-          ) : null}
-
-          {/* Error message */}
-          {error ? (
-            <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {error}
-            </div>
-          ) : null}
+          {/* Composition slot for status components */}
+          {children}
         </CardContent>
       </Card>
     );
@@ -152,6 +129,36 @@ export const PitPhotoUpload = forwardRef<PitPhotoUploadRef, PitPhotoUploadProps>
 );
 
 PitPhotoUpload.displayName = "PitPhotoUpload";
+
+// Explicit status component variants (follows patterns-explicit-variants)
+
+export function PhotoCompressionProgress({ value }: { value?: number }) {
+  return (
+    <div className="space-y-2">
+      <div className="text-sm text-muted-foreground">Compressing images…</div>
+      {value !== undefined ? <Progress value={value} /> : null}
+    </div>
+  );
+}
+
+export function PhotoUploadProgress({ current, total }: { current: number; total: number }) {
+  return (
+    <div className="space-y-2">
+      <div className="text-sm text-muted-foreground">
+        Uploading {current} of {total}…
+      </div>
+      <Progress value={(current / total) * 100} />
+    </div>
+  );
+}
+
+export function PhotoUploadError({ message }: { message: string }) {
+  return (
+    <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+      {message}
+    </div>
+  );
+}
 
 // Memoized thumbnail component to avoid re-rendering all thumbnails when one changes
 interface PhotoThumbnailProps {

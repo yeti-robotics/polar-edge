@@ -15,9 +15,16 @@ import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
-import { useActionState, useCallback, useEffect, useRef, useState, startTransition } from "react";
+import { useActionState, useCallback, useEffect, useRef, startTransition } from "react";
 import { submitPitForm } from "./action";
-import { PitPhotoUpload, type PitPhotoUploadRef } from "./PitPhotoUpload";
+import { usePhotoUpload } from "./hooks/use-photo-upload";
+import {
+  PhotoCompressionProgress,
+  PhotoUploadError,
+  PhotoUploadProgress,
+  PitPhotoUpload,
+  type PitPhotoUploadRef,
+} from "./PitPhotoUpload";
 import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
 
 const DRIVING_ABILITIES = [
@@ -40,11 +47,7 @@ export function PitForm() {
   const lastHandledError = useRef<typeof state | null>(null);
   const photoUploadRef = useRef<PitPhotoUploadRef>(null);
 
-  const [photoUploadState, setPhotoUploadState] = useState<{
-    status: "idle" | "compressing" | "uploading";
-    uploadProgress?: { current: number; total: number };
-    error?: string;
-  }>({ status: "idle" });
+  const { state: photoUploadState, uploadPhotos, reset: resetPhotoUpload } = usePhotoUpload();
 
   useEffect(() => {
     if ("_success" in state && state !== lastHandledSuccess.current) {
@@ -52,7 +55,7 @@ export function PitForm() {
       if (typeof form.reset === "function") {
         form.reset();
       }
-      setPhotoUploadState({ status: "idle" });
+      resetPhotoUpload();
       toast.success("Pit form submitted successfully.", {
         position: "top-right",
       });
@@ -64,12 +67,12 @@ export function PitForm() {
       typeof state._error === "string"
     ) {
       lastHandledError.current = state;
-      setPhotoUploadState({ status: "idle" });
+      resetPhotoUpload();
       toast.error(state._error, {
         position: "top-right",
       });
     }
-  }, [state, form]);
+  }, [state, form, resetPhotoUpload]);
 
   const handleSubmitWithPhotos = useCallback(
     async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -111,127 +114,22 @@ export function PitForm() {
         return formData;
       };
 
-      if (pendingFiles.length === 0) {
-        // No photos, submit normally
-        startTransition(() => {
-          action(buildFormData());
-        });
+      // Upload photos if any, or submit form directly
+      const photoKeys = await uploadPhotos(pendingFiles, teamNumber);
+
+      // If uploadPhotos returned null, there was an error (already handled by the hook)
+      if (pendingFiles.length > 0 && photoKeys === null) {
         return;
       }
 
-      try {
-        setPhotoUploadState({ status: "compressing" });
+      // Build FormData with form fields and photo keys
+      const formData = buildFormData(photoKeys ?? undefined);
 
-        // Dynamically import compression utility
-        const { compressImage } = await import("@/lib/compress-image");
-
-        // Compress all photos in parallel
-        const compressionResults = await Promise.all(
-          pendingFiles.map((file) => compressImage(file))
-        );
-
-        // Check for compression errors
-        const firstError = compressionResults.find((r) => "error" in r);
-        if (firstError && "error" in firstError) {
-          setPhotoUploadState({ status: "idle", error: firstError.error });
-          toast.error(firstError.error);
-          return;
-        }
-
-        // Extract compressed files
-        const compressedFiles = compressionResults
-          .filter((r): r is { file: File } => "file" in r)
-          .map((r) => r.file);
-
-        setPhotoUploadState({
-          status: "uploading",
-          uploadProgress: { current: 0, total: compressedFiles.length },
-        });
-
-        // Get all presigned URLs in parallel
-        const { getPhotoUploadUrl } = await import("./photo-actions");
-        const urlPromises = compressedFiles.map((_, index) =>
-          getPhotoUploadUrl({
-            teamNumber,
-            index,
-            contentType: "image/jpeg",
-          })
-        );
-
-        const urlResults = await Promise.all(urlPromises);
-
-        // Check for URL generation errors
-        const firstUrlError = urlResults.find((r) => "error" in r);
-        if (firstUrlError && "error" in firstUrlError) {
-          setPhotoUploadState({ status: "idle", error: firstUrlError.error });
-          toast.error(firstUrlError.error);
-          return;
-        }
-
-        // Extract URLs and keys
-        const urlsAndKeys = urlResults.filter(
-          (r): r is { url: string; key: string } => "url" in r && "key" in r
-        );
-
-        // Upload all photos in parallel
-        const uploadPromises = compressedFiles.map(async (file, index) => {
-          const urlData = urlsAndKeys[index];
-          if (!urlData) {
-            throw new Error(`Missing URL for photo ${index + 1}`);
-          }
-          const { url, key } = urlData;
-
-          try {
-            const response = await fetch(url, {
-              method: "PUT",
-              body: file,
-              headers: {
-                "Content-Type": "image/jpeg",
-              },
-            });
-
-            if (!response.ok) {
-              const errorText = await response.text().catch(() => "No error details");
-              console.error(`Upload failed for photo ${index + 1}:`, {
-                status: response.status,
-                statusText: response.statusText,
-                errorText,
-                url: url.split("?")[0], // Log URL without query params
-              });
-              throw new Error(
-                `Upload failed for photo ${index + 1}: ${response.status} ${response.statusText}`
-              );
-            }
-
-            setPhotoUploadState((prev) => ({
-              ...prev,
-              uploadProgress: { current: index + 1, total: compressedFiles.length },
-            }));
-
-            return key;
-          } catch (error) {
-            console.error(`Network error uploading photo ${index + 1}:`, error);
-            throw error;
-          }
-        });
-
-        const photoKeys = await Promise.all(uploadPromises);
-
-        // Build FormData with form fields and photo keys
-        const formData = buildFormData(photoKeys);
-
-        setPhotoUploadState({ status: "idle" });
-        startTransition(() => {
-          action(formData);
-        });
-      } catch (error) {
-        console.error("Photo upload error:", error);
-        const errorMessage = error instanceof Error ? error.message : "Failed to upload photos";
-        setPhotoUploadState({ status: "idle", error: errorMessage });
-        toast.error(errorMessage);
-      }
+      startTransition(() => {
+        action(formData);
+      });
     },
-    [form, action]
+    [form, action, uploadPhotos]
   );
 
   useEffect(() => {
@@ -473,12 +371,15 @@ export function PitForm() {
         </CardContent>
       </Card>
 
-      <PitPhotoUpload
-        ref={photoUploadRef}
-        status={photoUploadState.status}
-        uploadProgress={photoUploadState.uploadProgress}
-        error={photoUploadState.error}
-      />
+      <PitPhotoUpload ref={photoUploadRef} disabled={photoUploadState.status !== "idle"}>
+        {photoUploadState.status === "compressing" && (
+          <PhotoCompressionProgress value={photoUploadState.compressionProgress} />
+        )}
+        {photoUploadState.status === "uploading" && photoUploadState.uploadProgress && (
+          <PhotoUploadProgress {...photoUploadState.uploadProgress} />
+        )}
+        {photoUploadState.error && <PhotoUploadError message={photoUploadState.error} />}
+      </PitPhotoUpload>
 
       <div className="sticky bottom-0 bg-background pb-5 pt-3">
         <Button
