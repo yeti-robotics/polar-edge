@@ -7,6 +7,8 @@ import { organization } from "../tables/organization";
 import { organizationEvent } from "../tables/organization-event";
 import { organizationInviteLink } from "../tables/organization-invite-link";
 import { passkey } from "../tables/passkey";
+import { pitForm } from "../tables/pit-form";
+import { pitPhoto } from "../tables/pit-photo";
 import { session } from "../tables/session";
 import { user } from "../tables/user";
 
@@ -87,5 +89,16 @@ export const passkeyRelations = relations(passkey, ({ one }) => ({
   user: one(user, {
     fields: [passkey.userId],
     references: [user.id],
+  }),
+}));
+
+export const pitFormRelations = relations(pitForm, ({ many }) => ({
+  photos: many(pitPhoto),
+}));
+
+export const pitPhotoRelations = relations(pitPhoto, ({ one }) => ({
+  pitForm: one(pitForm, {
+    fields: [pitPhoto.pitFormId],
+    references: [pitForm.id],
   }),
 }));
