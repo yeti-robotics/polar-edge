@@ -23,6 +23,7 @@ interface PhotoFile {
 
 export interface PitPhotoUploadRef {
   getPendingFiles: () => File[];
+  clearPhotos: () => void;
 }
 
 interface PitPhotoUploadProps {
@@ -34,10 +35,20 @@ export const PitPhotoUpload = forwardRef<PitPhotoUploadRef, PitPhotoUploadProps>
   ({ disabled = false, children }, ref) => {
     const [photos, setPhotos] = useState<PhotoFile[]>([]);
 
-    // Expose getPendingFiles method to parent
+    const clearPhotos = useCallback(() => {
+      setPhotos((prev) => {
+        for (const p of prev) {
+          URL.revokeObjectURL(p.preview);
+        }
+        return [];
+      });
+    }, []);
+
+    // Expose getPendingFiles and clearPhotos to parent
     useImperativeHandle(ref, () => ({
       getPendingFiles: () => photos.map((p) => p.file),
-    }));
+      clearPhotos,
+    }), [photos, clearPhotos]);
 
     const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(e.target.files ?? []);

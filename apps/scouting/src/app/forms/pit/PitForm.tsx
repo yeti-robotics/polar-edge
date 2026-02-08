@@ -15,7 +15,7 @@ import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
-import { useActionState, useCallback, useEffect, useRef, startTransition } from "react";
+import { startTransition, useActionState, useCallback, useEffect, useRef } from "react";
 import { submitPitForm } from "./action";
 import { usePhotoUpload } from "./hooks/use-photo-upload";
 import {
@@ -56,8 +56,9 @@ export function PitForm() {
         form.reset();
       }
       resetPhotoUpload();
+      photoUploadRef.current?.clearPhotos();
       toast.success("Pit form submitted successfully.", {
-        position: "top-right",
+        position: "bottom-right",
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
