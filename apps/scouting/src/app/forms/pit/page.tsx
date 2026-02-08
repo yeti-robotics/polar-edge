@@ -13,9 +13,7 @@ export default async function PitFormPage() {
     if (!member) {
       redirect("/");
     }
-    const activeEvent = await getActiveEventForOrganization(
-      member.organizationId,
-    );
+    const activeEvent = await getActiveEventForOrganization(member.organizationId);
 
     if (!activeEvent) {
       redirect("/");
