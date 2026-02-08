@@ -1,10 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: this is a test file, so we can use any */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
-import {
-  type UpdateOrganizationNameState,
-  updateOrganizationNameAction,
-} from "./actions";
+import { type UpdateOrganizationNameState, updateOrganizationNameAction } from "./actions";
 
 vi.mock("@/lib/auth", () => ({
   auth: {
@@ -43,7 +40,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "New Name" }),
+      makeFormData({ organizationId: "org-123", name: "New Name" })
     );
 
     expect(result).toEqual({
@@ -63,7 +60,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "New Name" }),
+      makeFormData({ organizationId: "org-123", name: "New Name" })
     );
 
     expect(result).toEqual({
@@ -83,7 +80,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "New Name" }),
+      makeFormData({ organizationId: "org-123", name: "New Name" })
     );
 
     expect(result).toEqual({
@@ -103,7 +100,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "" }),
+      makeFormData({ organizationId: "org-123", name: "" })
     );
 
     expect(result).toEqual({
@@ -123,7 +120,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "   " }),
+      makeFormData({ organizationId: "org-123", name: "   " })
     );
 
     expect(result).toEqual({
@@ -144,7 +141,7 @@ describe("updateOrganizationNameAction", () => {
     const longName = "a".repeat(101);
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: longName }),
+      makeFormData({ organizationId: "org-123", name: longName })
     );
 
     expect(result).toEqual({
@@ -166,7 +163,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "New Name" }),
+      makeFormData({ organizationId: "org-123", name: "New Name" })
     );
 
     expect(result).toEqual({
@@ -193,7 +190,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "Updated Org" }),
+      makeFormData({ organizationId: "org-123", name: "Updated Org" })
     );
 
     expect(result).toEqual({
@@ -220,7 +217,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "  Trimmed Name  " }),
+      makeFormData({ organizationId: "org-123", name: "  Trimmed Name  " })
     );
 
     expect(result).toEqual({
@@ -247,7 +244,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "New Name" }),
+      makeFormData({ organizationId: "org-123", name: "New Name" })
     );
 
     expect(result).toEqual({
@@ -269,7 +266,7 @@ describe("updateOrganizationNameAction", () => {
 
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: "New Name" }),
+      makeFormData({ organizationId: "org-123", name: "New Name" })
     );
 
     expect(result).toEqual({
@@ -292,7 +289,7 @@ describe("updateOrganizationNameAction", () => {
     const exactName = "a".repeat(100);
     const result = await updateOrganizationNameAction(
       initialState,
-      makeFormData({ organizationId: "org-123", name: exactName }),
+      makeFormData({ organizationId: "org-123", name: exactName })
     );
 
     expect(result).toEqual({
