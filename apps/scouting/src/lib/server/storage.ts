@@ -63,6 +63,8 @@ export async function createPresignedUploadUrl(
   const config = getStorageConfig();
   const client = getClient();
 
+  // Sign Bucket, Key, and ContentType. Client must send the same Content-Type
+  // (no ContentLength in signature so body size can vary).
   const command = new PutObjectCommand({
     Bucket: config.bucket,
     Key: objectKey,
@@ -89,4 +91,37 @@ export async function createPresignedDownloadUrl(objectKey: string): Promise<str
   return getSignedUrl(client, command, {
     expiresIn: DOWNLOAD_EXPIRATION_SECONDS,
   });
+}
+
+/**
+ * Stream an object from S3 (server-side only). Used by the pit-photo proxy route
+ * so Next.js Image optimization can resize, re-encode (WebP/AVIF), and cache.
+ */
+export async function getObjectStream(
+  objectKey: string
+): Promise<{ body: ReadableStream; contentType: string } | null> {
+  const config = getStorageConfig();
+  const client = getClient();
+
+  const command = new GetObjectCommand({
+    Bucket: config.bucket,
+    Key: objectKey,
+  });
+
+  try {
+    const response = await client.send(command);
+    if (!response.Body) return null;
+
+    const contentType = response.ContentType ?? "application/octet-stream";
+    return {
+      body: response.Body as ReadableStream,
+      contentType,
+    };
+  } catch (error) {
+    if (error && typeof error === "object" && "name" in error && error.name === "NoSuchKey") {
+      return null;
+    }
+    console.error("getObjectStream error:", error);
+    return null;
+  }
 }

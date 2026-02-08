@@ -2,8 +2,19 @@ import "server-only";
 
 import { and, asc, desc, eq, inArray, isNotNull, sql } from "drizzle-orm";
 import { db } from "@/lib/database";
-import { climb, cycle, event, match, member, standForm, teamMatch } from "@/lib/database/schema";
+import {
+  climb,
+  cycle,
+  event,
+  match,
+  member,
+  pitForm,
+  pitPhoto,
+  standForm,
+  teamMatch,
+} from "@/lib/database/schema";
 import { vStandFormExpected } from "@/lib/database/schema/views/metrics";
+import { createPitPhotoViewToken } from "@/lib/server/pit-photo-token";
 
 export interface TeamStats {
   goblinPerMatch: number;
@@ -429,4 +440,45 @@ export async function getTeamInfo(teamNumber: number) {
   });
 
   return teamData;
+}
+
+export interface PitPhotoItem {
+  storageKey: string;
+  index: number;
+  /** Short-lived token for /pit-photo so image optimizer can load without cookies */
+  viewToken: string;
+}
+
+/**
+ * Pit photos for a team from your organization's pit forms only.
+ * Returns empty array if no organization or no photos.
+ */
+export async function getTeamPitPhotos(
+  teamNumber: number,
+  organizationId: string | null
+): Promise<PitPhotoItem[]> {
+  if (!organizationId) return [];
+
+  const rows = await db
+    .select({
+      storageKey: pitPhoto.storageKey,
+      index: pitPhoto.index,
+    })
+    .from(pitPhoto)
+    .innerJoin(pitForm, eq(pitForm.id, pitPhoto.pitFormId))
+    .innerJoin(member, eq(member.id, pitForm.scoutMemberId))
+    .where(
+      and(
+        eq(pitForm.teamNumber, teamNumber),
+        eq(member.organizationId, organizationId),
+        isNotNull(pitForm.scoutMemberId)
+      )
+    )
+    .orderBy(asc(pitPhoto.index));
+
+  return rows.map((row) => ({
+    storageKey: row.storageKey,
+    index: row.index,
+    viewToken: createPitPhotoViewToken(row.storageKey),
+  }));
 }
