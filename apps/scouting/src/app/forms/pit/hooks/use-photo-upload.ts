@@ -16,6 +16,9 @@ export interface UsePhotoUploadReturn {
   reset: () => void;
 }
 
+/** Must match MAX_FILE_SIZE_BYTES in photo-actions (server enforces as well). */
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+
 /**
  * Custom hook to handle photo compression and upload orchestration.
  * Follows state-decouple-implementation pattern by encapsulating all photo upload logic.
@@ -30,6 +33,19 @@ export function usePhotoUpload(): UsePhotoUploadReturn {
   const uploadPhotos = useCallback(
     async (files: File[], teamNumber: number): Promise<string[] | null> => {
       if (files.length === 0) {
+        return null;
+      }
+
+      // Client-side size check for immediate feedback (Spaces has no bucket-level limit).
+      const oversized = files.filter((f) => f.size > MAX_FILE_SIZE_BYTES);
+      if (oversized.length > 0) {
+        const first = oversized[0];
+        const msg =
+          oversized.length === 1 && first
+            ? `"${first.name}" exceeds the 5MB limit.`
+            : `${oversized.length} file(s) exceed the 5MB limit.`;
+        setState({ status: "idle", error: msg });
+        toast.error(msg);
         return null;
       }
 
