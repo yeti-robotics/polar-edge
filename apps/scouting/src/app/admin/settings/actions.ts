@@ -11,7 +11,7 @@ export type UpdateOrganizationNameState = {
 
 export async function updateOrganizationNameAction(
   _prevState: UpdateOrganizationNameState,
-  formData: FormData,
+  formData: FormData
 ): Promise<UpdateOrganizationNameState> {
   try {
     const organizationId = formData.get("organizationId") as string;
