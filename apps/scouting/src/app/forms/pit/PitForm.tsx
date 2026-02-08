@@ -32,14 +32,6 @@ import { useActionState, useEffect, useRef } from "react";
 import { submitPitForm } from "./action";
 import * as shared from "./shared";
 
-// this under is for now jsut given data but we should make it absed off the compettons
-
-type mockteams = {
-  teamName: string;
-  teamNumber: number;
-};
-
-const teams = ["3506 Yeti"] as const;
 // need to make the thing up here more itneractve and actually work backend right now its jusst very simple spitting out what we give the informarion const teams
 // Select is populated with only teams registered at the active events
 
@@ -49,7 +41,11 @@ const DRIVING_ABILITIES = [
   { name: "canShuttle", id: "can_shuttle", label: "Can Shuttle" },
 ] as const;
 
-export function PitForm() {
+export function PitForm({
+  teams,
+}: {
+  teams: { teamNumber: number; teamName: string }[];
+}) {
   const [state, action, isPending] = useActionState(
     submitPitForm,
     initialFormState,
@@ -121,8 +117,11 @@ export function PitForm() {
                       <ComboboxEmpty>No items found.</ComboboxEmpty>
                       <ComboboxList>
                         {(item) => (
-                          <ComboboxItem key={item} value={item}>
-                            {item}
+                          <ComboboxItem
+                            key={item.teamNumber}
+                            value={item.teamNumber.toString()}
+                          >
+                            {item.teamNumber} - {item.teamName}
                           </ComboboxItem>
                         )}
                       </ComboboxList>
