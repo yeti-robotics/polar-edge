@@ -5,7 +5,7 @@ export const DRIVETRAIN_OPTIONS = ["tank", "swerve", "mecanum", "other"] as cons
 export const CLIMB_TYPE_OPTIONS = ["sides", "center", "left", "right", "any", "none"] as const;
 
 export const FormSchema = z.object({
-  teamNumber: z.number().int().positive("Team number is required"),
+  teamNumber: z.coerce.number().int().positive("Team number is required"),
   drivetrainType: z
     .union([z.enum(DRIVETRAIN_OPTIONS), z.literal("")])
     .refine((val): val is (typeof DRIVETRAIN_OPTIONS)[number] => val !== "", {
