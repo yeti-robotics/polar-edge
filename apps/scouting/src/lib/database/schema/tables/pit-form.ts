@@ -18,7 +18,7 @@ export const pitForm = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
 
-    scoutMemberId: text("scout_member_id").references(() => member.id, { onDelete: "cascade" }),
+    scoutMemberId: text("scout_member_id").references(() => member.id, { onDelete: "set null" }),
     teamNumber: integer("team_number")
       .notNull()
       .references(() => team.teamNumber),

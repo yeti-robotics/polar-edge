@@ -1,6 +1,7 @@
 {
   "name": "scouting",
-  "version": "2026.1.0",
+  "version": "2026.1.1-alpha.0",
+  "description": "FRC scouting application for YETI Robotics",
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
@@ -18,6 +19,8 @@
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.13",
+    "@aws-sdk/client-s3": "^3.985.0",
+    "@aws-sdk/s3-request-presigner": "^3.985.0",
     "@better-auth/passkey": "^1.4.17",
     "@repo/tba-sdk": "workspace:*",
     "@repo/ui": "workspace:*",
@@ -25,8 +28,10 @@
     "@tanstack/react-table": "^8.21.3",
     "ai": "catalog:",
     "better-auth": "^1.4.17",
+    "browser-image-compression": "^2.0.2",
     "drizzle-orm": "^0.44.7",
     "drizzle-seed": "^0.3.1",
+    "heic-to": "^1.4.2",
     "lucide-react": "^0.525.0",
     "nanoid": "^5.1.6",
     "next": "catalog:",

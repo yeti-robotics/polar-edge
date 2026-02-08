@@ -12,6 +12,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
+import { RemoveMemberButton } from "./RemoveMemberButton";
 import { RoleSelect } from "./RoleSelect";
 
 function getInitials(name: string): string {
@@ -39,6 +40,7 @@ function LoadingTable() {
           <TableHead>Member</TableHead>
           <TableHead>Role</TableHead>
           <TableHead>Joined</TableHead>
+          <TableHead className="w-25">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -58,6 +60,9 @@ function LoadingTable() {
             </TableCell>
             <TableCell>
               <Skeleton className="h-4 w-24" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-8 w-16" />
             </TableCell>
           </TableRow>
         ))}
@@ -95,6 +100,24 @@ async function MembersContent() {
 
   const members = membersResponse?.members ?? [];
 
+  // Helper function to check if the active member can remove another member
+  const canRemoveMember = (targetMemberRole: string) => {
+    // Owner cannot be removed
+    if (targetMemberRole === "owner") {
+      return false;
+    }
+    // Owners can remove anyone (except other owners, already checked above)
+    if (activeMember.role === "owner") {
+      return true;
+    }
+    // Admins cannot remove other admins
+    if (activeMember.role === "admin" && targetMemberRole === "admin") {
+      return false;
+    }
+    // Admins can remove members
+    return activeMember.role === "admin" && targetMemberRole === "member";
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -102,6 +125,7 @@ async function MembersContent() {
           <TableHead>Member</TableHead>
           <TableHead>Role</TableHead>
           <TableHead>Joined</TableHead>
+          <TableHead className="w-[100px]">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -133,6 +157,11 @@ async function MembersContent() {
             </TableCell>
             <TableCell className="text-muted-foreground">
               {formatDate(new Date(memberData.createdAt))}
+            </TableCell>
+            <TableCell>
+              {canRemoveMember(memberData.role) && (
+                <RemoveMemberButton memberId={memberData.id} memberName={memberData.user.name} />
+              )}
             </TableCell>
           </TableRow>
         ))}

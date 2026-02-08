@@ -51,18 +51,18 @@ export function useStandFormActions() {
       return;
     }
 
+    const activeAction = actionState.activeAction;
     const endedAt = Date.now();
     const cycleNumber =
-      formData.completedCycles.filter((c) => c.phase === actionState.activeAction!.phase).length +
-      1;
+      formData.completedCycles.filter((c) => c.phase === activeAction.phase).length + 1;
 
     // Add to FormData
     dispatchFormData({
       type: "add_cycle",
       payload: {
-        phase: actionState.activeAction.phase,
+        phase: activeAction.phase,
         cycleNumber,
-        startedAt: actionState.activeAction.startedAt,
+        startedAt: activeAction.startedAt,
         endedAt,
         bucket,
       },

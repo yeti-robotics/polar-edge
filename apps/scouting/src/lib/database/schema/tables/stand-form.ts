@@ -11,7 +11,7 @@ export const standForm = pgTable(
       .notNull()
       .references(() => teamMatch.id),
 
-    scoutMemberId: text("scout_member_id").references(() => member.id, { onDelete: "cascade" }),
+    scoutMemberId: text("scout_member_id").references(() => member.id, { onDelete: "set null" }),
 
     comments: text("comments").notNull().default(""),
     oofTimeSeconds: smallint("oof_time_seconds").notNull().default(0),
