@@ -14,7 +14,11 @@ export const FormSchema = z.object({
   canTrench: z.boolean().optional(),
   canBump: z.boolean().optional(),
   canShuttle: z.boolean().optional(),
-  capacity: z.number().int().positive("Capacity is required"),
+  capacity: z
+    .number()
+    .int()
+    .positive("Capacity is required")
+    .max(200, "Capacity cannot exceed 200"),
   weight: z.number().int().positive("Weight is required"),
   climbType: z
     .union([z.enum(CLIMB_TYPE_OPTIONS), z.literal("")])

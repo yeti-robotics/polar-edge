@@ -15,8 +15,16 @@ import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
-import { useActionState, useEffect, useRef } from "react";
+import { startTransition, useActionState, useCallback, useEffect, useRef } from "react";
 import { submitPitForm } from "./action";
+import { usePhotoUpload } from "./hooks/use-photo-upload";
+import {
+  PhotoCompressionProgress,
+  PhotoUploadError,
+  PhotoUploadProgress,
+  PitPhotoUpload,
+  type PitPhotoUploadRef,
+} from "./PitPhotoUpload";
 import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
 
 const DRIVING_ABILITIES = [
@@ -37,6 +45,9 @@ export function PitForm() {
 
   const lastHandledSuccess = useRef<typeof state | null>(null);
   const lastHandledError = useRef<typeof state | null>(null);
+  const photoUploadRef = useRef<PitPhotoUploadRef>(null);
+
+  const { state: photoUploadState, uploadPhotos, reset: resetPhotoUpload } = usePhotoUpload();
 
   useEffect(() => {
     if ("_success" in state && state !== lastHandledSuccess.current) {
@@ -44,8 +55,10 @@ export function PitForm() {
       if (typeof form.reset === "function") {
         form.reset();
       }
+      resetPhotoUpload();
+      photoUploadRef.current?.clearPhotos();
       toast.success("Pit form submitted successfully.", {
-        position: "top-right",
+        position: "bottom-right",
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -55,11 +68,70 @@ export function PitForm() {
       typeof state._error === "string"
     ) {
       lastHandledError.current = state;
+      resetPhotoUpload();
       toast.error(state._error, {
         position: "top-right",
       });
     }
-  }, [state, form]);
+  }, [state, form, resetPhotoUpload]);
+
+  const handleSubmitWithPhotos = useCallback(
+    async (e: React.SubmitEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      // Validate form first
+      await form.handleSubmit(e);
+      if (!form.state.isValid) {
+        return;
+      }
+
+      const teamNumber = form.state.values.teamNumber;
+      if (!teamNumber) {
+        toast.error("Team number is required");
+        return;
+      }
+
+      // Get pending photos
+      const pendingFiles = photoUploadRef.current?.getPendingFiles() ?? [];
+
+      // Build FormData from form values
+      const buildFormData = (photoKeys?: string[]) => {
+        const formData = new FormData();
+        const values = form.state.values;
+
+        formData.append("teamNumber", String(values.teamNumber));
+        formData.append("drivetrainType", values.drivetrainType);
+        formData.append("canTrench", values.canTrench ? "on" : "off");
+        formData.append("canBump", values.canBump ? "on" : "off");
+        formData.append("canShuttle", values.canShuttle ? "on" : "off");
+        formData.append("capacity", String(values.capacity));
+        formData.append("weight", String(values.weight));
+        formData.append("climbType", values.climbType);
+
+        if (photoKeys && photoKeys.length > 0) {
+          formData.append("photoKeys", JSON.stringify(photoKeys));
+        }
+
+        return formData;
+      };
+
+      // Upload photos if any, or submit form directly
+      const photoKeys = await uploadPhotos(pendingFiles, teamNumber);
+
+      // If uploadPhotos returned null, there was an error (already handled by the hook)
+      if (pendingFiles.length > 0 && photoKeys === null) {
+        return;
+      }
+
+      // Build FormData with form fields and photo keys
+      const formData = buildFormData(photoKeys ?? undefined);
+
+      startTransition(() => {
+        action(formData);
+      });
+    },
+    [form, action, uploadPhotos]
+  );
 
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
@@ -72,7 +144,7 @@ export function PitForm() {
   }, [form.state.isDirty]);
 
   return (
-    <form action={action} onSubmit={form.handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmitWithPhotos} className="space-y-4">
       <Card>
         <CardHeader>
           <CardTitle>Team Number</CardTitle>
@@ -300,9 +372,29 @@ export function PitForm() {
         </CardContent>
       </Card>
 
+      <PitPhotoUpload ref={photoUploadRef} disabled={photoUploadState.status !== "idle"}>
+        {photoUploadState.status === "compressing" && (
+          <PhotoCompressionProgress value={photoUploadState.compressionProgress} />
+        )}
+        {photoUploadState.status === "uploading" && photoUploadState.uploadProgress && (
+          <PhotoUploadProgress {...photoUploadState.uploadProgress} />
+        )}
+        {photoUploadState.error && <PhotoUploadError message={photoUploadState.error} />}
+      </PitPhotoUpload>
+
       <div className="sticky bottom-0 bg-background pb-5 pt-3">
-        <Button type="submit" disabled={form.state.isSubmitting || isPending} className="w-full">
-          {form.state.isSubmitting || isPending ? "Submitting..." : "Submit"}
+        <Button
+          type="submit"
+          disabled={form.state.isSubmitting || isPending || photoUploadState.status !== "idle"}
+          className="w-full"
+        >
+          {photoUploadState.status === "compressing"
+            ? "Compressing photos..."
+            : photoUploadState.status === "uploading"
+              ? "Uploading photos..."
+              : form.state.isSubmitting || isPending
+                ? "Submitting..."
+                : "Submit"}
         </Button>
       </div>
     </form>
