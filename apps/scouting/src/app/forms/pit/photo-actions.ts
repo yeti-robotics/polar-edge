@@ -48,7 +48,9 @@ export async function getPhotoUploadUrl(params: {
       return { error: "Invalid file size" };
     }
     if (params.fileSize > MAX_FILE_SIZE_BYTES) {
-      return { error: `File size exceeds maximum limit of ${MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB` };
+      return {
+        error: `File size exceeds maximum limit of ${MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB`,
+      };
     }
 
     // Validate team number

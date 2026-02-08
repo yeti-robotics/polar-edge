@@ -45,10 +45,14 @@ export const PitPhotoUpload = forwardRef<PitPhotoUploadRef, PitPhotoUploadProps>
     }, []);
 
     // Expose getPendingFiles and clearPhotos to parent
-    useImperativeHandle(ref, () => ({
-      getPendingFiles: () => photos.map((p) => p.file),
-      clearPhotos,
-    }), [photos, clearPhotos]);
+    useImperativeHandle(
+      ref,
+      () => ({
+        getPendingFiles: () => photos.map((p) => p.file),
+        clearPhotos,
+      }),
+      [photos, clearPhotos]
+    );
 
     const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(e.target.files ?? []);

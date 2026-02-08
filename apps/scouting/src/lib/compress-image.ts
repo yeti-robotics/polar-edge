@@ -16,15 +16,18 @@ const INITIAL_QUALITY = 0.85;
  * @param file - The image file to compress
  * @returns Promise resolving to compressed file or error message
  */
-export async function compressImage(
-  file: File
-): Promise<{ file: File } | { error: string }> {
+export async function compressImage(file: File): Promise<{ file: File } | { error: string }> {
   try {
     let fileToCompress = file;
 
     // Convert HEIC/HEIF to JPEG using browser's native capabilities
     // Most modern browsers can decode HEIC via canvas when supported
-    if (file.type === "image/heic" || file.type === "image/heif" || file.name.toLowerCase().endsWith(".heic") || file.name.toLowerCase().endsWith(".heif")) {
+    if (
+      file.type === "image/heic" ||
+      file.type === "image/heif" ||
+      file.name.toLowerCase().endsWith(".heic") ||
+      file.name.toLowerCase().endsWith(".heif")
+    ) {
       try {
         // Try to convert HEIC to JPEG using canvas
         const heicBlob = await convertHeicToJpeg(file);
