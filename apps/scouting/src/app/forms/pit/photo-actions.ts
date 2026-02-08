@@ -22,13 +22,11 @@ export async function getPhotoUploadUrl(params: {
   fileSize: number;
 }): Promise<{ url: string; key: string } | { error: string }> {
   try {
-    // Authenticate
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) {
       return { error: "Unauthorized" };
     }
 
-    // Get active member
     const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });
@@ -36,14 +34,12 @@ export async function getPhotoUploadUrl(params: {
       return { error: "No active organization" };
     }
 
-    // Validate content type
     if (
       !ALLOWED_CONTENT_TYPES.includes(params.contentType as (typeof ALLOWED_CONTENT_TYPES)[number])
     ) {
       return { error: "Invalid file type. Only JPEG, PNG, and WebP are allowed." };
     }
 
-    // Validate file size
     if (!Number.isInteger(params.fileSize) || params.fileSize <= 0) {
       return { error: "Invalid file size" };
     }
@@ -53,12 +49,10 @@ export async function getPhotoUploadUrl(params: {
       };
     }
 
-    // Validate team number
     if (!Number.isInteger(params.teamNumber) || params.teamNumber <= 0) {
       return { error: "Invalid team number" };
     }
 
-    // Validate index
     if (!Number.isInteger(params.index) || params.index < 0 || params.index > 9) {
       return { error: "Invalid photo index (0-9)" };
     }
@@ -72,7 +66,8 @@ export async function getPhotoUploadUrl(params: {
       extension,
     });
 
-    const result = await createPresignedUploadUrl(key, params.contentType, params.fileSize);
+    // Generate presigned URL
+    const result = await createPresignedUploadUrl(key, params.contentType);
     return result;
   } catch (error) {
     console.error("Get photo upload URL error:", error);

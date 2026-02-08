@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   images: {
+    localPatterns: [
+      {
+        pathname: "/pit-photo",
+      },
+    ],
     remotePatterns: [
       {
         protocol: "https",

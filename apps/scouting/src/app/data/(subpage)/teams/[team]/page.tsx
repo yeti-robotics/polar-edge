@@ -2,9 +2,10 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { MatchHistoryTable } from "@/app/data/(subpage)/teams/[team]/MatchHistoryTable";
+import { PitPhotoImage } from "@/app/data/(subpage)/teams/[team]/PitPhotoImage";
 import { OrganizationFilterToggle } from "@/components/teams/OrganizationFilterToggle";
 import { auth } from "@/lib/auth";
-import { getTeamInfo, getTeamMatchDetails, getTeamMatchHistory } from "./actions";
+import { getTeamInfo, getTeamMatchDetails, getTeamMatchHistory, getTeamPitPhotos } from "./actions";
 
 interface TeamPageProps {
   params: Promise<{ team: string }>;
@@ -12,9 +13,15 @@ interface TeamPageProps {
 }
 
 async function getActiveOrganizationId(): Promise<string | null> {
-  const requestHeaders = await headers();
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-  return activeMember?.organizationId ?? null;
+  try {
+    const requestHeaders = await headers();
+    const activeMember = await auth.api.getActiveMember({
+      headers: requestHeaders,
+    });
+    return activeMember?.organizationId ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export default async function TeamPage({ params, searchParams }: TeamPageProps) {
@@ -29,9 +36,10 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
   const organizationId = await getActiveOrganizationId();
   const filterByOrgBool = filterByOrg === "true";
 
-  const [teamInfo, matchHistory] = await Promise.all([
+  const [teamInfo, matchHistory, pitPhotos] = await Promise.all([
     getTeamInfo(teamNumber),
     getTeamMatchHistory(teamNumber, organizationId, filterByOrgBool),
+    getTeamPitPhotos(teamNumber, organizationId),
   ]);
 
   if (!teamInfo) {
@@ -59,6 +67,22 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
           <OrganizationFilterToggle />
         </Suspense>
       </div>
+
+      {pitPhotos.length > 0 && (
+        <div>
+          <h2 className="text-2xl mb-4">Pit photos</h2>
+          <ul className="flex flex-wrap gap-4 list-none p-0 m-0">
+            {pitPhotos.map((photo) => (
+              <li key={`${photo.storageKey}-${photo.index}`} className="relative">
+                <PitPhotoImage
+                  src={`/pit-photo?key=${encodeURIComponent(photo.storageKey)}&token=${encodeURIComponent(photo.viewToken)}`}
+                  alt={`Robot photo ${photo.index + 1}`}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div>
         <h2 className="text-2xl mb-4">Match History</h2>
