@@ -22,19 +22,8 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
-import {
-  initialFormState,
-  mergeForm,
-  useForm,
-  useTransform,
-} from "@tanstack/react-form-nextjs";
-import {
-  startTransition,
-  useActionState,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
+import { startTransition, useActionState, useCallback, useEffect, useRef } from "react";
 import { submitPitForm } from "./action";
 import { usePhotoUpload } from "./hooks/use-photo-upload";
 import {
@@ -44,12 +33,7 @@ import {
   PitPhotoUpload,
   type PitPhotoUploadRef,
 } from "./PitPhotoUpload";
-import {
-  CLIMB_TYPE_OPTIONS,
-  DRIVETRAIN_OPTIONS,
-  FormSchema,
-  formOpts,
-} from "./shared";
+import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
 
 const DRIVING_ABILITIES = [
   { name: "canTrench", id: "can_trench", label: "Can Trench" },
@@ -57,21 +41,11 @@ const DRIVING_ABILITIES = [
   { name: "canShuttle", id: "can_shuttle", label: "Can Shuttle" },
 ] as const;
 
-export function PitForm({
-  teams,
-}: {
-  teams: { teamNumber: number; teamName: string }[];
-}) {
-  const [state, action, isPending] = useActionState(
-    submitPitForm,
-    initialFormState,
-  );
+export function PitForm({ teams }: { teams: { teamNumber: number; teamName: string }[] }) {
+  const [state, action, isPending] = useActionState(submitPitForm, initialFormState);
   const form = useForm({
     ...formOpts,
-    transform: useTransform(
-      (baseForm) => mergeForm(baseForm, state ?? {}),
-      [state],
-    ),
+    transform: useTransform((baseForm) => mergeForm(baseForm, state ?? {}), [state]),
     validators: {
       onSubmit: FormSchema,
     },
@@ -81,11 +55,7 @@ export function PitForm({
   const lastHandledError = useRef<typeof state | null>(null);
   const photoUploadRef = useRef<PitPhotoUploadRef>(null);
 
-  const {
-    state: photoUploadState,
-    uploadPhotos,
-    reset: resetPhotoUpload,
-  } = usePhotoUpload();
+  const { state: photoUploadState, uploadPhotos, reset: resetPhotoUpload } = usePhotoUpload();
 
   useEffect(() => {
     if ("_success" in state && state !== lastHandledSuccess.current) {
@@ -168,7 +138,7 @@ export function PitForm({
         action(formData);
       });
     },
-    [form, action, uploadPhotos],
+    [form, action, uploadPhotos]
   );
 
   useEffect(() => {
@@ -190,8 +160,7 @@ export function PitForm({
         <CardContent>
           <form.Field name="teamNumber">
             {(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <Field>
                   <FieldLabel className="sr-only">Team Number</FieldLabel>
@@ -214,10 +183,7 @@ export function PitForm({
                       <ComboboxEmpty>No items found.</ComboboxEmpty>
                       <ComboboxList>
                         {(item) => (
-                          <ComboboxItem
-                            key={item.teamNumber}
-                            value={item.teamNumber.toString()}
-                          >
+                          <ComboboxItem key={item.teamNumber} value={item.teamNumber.toString()}>
                             {item.teamNumber} - {item.teamName}
                           </ComboboxItem>
                         )}
@@ -235,15 +201,12 @@ export function PitForm({
       <Card>
         <CardHeader>
           <CardTitle>Drivetrain Type</CardTitle>
-          <CardDescription>
-            Select the drivetrain type of the robot.
-          </CardDescription>
+          <CardDescription>Select the drivetrain type of the robot.</CardDescription>
         </CardHeader>
         <CardContent>
           <form.Field name="drivetrainType">
             {(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <div>
                   <RadioGroup
@@ -254,9 +217,7 @@ export function PitForm({
                     aria-label="Drivetrain Type"
                     value={field.state.value}
                     onValueChange={(v) =>
-                      field.handleChange(
-                        v as (typeof DRIVETRAIN_OPTIONS)[number],
-                      )
+                      field.handleChange(v as (typeof DRIVETRAIN_OPTIONS)[number])
                     }
                     className="flex flex-wrap gap-2.5"
                   >
@@ -287,17 +248,14 @@ export function PitForm({
       <Card>
         <CardHeader>
           <CardTitle>Driving Ability</CardTitle>
-          <CardDescription>
-            Select all capabilities that apply to this robot.
-          </CardDescription>
+          <CardDescription>Select all capabilities that apply to this robot.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2">
             {DRIVING_ABILITIES.map(({ name, id, label }) => (
               <form.Field key={name} name={name}>
                 {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                   return (
                     <div>
                       <Label
@@ -309,16 +267,12 @@ export function PitForm({
                           name={name}
                           checked={field.state.value}
                           onBlur={field.handleBlur}
-                          onCheckedChange={(checked) =>
-                            field.handleChange(checked === true)
-                          }
+                          onCheckedChange={(checked) => field.handleChange(checked === true)}
                           aria-invalid={isInvalid}
                         />
                         {label}
                       </Label>
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
                     </div>
                   );
                 }}
@@ -331,16 +285,13 @@ export function PitForm({
       <Card>
         <CardHeader>
           <CardTitle>Specifications</CardTitle>
-          <CardDescription>
-            Quantitative measurements of the robot.
-          </CardDescription>
+          <CardDescription>Quantitative measurements of the robot.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <form.Field name="capacity">
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field>
                     <FieldLabel>Capacity (pieces)</FieldLabel>
@@ -351,9 +302,7 @@ export function PitForm({
                       value={field.state.value === 0 ? "" : field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
-                        field.handleChange(
-                          e.target.value === "" ? 0 : Number(e.target.value),
-                        )
+                        field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
                       }
                       placeholder="e.g. 4"
                       inputMode="numeric"
@@ -361,17 +310,14 @@ export function PitForm({
                       min={0}
                       aria-invalid={isInvalid}
                     />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>
                 );
               }}
             </form.Field>
             <form.Field name="weight">
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field>
                     <FieldLabel>Weight (lbs)</FieldLabel>
@@ -382,9 +328,7 @@ export function PitForm({
                       value={field.state.value === 0 ? "" : field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
-                        field.handleChange(
-                          e.target.value === "" ? 0 : Number(e.target.value),
-                        )
+                        field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
                       }
                       placeholder="e.g. 120"
                       inputMode="numeric"
@@ -392,9 +336,7 @@ export function PitForm({
                       min={0}
                       aria-invalid={isInvalid}
                     />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>
                 );
               }}
@@ -410,8 +352,7 @@ export function PitForm({
         <CardContent>
           <form.Field name="climbType">
             {(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <div>
                   <RadioGroup
@@ -422,9 +363,7 @@ export function PitForm({
                     aria-label="Climb Type"
                     value={field.state.value}
                     onValueChange={(v) =>
-                      field.handleChange(
-                        v as (typeof CLIMB_TYPE_OPTIONS)[number],
-                      )
+                      field.handleChange(v as (typeof CLIMB_TYPE_OPTIONS)[number])
                     }
                     className="flex flex-wrap gap-2.5"
                   >
@@ -452,32 +391,20 @@ export function PitForm({
         </CardContent>
       </Card>
 
-      <PitPhotoUpload
-        ref={photoUploadRef}
-        disabled={photoUploadState.status !== "idle"}
-      >
+      <PitPhotoUpload ref={photoUploadRef} disabled={photoUploadState.status !== "idle"}>
         {photoUploadState.status === "compressing" && (
-          <PhotoCompressionProgress
-            value={photoUploadState.compressionProgress}
-          />
+          <PhotoCompressionProgress value={photoUploadState.compressionProgress} />
         )}
-        {photoUploadState.status === "uploading" &&
-          photoUploadState.uploadProgress && (
-            <PhotoUploadProgress {...photoUploadState.uploadProgress} />
-          )}
-        {photoUploadState.error && (
-          <PhotoUploadError message={photoUploadState.error} />
+        {photoUploadState.status === "uploading" && photoUploadState.uploadProgress && (
+          <PhotoUploadProgress {...photoUploadState.uploadProgress} />
         )}
+        {photoUploadState.error && <PhotoUploadError message={photoUploadState.error} />}
       </PitPhotoUpload>
 
       <div className="sticky bottom-0 bg-background pb-5 pt-3">
         <Button
           type="submit"
-          disabled={
-            form.state.isSubmitting ||
-            isPending ||
-            photoUploadState.status !== "idle"
-          }
+          disabled={form.state.isSubmitting || isPending || photoUploadState.status !== "idle"}
           className="w-full"
         >
           {photoUploadState.status === "compressing"
