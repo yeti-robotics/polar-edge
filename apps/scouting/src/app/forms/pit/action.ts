@@ -74,7 +74,7 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
     const [insertedForm] = await db
       .insert(pitForm)
       .values({
-        teamNumber: validated.teamNumber,
+        teamNumber: Number(validated.teamNumber),
         drivetrainType: validated.drivetrainType === "" ? "other" : validated.drivetrainType,
         canTrench: validated.canTrench ?? false,
         canBump: validated.canBump ?? false,
