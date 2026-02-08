@@ -9,6 +9,14 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { Checkbox } from "@repo/ui/components/checkbox";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@repo/ui/components/combobox";
 import { Field, FieldError, FieldLabel } from "@repo/ui/components/field";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -33,7 +41,7 @@ const DRIVING_ABILITIES = [
   { name: "canShuttle", id: "can_shuttle", label: "Can Shuttle" },
 ] as const;
 
-export function PitForm() {
+export function PitForm({ teams }: { teams: { teamNumber: number; teamName: string }[] }) {
   const [state, action, isPending] = useActionState(submitPitForm, initialFormState);
   const form = useForm({
     ...formOpts,
@@ -85,7 +93,7 @@ export function PitForm() {
         return;
       }
 
-      const teamNumber = form.state.values.teamNumber;
+      const teamNumber = Number(form.state.values.teamNumber);
       if (!teamNumber) {
         toast.error("Team number is required");
         return;
@@ -156,21 +164,32 @@ export function PitForm() {
               return (
                 <Field>
                   <FieldLabel className="sr-only">Team Number</FieldLabel>
-                  <Input
-                    type="number"
-                    id="team_number"
+                  <Combobox
+                    id={field.name}
                     name={field.name}
-                    value={field.state.value === 0 ? "" : field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) =>
-                      field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
-                    }
-                    placeholder="e.g. 3506"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    autoFocus
-                    aria-invalid={isInvalid}
-                  />
+                    value={field.state.value}
+                    onValueChange={(v) => {
+                      v && field.handleChange(v);
+                    }}
+                    items={teams}
+                  >
+                    <ComboboxInput
+                      onBlur={field.handleBlur}
+                      aria-label="Team number"
+                      aria-invalid={isInvalid}
+                      placeholder="Select team"
+                    />
+                    <ComboboxContent>
+                      <ComboboxEmpty>No items found.</ComboboxEmpty>
+                      <ComboboxList>
+                        {(item) => (
+                          <ComboboxItem key={item.teamNumber} value={item.teamNumber.toString()}>
+                            {item.teamNumber} - {item.teamName}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
