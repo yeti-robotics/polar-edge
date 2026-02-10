@@ -18,6 +18,7 @@
       "release-type": "node",
       "changelog-path": "CHANGELOG.md",
       "include-component-in-tag": true,
+      "versioning": "prerelease",
       "prerelease": true,
       "prerelease-type": "alpha"
     }
