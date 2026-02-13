@@ -6,14 +6,12 @@ interface TeamsAtEventListProps {
   eventId: string;
   picklistId: string;
   picklistTeams: number[];
-  picklists: { id: string; name: string }[];
 }
 
 export async function TeamsAtEventList({
   eventId,
   picklistId,
   picklistTeams,
-  picklists,
 }: TeamsAtEventListProps) {
   const [allTeams, metricsMap] = await Promise.all([
     getTeamsForEvent(eventId),
@@ -40,10 +38,9 @@ export async function TeamsAtEventList({
       <CardHeader>
         <CardTitle>All Teams at Event</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="max-h-[calc(100vh-16rem)] overflow-y-auto">
         <TeamsAtEventClient
           teams={teamsWithMetrics}
-          picklists={picklists}
           currentPicklistId={picklistId}
           picklistTeams={picklistTeams}
           nextRank={nextRank}

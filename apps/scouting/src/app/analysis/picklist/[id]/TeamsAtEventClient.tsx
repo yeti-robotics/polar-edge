@@ -29,14 +29,8 @@ interface TeamWithMetrics {
   matchesScouted?: number;
 }
 
-interface Picklist {
-  id: string;
-  name: string;
-}
-
 interface TeamsAtEventClientProps {
   teams: TeamWithMetrics[];
-  picklists: Picklist[];
   currentPicklistId: string;
   picklistTeams: number[];
   nextRank: number;
@@ -44,45 +38,22 @@ interface TeamsAtEventClientProps {
 
 export function TeamsAtEventClient({
   teams,
-  picklists,
   currentPicklistId,
   picklistTeams,
   nextRank,
 }: TeamsAtEventClientProps) {
-  const [selectedPicklistId, setSelectedPicklistId] = useState(currentPicklistId);
-
   return (
     <div className="space-y-4">
-      {picklists.length > 1 && (
-        <div className="flex items-center gap-2">
-          <label htmlFor="picklist-select" className="text-sm font-medium">
-            Add to picklist:
-          </label>
-          <Select value={selectedPicklistId} onValueChange={setSelectedPicklistId}>
-            <SelectTrigger id="picklist-select" className="w-[200px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {picklists.map((pl) => (
-                <SelectItem key={pl.id} value={pl.id}>
-                  {pl.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="text-right"></TableHead>
             <TableHead>Team</TableHead>
             <TableHead>Name</TableHead>
             <TableHead className="text-right">Avg Pts</TableHead>
             <TableHead className="text-right">Climb %</TableHead>
             <TableHead className="text-right">Uptime %</TableHead>
             <TableHead className="text-right">Matches</TableHead>
-            <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -94,6 +65,19 @@ export function TeamsAtEventClient({
                 key={team.teamNumber}
                 className="data-[removed=true]:opacity-50 h-12"
               >
+                <TableCell className="text-right min-w-20">
+                  <div className="inline-flex items-center justify-end">
+                    {inPicklist ? (
+                      <span className="text-muted-foreground">Added</span>
+                    ) : (
+                      <QuickAddTeamButton
+                        picklistId={currentPicklistId}
+                        teamNumber={team.teamNumber}
+                        rank={nextRank}
+                      />
+                    )}
+                  </div>
+                </TableCell>
                 <TableCell className="font-mono font-bold">
                   <Link
                     href={`/data/teams/${team.teamNumber}`}
@@ -116,19 +100,6 @@ export function TeamsAtEventClient({
                 </TableCell>
                 <TableCell className="text-right tabular-nums">
                   {team.matchesScouted !== undefined ? team.matchesScouted : "—"}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="inline-flex items-center justify-end">
-                    {inPicklist ? (
-                      <Badge variant="secondary">✓ In Picklist</Badge>
-                    ) : (
-                      <QuickAddTeamButton
-                        picklistId={selectedPicklistId}
-                        teamNumber={team.teamNumber}
-                        rank={nextRank}
-                      />
-                    )}
-                  </div>
                 </TableCell>
               </TableRow>
             );

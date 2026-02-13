@@ -3,6 +3,7 @@
 import { and, eq, gt, gte, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { picklist, picklistTeam } from "@/lib/database/schema";
@@ -269,12 +270,12 @@ export async function deletePicklist(data: unknown) {
     if (result.length === 0) {
       return { error: "Picklist not found" };
     }
-
-    return { success: true };
   } catch (error) {
     console.error("Delete picklist error:", error);
     return { error: "Failed to delete picklist" };
   }
+
+  redirect("/analysis/picklist");
 }
 
 /**

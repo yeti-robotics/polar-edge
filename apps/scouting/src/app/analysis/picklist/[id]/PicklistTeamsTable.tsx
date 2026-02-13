@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { cn } from "@repo/ui/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { startTransition, useOptimistic } from "react";
@@ -128,20 +129,20 @@ export function PicklistTeamsTable({ picklistId, initialTeams }: PicklistTeamsTa
   }
 
   return (
-    <Table>
+    <Table className="table-fixed">
       <TableHeader>
         <TableRow>
-          <TableHead className="w-12"></TableHead>
-          <TableHead className="w-24">#</TableHead>
-          <TableHead>Team</TableHead>
-          <TableHead className="w-12"></TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead className="text-right">Avg Pts</TableHead>
-          <TableHead className="text-right">Climb %</TableHead>
-          <TableHead className="text-right">Uptime %</TableHead>
-          <TableHead className="text-right">Matches</TableHead>
-          <TableHead className="min-w-[200px]">Notes</TableHead>
-          <TableHead className="w-32 text-right">Actions</TableHead>
+          <TableHead className="w-10"></TableHead>
+          <TableHead className="w-12">#</TableHead>
+          <TableHead className="w-14">Team</TableHead>
+          <TableHead className="w-20"></TableHead>
+          <TableHead className="w-32 truncate">Name</TableHead>
+          <TableHead className="w-24 text-right">Avg Pts</TableHead>
+          <TableHead className="w-24 text-right">Climb %</TableHead>
+          <TableHead className="w-24 text-right">Uptime %</TableHead>
+          <TableHead className="w-24 text-right">Matches</TableHead>
+          <TableHead className="w-32">Notes</TableHead>
+          <TableHead className="w-24 text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -173,7 +174,7 @@ export function PicklistTeamsTable({ picklistId, initialTeams }: PicklistTeamsTa
                 onReorder={handleReorder}
               />
             </TableCell>
-            <TableCell className={team.picked ? "line-through" : ""}>
+            <TableCell className={cn("truncate", team.picked ? "line-through" : "")}>
               {team.teamName || "—"}
             </TableCell>
             <TableCell className="text-right tabular-nums">
@@ -188,7 +189,7 @@ export function PicklistTeamsTable({ picklistId, initialTeams }: PicklistTeamsTa
             <TableCell className="text-right tabular-nums">
               {team.matchesScouted !== undefined ? team.matchesScouted : "—"}
             </TableCell>
-            <TableCell>
+            <TableCell className="truncate">
               <NotesCell
                 picklistId={picklistId}
                 teamNumber={team.teamNumber}
