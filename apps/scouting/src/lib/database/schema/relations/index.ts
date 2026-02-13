@@ -7,9 +7,12 @@ import { organization } from "../tables/organization";
 import { organizationEvent } from "../tables/organization-event";
 import { organizationInviteLink } from "../tables/organization-invite-link";
 import { passkey } from "../tables/passkey";
+import { picklist } from "../tables/picklist";
+import { picklistTeam } from "../tables/picklist-team";
 import { pitForm } from "../tables/pit-form";
 import { pitPhoto } from "../tables/pit-photo";
 import { session } from "../tables/session";
+import { team } from "../tables/team";
 import { user } from "../tables/user";
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -39,6 +42,7 @@ export const organizationRelations = relations(organization, ({ many }) => ({
   invitations: many(invitation),
   inviteLinks: many(organizationInviteLink),
   organizationEvents: many(organizationEvent),
+  picklists: many(picklist),
 }));
 
 export const memberRelations = relations(member, ({ one }) => ({
@@ -100,5 +104,32 @@ export const pitPhotoRelations = relations(pitPhoto, ({ one }) => ({
   pitForm: one(pitForm, {
     fields: [pitPhoto.pitFormId],
     references: [pitForm.id],
+  }),
+}));
+
+export const picklistRelations = relations(picklist, ({ one, many }) => ({
+  organization: one(organization, {
+    fields: [picklist.organizationId],
+    references: [organization.id],
+  }),
+  event: one(event, {
+    fields: [picklist.eventId],
+    references: [event.id],
+  }),
+  createdBy: one(member, {
+    fields: [picklist.createdByMemberId],
+    references: [member.id],
+  }),
+  teams: many(picklistTeam),
+}));
+
+export const picklistTeamRelations = relations(picklistTeam, ({ one }) => ({
+  picklist: one(picklist, {
+    fields: [picklistTeam.picklistId],
+    references: [picklist.id],
+  }),
+  team: one(team, {
+    fields: [picklistTeam.teamNumber],
+    references: [team.teamNumber],
   }),
 }));

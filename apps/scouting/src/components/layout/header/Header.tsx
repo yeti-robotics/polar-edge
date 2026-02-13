@@ -29,12 +29,12 @@ const navItems = [
     href: "/forms/stand",
   },
   {
-    label: "Pit Form",
-    href: "/forms/pit",
-  },
-  {
     label: "Data",
     href: "/data",
+  },
+  {
+    label: "Picklist",
+    href: "/analysis/picklist",
   },
 ];
 
