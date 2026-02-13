@@ -75,7 +75,7 @@ async function PicklistContent() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       {picklists.map((picklist) => (
         <Link key={picklist.id} href={`/analysis/picklist/${picklist.id}`}>
           <Card className="hover:border-primary transition-colors cursor-pointer">

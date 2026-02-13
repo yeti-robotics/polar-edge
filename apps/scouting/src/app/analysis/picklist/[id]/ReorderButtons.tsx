@@ -21,6 +21,7 @@ export function ReorderButtons({
   return (
     <>
       <Button
+        type="button"
         variant="ghost"
         size="icon"
         onClick={() => onReorder(teamNumber, currentRank - 1)}
@@ -29,6 +30,7 @@ export function ReorderButtons({
         <ChevronUpIcon className="size-4" />
       </Button>
       <Button
+        type="button"
         variant="ghost"
         size="icon"
         onClick={() => onReorder(teamNumber, currentRank + 1)}
