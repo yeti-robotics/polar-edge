@@ -58,3 +58,14 @@ export const TogglePickedSchema = z.object({
 });
 
 export type TogglePickedInput = z.infer<typeof TogglePickedSchema>;
+
+export const UpdatePicklistTeamNotesSchema = z.object({
+  picklistId: z.string().uuid("Invalid picklist ID"),
+  teamNumber: z
+    .number()
+    .int("Team number must be an integer")
+    .positive("Team number must be positive"),
+  notes: z.string().max(1000, "Notes must be 1000 characters or less"),
+});
+
+export type UpdatePicklistTeamNotesInput = z.infer<typeof UpdatePicklistTeamNotesSchema>;

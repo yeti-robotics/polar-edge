@@ -71,6 +71,13 @@
       "when": 1770941878343,
       "tag": "0009_silent_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1770944246265,
+      "tag": "0010_supreme_baron_strucker",
+      "breakpoints": true
     }
   ]
 }
