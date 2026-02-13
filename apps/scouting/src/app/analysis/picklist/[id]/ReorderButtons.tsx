@@ -2,57 +2,37 @@
 
 import { Button } from "@repo/ui/components/button";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { reorderPicklistTeam } from "../actions";
 
 interface ReorderButtonsProps {
-  picklistId: string;
   teamNumber: number;
   currentRank: number;
   isFirst: boolean;
   isLast: boolean;
+  onReorder: (teamNumber: number, newRank: number) => void;
 }
 
 export function ReorderButtons({
-  picklistId,
   teamNumber,
   currentRank,
   isFirst,
   isLast,
+  onReorder,
 }: ReorderButtonsProps) {
-  const [isReordering, setIsReordering] = useState(false);
-  const router = useRouter();
-
-  const handleReorder = async (newRank: number) => {
-    setIsReordering(true);
-    const result = await reorderPicklistTeam({ picklistId, teamNumber, newRank });
-
-    if ("error" in result) {
-      console.error("Failed to reorder team:", result.error);
-      setIsReordering(false);
-      return;
-    }
-
-    setIsReordering(false);
-    router.refresh();
-  };
-
   return (
     <>
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => handleReorder(currentRank - 1)}
-        disabled={isFirst || isReordering}
+        onClick={() => onReorder(teamNumber, currentRank - 1)}
+        disabled={isFirst}
       >
         <ChevronUpIcon className="size-4" />
       </Button>
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => handleReorder(currentRank + 1)}
-        disabled={isLast || isReordering}
+        onClick={() => onReorder(teamNumber, currentRank + 1)}
+        disabled={isLast}
       >
         <ChevronDownIcon className="size-4" />
       </Button>

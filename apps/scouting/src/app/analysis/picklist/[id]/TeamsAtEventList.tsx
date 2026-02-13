@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { cn } from "@repo/ui/lib/utils";
 import { getTeamsForEvent } from "../queries";
 import { QuickAddTeamButton } from "./QuickAddTeamButton";
 
