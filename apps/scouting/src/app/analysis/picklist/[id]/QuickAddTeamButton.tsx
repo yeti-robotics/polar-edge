@@ -3,7 +3,7 @@
 import { Button } from "@repo/ui/components/button";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { startTransition, useOptimistic } from "react";
 import { addTeamToPicklist } from "../actions";
 
 interface QuickAddTeamButtonProps {
@@ -13,13 +13,14 @@ interface QuickAddTeamButtonProps {
 }
 
 export function QuickAddTeamButton({ picklistId, teamNumber, rank }: QuickAddTeamButtonProps) {
-  const [isAdding, setIsAdding] = useState(false);
   const router = useRouter();
+  const [optimisticAdded, setOptimisticAdded] = useOptimistic(false, () => true);
 
   const handleAdd = async () => {
-    setIsAdding(true);
+    startTransition(() => {
+      setOptimisticAdded(true);
+    });
 
-    // Add to the end of the picklist
     const result = await addTeamToPicklist({
       picklistId,
       teamNumber,
@@ -28,15 +29,17 @@ export function QuickAddTeamButton({ picklistId, teamNumber, rank }: QuickAddTea
 
     if ("error" in result) {
       console.error("Failed to add team:", result.error);
-      setIsAdding(false);
-      return;
     }
 
     router.refresh();
   };
 
+  if (optimisticAdded) {
+    return <span className="text-sm text-muted-foreground">Adding...</span>;
+  }
+
   return (
-    <Button variant="ghost" size="icon-sm" onClick={handleAdd} disabled={isAdding}>
+    <Button variant="ghost" size="icon-sm" onClick={handleAdd}>
       <PlusIcon className="size-4" />
     </Button>
   );

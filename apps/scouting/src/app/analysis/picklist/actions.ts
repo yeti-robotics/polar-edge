@@ -221,10 +221,7 @@ export async function removeTeamFromPicklist(data: unknown) {
         .update(picklistTeam)
         .set({ rank: sql`-${picklistTeam.rank}` })
         .where(
-          and(
-            eq(picklistTeam.picklistId, validated.data.picklistId),
-            sql`${picklistTeam.rank} < 0`
-          )
+          and(eq(picklistTeam.picklistId, validated.data.picklistId), sql`${picklistTeam.rank} < 0`)
         );
     });
 

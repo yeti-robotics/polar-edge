@@ -1,23 +1,13 @@
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@repo/ui/components/table";
-import { ArrowLeftIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { ArrowLeftIcon, Trash2Icon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getAvailableTeamsForPicklist, getPicklistWithTeams } from "../queries";
+import { getPicklistWithTeams } from "../queries";
 import { DeletePicklistButton } from "./DeletePicklistButton";
-import { PickedCheckbox } from "./PickedCheckbox";
-import { RemoveTeamButton } from "./RemoveTeamButton";
-import { ReorderButtons } from "./ReorderButtons";
+import { PicklistTeamsTable } from "./PicklistTeamsTable";
 import { TeamsAtEventList } from "./TeamsAtEventList";
 
 interface PicklistDetailPageProps {
@@ -40,7 +30,6 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
   }
 
   const { picklist, teams } = data;
-  const availableTeams = await getAvailableTeamsForPicklist(picklist.eventId, id);
 
   return (
     <main className="container mx-auto max-w-5xl px-4 py-8">
@@ -76,57 +65,7 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
             <CardTitle>Team Rankings</CardTitle>
           </CardHeader>
           <CardContent>
-            {teams.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground">
-                <p className="mb-4">No teams added yet. Add a team to get started.</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-12"></TableHead>
-                    <TableHead className="w-16">#</TableHead>
-                    <TableHead>Team</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="w-32 text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {teams.map((team, index) => (
-                    <TableRow key={team.teamNumber} className={team.picked ? "opacity-50" : ""}>
-                      <TableCell>
-                        <PickedCheckbox
-                          picklistId={id}
-                          teamNumber={team.teamNumber}
-                          picked={team.picked}
-                        />
-                      </TableCell>
-                      <TableCell className="font-mono font-medium">{team.rank}</TableCell>
-                      <TableCell
-                        className={`font-mono font-bold ${team.picked ? "line-through" : ""}`}
-                      >
-                        {team.teamNumber}
-                      </TableCell>
-                      <TableCell className={team.picked ? "line-through" : ""}>
-                        {team.teamName || "—"}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="inline-flex items-center gap-1">
-                          <ReorderButtons
-                            picklistId={id}
-                            teamNumber={team.teamNumber}
-                            currentRank={team.rank}
-                            isFirst={index === 0}
-                            isLast={index === teams.length - 1}
-                          />
-                          <RemoveTeamButton picklistId={id} teamNumber={team.teamNumber} />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+            <PicklistTeamsTable picklistId={id} initialTeams={teams} />
           </CardContent>
         </Card>
 
