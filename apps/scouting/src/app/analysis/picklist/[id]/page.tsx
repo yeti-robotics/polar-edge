@@ -43,7 +43,7 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
         </Link>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{picklist.name}</h1>
+            <h1 className="text-3xl tracking-tight">{picklist.name}</h1>
             <p className="mt-2 text-muted-foreground">
               {teams.length} {teams.length === 1 ? "team" : "teams"}
             </p>

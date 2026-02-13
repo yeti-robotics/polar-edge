@@ -98,7 +98,7 @@ export default function PicklistPage() {
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Picklists</h1>
+          <h1 className="text-3xl tracking-tight">Picklists</h1>
           <p className="mt-2 text-muted-foreground">
             Create and manage team picklists for alliance selection
           </p>
