@@ -1,0 +1,1 @@
+ALTER TABLE "picklist_team" ADD COLUMN "notes" text DEFAULT '' NOT NULL;

@@ -14,6 +14,7 @@ import {
   RemoveTeamFromPicklistSchema,
   ReorderPicklistTeamSchema,
   TogglePickedSchema,
+  UpdatePicklistTeamNotesSchema,
 } from "./types";
 
 export type CreatePicklistState = {
@@ -437,5 +438,57 @@ export async function togglePickedStatus(data: unknown) {
   } catch (error) {
     console.error("Toggle picked status error:", error);
     return { error: "Failed to update picked status" };
+  }
+}
+
+/**
+ * Update the notes for a team in a picklist
+ */
+export async function updatePicklistTeamNotes(data: unknown) {
+  try {
+    // 1. Authenticate
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return { error: "Unauthorized" };
+    }
+
+    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    if (!activeMember) {
+      return { error: "No active organization" };
+    }
+
+    // 2. Validate input
+    const validated = UpdatePicklistTeamNotesSchema.safeParse(data);
+    if (!validated.success) {
+      return { error: "Invalid input" };
+    }
+
+    // 3. Verify picklist belongs to organization
+    const picklistRecord = await db.query.picklist.findFirst({
+      where: and(
+        eq(picklist.id, validated.data.picklistId),
+        eq(picklist.organizationId, activeMember.organizationId)
+      ),
+    });
+
+    if (!picklistRecord) {
+      return { error: "Picklist not found" };
+    }
+
+    // 4. Update notes
+    await db
+      .update(picklistTeam)
+      .set({ notes: validated.data.notes })
+      .where(
+        and(
+          eq(picklistTeam.picklistId, validated.data.picklistId),
+          eq(picklistTeam.teamNumber, validated.data.teamNumber)
+        )
+      );
+
+    return { success: true };
+  } catch (error) {
+    console.error("Update notes error:", error);
+    return { error: "Failed to update notes" };
   }
 }
