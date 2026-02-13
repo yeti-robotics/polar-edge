@@ -8,9 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { startTransition, useOptimistic } from "react";
 import { removeTeamFromPicklist, reorderPicklistTeam, togglePickedStatus } from "../actions";
+import { NotesCell } from "./NotesCell";
 import { PickedCheckbox } from "./PickedCheckbox";
 import { RemoveTeamButton } from "./RemoveTeamButton";
 import { ReorderButtons } from "./ReorderButtons";
@@ -20,6 +22,11 @@ interface Team {
   rank: number;
   teamName: string;
   picked: boolean;
+  notes: string;
+  avgTotalPoints?: number;
+  climbSuccessPct?: number;
+  uptimePct?: number;
+  matchesScouted?: number;
 }
 
 interface PicklistTeamsTableProps {
@@ -125,9 +132,15 @@ export function PicklistTeamsTable({ picklistId, initialTeams }: PicklistTeamsTa
       <TableHeader>
         <TableRow>
           <TableHead className="w-12"></TableHead>
-          <TableHead className="w-16">#</TableHead>
+          <TableHead className="w-24">#</TableHead>
           <TableHead>Team</TableHead>
+          <TableHead className="w-12"></TableHead>
           <TableHead>Name</TableHead>
+          <TableHead className="text-right">Avg Pts</TableHead>
+          <TableHead className="text-right">Climb %</TableHead>
+          <TableHead className="text-right">Uptime %</TableHead>
+          <TableHead className="text-right">Matches</TableHead>
+          <TableHead className="min-w-[200px]">Notes</TableHead>
           <TableHead className="w-32 text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -141,24 +154,49 @@ export function PicklistTeamsTable({ picklistId, initialTeams }: PicklistTeamsTa
                 onToggle={handleTogglePicked}
               />
             </TableCell>
+
             <TableCell className="font-mono font-medium">{team.rank}</TableCell>
             <TableCell className={`font-mono font-bold ${team.picked ? "line-through" : ""}`}>
-              {team.teamNumber}
+              <Link
+                href={`/data/teams/${team.teamNumber}`}
+                className="text-primary hover:underline"
+              >
+                {team.teamNumber}
+              </Link>
+            </TableCell>
+            <TableCell>
+              <ReorderButtons
+                teamNumber={team.teamNumber}
+                currentRank={team.rank}
+                isFirst={index === 0}
+                isLast={index === optimisticTeams.length - 1}
+                onReorder={handleReorder}
+              />
             </TableCell>
             <TableCell className={team.picked ? "line-through" : ""}>
               {team.teamName || "—"}
             </TableCell>
+            <TableCell className="text-right tabular-nums">
+              {team.avgTotalPoints !== undefined ? team.avgTotalPoints.toFixed(1) : "—"}
+            </TableCell>
+            <TableCell className="text-right tabular-nums">
+              {team.climbSuccessPct !== undefined ? `${Math.round(team.climbSuccessPct)}%` : "—"}
+            </TableCell>
+            <TableCell className="text-right tabular-nums">
+              {team.uptimePct !== undefined ? `${Math.round(team.uptimePct)}%` : "—"}
+            </TableCell>
+            <TableCell className="text-right tabular-nums">
+              {team.matchesScouted !== undefined ? team.matchesScouted : "—"}
+            </TableCell>
+            <TableCell>
+              <NotesCell
+                picklistId={picklistId}
+                teamNumber={team.teamNumber}
+                initialNotes={team.notes}
+              />
+            </TableCell>
             <TableCell className="text-right">
-              <div className="inline-flex items-center gap-1">
-                <ReorderButtons
-                  teamNumber={team.teamNumber}
-                  currentRank={team.rank}
-                  isFirst={index === 0}
-                  isLast={index === optimisticTeams.length - 1}
-                  onReorder={handleReorder}
-                />
-                <RemoveTeamButton teamNumber={team.teamNumber} onRemove={handleRemove} />
-              </div>
+              <RemoveTeamButton teamNumber={team.teamNumber} onRemove={handleRemove} />
             </TableCell>
           </TableRow>
         ))}

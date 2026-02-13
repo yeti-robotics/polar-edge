@@ -1,4 +1,13 @@
-import { boolean, index, integer, pgTable, smallint, unique, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  smallint,
+  text,
+  unique,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { picklist } from "./picklist";
 import { team } from "./team";
 
@@ -18,6 +27,8 @@ export const picklistTeam = pgTable(
     rank: smallint("rank").notNull(),
 
     picked: boolean("picked").notNull().default(false),
+
+    notes: text("notes").notNull().default(""),
   },
   (t) => [
     index("idx_picklist_team_picklist").on(t.picklistId),

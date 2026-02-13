@@ -1,8 +1,16 @@
 import "server-only";
 
-import { and, count, eq, notInArray } from "drizzle-orm";
+import { and, count, eq, notInArray, sql } from "drizzle-orm";
 import { db } from "@/lib/database";
-import { picklist, picklistTeam, team, teamMatch } from "@/lib/database/schema";
+import {
+  climb,
+  picklist,
+  picklistTeam,
+  standForm,
+  team,
+  teamMatch,
+  vTeamMatchConsensus,
+} from "@/lib/database/schema";
 
 /**
  * Get all picklists for a specific organization and event
@@ -47,15 +55,31 @@ export async function getPicklistWithTeams(picklistId: string, organizationId: s
       rank: picklistTeam.rank,
       teamName: team.teamName,
       picked: picklistTeam.picked,
+      notes: picklistTeam.notes,
     })
     .from(picklistTeam)
     .innerJoin(team, eq(picklistTeam.teamNumber, team.teamNumber))
     .where(eq(picklistTeam.picklistId, picklistId))
     .orderBy(picklistTeam.rank);
 
+  // Get metrics for all teams at this event
+  const metricsMap = await getTeamMetricsForEvent(picklistRecord.eventId);
+
+  // Attach metrics to each team
+  const teamsWithMetrics = teams.map((t) => {
+    const metrics = metricsMap.get(t.teamNumber);
+    return {
+      ...t,
+      avgTotalPoints: metrics?.avgTotalPoints,
+      climbSuccessPct: metrics?.climbSuccessPct,
+      uptimePct: metrics?.uptimePct,
+      matchesScouted: metrics?.matchesScouted,
+    };
+  });
+
   return {
     picklist: picklistRecord,
-    teams,
+    teams: teamsWithMetrics,
   };
 }
 
@@ -104,4 +128,83 @@ export async function getAvailableTeamsForPicklist(eventId: string, picklistId: 
     .orderBy(teamMatch.teamNumber);
 
   return allTeams;
+}
+
+export interface TeamMetrics {
+  teamNumber: number;
+  avgTotalPoints: number;
+  climbSuccessPct: number;
+  uptimePct: number;
+  matchesScouted: number;
+}
+
+/**
+ * Get performance metrics for all teams at a specific event
+ * Returns metrics including avg points, climb success %, uptime %, and match count
+ */
+export async function getTeamMetricsForEvent(eventId: string): Promise<Map<number, TeamMetrics>> {
+  // Get avg points and match count with consensus data
+  const pointsData = await db
+    .select({
+      teamNumber: teamMatch.teamNumber,
+      avgTotalPoints: sql<number>`avg(coalesce(${vTeamMatchConsensus.expFuelActive}, 0) + coalesce(${vTeamMatchConsensus.expTower}, 0))`,
+      matchesScouted: count(vTeamMatchConsensus.teamMatchId),
+    })
+    .from(teamMatch)
+    .leftJoin(vTeamMatchConsensus, eq(teamMatch.id, vTeamMatchConsensus.teamMatchId))
+    .where(eq(teamMatch.eventId, eventId))
+    .groupBy(teamMatch.teamNumber);
+
+  // Get climb success rate
+  const climbData = await db
+    .select({
+      teamNumber: teamMatch.teamNumber,
+      climbSuccessPct: sql<number>`(sum(case when ${climb.climbSuccess} then 1 else 0 end)::float / nullif(count(*), 0) * 100)`,
+    })
+    .from(climb)
+    .innerJoin(standForm, eq(standForm.id, climb.standFormId))
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .where(eq(teamMatch.eventId, eventId))
+    .groupBy(teamMatch.teamNumber);
+
+  // Get uptime % (based on oof_time_seconds)
+  // Use median or average across all stand forms for a team
+  const uptimeData = await db
+    .select({
+      teamNumber: teamMatch.teamNumber,
+      uptimePct: sql<number>`avg((150.0 - least(${standForm.oofTimeSeconds}, 150)) / 150.0 * 100)`,
+    })
+    .from(standForm)
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .where(eq(teamMatch.eventId, eventId))
+    .groupBy(teamMatch.teamNumber);
+
+  // Merge all data into a Map
+  const metricsMap = new Map<number, TeamMetrics>();
+
+  for (const p of pointsData) {
+    metricsMap.set(p.teamNumber, {
+      teamNumber: p.teamNumber,
+      avgTotalPoints: Number(p.avgTotalPoints) || 0,
+      climbSuccessPct: 0,
+      uptimePct: 0,
+      matchesScouted: Number(p.matchesScouted) || 0,
+    });
+  }
+
+  for (const c of climbData) {
+    const metrics = metricsMap.get(c.teamNumber);
+    if (metrics) {
+      metrics.climbSuccessPct = Number(c.climbSuccessPct) || 0;
+    }
+  }
+
+  for (const u of uptimeData) {
+    const metrics = metricsMap.get(u.teamNumber);
+    if (metrics) {
+      metrics.uptimePct = Number(u.uptimePct) || 0;
+    }
+  }
+
+  return metricsMap;
 }

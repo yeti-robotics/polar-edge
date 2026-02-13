@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getPicklistWithTeams } from "../queries";
+import { getPicklistsForEvent, getPicklistWithTeams } from "../queries";
 import { DeletePicklistButton } from "./DeletePicklistButton";
 import { PicklistTeamsTable } from "./PicklistTeamsTable";
 import { TeamsAtEventList } from "./TeamsAtEventList";
@@ -30,6 +30,9 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
   }
 
   const { picklist, teams } = data;
+
+  // Fetch all picklists for this event for the dropdown
+  const picklists = await getPicklistsForEvent(activeMember.organizationId, picklist.eventId);
 
   return (
     <main className="container mx-auto max-w-5xl px-4 py-8">
@@ -74,6 +77,7 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
             eventId={picklist.eventId}
             picklistId={id}
             picklistTeams={teams.map((t) => t.teamNumber)}
+            picklists={picklists.map((pl) => ({ id: pl.id, name: pl.name }))}
           />
         </div>
       </div>
