@@ -13,7 +13,7 @@ import {
   team as teamTable,
 } from "@/lib/database/schema";
 import { TeamRadarChart } from "../Recharts";
-
+import { ExampleCombobox } from "./TeamSwitcher";
 export default async function TeamPage({
   params,
 }: {
@@ -23,9 +23,7 @@ export default async function TeamPage({
   const teamResults = await db
     .select()
     .from(teamTable)
-    .where(eq(teamTable.teamNumber, parseInt(teamNumber, 10)))
-    .limit(1);
-
+    .where(eq(teamTable.teamNumber, parseInt(teamNumber, 10)));
   if (!teamResults || teamResults.length === 0)
     return (
       <Card className="w-full p-6 rounded-lg shadow-md">
@@ -86,6 +84,10 @@ export default async function TeamPage({
     { subject: "Reliability", value: 70, fullmark: 100 },
   ];
 
+  function TeamSwitcher(): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="p-4 space-y-4">
       <Card className="w-full p-6 rounded-lg shadow-md">
@@ -93,12 +95,8 @@ export default async function TeamPage({
           Team {teamRow.teamNumber} Analysis
         </h1>
         <p className="mt-2 text-muted-foreground">Name: {teamRow.teamName}</p>
-        <Button className="w-30">Switch Team</Button>
-        <Label>
-          {" "}
-          This should use autocomplete and change to view all the teams and
-          compare data and such for scouts and strat leads/ us to view{" "}
-        </Label>
+        <ExampleCombobox />
+        <Label> Use this button to switch out teams </Label>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -109,25 +107,33 @@ export default async function TeamPage({
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>Auto:</span>
-              <span className="font-bold">{radarData[0].value}/100</span>
             </div>
             <div className="flex justify-between">
               <span>Teleop:</span>
-              <span className="font-bold">{radarData[1].value}/100</span>
             </div>
             <div className="flex justify-between">
               <span>Climb:</span>
-              <span className="font-bold">{radarData[2].value}/100</span>
             </div>
             <div className="flex justify-between">
               <span>Consistency:</span>
-              <span className="font-bold">{radarData[3].value}/100</span>
             </div>
             <div className="flex justify-between">
               <span>Reliability:</span>
-              <span className="font-bold">{radarData[4].value}/100</span>
             </div>
+            <div className="flex justify-between">
+              <span> Total matches Scouted: {totalMatches}</span>
+            </div>
+            <h1 className="font-bold text-3xl"> add backend </h1>
           </div>
+
+          {/* Avg auto points
+Avg teleop points
+Avg climb points
+Avg uptime % (reliability)
+Avg downtime per match (oofTime in seconds)
+Total matches scouted
+Broke in X/Y matches (count where oofTime > 0)
+ */}
         </Card>
       </div>
     </div>
