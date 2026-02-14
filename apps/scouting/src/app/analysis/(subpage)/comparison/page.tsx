@@ -10,8 +10,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+// used claude to help make this function, to update the the URL
+type Team = {
+  id: string;
+  teamNumber: string;
+  teamName: string;
+};
 
 export function DropdownMenuCheckboxesIcons() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const team1 = searchParams.get("team1");
+  const team2 = searchParams.get("team2");
+  const team3 = searchParams.get("team3");
+
+  const teamUpdate = (paramName: string, teamNumber: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(paramName, teamNumber);
+    router.push(`?${params.toString()}`);
+  };
+
   return (
     <div className="sticky top-0 z-10">
       <DropdownMenu>
@@ -23,12 +44,17 @@ export function DropdownMenuCheckboxesIcons() {
         <DropdownMenuContent>
           <DropdownMenuGroup>
             <DropdownMenuLabel className="font-bold">
-              {" "}
-              Team Number & Team Name{" "}
+              {team1 && <p>Selected Team: {team1}</p>}
             </DropdownMenuLabel>
-            <DropdownMenuItem> MOCK TEAM 1 + NAME </DropdownMenuItem>
-            <DropdownMenuItem> MOCK TEAM 2 </DropdownMenuItem>
-            <DropdownMenuItem> MOCK TEAM 3</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => teamUpdate("1234", "team1")}>
+              {team1 && <p> Team: {team1}</p>}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => teamUpdate("5678", "team2")}>
+              {team2 && <p> Team: {team2}</p>}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => teamUpdate("9012", "team3")}>
+              {team3 && <p>Team: {team3}</p>}
+            </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
