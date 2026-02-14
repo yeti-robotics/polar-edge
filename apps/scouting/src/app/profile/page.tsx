@@ -1,14 +1,34 @@
 "use client";
 import { Button } from "@repo/ui/components/button";
+import { Card } from "@repo/ui/components/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@repo/ui/components/dialog";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import PasskeyManager from "./passkey/PasskeyManager";
 
 export default function ProfilePage() {
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
   function handleLogOut() {
     authClient.signOut();
   }
   const { data: session, isPending } = authClient.useSession();
+
+  function handleLeaveOrganization() {
+    console.log("User confirmed leaving organization");
+    setOpen(false);
+    router.refresh();
+  }
 
   if (isPending) {
     return (
@@ -23,7 +43,9 @@ export default function ProfilePage() {
       <div className="min-h-screen flex items-center justify-center bg-black text-white p-8">
         <div className="max-w-xl w-full text-center">
           <h2 className="text-2xl font-semibold mb-2">You're not signed in</h2>
-          <p className="text-sm text-neutral-400">Sign in to view your profile and progress.</p>
+          <p className="text-sm text-neutral-400">
+            Sign in to view your profile and progress.
+          </p>
         </div>
       </div>
     );
@@ -54,22 +76,41 @@ export default function ProfilePage() {
           <Button onClick={handleLogOut}>Log Out</Button>
         </header>
         <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full mt-10">
-          <h3 className="text-2xl font-semibold text-foreground-white mb-3">Account</h3>
+          <h3 className="text-2xl font-semibold text-foreground-white mb-3">
+            Account
+          </h3>
           <PasskeyManager />
         </section>
-        <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full mt-10">
-          <h3 className="text-2xl font-semibold text-foreground-white mb-3"> Recent activity</h3>
-          <ul>
-            <li className="py-3 flex items-start justify-between">
-              <div>
-                <div className="text-sm text-primary-white font-medium">
-                  Mock Data | Real Time Soon (Incorporate Drizzle or Forms that users have filled
-                  out)
-                </div>
-              </div>
-            </li>
-          </ul>
-        </section>
+        <Card className=" rounded-lg p-6 ring-ring mb-8 size-full mt-10">
+          <h3 className="text-2xl font-semibold text-foreground-white mb-3">
+            Leave Organization
+          </h3>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" className=" w-42">
+                Leave Organization
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you sure you want to leave?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. You will lose access to all
+                  organization scouting data and if you have no other org it
+                  will delete your account.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpen(false)}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleLeaveOrganization}>
+                  Leave Organization
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </Card>
       </div>
     </main>
   );

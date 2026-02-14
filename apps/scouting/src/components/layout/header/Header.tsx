@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +16,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
+import { session } from "@/lib/database/schema/tables/session";
 import { isSuperAdmin } from "@/lib/permissions";
 import { setDefaultOrganizationIfNeeded } from "@/lib/server/organization/default-organization";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
@@ -62,7 +67,9 @@ export function Header() {
     <header className="sticky top-0 z-50 py-2 overflow-x-hidden border-b bg-background h-(--header-height) flex flex-col justify-between">
       <div className="flex items-center justify-between w-full px-6">
         <div className="flex items-center gap-4">
-          <span className="hidden md:block uppercase font-mono text-sm">Polar Edge</span>
+          <span className="hidden md:block uppercase font-mono text-sm">
+            Polar Edge
+          </span>
           <Suspense fallback={<OrganizationSelectorFallback />}>
             <OrganizationSelectorWrapper />
           </Suspense>
@@ -117,14 +124,20 @@ async function UserAvatar() {
     const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });
-    const isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
+    const isAdminOrOwner =
+      activeMember?.role === "admin" || activeMember?.role === "owner";
 
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="size-8 select-none">
-            <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
-            <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
+            <AvatarImage
+              src={session.user.image ?? ""}
+              alt={session.user.name ?? ""}
+            ></AvatarImage>
+            <AvatarFallback>
+              {session.user.name?.charAt(0) ?? ""}
+            </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="end" className="min-w-36">
