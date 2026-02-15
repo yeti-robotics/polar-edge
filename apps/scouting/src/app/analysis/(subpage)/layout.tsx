@@ -11,11 +11,7 @@ import {
 import { ChevronLeftIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-export default function DataSubpageLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DataSubpageLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const hideBreadcrumb =
     pathname === "/analysis/teams" ||
@@ -36,9 +32,7 @@ export default function DataSubpageLayout({
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/components">
-                      Components
-                    </BreadcrumbLink>
+                    <BreadcrumbLink href="/components">Components</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                 </BreadcrumbList>

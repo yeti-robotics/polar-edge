@@ -73,24 +73,13 @@ async function getTeamsData(page: number = 1, searchQuery?: string) {
   };
 }
 
-async function TeamsTable({
-  page,
-  searchQuery,
-}: {
-  page: number;
-  searchQuery?: string;
-}) {
-  const { teams, totalCount, totalPages, currentPage } = await getTeamsData(
-    page,
-    searchQuery,
-  );
+async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: string }) {
+  const { teams, totalCount, totalPages, currentPage } = await getTeamsData(page, searchQuery);
 
   if (teams.length === 0) {
     return (
       <div className="rounded-lg border p-8 text-center text-muted-foreground">
-        {searchQuery
-          ? `No teams found matching "${searchQuery}"`
-          : "No teams found in database"}
+        {searchQuery ? `No teams found matching "${searchQuery}"` : "No teams found in database"}
       </div>
     );
   }
@@ -107,10 +96,7 @@ async function TeamsTable({
           </TableHeader>
           <TableBody>
             {teams.map((teamData) => (
-              <TableRow
-                key={teamData.teamNumber}
-                className="cursor-pointer hover:bg-muted/50"
-              >
+              <TableRow key={teamData.teamNumber} className="cursor-pointer hover:bg-muted/50">
                 <TableCell>
                   <Link
                     href={`/analysis/teams/${teamData.teamNumber}`}
@@ -120,14 +106,9 @@ async function TeamsTable({
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <Link
-                    href={`/analysis/teams/${teamData.teamNumber}`}
-                    className="hover:underline"
-                  >
+                  <Link href={`/analysis/teams/${teamData.teamNumber}`} className="hover:underline">
                     {teamData.teamName || (
-                      <span className="text-muted-foreground italic">
-                        No name
-                      </span>
+                      <span className="text-muted-foreground italic">No name</span>
                     )}
                   </Link>
                 </TableCell>
@@ -141,8 +122,7 @@ async function TeamsTable({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-center text-sm text-muted-foreground sm:text-left">
             Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
-            {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount}{" "}
-            teams
+            {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} teams
           </div>
           <Pagination className="w-full sm:w-auto">
             <PaginationContent>
@@ -150,9 +130,7 @@ async function TeamsTable({
                 <PaginationItem>
                   <PaginationPrevious
                     href={`/analysis/teams?page=${currentPage - 1}${
-                      searchQuery
-                        ? `&search=${encodeURIComponent(searchQuery)}`
-                        : ""
+                      searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                     }`}
                   />
                 </PaginationItem>
@@ -163,9 +141,7 @@ async function TeamsTable({
                   <PaginationItem>
                     <PaginationLink
                       href={`analysis/teams?page=1${
-                        searchQuery
-                          ? `&search=${encodeURIComponent(searchQuery)}`
-                          : ""
+                        searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                       }`}
                     >
                       1
@@ -183,9 +159,7 @@ async function TeamsTable({
                 <PaginationItem>
                   <PaginationLink
                     href={`analysis/teams?page=${currentPage - 1}${
-                      searchQuery
-                        ? `&search=${encodeURIComponent(searchQuery)}`
-                        : ""
+                      searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                     }`}
                   >
                     {currentPage - 1}
@@ -196,9 +170,7 @@ async function TeamsTable({
               <PaginationItem>
                 <PaginationLink
                   href={`/analysis/teams?page=${currentPage}${
-                    searchQuery
-                      ? `&search=${encodeURIComponent(searchQuery)}`
-                      : ""
+                    searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                   }`}
                   isActive
                 >
@@ -210,9 +182,7 @@ async function TeamsTable({
                 <PaginationItem>
                   <PaginationLink
                     href={`/analysis/teams?page=${currentPage + 1}${
-                      searchQuery
-                        ? `&search=${encodeURIComponent(searchQuery)}`
-                        : ""
+                      searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                     }`}
                   >
                     {currentPage + 1}
@@ -230,9 +200,7 @@ async function TeamsTable({
                   <PaginationItem>
                     <PaginationLink
                       href={`/analysis/teams?page=${totalPages}${
-                        searchQuery
-                          ? `&search=${encodeURIComponent(searchQuery)}`
-                          : ""
+                        searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                       }`}
                     >
                       {totalPages}
@@ -245,9 +213,7 @@ async function TeamsTable({
                 <PaginationItem>
                   <PaginationNext
                     href={`analysis/teams?page=${currentPage + 1}${
-                      searchQuery
-                        ? `&search=${encodeURIComponent(searchQuery)}`
-                        : ""
+                      searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                     }`}
                   />
                 </PaginationItem>
@@ -270,9 +236,7 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl">Teams</h1>
-          <p className="text-muted-foreground mt-1">
-            Browse all teams in the database
-          </p>
+          <p className="text-muted-foreground mt-1">Browse all teams in the database</p>
         </div>
       </div>
 

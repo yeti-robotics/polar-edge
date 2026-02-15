@@ -29,9 +29,7 @@ export default function ComparisonPage() {
         <ComparisonPageBreadCrumbComponent />
       </span>
       <h1 className="text-2xl font-bold tracking-tight mt-4">Comparison</h1>
-      <p className="text-muted-foreground">
-        Skeleton for the comparison page here
-      </p>
+      <p className="text-muted-foreground">Skeleton for the comparison page here</p>
     </div>
   );
 }

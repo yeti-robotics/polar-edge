@@ -10,10 +10,7 @@ import {
 } from "@repo/ui/components/table";
 import { ChevronDown } from "lucide-react";
 import React, { useState } from "react";
-import type {
-  MatchDetails,
-  MatchHistoryItem,
-} from "@/app/data/(subpage)/teams/[team]/actions";
+import type { MatchDetails, MatchHistoryItem } from "@/app/data/(subpage)/teams/[team]/actions";
 import { MatchDetailsExpansion } from "./MatchDetailsExpansion";
 
 interface MatchHistoryTableProps {
@@ -36,10 +33,7 @@ function formatAlliance(alliance: "red" | "blue"): string {
   return alliance === "red" ? "Red" : "Blue";
 }
 
-export function MatchHistoryTable({
-  matches,
-  matchDetails,
-}: MatchHistoryTableProps) {
+export function MatchHistoryTable({ matches, matchDetails }: MatchHistoryTableProps) {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   if (matches.length === 0) {
@@ -76,10 +70,7 @@ export function MatchHistoryTable({
             const isExpanded = expandedRow === match.teamMatchId;
             return (
               <React.Fragment key={match.teamMatchId}>
-                <TableRow
-                  className="cursor-pointer"
-                  onClick={() => toggleRow(match.teamMatchId)}
-                >
+                <TableRow className="cursor-pointer" onClick={() => toggleRow(match.teamMatchId)}>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <ChevronDown
@@ -95,18 +86,10 @@ export function MatchHistoryTable({
                   <TableCell>{match.eventCode}</TableCell>
                   <TableCell>{formatAlliance(match.alliance)}</TableCell>
                   <TableCell>{match.position}</TableCell>
-                  <TableCell className="text-right">
-                    {match.expFuelActive.toFixed(1)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {match.expTower.toFixed(1)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {match.clank.toFixed(1)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {match.cycleSummary.totalCycles}
-                  </TableCell>
+                  <TableCell className="text-right">{match.expFuelActive.toFixed(1)}</TableCell>
+                  <TableCell className="text-right">{match.expTower.toFixed(1)}</TableCell>
+                  <TableCell className="text-right">{match.clank.toFixed(1)}</TableCell>
+                  <TableCell className="text-right">{match.cycleSummary.totalCycles}</TableCell>
                   <TableCell className="text-right">
                     {match.climbSummary.totalAttempts > 0
                       ? `${match.climbSummary.totalAttempts} (${(match.climbSummary.successRate * 100).toFixed(0)}%)`

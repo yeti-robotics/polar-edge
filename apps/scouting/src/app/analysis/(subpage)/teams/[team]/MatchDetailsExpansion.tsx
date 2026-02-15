@@ -42,8 +42,8 @@ export function MatchDetailsExpansion({
           <CardHeader>
             <CardTitle>Climbs</CardTitle>
             <CardDescription>
-              {climbSummary.totalAttempts} attempts,{" "}
-              {(climbSummary.successRate * 100).toFixed(0)}% success rate
+              {climbSummary.totalAttempts} attempts, {(climbSummary.successRate * 100).toFixed(0)}%
+              success rate
             </CardDescription>
           </CardHeader>
         </Card>
@@ -77,9 +77,7 @@ export function MatchDetailsExpansion({
                   <TableBody>
                     {details.cycles.map((cycle) => (
                       <TableRow key={cycle.id}>
-                        <TableCell className="capitalize">
-                          {cycle.phase}
-                        </TableCell>
+                        <TableCell className="capitalize">{cycle.phase}</TableCell>
                         <TableCell>{cycle.cycleNumber}</TableCell>
                         <TableCell>{cycle.bucket}</TableCell>
                         <TableCell className="text-right">
@@ -91,9 +89,7 @@ export function MatchDetailsExpansion({
                 </Table>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
-                No cycles recorded
-              </p>
+              <p className="text-sm text-muted-foreground">No cycles recorded</p>
             )}
           </CardContent>
         </Card>
@@ -102,8 +98,8 @@ export function MatchDetailsExpansion({
           <CardHeader>
             <CardTitle>Climbs</CardTitle>
             <CardDescription>
-              {climbSummary.totalAttempts} attempts,{" "}
-              {(climbSummary.successRate * 100).toFixed(0)}% success rate
+              {climbSummary.totalAttempts} attempts, {(climbSummary.successRate * 100).toFixed(0)}%
+              success rate
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -121,9 +117,7 @@ export function MatchDetailsExpansion({
                   <TableBody>
                     {details.climbs.map((climb) => (
                       <TableRow key={climb.id}>
-                        <TableCell className="capitalize">
-                          {climb.climbPhase}
-                        </TableCell>
+                        <TableCell className="capitalize">{climb.climbPhase}</TableCell>
                         <TableCell>L{climb.climbLevel}</TableCell>
                         <TableCell>
                           {climb.climbSuccess ? (
@@ -141,9 +135,7 @@ export function MatchDetailsExpansion({
                 </Table>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
-                No climbs recorded
-              </p>
+              <p className="text-sm text-muted-foreground">No climbs recorded</p>
             )}
           </CardContent>
         </Card>
