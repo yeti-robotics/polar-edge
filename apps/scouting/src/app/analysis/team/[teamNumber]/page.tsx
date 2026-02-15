@@ -1,19 +1,12 @@
 // route for [teamNumber] page
 
-import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
-import { Label } from "@repo/ui/components/label";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/database";
-import {
-  climb,
-  cycle,
-  standForm,
-  teamMatch,
-  team as teamTable,
-} from "@/lib/database/schema";
+import { standForm, teamMatch, team as teamTable } from "@/lib/database/schema";
 import { TeamRadarChart } from "../Recharts";
-import { ExampleCombobox } from "./TeamSwitcher";
+import { SelectTeam } from "./TeamSwitcher";
+
 export default async function TeamPage({
   params,
 }: {
@@ -58,24 +51,6 @@ export default async function TeamPage({
 
   const totalMatches = standForms.length;
 
-  const reliabilitySum = standForms.reduce((sum, form) => {
-    const uptime = 150 - form.oofTimeSeconds;
-    return sum + (uptime / 150) * 100;
-  }, 0);
-
-  const reliability = reliabilitySum / totalMatches;
-
-  const standFormsId = standForms.map((form) => form.id);
-
-  const cycles = await db
-    .select({
-      phase: cycle.phase,
-      bucket: cycle.bucket,
-      standformId: cycle.standFormId,
-    })
-    .from(cycle)
-    .where(sql`${cycle.standFormId} IN ${standFormsId}`);
-
   const radarData = [
     { subject: "Auto Scoring", value: 85, fullmark: 100 },
     { subject: "Teleop Scoring", value: 90, fullmark: 100 },
@@ -84,19 +59,16 @@ export default async function TeamPage({
     { subject: "Reliability", value: 70, fullmark: 100 },
   ];
 
-  function TeamSwitcher(): void {
-    throw new Error("Function not implemented.");
-  }
-
   return (
     <div className="p-4 space-y-4">
       <Card className="w-full p-6 rounded-lg shadow-md">
         <h1 className="text-4xl font-mono">
           Team {teamRow.teamNumber} Analysis
         </h1>
-        <p className="mt-2 text-muted-foreground">Name: {teamRow.teamName}</p>
-        <ExampleCombobox />
-        <Label> Use this button to switch out teams </Label>
+        <p className="mt-2 text-muted-foreground">
+          Team Name: {teamRow.teamName}
+        </p>
+        <SelectTeam />
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
