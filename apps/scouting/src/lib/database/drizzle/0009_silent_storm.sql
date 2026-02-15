@@ -1,0 +1,1 @@
+ALTER TABLE "picklist_team" ADD COLUMN "picked" boolean DEFAULT false NOT NULL;

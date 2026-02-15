@@ -10,6 +10,8 @@ export { organization } from "./organization";
 export { organizationEvent } from "./organization-event";
 export { organizationInviteLink } from "./organization-invite-link";
 export { passkey } from "./passkey";
+export { picklist } from "./picklist";
+export { picklistTeam } from "./picklist-team";
 export { pitForm } from "./pit-form";
 export { pitPhoto } from "./pit-photo";
 export { session } from "./session";

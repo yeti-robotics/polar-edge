@@ -23,6 +23,25 @@ import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
 import { ThemeToggle } from "./ThemeToggle";
 
+const navItems = [
+  {
+    label: "Pit Form",
+    href: "/forms/pit",
+  },
+  {
+    label: "Stand Form",
+    href: "/forms/stand",
+  },
+  {
+    label: "Data",
+    href: "/data",
+  },
+  {
+    label: "Picklist",
+    href: "/analysis/picklist",
+  },
+];
+
 function OrganizationSelectorFallback() {
   return (
     <>
@@ -44,8 +63,8 @@ function UserAvatarFallback() {
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 py-2 px-6 border-b bg-background h-(--header-height) flex flex-col justify-between">
-      <div className="flex items-center justify-between w-full">
+    <header className="sticky top-0 z-50 py-2 overflow-x-hidden border-b bg-background h-(--header-height) flex flex-col justify-between">
+      <div className="flex items-center justify-between w-full px-6">
         <div className="flex items-center gap-4">
           <span className="hidden md:block uppercase font-mono text-sm">
             Polar Edge
@@ -58,34 +77,16 @@ export function Header() {
           <UserAvatar />
         </Suspense>
       </div>
-      <nav className="gap-6 text-sm inline-flex">
-        <Link className="hover:text-foreground text-muted-foreground" href="/">
-          Home
-        </Link>
-        <Link
-          className="hover:text-foreground text-muted-foreground"
-          href="/auto-path"
-        >
-          Auto Paths
-        </Link>
-        <Link
-          className="hover:text-foreground text-muted-foreground"
-          href="/forms/pit"
-        >
-          Pit Form
-        </Link>
-        <Link
-          className="hover:text-foreground text-muted-foreground"
-          href="/forms/stand"
-        >
-          Stand Form
-        </Link>
-        <Link
-          className="hover:text-foreground text-muted-foreground"
-          href="/analysis/overview"
-        >
-          Analysis
-        </Link>
+      <nav className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+            href={item.href}
+          >
+            {item.label}
+          </Link>
+        ))}
         <nav />
       </nav>
     </header>
