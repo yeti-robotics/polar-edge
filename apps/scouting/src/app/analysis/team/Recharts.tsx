@@ -1,13 +1,6 @@
 "use client";
 import { Card } from "@repo/ui/components/card";
-import {
-  Legend,
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
-} from "recharts";
+import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
 
 export const TeamRadarChart = ({
   data,

@@ -7,11 +7,7 @@ import { standForm, teamMatch, team as teamTable } from "@/lib/database/schema";
 import { TeamRadarChart } from "../Recharts";
 import { SelectTeam } from "./TeamSwitcher";
 
-export default async function TeamPage({
-  params,
-}: {
-  params: { teamNumber: string };
-}) {
+export default async function TeamPage({ params }: { params: { teamNumber: string } }) {
   const { teamNumber } = await params;
   const teamResults = await db
     .select()
@@ -42,9 +38,7 @@ export default async function TeamPage({
   if (!standForms || standForms.length === 0) {
     return (
       <Card className="w-full p-6 rounded-lg shadow-md">
-        <h1 className="text-4xl font-mono">
-          No Stand Form Data for Team {teamNumber}
-        </h1>
+        <h1 className="text-4xl font-mono">No Stand Form Data for Team {teamNumber}</h1>
       </Card>
     );
   }
@@ -62,12 +56,8 @@ export default async function TeamPage({
   return (
     <div className="p-4 space-y-4">
       <Card className="w-full p-6 rounded-lg shadow-md">
-        <h1 className="text-4xl font-mono">
-          Team {teamRow.teamNumber} Analysis
-        </h1>
-        <p className="mt-2 text-muted-foreground">
-          Team Name: {teamRow.teamName}
-        </p>
+        <h1 className="text-4xl font-mono">Team {teamRow.teamNumber} Analysis</h1>
+        <p className="mt-2 text-muted-foreground">Team Name: {teamRow.teamName}</p>
         <SelectTeam />
       </Card>
 
