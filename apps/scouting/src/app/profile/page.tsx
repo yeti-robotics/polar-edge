@@ -13,13 +13,11 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { auth } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
 import PasskeyManager from "./passkey/PasskeyManager";
 
 export default function ProfilePage() {
   const [open, setOpen] = useState(false);
-  const [isLeaving, setIsLeaving] = useState(false);
 
   const router = useRouter();
   function handleLogOut() {
@@ -29,7 +27,9 @@ export default function ProfilePage() {
 
   async function handleLeaveOrganization() {
     console.log("User confirmed leaving organization");
+    alert("signing out fix logic to delete org");
     router.refresh();
+    authClient.signOut();
   }
 
   if (isPending) {
