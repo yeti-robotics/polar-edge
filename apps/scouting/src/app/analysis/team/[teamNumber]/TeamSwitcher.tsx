@@ -19,11 +19,7 @@ import { ArrowLeftRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function SelectTeam({
-  teams,
-}: {
-  teams: Array<{ teamNumber: number; teamName: string }>;
-}) {
+export function SelectTeam({ teams }: { teams: Array<{ teamNumber: number; teamName: string }> }) {
   const router = useRouter();
   const [selectedValue, setSelectedValue] = useState<string | null>(null); //using claude to help fix and dynamically shiw the pages
   const teamOptions = teams.map((team) => ({
