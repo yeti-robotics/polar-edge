@@ -68,6 +68,7 @@ function TeamSelection() {
       <h1 className="text-4xl font-mono">Comparison Page </h1>
       <div className="w-full">
         <DropdownMenuCheckboxesIcons />
+        <h1> Page For comparison </h1>
       </div>
     </div>
   );
