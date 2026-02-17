@@ -119,7 +119,7 @@ function TeamRowExpansion({ row }: { row: AnalysisTeamRow }) {
             <Badge variant={row.canShuttle ? "default" : "outline"}>Shuttle</Badge>
           </div>
           <Button variant="outline" size="sm" asChild>
-            <Link href={`/data/teams/${row.teamNumber}`}>
+            <Link href={`/analysis/team/${row.teamNumber}`}>
               Open Team Page
               <ExternalLink className="size-4" />
             </Link>
@@ -206,7 +206,10 @@ export default function Overview({ teams }: OverviewProps) {
           <SortHeader label="Team #" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
         cell: ({ row }) => (
-          <Link className="font-medium text-primary hover:underline" href={`/data/teams/${row.original.teamNumber}`}>
+          <Link
+            className="font-medium text-primary hover:underline"
+            href={`/analysis/team/${row.original.teamNumber}`}
+          >
             {row.original.teamNumber}
           </Link>
         ),

@@ -24,7 +24,7 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/data/analysis">
+              <Link className="text-sm w-full justify-start" href="/analysis/overview">
                 Analysis
               </Link>
             </Button>
