@@ -1,10 +1,13 @@
 import { Card, CardContent, CardFooter } from "@repo/ui/components/card";
+import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { UnsavedChangesWarning } from "./components/UnsavedChangesWarning";
 import { StandFormNavigation, StandFormProgress } from "./StandFormNavigation";
 import { StandFormProvider } from "./StandFormProvider";
 import { StandFormTabs } from "./StandFormTabs";
 
-export default function StandFormPage() {
+export default async function StandFormPage() {
+  await requireActiveMember();
+
   return (
     <div className="py-6 max-w-md w-full mx-auto px-4">
       <h1 className="mb-6 text-3xl tracking-tight">Stand Form</h1>

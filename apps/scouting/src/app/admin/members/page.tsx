@@ -9,9 +9,9 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
+import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { RemoveMemberButton } from "./RemoveMemberButton";
 import { RoleSelect } from "./RoleSelect";
 
@@ -72,15 +72,9 @@ function LoadingTable() {
 }
 
 async function MembersContent() {
+  const activeMember = await requireAdminMember();
   const requestHeaders = await headers();
-
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-  const activeOrganization = activeMember?.organizationId;
-
-  // Only admins and owners can view this page
-  if (activeMember?.role !== "admin" && activeMember?.role !== "owner") {
-    redirect("/");
-  }
+  const activeOrganization = activeMember.organizationId;
 
   // Fetch organization details and members in parallel
   const [_organization, membersResponse] = await Promise.all([

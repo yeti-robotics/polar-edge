@@ -1,5 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { and, eq } from "drizzle-orm";
+
+const INVITE_LINK_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
@@ -110,7 +112,15 @@ export async function getInviteLinkByToken(token: string) {
     .where(eq(organizationInviteLink.token, token))
     .limit(1);
 
-  return inviteLink[0] || null;
+  const link = inviteLink[0] || null;
+  if (!link) return null;
+
+  // Expire links older than 7 days
+  if (Date.now() - link.createdAt.getTime() > INVITE_LINK_TTL_MS) {
+    return null;
+  }
+
+  return link;
 }
 
 export async function acceptInviteLink(token: string) {

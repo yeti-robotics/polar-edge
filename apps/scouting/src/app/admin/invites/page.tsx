@@ -15,10 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { auth } from "@/lib/auth";
+import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { listInviteLinks } from "@/lib/server/invite-links";
 import { InviteLinkCopy } from "./InviteLinkCopy";
 import { InviteLinkManager } from "./InviteLinkManager";
@@ -76,12 +74,7 @@ function formatDate(date: Date): string {
 async function InvitesContent() {
   const requestHeaders = await headers();
 
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-
-  // Only admins and owners can view this page
-  if (activeMember?.role !== "admin" && activeMember?.role !== "owner") {
-    redirect("/");
-  }
+  await requireAdminMember();
 
   const inviteLinks = await listInviteLinks();
 
