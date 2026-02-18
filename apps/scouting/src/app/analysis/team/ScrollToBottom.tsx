@@ -12,9 +12,14 @@ export function ScrollToBottomButton() {
   };
 
   return (
-    <Button onClick={scrollToBottom} variant="outline" size="sm" className="w-fit">
+    <Button
+      onClick={scrollToBottom}
+      variant="outline"
+      size="sm"
+      className="w-fit"
+    >
       <ArrowDown />
-      Scroll To PitForm
+      Scroll To PitForm Data
     </Button>
   );
 }
