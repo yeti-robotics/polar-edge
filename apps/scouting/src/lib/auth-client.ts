@@ -1,10 +1,17 @@
 import { passkeyClient } from "@better-auth/passkey/client";
 import { organizationClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
+import { ac, admin, memberRole, owner } from "@/lib/access-control";
 
 /**
  * Note: this is a client-side auth client. It should not be used in server components.
  */
 export const authClient = createAuthClient({
-  plugins: [organizationClient(), passkeyClient()],
+  plugins: [
+    organizationClient({
+      ac,
+      roles: { member: memberRole, admin, owner },
+    }),
+    passkeyClient(),
+  ],
 });

@@ -5,6 +5,7 @@ import { createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
+import { ac, admin, memberRole, owner } from "@/lib/access-control";
 import { db } from "@/lib/database";
 import { user as userTable } from "@/lib/database/schema/tables/user";
 import { isSuperAdmin } from "@/lib/permissions";
@@ -74,6 +75,12 @@ export const auth = betterAuth({
   },
   plugins: [
     organization({
+      ac,
+      roles: {
+        member: memberRole,
+        admin,
+        owner,
+      },
       allowUserToCreateOrganization: (user) => isSuperAdmin(user.email) || false,
       // No-op email function - we use invite URLs instead
       sendInvitationEmail: async () => {
