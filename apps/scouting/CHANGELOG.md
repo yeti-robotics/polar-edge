@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026.2.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.1...scouting-v2026.2.2) (2026-02-19)
+
+
+### Bug Fixes
+
+* **scouting:** reorder imports in proxy file for clarity ([f061bd4](https://github.com/yeti-robotics/polar-edge/commit/f061bd43aef3494c017a1aa728fd289f8991d2dd))
+* **scouting:** streamline session cookie retrieval in proxy ([5b9531e](https://github.com/yeti-robotics/polar-edge/commit/5b9531ee4baba3abbbe6a1c5fc91cf8a351f848d))
+
 ## [2026.2.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.0...scouting-v2026.2.1) (2026-02-19)
 
 
