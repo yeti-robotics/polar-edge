@@ -3,7 +3,10 @@ import { Libre_Franklin } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@repo/ui/components/sonner";
 import { Header } from "@/components/layout/header/Header";
+import { OfflineStatusBar } from "@/components/offline/OfflineStatusBar";
+import { OfflineToastListener } from "@/components/offline/OfflineToastListener";
 import { ThemeProvider } from "@/components/theme";
+import { QueueCountProvider } from "@/lib/offline/queue-count-context";
 
 const libreFranklin = Libre_Franklin({
   subsets: ["latin"],
@@ -33,9 +36,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          {children}
-          <Toaster />
+          <QueueCountProvider>
+            <Header />
+            <OfflineStatusBar />
+            <OfflineToastListener />
+            {children}
+            <Toaster />
+          </QueueCountProvider>
         </ThemeProvider>
       </body>
     </html>
