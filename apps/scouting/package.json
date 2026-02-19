@@ -1,6 +1,6 @@
 {
   "name": "scouting",
-  "version": "2026.1.1-alpha.0",
+  "version": "2026.2.0",
   "description": "FRC scouting application for YETI Robotics",
   "private": true,
   "scripts": {
