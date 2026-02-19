@@ -14,10 +14,7 @@ import { getInviteLinkByToken } from "@/lib/server/invite-links";
 const PENDING_INVITE_COOKIE = "pending_invite_token";
 const NEW_USER_WINDOW_MS = 60_000; // 1 minute
 
-const url = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : (process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3000}`);
-const hostname = new URL(url).hostname;
+const hostname = new URL(process.env.BETTER_AUTH_URL!).hostname;
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -87,10 +84,16 @@ export const auth = betterAuth({
         // Invitations are handled via shareable URLs, not email
       },
     }),
-    nextCookies(),
     passkey({
       rpID: hostname,
     }),
+    nextCookies(),
   ],
-  trustedOrigins: [url],
+  trustedOrigins: () => {
+    if (process.env.NODE_ENV === "production") {
+      // biome-ignore lint/style/noNonNullAssertion: production better-auth url is required
+      return [process.env.BETTER_AUTH_URL!];
+    }
+    return ["http://localhost:3000"];
+  },
 });
