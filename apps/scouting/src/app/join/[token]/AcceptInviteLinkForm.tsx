@@ -5,14 +5,19 @@ import { CheckCircle2Icon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { acceptInviteLink } from "./actions";
+import { acceptInviteLink, setPendingInviteCookie } from "./actions";
 
 interface AcceptInviteLinkFormProps {
   token: string;
   organizationName: string;
+  organizationId: string;
 }
 
-export function AcceptInviteLinkForm({ token, organizationName }: AcceptInviteLinkFormProps) {
+export function AcceptInviteLinkForm({
+  token,
+  organizationName,
+  organizationId,
+}: AcceptInviteLinkFormProps) {
   const [isAccepting, setIsAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -27,7 +32,8 @@ export function AcceptInviteLinkForm({ token, organizationName }: AcceptInviteLi
       const session = await authClient.getSession();
 
       if (!session?.data?.user) {
-        // Redirect to sign in, then back to this page
+        // Set cookie before redirecting so OAuth callback knows about the invite
+        await setPendingInviteCookie(token);
         const currentUrl = window.location.href;
         router.push(`/?redirect=${encodeURIComponent(currentUrl)}`);
         return;
@@ -42,7 +48,9 @@ export function AcceptInviteLinkForm({ token, organizationName }: AcceptInviteLi
       }
 
       setSuccess(true);
-      // Refresh to update organization list, then redirect
+      // Set the newly joined org as active so Better Auth's client-side
+      // reactive store invalidates immediately (fixes stale org in header).
+      await authClient.organization.setActive({ organizationId });
       setTimeout(() => {
         router.refresh();
         router.push("/");

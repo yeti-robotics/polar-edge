@@ -17,6 +17,21 @@ function parseTeamKey(teamKey: string): number {
 
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {
+    const requestHeaders = await headers();
+    const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+
+    if (!activeMember || activeMember.organizationId !== organizationId) {
+      return { data: null, error: "Only organization admins and owners can set the active event" };
+    }
+
+    const { success: canActivate } = await auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permission: { event: ["activate"] } },
+    });
+    if (!canActivate) {
+      return { data: null, error: "Only organization admins and owners can set the active event" };
+    }
+
     await setActiveEventForOrganization(organizationId, eventId);
     revalidatePath("/admin/event");
     return { data: { success: true }, error: null };
@@ -33,11 +48,18 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     const requestHeaders = await headers();
     const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
 
-    if (
-      !activeMember ||
-      activeMember.organizationId !== organizationId ||
-      (activeMember.role !== "admin" && activeMember.role !== "owner")
-    ) {
+    if (!activeMember || activeMember.organizationId !== organizationId) {
+      return {
+        data: null,
+        error: "Only organization admins and owners can sync events from TBA",
+      };
+    }
+
+    const { success: canSync } = await auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permission: { event: ["sync"] } },
+    });
+    if (!canSync) {
       return {
         data: null,
         error: "Only organization admins and owners can sync events from TBA",

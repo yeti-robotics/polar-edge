@@ -1,7 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Mutex } from "async-mutex";
-import { google, type sheets_v4 } from "googleapis";
+import { sheets, type sheets_v4 } from "@googleapis/sheets";
+import { GoogleAuth } from "google-auth-library";
 
 export type SheetCredentials = {
   client_email: string;
@@ -38,8 +39,8 @@ export class SheetService {
 
     const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
 
-    const auth = new google.auth.GoogleAuth({ credentials, scopes });
-    this.sheetsClient = google.sheets({ version: "v4", auth });
+    const auth = new GoogleAuth({ credentials, scopes });
+    this.sheetsClient = sheets({ version: "v4", auth });
   }
 
   async getSheetValues(

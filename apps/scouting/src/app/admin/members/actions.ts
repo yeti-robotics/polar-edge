@@ -18,8 +18,30 @@ export async function updateMemberRole(memberId: string, role: string) {
       return { data: null, error: "Not authenticated" };
     }
 
-    if (activeMember.role !== "admin" && activeMember.role !== "owner") {
+    const { success: canUpdate } = await auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permission: { member: ["update"] } },
+    });
+    if (!canUpdate) {
       return { data: null, error: "You do not have permission to update roles" };
+    }
+
+    // Only owners can promote to owner
+    if (role === "owner" && activeMember.role !== "owner") {
+      return { data: null, error: "Only owners can assign the owner role" };
+    }
+
+    // Verify target member belongs to the caller's organization
+    const targetMember = await db.query.member.findFirst({
+      where: eq(member.id, memberId),
+    });
+
+    if (!targetMember) {
+      return { data: null, error: "Member not found" };
+    }
+
+    if (targetMember.organizationId !== activeMember.organizationId) {
+      return { data: null, error: "Member not in your organization" };
     }
 
     await auth.api.updateMemberRole({
@@ -51,7 +73,11 @@ export async function removeMember(memberId: string) {
     }
 
     // Only admins and owners can remove members
-    if (activeMember.role !== "admin" && activeMember.role !== "owner") {
+    const { success: canDelete } = await auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permission: { member: ["delete"] } },
+    });
+    if (!canDelete) {
       return { data: null, error: "You do not have permission to remove members" };
     }
 

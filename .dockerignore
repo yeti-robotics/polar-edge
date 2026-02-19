@@ -1,0 +1,10 @@
+**/.git
+**/.next
+**/node_modules
+**/dist
+**/.turbo
+**/coverage
+**/*.log
+**/.env
+**/.env.local
+**/apps/scouting/scripts/teams.json

@@ -8,11 +8,9 @@ import {
 } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { PlusIcon } from "lucide-react";
-import { headers } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { auth } from "@/lib/auth";
+import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { CreatePicklistDialog } from "./CreatePicklistDialog";
 import { getPicklistsForEvent } from "./queries";
@@ -33,13 +31,7 @@ function LoadingPicklists() {
 }
 
 async function PicklistContent() {
-  const requestHeaders = await headers();
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-
-  if (!activeMember) {
-    redirect("/");
-  }
-
+  const activeMember = await requireActiveMember();
   const activeEvent = await getActiveEventForOrganization(activeMember.organizationId);
 
   if (!activeEvent?.event) {

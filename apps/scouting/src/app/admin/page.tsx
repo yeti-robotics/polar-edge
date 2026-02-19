@@ -1,15 +1,7 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { requireAdminMember } from "@/lib/server/auth/require-member";
 
 export default async function AdminPage() {
-  const member = await auth.api.getActiveMember({
-    headers: await headers(),
-  });
-
-  if (member?.role !== "admin" && member?.role !== "owner") {
-    redirect("/");
-  }
+  await requireAdminMember();
 
   return <div>hi there</div>;
 }

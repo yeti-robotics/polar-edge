@@ -7,7 +7,7 @@ import { z } from "zod";
 import type { PathData } from "@/components/auto-path/PathCanvas";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { autoPath, event, match, team } from "@/lib/database/schema";
+import { autoPath, event, match, member, team } from "@/lib/database/schema";
 
 const createAutoPathSchema = z.object({
   teamNumber: z.number().int().positive(),
@@ -85,19 +85,20 @@ export async function getAutoPaths(filters?: {
     throw new Error("No active organization");
   }
 
-  const conditions = [];
+  const conditions = [eq(member.organizationId, activeOrganization)];
 
   if (filters?.teamNumber) {
     conditions.push(eq(autoPath.teamNumber, filters.teamNumber));
   }
 
-  const paths = await db
-    .select()
+  const rows = await db
+    .select({ autoPath })
     .from(autoPath)
+    .innerJoin(member, eq(autoPath.createdByMemberId, member.id))
     .where(and(...conditions))
     .orderBy(desc(autoPath.createdAt));
 
-  return paths.map((path) => ({
+  return rows.map(({ autoPath: path }) => ({
     ...path,
     pathData: path.pathData as unknown as PathData,
   }));
@@ -115,11 +116,16 @@ export async function getAutoPath(id: string) {
     throw new Error("No active organization");
   }
 
-  const paths = await db.select().from(autoPath).where(eq(autoPath.id, id)).limit(1);
+  const rows = await db
+    .select({ autoPath })
+    .from(autoPath)
+    .innerJoin(member, eq(autoPath.createdByMemberId, member.id))
+    .where(and(eq(autoPath.id, id), eq(member.organizationId, activeOrganization)))
+    .limit(1);
 
-  const path = paths[0];
+  const path = rows[0]?.autoPath;
   if (!path) {
-    throw new Error("Auto path not found");
+    throw new Error("Auto path not found or unauthorized");
   }
 
   return {
@@ -143,11 +149,16 @@ export async function updateAutoPath(
     throw new Error("No active organization");
   }
 
-  // Verify ownership
-  const existing = await db.select().from(autoPath).where(eq(autoPath.id, id)).limit(1);
+  // Verify ownership and org membership
+  const existingRows = await db
+    .select({ autoPath })
+    .from(autoPath)
+    .innerJoin(member, eq(autoPath.createdByMemberId, member.id))
+    .where(and(eq(autoPath.id, id), eq(member.organizationId, activeOrganization)))
+    .limit(1);
 
-  if (existing.length === 0 || !existing[0]) {
-    throw new Error("Auto path not found");
+  if (existingRows.length === 0 || !existingRows[0]) {
+    throw new Error("Auto path not found or unauthorized");
   }
 
   const updateData: Partial<typeof autoPath.$inferInsert> = {};
@@ -182,6 +193,18 @@ export async function deleteAutoPath(id: string) {
     throw new Error("No active organization");
   }
 
+  // Verify the path belongs to the caller's org before deleting
+  const existing = await db
+    .select({ id: autoPath.id })
+    .from(autoPath)
+    .innerJoin(member, eq(autoPath.createdByMemberId, member.id))
+    .where(and(eq(autoPath.id, id), eq(member.organizationId, activeOrganization)))
+    .limit(1);
+
+  if (existing.length === 0) {
+    throw new Error("Auto path not found or unauthorized");
+  }
+
   await db.delete(autoPath).where(eq(autoPath.id, id));
 
   return { id };
@@ -189,11 +212,31 @@ export async function deleteAutoPath(id: string) {
 
 // Helper functions for fetching teams and matches
 export async function getTeams() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+  if (!activeMember?.organizationId) {
+    throw new Error("No active organization");
+  }
+
   const teams = await db.select().from(team).orderBy(team.teamNumber);
   return teams;
 }
 
 export async function getMatches(eventCode?: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+  if (!activeMember?.organizationId) {
+    throw new Error("No active organization");
+  }
+
   if (eventCode) {
     const matches = await db
       .select({
