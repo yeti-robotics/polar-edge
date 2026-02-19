@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Only check cookie existence per Better Auth's Next.js proxy recommendation.
 // Avoid DB/API calls in middleware to prevent blocking requests.
