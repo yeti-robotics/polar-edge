@@ -14,8 +14,8 @@ import { getInviteLinkByToken } from "@/lib/server/invite-links";
 const PENDING_INVITE_COOKIE = "pending_invite_token";
 const NEW_USER_WINDOW_MS = 60_000; // 1 minute
 
-// biome-ignore lint/style/noNonNullAssertion: better-auth url is required
-const hostname = new URL(process.env.BETTER_AUTH_URL!).hostname;
+const betterAuthUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+const hostname = new URL(betterAuthUrl).hostname;
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
