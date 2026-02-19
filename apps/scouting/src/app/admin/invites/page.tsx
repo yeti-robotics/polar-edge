@@ -72,8 +72,6 @@ function formatDate(date: Date): string {
 }
 
 async function InvitesContent() {
-  const requestHeaders = await headers();
-
   await requireAdminMember();
 
   const inviteLinks = await listInviteLinks();

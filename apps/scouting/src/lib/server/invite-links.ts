@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { and, eq } from "drizzle-orm";
 
 const INVITE_LINK_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
