@@ -19,10 +19,7 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": ["apps/*", "packages/*"],
   "packageManager": "pnpm@10.29.3",
   "dependencies": {
     "next": "catalog:"
