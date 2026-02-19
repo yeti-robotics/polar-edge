@@ -13,7 +13,11 @@ interface AcceptInviteLinkFormProps {
   organizationId: string;
 }
 
-export function AcceptInviteLinkForm({ token, organizationName, organizationId }: AcceptInviteLinkFormProps) {
+export function AcceptInviteLinkForm({
+  token,
+  organizationName,
+  organizationId,
+}: AcceptInviteLinkFormProps) {
   const [isAccepting, setIsAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
