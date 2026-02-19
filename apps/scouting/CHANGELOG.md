@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.2.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.2...scouting-v2026.2.3) (2026-02-19)
+
+
+### Bug Fixes
+
+* **scouting:** implement pending invite cookie handling ([690cdc6](https://github.com/yeti-robotics/polar-edge/commit/690cdc6997fc502f6861067ba685ce9c0df41498))
+
 ## [2026.2.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.1...scouting-v2026.2.2) (2026-02-19)
 
 
