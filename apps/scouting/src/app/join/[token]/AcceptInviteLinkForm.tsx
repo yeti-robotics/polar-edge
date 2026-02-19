@@ -5,7 +5,7 @@ import { CheckCircle2Icon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { acceptInviteLink } from "./actions";
+import { acceptInviteLink, setPendingInviteCookie } from "./actions";
 
 interface AcceptInviteLinkFormProps {
   token: string;
@@ -27,7 +27,8 @@ export function AcceptInviteLinkForm({ token, organizationName }: AcceptInviteLi
       const session = await authClient.getSession();
 
       if (!session?.data?.user) {
-        // Redirect to sign in, then back to this page
+        // Set cookie before redirecting so OAuth callback knows about the invite
+        await setPendingInviteCookie(token);
         const currentUrl = window.location.href;
         router.push(`/?redirect=${encodeURIComponent(currentUrl)}`);
         return;

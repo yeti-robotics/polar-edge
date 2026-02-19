@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { eq } from "drizzle-orm";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { organization } from "@/lib/database/schema/tables";
@@ -93,16 +93,6 @@ export default async function JoinPage({ params }: { params: Promise<{ token: st
       );
     }
   }
-
-  // Set invite token cookie so sign-up is allowed when they complete OAuth
-  const cookieStore = await cookies();
-  cookieStore.set("pending_invite_token", token, {
-    maxAge: 60 * 10, // 10 minutes
-    path: "/",
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-  });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
