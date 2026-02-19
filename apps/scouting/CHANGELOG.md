@@ -1,5 +1,14 @@
 # Changelog
 
+## [2026.2.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.0...scouting-v2026.2.1) (2026-02-19)
+
+
+### Bug Fixes
+
+* **auth:** add non-null assertion for BETTER_AUTH_URL in authentication setup ([f588306](https://github.com/yeti-robotics/polar-edge/commit/f5883066293272b6766b601327df7a485de0d87b))
+* **scouting:** improve BETTER_AUTH_URL handling for hostname extraction ([e7bb696](https://github.com/yeti-robotics/polar-edge/commit/e7bb69613aef697e6a983a4e397a7a85f6486001))
+* **scouting:** update hostname configuration for better authentication URL handling ([3b26b15](https://github.com/yeti-robotics/polar-edge/commit/3b26b152f2ddf8b50fa603a584185be879e52f83))
+
 ## [2026.2.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.1.0...scouting-v2026.2.0) (2026-02-19)
 
 
