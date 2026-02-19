@@ -2,6 +2,7 @@ import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { ArrowLeftIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getPicklistWithTeams } from "../queries";
 import { DeletePicklistButton } from "./DeletePicklistButton";
