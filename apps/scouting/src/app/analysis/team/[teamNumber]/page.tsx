@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import {
   Table,
   TableBody,
@@ -15,23 +10,14 @@ import {
 import { eq } from "drizzle-orm";
 import { Badge } from "lucide-react";
 import { db } from "@/lib/database";
-import {
-  pitForm,
-  standForm,
-  teamMatch,
-  team as teamTable,
-} from "@/lib/database/schema";
+import { pitForm, standForm, teamMatch, team as teamTable } from "@/lib/database/schema";
 import { ScrollToBottomButton } from "../ScrollToBottom";
 import { TeamRadarChart } from "../TeamRadarChart";
 import { SelectTeam } from "./TeamSwitcher";
 
 const allTeams = await db.select().from(teamTable);
 
-export default async function TeamPage({
-  params,
-}: {
-  params: { teamNumber: string };
-}) {
+export default async function TeamPage({ params }: { params: { teamNumber: string } }) {
   const { teamNumber } = await params;
   const teamResults = await db
     .select()
@@ -70,9 +56,7 @@ export default async function TeamPage({
   if (!standForms || standForms.length === 0) {
     return (
       <Card className="w-full p-6 rounded-lg shadow-md">
-        <h1 className="text-4xl font-mono">
-          No Stand Form Data for Team {teamNumber}
-        </h1>
+        <h1 className="text-4xl font-mono">No Stand Form Data for Team {teamNumber}</h1>
       </Card>
     );
   }
@@ -91,9 +75,7 @@ export default async function TeamPage({
     <div className="p-4 space-y-4">
       <Card className="w-full p-6 rounded-lg shadow-md">
         <h1 className="text-4xl font-mono">Team {teamRow.teamNumber}</h1>
-        <p className="mt-2 text-muted-foreground">
-          Team Name: {teamRow.teamName}
-        </p>
+        <p className="mt-2 text-muted-foreground">Team Name: {teamRow.teamName}</p>
         <SelectTeam teams={allTeams} />
         <ScrollToBottomButton />
       </Card>
@@ -141,9 +123,7 @@ Broke in X/Y matches (count where oofTime > 0)
           </CardHeader>
           <CardContent>
             {!pitData ? (
-              <p className="text-muted-foreground">
-                No pit scouting data available
-              </p>
+              <p className="text-muted-foreground">No pit scouting data available</p>
             ) : (
               <Table>
                 <TableHeader>
