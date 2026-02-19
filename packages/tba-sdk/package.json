@@ -14,7 +14,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -28,13 +30,13 @@
     "@repo/vitest-config": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-istanbul": "catalog:",
-    "openapi-typescript": "^7.4.2",
+    "openapi-typescript": "^7.13.0",
     "tsdown": "0.19.0",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "dependencies": {
-    "lru-cache": "^11.2.4"
+    "lru-cache": "^11.2.6"
   },
   "author": "",
   "license": "ISC",
