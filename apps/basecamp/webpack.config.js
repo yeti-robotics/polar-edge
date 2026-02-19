@@ -5,13 +5,7 @@ module.exports = (options) => ({
   mode: "production",
   // Bundle all dependencies — no node_modules needed in the runner.
   // Optional native modules from discord.js are excluded; it handles their absence gracefully.
-  externals: [
-    "zlib-sync",
-    "bufferutil",
-    "utf-8-validate",
-    "@discordjs/opus",
-    "erlpack",
-  ],
+  externals: ["zlib-sync", "bufferutil", "utf-8-validate", "@discordjs/opus", "erlpack"],
   module: {
     rules: [],
   },

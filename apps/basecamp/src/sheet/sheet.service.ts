@@ -1,7 +1,7 @@
+import { sheets, type sheets_v4 } from "@googleapis/sheets";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Mutex } from "async-mutex";
-import { sheets, type sheets_v4 } from "@googleapis/sheets";
 import { GoogleAuth } from "google-auth-library";
 
 export type SheetCredentials = {
