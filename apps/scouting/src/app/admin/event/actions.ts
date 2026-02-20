@@ -1,7 +1,7 @@
 "use server";
 
 import { eq, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
@@ -219,6 +219,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     });
 
     revalidatePath("/admin/event");
+    revalidateTag("teams-search");
     return {
       data: { success: true, eventId, matchCount, teamMatchCount },
       error: null,

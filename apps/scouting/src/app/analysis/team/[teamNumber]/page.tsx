@@ -28,8 +28,6 @@ import { RadarChart } from "./TeamRadarChart";
 import { TeamScopeControls } from "./TeamScopeControls";
 import { SelectTeam } from "./TeamSwitcher";
 
-const allTeams = await db.select().from(teamTable);
-
 async function TeamKeyMetricsSection({
   teamNum,
   effectiveOrgId,
@@ -159,7 +157,7 @@ export default async function TeamPage({
             </p>
             <h1 className="text-3xl tracking-tight">{teamRow.teamName}</h1>
             <p className="mt-1 text-muted-foreground">Team {teamRow.teamNumber}</p>
-            <SelectTeam teams={allTeams} />
+            <SelectTeam />
           </div>
 
           <TeamScopeControls
