@@ -16,9 +16,9 @@ export default async function AuthPage() {
     return null;
   }
 
-  const secret = cookieStore.get("toofaSecret")?.value;
+  const secret = process.env.ATTENDANCE_2FA_SECRET;
   if (!secret) {
-    console.error("TOTP secret not found in cookies");
+    console.error("ATTENDANCE_2FA_SECRET is not configured");
     return null;
   }
 

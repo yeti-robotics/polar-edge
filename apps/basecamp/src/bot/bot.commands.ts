@@ -197,6 +197,9 @@ export class BotCommands {
   ) {
     await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
+    if (!interaction.member) {
+      return interaction.editReply({ content: "This command must be used in a server." });
+    }
     const member = interaction.member as GuildMember;
     if (!member.roles.cache.has(this.adminRoleId)) {
       return interaction.editReply({
@@ -213,12 +216,10 @@ export class BotCommands {
       });
     }
 
-    const result = await this.attendanceService.signIn(
+    const result = await this.attendanceService.adminSignIn(
       user.id,
       interaction.guild?.id || "",
-      nickname,
-      undefined,
-      true
+      nickname
     );
 
     if (result.success) {
@@ -245,6 +246,9 @@ export class BotCommands {
   ) {
     await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
+    if (!interaction.member) {
+      return interaction.editReply({ content: "This command must be used in a server." });
+    }
     const member = interaction.member as GuildMember;
     if (!member.roles.cache.has(this.adminRoleId)) {
       return interaction.editReply({
@@ -261,12 +265,10 @@ export class BotCommands {
       });
     }
 
-    const result = await this.attendanceService.signOut(
+    const result = await this.attendanceService.adminSignOut(
       user.id,
       interaction.guildId || "",
-      nickname,
-      undefined,
-      true
+      nickname
     );
 
     if (result.success) {

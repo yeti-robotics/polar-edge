@@ -10,8 +10,10 @@ import {
   useRef,
   useState,
 } from "react";
+import { maybeRefreshToken } from "./action";
 
 export const INTERVAL_MS = 30_000;
+const REFRESH_INTERVAL_MS = 60 * 60 * 1000; // Check token refresh every hour
 
 interface TOTPContextValue {
   code: number | null;
@@ -33,6 +35,7 @@ export function TOTPProvider({ secret, intervalMs = INTERVAL_MS, children }: TOT
   const [progress, setProgress] = useState<number>(100);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const refreshRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   const generateCode = useCallback(async () => {
     try {
@@ -82,10 +85,16 @@ export function TOTPProvider({ secret, intervalMs = INTERVAL_MS, children }: TOT
 
     scheduleNextCode();
 
+    // Periodically refresh the JWT to keep the kiosk session alive
+    refreshRef.current = setInterval(() => {
+      maybeRefreshToken().catch(() => {});
+    }, REFRESH_INTERVAL_MS);
+
     return () => {
       isMounted = false;
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (refreshRef.current) clearInterval(refreshRef.current);
     };
   }, [generateCode, intervalMs]);
 

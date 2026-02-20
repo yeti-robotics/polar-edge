@@ -38,6 +38,14 @@ type AttendanceOperationResult =
       message: string;
     };
 
+/** Prevents Sheets formula injection by prefixing dangerous characters with a text-prefix quote. */
+function sanitizeForSheets(value: string): string {
+  if (/^[=+\-@\t\r\n]/.test(value)) {
+    return "'" + value;
+  }
+  return value;
+}
+
 @Injectable()
 export class AttendanceService {
   private readonly attendanceSheetId: string;
@@ -82,7 +90,7 @@ export class AttendanceService {
     const attendance = AttendanceSchema.parse({
       discordId,
       team,
-      discordName,
+      discordName: sanitizeForSheets(discordName),
       date: date.toISOString(),
       isSigningIn: operation === "signIn",
     });
@@ -225,14 +233,11 @@ export class AttendanceService {
     discordId: string,
     guildId: string,
     discordName: string,
-    code?: number,
-    skipTwofa?: boolean
+    code?: number
   ): Promise<AttendanceOperationResult> {
-    if (!skipTwofa) {
-      const codeError = this.validateTwofaCode(code);
-      if (codeError) {
-        return codeError;
-      }
+    const codeError = this.validateTwofaCode(code);
+    if (codeError) {
+      return codeError;
     }
 
     const lastOperation = await this.getLastAttendanceRecord(discordId);
@@ -255,14 +260,11 @@ export class AttendanceService {
     discordId: string,
     guildId: string,
     discordName: string,
-    code?: number,
-    skipTwofa?: boolean
+    code?: number
   ): Promise<AttendanceOperationResult> {
-    if (!skipTwofa) {
-      const codeError = this.validateTwofaCode(code);
-      if (codeError) {
-        return codeError;
-      }
+    const codeError = this.validateTwofaCode(code);
+    if (codeError) {
+      return codeError;
     }
 
     const lastOperation = await this.getLastAttendanceRecord(discordId);
@@ -274,10 +276,45 @@ export class AttendanceService {
       };
     }
 
-    // If session expired, treat as new sign-in (admin bypasses this check)
+    // If session expired, treat as new sign-in
     const lastDate = new Date(lastOperation.date);
-    if (!skipTwofa && Date.now() - lastDate.getTime() > EXPIRED_SESSION_THRESHOLD_MS) {
-      return this.signIn(discordId, guildId, discordName, code, skipTwofa);
+    if (Date.now() - lastDate.getTime() > EXPIRED_SESSION_THRESHOLD_MS) {
+      return this.signIn(discordId, guildId, discordName, code);
+    }
+
+    return this.recordSignOut(discordId, discordName, guildId);
+  }
+
+  /** Admin sign-in — skips 2FA and expired-session checks. */
+  public async adminSignIn(
+    discordId: string,
+    guildId: string,
+    discordName: string
+  ): Promise<AttendanceOperationResult> {
+    const lastOperation = await this.getLastAttendanceRecord(discordId);
+
+    if (!lastOperation?.isSigningIn) {
+      return this.recordSignIn(discordId, discordName, guildId);
+    }
+
+    const lastDate = new Date(lastOperation.date);
+    if (this.isStaleSession(lastDate)) {
+      return this.handleForgotToSignOut(discordId, discordName, guildId, lastDate);
+    }
+
+    return { success: false, message: "User is currently signed in." };
+  }
+
+  /** Admin sign-out — skips 2FA and expired-session checks. */
+  public async adminSignOut(
+    discordId: string,
+    guildId: string,
+    discordName: string
+  ): Promise<AttendanceOperationResult> {
+    const lastOperation = await this.getLastAttendanceRecord(discordId);
+
+    if (!lastOperation?.isSigningIn) {
+      return { success: false, message: "User is not signed in." };
     }
 
     return this.recordSignOut(discordId, discordName, guildId);

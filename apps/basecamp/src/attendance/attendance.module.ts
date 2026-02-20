@@ -16,6 +16,7 @@ import { TwofaService } from "./twofa/twofa.service";
           secret: configService.get("JWT_SECRET"),
           signOptions: {
             algorithm: "HS256",
+            expiresIn: "7d",
           },
         };
       },

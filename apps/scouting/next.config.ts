@@ -1,5 +1,15 @@
 import type { NextConfig } from "next";
 
+const defaultOrigins = [
+  "scout.yetirobotics.org",
+  "scouting.svc.int.yukigamine.net",
+  "localhost:3000",
+];
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+  : defaultOrigins;
+
 const nextConfig: NextConfig = {
   // Configure `pageExtensions` to include MDX files
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
@@ -24,11 +34,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: [
-        "scout.yetirobotics.org",
-        "scouting.svc.int.yukigamine.net",
-        "localhost:3000",
-      ],
+      allowedOrigins,
     },
     esmExternals: true,
   },
