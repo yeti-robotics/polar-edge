@@ -1,6 +1,6 @@
 # Security Fix Implementation Plan
 
-Fixes all audit findings except M4 (Weak TOTP Parameters — intentionally 4 digits).
+Fixes all audit findings except M4 (Weak TOTP Parameters — intentionally 4 digits) and M7 (TOTP replay — sign-in then sign-out in the same 30s window is valid).
 
 ---
 
@@ -14,11 +14,16 @@ Fixes all audit findings except M4 (Weak TOTP Parameters — intentionally 4 dig
 - Keep `ATTENDANCE_2FA_SECRET` for TOTP code generation only (line 30)
 - These are now two distinct env vars — knowing the login password no longer reveals the TOTP secret
 
-### 1.2 Add JWT expiration [C2]
+### 1.2 Add JWT expiration + auto-refresh [C2]
 
 **File:** `apps/basecamp/src/attendance/attendance.module.ts`
 
-- Add `expiresIn: "8h"` to `signOptions` in JwtModule config
+- Add `expiresIn: "7d"` to `signOptions` in JwtModule config (long-lived for kiosk use)
+
+**File:** `apps/basecamp/src/attendance/twofa/twofa.controller.ts`
+
+- Add `POST /2fa/refresh` endpoint: accepts a valid (non-expired) JWT, returns a new JWT with fresh 7-day expiry
+- Verifies the existing token before issuing a new one
 
 ### 1.3 Timing-safe password comparison [M3]
 
@@ -34,56 +39,34 @@ Fixes all audit findings except M4 (Weak TOTP Parameters — intentionally 4 dig
 - Add `private readonly logger = new Logger(TwofaController.name)`
 - Replace `console.error` on lines 22 and 40
 
-### 1.5 Add `/2fa/code` endpoint — server-side TOTP generation [C1]
-
-**File:** `apps/basecamp/src/attendance/twofa/twofa.controller.ts`
-
-- New `GET /2fa/code` endpoint
-- Manually verify JWT from `Authorization: Bearer <token>` header
-- Call `TwofaService.getCurrentCode()` to generate the current TOTP code server-side
-- Return `{ code }` — the secret never leaves the server
-
-**File:** `apps/basecamp/src/attendance/twofa/twofa.service.ts`
-
-- Add `getCurrentCode(): number` method using `getCurrentCode` from `@repo/twofa/server`
-
-### 1.6 Stop leaking TOTP secret in auth response [C1]
+### 1.5 Stop leaking TOTP secret in auth response [C1]
 
 **File:** `apps/basecamp/src/attendance/twofa/twofa.controller.ts`
 
 - Remove `secret: totpSecret` from the `/2fa/authenticate` JSON response
 - Response becomes just `{ message: "Accepted", token }`
 
-### 1.7 Add global ValidationPipe [H4]
+### 1.6 Add global ValidationPipe [H4]
 
 **File:** `apps/basecamp/src/main.ts`
 
 - Add `app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))`
 - This activates the existing `@IsString()` / `@IsNotEmpty()` decorators on `TwofaSignInDto` and `TwofaValidateDto`
 
-### 1.8 Add CORS configuration [H3]
+### 1.7 Add CORS configuration [H3]
 
 **File:** `apps/basecamp/src/main.ts`
 
 - Add `app.enableCors({ origin: process.env.CORS_ORIGIN || "http://localhost:3000" })`
 - Deployments set `CORS_ORIGIN` to the basecamp-fe domain
 
-### 1.9 Add rate limiting on auth endpoint [M2]
+### 1.8 Add rate limiting on auth endpoint [M2]
 
 **Files:** `apps/basecamp/src/app.module.ts`, `apps/basecamp/src/attendance/twofa/twofa.controller.ts`
 
 - Install `@nestjs/throttler`
 - Register `ThrottlerModule` in AppModule with default limits (e.g. 10 requests per 60 seconds)
 - Apply `@Throttle()` to the `POST /2fa/authenticate` endpoint with a stricter limit (5 per 60s)
-
-### 1.10 TOTP replay protection [M7]
-
-**File:** `apps/basecamp/src/attendance/twofa/twofa.service.ts`
-
-- Add an in-memory `Set<string>` of recently used codes (keyed by `${code}-${timeWindow}`)
-- In `verifyCode`, after a successful verification, check if the code was already used in this window
-- If already used, return `false`; otherwise add to set and return `true`
-- Clean up stale entries every 60 seconds
 
 ---
 
@@ -94,33 +77,41 @@ Fixes all audit findings except M4 (Weak TOTP Parameters — intentionally 4 dig
 **File:** `apps/basecamp-fe/src/lib/auth.ts`
 
 - Set `httpOnly: true` on the `toofaToken` cookie
-- Add `maxAge: 28800` (8 hours, matching JWT expiry) to the cookie
+- Add `maxAge` matching 7-day JWT expiry
 - Remove the entire `toofaSecret` cookie block — secret no longer sent by backend
 
-### 2.2 Add server action to fetch TOTP code from backend
+### 2.2 Generate TOTP codes on the Next.js server [C1]
+
+`basecamp-fe` already depends on `@repo/twofa`. Instead of fetching codes from the remote basecamp API (which had reliability issues on the Pi), generate them locally on the Next.js server using `getCurrentCode` from `@repo/twofa/server`.
 
 **File:** `apps/basecamp-fe/src/app/@auth/action.ts`
 
-- New `getCode()` server action that:
-  - Reads `toofaToken` from httpOnly cookie
-  - Calls `GET /2fa/code` on basecamp backend with `Authorization: Bearer <token>`
-  - Returns the code number (or null on failure)
+- New `getCode()` server action:
+  - Reads `toofaToken` from httpOnly cookie, validates it
+  - Generates TOTP code using `getCurrentCode(process.env.ATTENDANCE_2FA_SECRET, { timeStep: 30, digits: 4 })`
+  - Returns the code number (or null on auth failure)
+  - No network call to basecamp backend — fully local, reliable on the Pi
 
-### 2.3 Rearchitect TOTPProvider — poll server instead of generating client-side
+- As a side-effect, checks JWT expiry. If expiring within 24 hours, calls `POST /2fa/refresh` on basecamp backend to refresh the token and update the cookie. If refresh fails (network blip), no problem — the token is still valid for days, and it'll retry in 30 seconds.
+
+**New env var:** `ATTENDANCE_2FA_SECRET` added to basecamp-fe environment (same value as basecamp).
+
+### 2.3 Rearchitect TOTPProvider — poll server action instead of generating client-side
 
 **File:** `apps/basecamp-fe/src/app/@auth/totp-context.tsx`
 
-- Remove `@repo/twofa/client` import and `generateCode` callback
+- Remove `@repo/twofa/client` import and client-side `generateCode` callback
 - Accept `initialCode: number | null` and `fetchCode: () => Promise<number | null>` props instead of `secret`
-- On mount and at each 30-second boundary, call `fetchCode()` to get the current code from the server
-- Timer/progress bar remain computed locally from wall clock (no change to UX)
+- On mount and at each 30-second boundary, call `fetchCode()` (the server action)
+- Timer/progress bar remain computed locally from wall clock — **no change to UX**
+- The secret never reaches the browser
 
 ### 2.4 Update @auth/page.tsx
 
 **File:** `apps/basecamp-fe/src/app/@auth/page.tsx`
 
 - Remove `toofaSecret` cookie read
-- Fetch initial code server-side by calling the backend `/2fa/code` endpoint
+- Fetch initial code server-side via `getCurrentCode` directly (server component has access)
 - Pass `initialCode` and the `getCode` server action to `TOTPProvider`
 - Remove the `secret` prop entirely
 
@@ -173,10 +164,10 @@ Apply in `recordAttendance` before building the row array — sanitize only `dis
 
 ### 4.3 Scouting: Fix dead middleware [M1]
 
-**File:** `apps/scouting/src/middleware.ts` (new) or delete `apps/scouting/src/proxy.ts`
+**File:** delete `apps/scouting/src/proxy.ts`
 
-- Since all server actions independently validate auth, the simplest fix is to delete the dead `proxy.ts` to avoid a false sense of security
-- If defense-in-depth is preferred: create `middleware.ts` that imports and uses the proxy function with the correct Next.js middleware export pattern
+- All server actions independently validate auth, so this is dead code creating a false sense of security
+- Delete it
 
 ### 4.4 Fix .gitignore to cover bare .env files [L6]
 
@@ -199,15 +190,15 @@ Apply in `recordAttendance` before building the row array — sanitize only `dis
 
 ### 4.7 M5 (OAuth tokens plaintext) — Defer
 
-This is a Better Auth default. Application-level encryption would require custom adapter logic and key management. Recommend accepting this risk with database-level encryption, or deferring to a future PR.
+Better Auth default. Application-level encryption would require custom adapter logic and key management. Recommend accepting risk or deferring to a future PR.
 
 ### 4.8 L1 (Public /api/teams/search) — Defer
 
-FRC team data is publicly available. Recommend documenting this as intentional rather than adding auth.
+FRC team data is publicly available. Document as intentional.
 
 ### 4.9 L2 + L3 (Invite link limits and cleanup) — Defer
 
-Low severity. Recommend as a separate PR for scouting app improvements.
+Low severity. Separate PR for scouting improvements.
 
 ---
 
@@ -216,9 +207,10 @@ Low severity. Recommend as a separate PR for scouting app improvements.
 | Variable | App | Purpose |
 |----------|-----|---------|
 | `ATTENDANCE_2FA_PASSWORD` | basecamp | Login password (separate from TOTP secret) |
+| `ATTENDANCE_2FA_SECRET` | basecamp-fe | TOTP secret for server-side code generation (same value as basecamp) |
 | `CORS_ORIGIN` | basecamp | Allowed CORS origin for basecamp-fe |
 
-`ATTENDANCE_2FA_SECRET` continues to exist but is now used solely for TOTP code generation.
+`ATTENDANCE_2FA_SECRET` already exists in basecamp — now also needed in basecamp-fe's environment.
 
 ---
 
@@ -232,6 +224,6 @@ Low severity. Recommend as a separate PR for scouting app improvements.
 
 ## Execution Order
 
-Steps 1.1–1.10 and 3.1 can be done in one commit (backend changes).
-Steps 2.1–2.5 in a second commit (frontend changes that depend on the new backend endpoint).
-Steps 4.1–4.6 can be done independently in parallel or as a third commit.
+1. **Backend commit:** Steps 1.1–1.8 and 3.1 (all basecamp server changes)
+2. **Frontend commit:** Steps 2.1–2.5 (basecamp-fe changes that depend on the backend changes)
+3. **Cleanup commit:** Steps 4.1–4.6 (independent fixes across both apps)
