@@ -6,11 +6,7 @@ import { ArrowLeftRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function SelectTeam({
-  teams,
-}: {
-  teams: Array<{ teamNumber: number; teamName: string }>;
-}) {
+export function SelectTeam({ teams }: { teams: Array<{ teamNumber: number; teamName: string }> }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");

@@ -155,7 +155,8 @@ export async function getTeamKeyMetrics(
   const m = matchStats[0];
   if (!m || Number(m.totalMatchesScouted) === 0) return null;
 
-  const f = formStats[0]!;
+  const f = formStats[0];
+  if (!f) return null;
   return {
     avgAutoPoints: Math.round(Number(f.avgAutoPoints) * 10) / 10,
     avgTeleopPoints: Math.round(Number(f.avgTeleopPoints) * 10) / 10,
