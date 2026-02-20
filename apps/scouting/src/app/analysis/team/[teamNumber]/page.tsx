@@ -1,14 +1,22 @@
 // route for [teamNumber] page
 
-import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
 import { Label } from "@repo/ui/components/label";
 import { eq, sql } from "drizzle-orm";
 import { db } from "@/lib/database";
-import { cycle, standForm, teamMatch, team as teamTable } from "@/lib/database/schema";
+import {
+  cycle,
+  standForm,
+  teamMatch,
+  team as teamTable,
+} from "@/lib/database/schema";
 // import { TeamRadarChart } from "../Recharts";
 // import { ExampleCombobox } from "./TeamSwitcher";
-export default async function TeamPage({ params }: { params: { teamNumber: string } }) {
+export default async function TeamPage({
+  params,
+}: {
+  params: { teamNumber: string };
+}) {
   const { teamNumber } = await params;
   const teamResults = await db
     .select()
@@ -39,7 +47,9 @@ export default async function TeamPage({ params }: { params: { teamNumber: strin
   if (!standForms || standForms.length === 0) {
     return (
       <Card className="w-full p-6 rounded-lg shadow-md">
-        <h1 className="text-4xl font-mono">No Stand Form Data for Team {teamNumber}</h1>
+        <h1 className="text-4xl font-mono">
+          No Stand Form Data for Team {teamNumber}
+        </h1>
       </Card>
     );
   }
@@ -79,7 +89,9 @@ export default async function TeamPage({ params }: { params: { teamNumber: strin
   return (
     <div className="p-4 space-y-4">
       <Card className="w-full p-6 rounded-lg shadow-md">
-        <h1 className="text-4xl font-mono">Team {teamRow.teamNumber} Analysis</h1>
+        <h1 className="text-4xl font-mono">
+          Team {teamRow.teamNumber} Analysis
+        </h1>
         <p className="mt-2 text-muted-foreground">Name: {teamRow.teamName}</p>
 
         <Label> Use this button to switch out teams </Label>
