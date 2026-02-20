@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.3...basecamp-v1.0.4) (2026-02-20)
+
+
+### Bug Fixes
+
+* **basecamp:** enhance Dockerfile and update TypeScript configuration ([7737d87](https://github.com/yeti-robotics/polar-edge/commit/7737d87f12b5ef126137a2cd006c6d12df48da83))
+
 ## [1.0.3](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.2...basecamp-v1.0.3) (2026-02-20)
 
 
