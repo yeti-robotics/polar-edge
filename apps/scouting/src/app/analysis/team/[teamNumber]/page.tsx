@@ -94,13 +94,11 @@ export default async function TeamPage({
           Team {teamRow.teamNumber} Analysis
         </h1>
         <p className="mt-2 text-muted-foreground">Name: {teamRow.teamName}</p>
-        <ExampleCombobox />
+
         <Label> Use this button to switch out teams </Label>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <TeamRadarChart data={radarData} />
-
         <Card className="w-full p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-mono mb-4">Metrics</h2>
           <div className="space-y-2">
