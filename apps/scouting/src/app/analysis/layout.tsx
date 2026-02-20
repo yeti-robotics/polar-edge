@@ -9,23 +9,28 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
           <div className="flex flex-col p-5">
             <span className="text-xs text-muted-foreground uppercase font-mono">Scouting Data</span>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/data">
-                Data
+              <Link className="text-sm w-full justify-start" href="/analysis/comparison">
+                Comparison
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/data/graphs">
+              <Link className="text-sm w-full justify-start" href="/analysis/graphs">
                 Graph
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/data/teams">
+              <Link className="text-sm w-full justify-start" href="/analysis/teams">
                 Teams
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link className="text-sm w-full justify-start" href="/analysis/events">
+                Events
               </Link>
             </Button>
           </div>
         </aside>
-        <div className="h-full overflow-y-auto overflow-x-hidden">{children}</div>
+        <div className="h-full overflow-y-auto min-w-0">{children}</div>
       </div>
     </div>
   );

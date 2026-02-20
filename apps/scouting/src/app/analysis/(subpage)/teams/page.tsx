@@ -99,14 +99,14 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
               <TableRow key={teamData.teamNumber} className="cursor-pointer hover:bg-muted/50">
                 <TableCell>
                   <Link
-                    href={`/data/teams/${teamData.teamNumber}`}
+                    href={`/analysis/team/${teamData.teamNumber}`}
                     className="font-medium text-primary hover:underline"
                   >
                     {teamData.teamNumber}
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <Link href={`/data/teams/${teamData.teamNumber}`} className="hover:underline">
+                  <Link href={`/analysis/team/${teamData.teamNumber}`} className="hover:underline">
                     {teamData.teamName || (
                       <span className="text-muted-foreground italic">No name</span>
                     )}
@@ -129,7 +129,7 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
               {currentPage > 1 && (
                 <PaginationItem>
                   <PaginationPrevious
-                    href={`/data/teams?page=${currentPage - 1}${
+                    href={`/analysis/teams?page=${currentPage - 1}${
                       searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                     }`}
                   />
@@ -140,7 +140,7 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
                 <>
                   <PaginationItem>
                     <PaginationLink
-                      href={`/data/teams?page=1${
+                      href={`analysis/teams?page=1${
                         searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                       }`}
                     >
@@ -158,7 +158,7 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
               {currentPage > 1 && (
                 <PaginationItem>
                   <PaginationLink
-                    href={`/data/teams?page=${currentPage - 1}${
+                    href={`analysis/teams?page=${currentPage - 1}${
                       searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                     }`}
                   >
@@ -169,7 +169,7 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
 
               <PaginationItem>
                 <PaginationLink
-                  href={`/data/teams?page=${currentPage}${
+                  href={`/analysis/teams?page=${currentPage}${
                     searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                   }`}
                   isActive
@@ -181,7 +181,7 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
               {currentPage < totalPages && (
                 <PaginationItem>
                   <PaginationLink
-                    href={`/data/teams?page=${currentPage + 1}${
+                    href={`/analysis/teams?page=${currentPage + 1}${
                       searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                     }`}
                   >
@@ -199,7 +199,7 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
                   )}
                   <PaginationItem>
                     <PaginationLink
-                      href={`/data/teams?page=${totalPages}${
+                      href={`/analysis/teams?page=${totalPages}${
                         searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                       }`}
                     >
@@ -212,7 +212,7 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
               {currentPage < totalPages && (
                 <PaginationItem>
                   <PaginationNext
-                    href={`/data/teams?page=${currentPage + 1}${
+                    href={`analysis/teams?page=${currentPage + 1}${
                       searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
                     }`}
                   />

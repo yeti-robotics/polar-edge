@@ -28,7 +28,7 @@ export function TeamsSearch({ initialSearch }: TeamsSearchProps) {
     }
 
     startTransition(() => {
-      router.push(`/data/teams?${params.toString()}`);
+      router.push(`/analysis/teams?${params.toString()}`);
     });
   };
 
