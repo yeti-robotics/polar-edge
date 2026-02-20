@@ -38,7 +38,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 USER nodejs
 
-COPY --from=installer --chown=nodejs:nodejs /app/apps/basecamp/dist ./dist
-COPY --from=installer --chown=nodejs:nodejs /app/deploy/node_modules ./node_modules
+COPY --from=installer --chown=nodejs:nodejs /app/apps/basecamp/dist ./apps/basecamp/dist
+COPY --from=installer --chown=nodejs:nodejs /app/deploy/node_modules ./apps/basecamp/node_modules
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "apps/basecamp/dist/main.js"]
