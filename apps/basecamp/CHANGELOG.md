@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.4...basecamp-v1.0.5) (2026-02-20)
+
+
+### Bug Fixes
+
+* **basecamp:** update Dockerfile paths for improved directory structure ([45ecaac](https://github.com/yeti-robotics/polar-edge/commit/45ecaac3428b2bc457a0972994ed03972a821596))
+
 ## [1.0.4](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.3...basecamp-v1.0.4) (2026-02-20)
 
 
