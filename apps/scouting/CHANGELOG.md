@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026.3.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.4...scouting-v2026.3.0) (2026-02-20)
+
+
+### Features
+
+* **scouting:** routing for analysis pages ([#412](https://github.com/yeti-robotics/polar-edge/issues/412)) ([3476559](https://github.com/yeti-robotics/polar-edge/commit/347655910187ffe2ba292ace115de29bbd047f10))
+* **scouting:** team detail page ([#414](https://github.com/yeti-robotics/polar-edge/issues/414)) ([c4762f3](https://github.com/yeti-robotics/polar-edge/commit/c4762f3ae6a11add324a13e7ad3d4509159cabc0))
+
 ## [2026.2.4](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.3...scouting-v2026.2.4) (2026-02-19)
 
 
