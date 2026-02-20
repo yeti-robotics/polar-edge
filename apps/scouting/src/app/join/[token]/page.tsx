@@ -104,7 +104,7 @@ export default async function JoinPage({ params }: { params: Promise<{ token: st
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AcceptInviteLinkForm token={token} organizationName={org.name} />
+          <AcceptInviteLinkForm token={token} organizationName={org.name} organizationId={org.id} />
         </CardContent>
       </Card>
     </main>

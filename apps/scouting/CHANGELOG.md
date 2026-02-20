@@ -1,5 +1,20 @@
 # Changelog
 
+## [2026.2.4](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.3...scouting-v2026.2.4) (2026-02-19)
+
+
+### Bug Fixes
+
+* **scouting:** enhance AcceptInviteLinkForm to include organizationId ([2a81efe](https://github.com/yeti-robotics/polar-edge/commit/2a81efed9ce17dc88f01a95399aeec1ce9b6a86a))
+* **scouting:** implement loading skeletons and handle no active event state ([c735362](https://github.com/yeti-robotics/polar-edge/commit/c735362ab73b0c58304260a7c8aef61197a4c4a5))
+
+## [2026.2.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.2...scouting-v2026.2.3) (2026-02-19)
+
+
+### Bug Fixes
+
+* **scouting:** implement pending invite cookie handling ([690cdc6](https://github.com/yeti-robotics/polar-edge/commit/690cdc6997fc502f6861067ba685ce9c0df41498))
+
 ## [2026.2.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.1...scouting-v2026.2.2) (2026-02-19)
 
 

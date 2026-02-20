@@ -19,7 +19,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@nestjs/cli": "^11.0.16",
+    "@googleapis/sheets": "^13.0.1",
     "@nestjs/common": "^11.1.14",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.1.14",
@@ -33,13 +33,14 @@
     "class-validator": "^0.14.3",
     "discord.js": "^14.25.1",
     "express": "^5.2.1",
-    "googleapis": "^158.0.0",
+    "google-auth-library": "^10.5.0",
     "necord": "^6.12.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.14",
     "@repo/typescript-config": "workspace:*",
