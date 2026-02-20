@@ -9,8 +9,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import Overview from "./Overview";
 import { getAnalysisOverviewData } from "./actions";
+import Overview from "./Overview";
 
 function formatNumber(value: number): string {
   return value.toFixed(1);

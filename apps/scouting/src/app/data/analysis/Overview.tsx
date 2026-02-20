@@ -1,16 +1,14 @@
 "use client";
 
-import {
-  type ColumnDef,
-  type SortingState,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/card";
 import { Input } from "@repo/ui/components/input";
 import {
   Select,
@@ -27,6 +25,14 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Fragment, type ReactNode, useMemo, useState } from "react";
@@ -50,13 +56,7 @@ function formatNumber(value: number): string {
   return value.toFixed(1);
 }
 
-function SortHeader({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}): ReactNode {
+function SortHeader({ label, onClick }: { label: string; onClick: () => void }): ReactNode {
   return (
     <Button variant="ghost" className="-ml-2 h-8 px-2" onClick={onClick}>
       {label}
@@ -141,7 +141,9 @@ export default function Overview({ teams }: OverviewProps) {
   const drivetrainOptions = useMemo(
     () => [
       "all",
-      ...Array.from(new Set(teams.map((team) => team.drivetrain))).sort((a, b) => a.localeCompare(b)),
+      ...Array.from(new Set(teams.map((team) => team.drivetrain))).sort((a, b) =>
+        a.localeCompare(b)
+      ),
     ],
     [teams]
   );
@@ -149,7 +151,9 @@ export default function Overview({ teams }: OverviewProps) {
   const climbOptions = useMemo(
     () => [
       "all",
-      ...Array.from(new Set(teams.map((team) => team.climbType))).sort((a, b) => a.localeCompare(b)),
+      ...Array.from(new Set(teams.map((team) => team.climbType))).sort((a, b) =>
+        a.localeCompare(b)
+      ),
     ],
     [teams]
   );
@@ -203,10 +207,16 @@ export default function Overview({ teams }: OverviewProps) {
       {
         accessorKey: "teamNumber",
         header: ({ column }) => (
-          <SortHeader label="Team #" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
+          <SortHeader
+            label="Team #"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          />
         ),
         cell: ({ row }) => (
-          <Link className="font-medium text-primary hover:underline" href={`/data/teams/${row.original.teamNumber}`}>
+          <Link
+            className="font-medium text-primary hover:underline"
+            href={`/data/teams/${row.original.teamNumber}`}
+          >
             {row.original.teamNumber}
           </Link>
         ),
@@ -228,7 +238,9 @@ export default function Overview({ teams }: OverviewProps) {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           />
         ),
-        cell: ({ row }) => <span className="tabular-nums">{formatNumber(row.original.avgAutoPoints)}</span>,
+        cell: ({ row }) => (
+          <span className="tabular-nums">{formatNumber(row.original.avgAutoPoints)}</span>
+        ),
       },
       {
         accessorKey: "avgTeleopPoints",
@@ -250,7 +262,9 @@ export default function Overview({ teams }: OverviewProps) {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           />
         ),
-        cell: ({ row }) => <span className="tabular-nums">{formatNumber(row.original.avgClimbPoints)}</span>,
+        cell: ({ row }) => (
+          <span className="tabular-nums">{formatNumber(row.original.avgClimbPoints)}</span>
+        ),
       },
       {
         accessorKey: "avgTotalPoints",
@@ -260,7 +274,9 @@ export default function Overview({ teams }: OverviewProps) {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           />
         ),
-        cell: ({ row }) => <span className="tabular-nums">{formatNumber(row.original.avgTotalPoints)}</span>,
+        cell: ({ row }) => (
+          <span className="tabular-nums">{formatNumber(row.original.avgTotalPoints)}</span>
+        ),
       },
       {
         accessorKey: "uptimePct",
@@ -270,7 +286,9 @@ export default function Overview({ teams }: OverviewProps) {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           />
         ),
-        cell: ({ row }) => <span className="tabular-nums">{formatNumber(row.original.uptimePct)}%</span>,
+        cell: ({ row }) => (
+          <span className="tabular-nums">{formatNumber(row.original.uptimePct)}%</span>
+        ),
       },
       {
         accessorKey: "matchesScouted",
@@ -410,7 +428,10 @@ export default function Overview({ teams }: OverviewProps) {
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   No teams match the current filters.
                 </TableCell>
               </TableRow>

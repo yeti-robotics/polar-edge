@@ -266,27 +266,30 @@ export async function getAnalysisOverviewData(eventId: string): Promise<Analysis
     order by overall_score desc, n.avg_total_points desc, n.team_number asc
   `);
 
-  const rows = (result.rows ?? []).map((row) => ({
-    teamNumber: Number(row.team_number),
-    teamName: row.team_name,
-    avgAutoPoints: Number(row.avg_auto_points) || 0,
-    avgTeleopPoints: Number(row.avg_teleop_points) || 0,
-    avgClimbPoints: Number(row.avg_climb_points) || 0,
-    avgTotalPoints: Number(row.avg_total_points) || 0,
-    uptimePct: Number(row.uptime_pct) || 0,
-    matchesScouted: Number(row.matches_scouted) || 0,
-    scheduledMatches: Number(row.scheduled_matches) || 0,
-    consistencyScore: Number(row.consistency_score) || 0,
-    overallScore: Number(row.overall_score) || 0,
-    overallRank: Number(row.overall_rank) || 0,
-    drivetrain: row.drivetrain,
-    climbType: row.climb_type,
-    canTrench: Boolean(row.can_trench),
-    canBump: Boolean(row.can_bump),
-    canShuttle: Boolean(row.can_shuttle),
-    capacity: Number(row.capacity) || 0,
-    weight: Number(row.weight) || 0,
-  } satisfies AnalysisTeamRow));
+  const rows = (result.rows ?? []).map(
+    (row) =>
+      ({
+        teamNumber: Number(row.team_number),
+        teamName: row.team_name,
+        avgAutoPoints: Number(row.avg_auto_points) || 0,
+        avgTeleopPoints: Number(row.avg_teleop_points) || 0,
+        avgClimbPoints: Number(row.avg_climb_points) || 0,
+        avgTotalPoints: Number(row.avg_total_points) || 0,
+        uptimePct: Number(row.uptime_pct) || 0,
+        matchesScouted: Number(row.matches_scouted) || 0,
+        scheduledMatches: Number(row.scheduled_matches) || 0,
+        consistencyScore: Number(row.consistency_score) || 0,
+        overallScore: Number(row.overall_score) || 0,
+        overallRank: Number(row.overall_rank) || 0,
+        drivetrain: row.drivetrain,
+        climbType: row.climb_type,
+        canTrench: Boolean(row.can_trench),
+        canBump: Boolean(row.can_bump),
+        canShuttle: Boolean(row.can_shuttle),
+        capacity: Number(row.capacity) || 0,
+        weight: Number(row.weight) || 0,
+      }) satisfies AnalysisTeamRow
+  );
 
   const totalTeams = rows.length;
   const teamsScouted = rows.filter((row) => row.matchesScouted > 0).length;
@@ -298,9 +301,9 @@ export async function getAnalysisOverviewData(eventId: string): Promise<Analysis
   const avgPointsPerMatch = totalMatchesScouted > 0 ? totalPointsWeighted / totalMatchesScouted : 0;
   const highestScoringTeam =
     rows.length > 0
-      ? [...rows]
+      ? ([...rows]
           .sort((a, b) => b.avgTotalPoints - a.avgTotalPoints || a.teamNumber - b.teamNumber)
-          .at(0) ?? null
+          .at(0) ?? null)
       : null;
 
   return {
