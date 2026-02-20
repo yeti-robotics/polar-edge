@@ -1,0 +1,329 @@
+import "server-only";
+
+import { and, eq, exists, isNull, sql } from "drizzle-orm";
+import { db } from "@/lib/database";
+import {
+  cycle,
+  member,
+  standForm,
+  teamMatch,
+  vTeamGoblinMatch,
+  vTeamMatchConsensus,
+  vTeamRpMagicMatch,
+} from "@/lib/database/schema";
+
+export type TeamKeyMetrics = {
+  avgAutoPoints: number;
+  avgTeleopPoints: number;
+  avgClimbPoints: number;
+  avgAutoClimbPoints: number;
+  avgTeleopClimbPoints: number;
+  avgClank: number;
+  avgRpMagic: number;
+  avgGoblin: number;
+  avgUptimePct: number;
+  avgDowntimeSeconds: number;
+  totalMatchesScouted: number;
+  brokeCount: number;
+};
+
+export async function getTeamKeyMetrics(
+  teamNumber: number,
+  opts: { organizationId?: string | null; eventId?: string | null }
+): Promise<TeamKeyMetrics | null> {
+  const { organizationId, eventId } = opts;
+
+  const scopeCondition = eventId
+    ? eq(teamMatch.eventId, eventId)
+    : organizationId
+      ? exists(
+          db
+            .select({ one: sql<number>`1` })
+            .from(standForm)
+            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
+            .where(
+              and(
+                eq(standForm.teamMatchId, teamMatch.id),
+                isNull(standForm.deletedAt),
+                eq(member.organizationId, organizationId)
+              )
+            )
+        )
+      : undefined;
+
+  const teamWhere = scopeCondition
+    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
+    : eq(teamMatch.teamNumber, teamNumber);
+
+  const fuelPtsExpr = sql`case ${cycle.bucket}
+    when 0 then 0.0 when 1 then 1.0 when 2 then 2.25
+    when 3 then 4.0 when 4 then 6.0 when 5 then 8.0
+    else 0.0 end * greatest(coalesce(${cycle.dumpDuration}, 0), 0)`;
+
+  const autoFuelCTE = db.$with("af").as(
+    db
+      .select({
+        standFormId: standForm.id,
+        pts: sql<number>`sum(${fuelPtsExpr})`.as("pts"),
+      })
+      .from(cycle)
+      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
+      .where(and(eq(cycle.phase, "auto"), isNull(standForm.deletedAt)))
+      .groupBy(standForm.id)
+  );
+
+  const teleopFuelCTE = db.$with("tf").as(
+    db
+      .select({
+        standFormId: standForm.id,
+        pts: sql<number>`sum(${fuelPtsExpr})`.as("pts"),
+      })
+      .from(cycle)
+      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
+      .where(and(eq(cycle.phase, "teleop"), isNull(standForm.deletedAt)))
+      .groupBy(standForm.id)
+  );
+
+  // Subquery: distinct teamMatchIds that have at least one stand form
+  const sfExistsSub = db
+    .select({ teamMatchId: standForm.teamMatchId })
+    .from(standForm)
+    .where(isNull(standForm.deletedAt))
+    .groupBy(standForm.teamMatchId)
+    .as("sf_exists");
+
+  // Subquery: distinct teamMatchIds where any stand form had oof time > 0
+  const sfOofSub = db
+    .select({ teamMatchId: standForm.teamMatchId })
+    .from(standForm)
+    .where(and(isNull(standForm.deletedAt), sql`${standForm.oofTimeSeconds} > 0`))
+    .groupBy(standForm.teamMatchId)
+    .as("sf_oof");
+
+  const [formStats, matchStats] = await Promise.all([
+    // Per stand-form: auto pts, teleop pts, uptime, downtime
+    db
+      .with(autoFuelCTE, teleopFuelCTE)
+      .select({
+        avgAutoPoints: sql<number>`avg(coalesce(af.pts, 0))`,
+        avgTeleopPoints: sql<number>`avg(coalesce(tf.pts, 0))`,
+        avgUptimePct: sql<number>`avg((150.0 - least(${standForm.oofTimeSeconds}, 150)) / 150.0 * 100)`,
+        avgDowntimeSeconds: sql<number>`avg(${standForm.oofTimeSeconds}::numeric)`,
+      })
+      .from(teamMatch)
+      .innerJoin(
+        standForm,
+        and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
+      )
+      .leftJoin(autoFuelCTE, eq(autoFuelCTE.standFormId, standForm.id))
+      .leftJoin(teleopFuelCTE, eq(teleopFuelCTE.standFormId, standForm.id))
+      .where(teamWhere),
+
+    // Per match: climb pts, total scouted matches, broke count
+    db
+      .select({
+        avgClimbPoints: sql<number>`avg(coalesce(${vTeamMatchConsensus.pureClimbTotal}, 0))`,
+        avgAutoClimbPoints: sql<number>`avg(coalesce(${vTeamMatchConsensus.pureClimbAuto}, 0))`,
+        avgTeleopClimbPoints: sql<number>`avg(coalesce(${vTeamMatchConsensus.pureClimbTeleop}, 0))`,
+        avgClank: sql<number>`avg(coalesce(${vTeamMatchConsensus.clank}, 0))`,
+        avgRpMagic: sql<number>`avg(coalesce(${vTeamRpMagicMatch.rpmagicTotal}, 0))`,
+        avgGoblin: sql<number>`avg(${vTeamGoblinMatch.goblinTeamMatch})`,
+        totalMatchesScouted: sql<number>`count(*)::int`,
+        brokeCount: sql<number>`count(case when sf_oof.team_match_id is not null then 1 end)::int`,
+      })
+      .from(teamMatch)
+      .innerJoin(sfExistsSub, eq(sfExistsSub.teamMatchId, teamMatch.id))
+      .leftJoin(vTeamMatchConsensus, eq(vTeamMatchConsensus.teamMatchId, teamMatch.id))
+      .leftJoin(
+        vTeamRpMagicMatch,
+        and(
+          eq(vTeamRpMagicMatch.matchId, teamMatch.matchId),
+          eq(vTeamRpMagicMatch.teamNumber, teamMatch.teamNumber)
+        )
+      )
+      .leftJoin(
+        vTeamGoblinMatch,
+        and(
+          eq(vTeamGoblinMatch.matchId, teamMatch.matchId),
+          eq(vTeamGoblinMatch.teamNumber, teamMatch.teamNumber)
+        )
+      )
+      .leftJoin(sfOofSub, eq(sfOofSub.teamMatchId, teamMatch.id))
+      .where(teamWhere),
+  ]);
+
+  const m = matchStats[0];
+  if (!m || Number(m.totalMatchesScouted) === 0) return null;
+
+  const f = formStats[0]!;
+  return {
+    avgAutoPoints: Math.round(Number(f.avgAutoPoints) * 10) / 10,
+    avgTeleopPoints: Math.round(Number(f.avgTeleopPoints) * 10) / 10,
+    avgClimbPoints: Math.round(Number(m.avgClimbPoints) * 10) / 10,
+    avgAutoClimbPoints: Math.round(Number(m.avgAutoClimbPoints) * 10) / 10,
+    avgTeleopClimbPoints: Math.round(Number(m.avgTeleopClimbPoints) * 10) / 10,
+    avgClank: Math.round(Number(m.avgClank) * 10) / 10,
+    avgRpMagic: Math.round(Number(m.avgRpMagic) * 1000) / 1000,
+    avgGoblin: Math.round(Number(m.avgGoblin) * 10) / 10,
+    avgUptimePct: Math.round(Number(f.avgUptimePct) * 10) / 10,
+    avgDowntimeSeconds: Math.round(Number(f.avgDowntimeSeconds) * 10) / 10,
+    totalMatchesScouted: Number(m.totalMatchesScouted),
+    brokeCount: Number(m.brokeCount),
+  };
+}
+
+export type RadarPoint = { subject: string; value: number };
+
+function normalizeAll(rows: { teamNumber: number; value: number }[]): Map<number, number> {
+  const max = Math.max(...rows.map((r) => r.value), 0.001);
+  return new Map(rows.map((r) => [r.teamNumber, Math.round((r.value / max) * 100)]));
+}
+
+export async function getTeamRadarData(
+  teamNumber: number,
+  opts: { organizationId?: string | null; eventId?: string | null }
+): Promise<RadarPoint[]> {
+  const { organizationId, eventId } = opts;
+
+  // Build scope condition for teamMatch-level queries
+  const scopeCondition = eventId
+    ? eq(teamMatch.eventId, eventId)
+    : organizationId
+      ? exists(
+          db
+            .select({ one: sql<number>`1` })
+            .from(standForm)
+            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
+            .where(
+              and(
+                eq(standForm.teamMatchId, teamMatch.id),
+                isNull(standForm.deletedAt),
+                eq(member.organizationId, organizationId)
+              )
+            )
+        )
+      : undefined;
+
+  // CTE: Auto fuel points per stand form
+  const autoFuelCTE = db.$with("auto_fuel").as(
+    db
+      .select({
+        teamMatchId: standForm.teamMatchId,
+        pts: sql<number>`sum(case ${cycle.bucket}
+          when 0 then 0.0 when 1 then 1.0 when 2 then 2.25
+          when 3 then 4.0 when 4 then 6.0 when 5 then 8.0
+          else 0.0 end * greatest(coalesce(${cycle.dumpDuration}, 0), 0))`.as("pts"),
+      })
+      .from(cycle)
+      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
+      .where(and(eq(cycle.phase, "auto"), isNull(standForm.deletedAt)))
+      .groupBy(standForm.id, standForm.teamMatchId)
+  );
+
+  // CTE: Teleop fuel points per stand form
+  const teleopFuelCTE = db.$with("teleop_fuel").as(
+    db
+      .select({
+        teamMatchId: standForm.teamMatchId,
+        pts: sql<number>`sum(case ${cycle.bucket}
+          when 0 then 0.0 when 1 then 1.0 when 2 then 2.25
+          when 3 then 4.0 when 4 then 6.0 when 5 then 8.0
+          else 0.0 end * greatest(coalesce(${cycle.dumpDuration}, 0), 0))`.as("pts"),
+      })
+      .from(cycle)
+      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
+      .where(and(eq(cycle.phase, "teleop"), isNull(standForm.deletedAt)))
+      .groupBy(standForm.id, standForm.teamMatchId)
+  );
+
+  // Run all 4 queries in parallel
+  const [autoData, teleopData, climbData, consistencyReliabilityData] = await Promise.all([
+    // Query 1: Auto scoring — avg auto cycle fuel points per stand form submission
+    db
+      .with(autoFuelCTE)
+      .select({
+        teamNumber: teamMatch.teamNumber,
+        avgPts: sql<number>`avg(coalesce(auto_fuel.pts, 0))`,
+      })
+      .from(teamMatch)
+      .leftJoin(autoFuelCTE, eq(autoFuelCTE.teamMatchId, teamMatch.id))
+      .where(scopeCondition)
+      .groupBy(teamMatch.teamNumber),
+
+    // Query 2: Teleop scoring — avg teleop cycle fuel points per stand form submission
+    db
+      .with(teleopFuelCTE)
+      .select({
+        teamNumber: teamMatch.teamNumber,
+        avgPts: sql<number>`avg(coalesce(teleop_fuel.pts, 0))`,
+      })
+      .from(teamMatch)
+      .leftJoin(teleopFuelCTE, eq(teleopFuelCTE.teamMatchId, teamMatch.id))
+      .where(scopeCondition)
+      .groupBy(teamMatch.teamNumber),
+
+    // Query 3: Climb points — avg consensus climb points per match
+    db
+      .select({
+        teamNumber: teamMatch.teamNumber,
+        avgClimb: sql<number>`avg(coalesce(${vTeamMatchConsensus.expTower}, 0))`,
+      })
+      .from(teamMatch)
+      .leftJoin(vTeamMatchConsensus, eq(vTeamMatchConsensus.teamMatchId, teamMatch.id))
+      .where(scopeCondition)
+      .groupBy(teamMatch.teamNumber),
+
+    // Query 4: Consistency + Reliability — single query over scouted matches
+    db
+      .select({
+        teamNumber: teamMatch.teamNumber,
+        consistency: sql<number>`
+          greatest(0, least(100,
+            (1.0 - stddev_pop(coalesce(${vTeamMatchConsensus.expFuelActive}, 0)
+                            + coalesce(${vTeamMatchConsensus.expTower}, 0))
+            / nullif(avg(coalesce(${vTeamMatchConsensus.expFuelActive}, 0)
+                       + coalesce(${vTeamMatchConsensus.expTower}, 0)), 0)) * 100
+          ))`,
+        reliability: sql<number>`avg((150.0 - least(${standForm.oofTimeSeconds}, 150)) / 150.0 * 100)`,
+      })
+      .from(teamMatch)
+      .leftJoin(vTeamMatchConsensus, eq(vTeamMatchConsensus.teamMatchId, teamMatch.id))
+      .innerJoin(
+        standForm,
+        and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
+      )
+      .where(scopeCondition)
+      .groupBy(teamMatch.teamNumber),
+  ]);
+
+  // Normalize each metric relative to best team in dataset (best = 100)
+  const autoMap = normalizeAll(
+    autoData.map((r) => ({ teamNumber: r.teamNumber, value: Number(r.avgPts) || 0 }))
+  );
+  const teleopMap = normalizeAll(
+    teleopData.map((r) => ({ teamNumber: r.teamNumber, value: Number(r.avgPts) || 0 }))
+  );
+  const climbMap = normalizeAll(
+    climbData.map((r) => ({ teamNumber: r.teamNumber, value: Number(r.avgClimb) || 0 }))
+  );
+  const consistencyMap = normalizeAll(
+    consistencyReliabilityData.map((r) => ({
+      teamNumber: r.teamNumber,
+      value: Number(r.consistency) || 0,
+    }))
+  );
+  const reliabilityMap = normalizeAll(
+    consistencyReliabilityData.map((r) => ({
+      teamNumber: r.teamNumber,
+      value: Number(r.reliability) || 0,
+    }))
+  );
+
+  return [
+    { subject: "Auto Scoring", value: autoMap.get(teamNumber) ?? 0 },
+    { subject: "Teleop Scoring", value: teleopMap.get(teamNumber) ?? 0 },
+    { subject: "Climb Points", value: climbMap.get(teamNumber) ?? 0 },
+    { subject: "Consistency", value: consistencyMap.get(teamNumber) ?? 0 },
+    { subject: "Reliability", value: reliabilityMap.get(teamNumber) ?? 0 },
+  ];
+}

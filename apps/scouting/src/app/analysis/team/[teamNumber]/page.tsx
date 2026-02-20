@@ -1,4 +1,6 @@
+import { Badge } from "@repo/ui/components/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
+import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
   TableBody,
@@ -7,117 +9,185 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { eq } from "drizzle-orm";
-import { Badge } from "lucide-react";
+import { and, desc, eq, isNull } from "drizzle-orm";
+import { headers } from "next/headers";
+import { Suspense } from "react";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { pitForm, standForm, teamMatch, team as teamTable } from "@/lib/database/schema";
-import { ScrollToBottomButton } from "../ScrollToBottom";
-import { TeamRadarChart } from "../TeamRadarChart";
+import {
+  event,
+  member,
+  pitForm,
+  standForm,
+  teamMatch,
+  team as teamTable,
+} from "@/lib/database/schema";
+import { getTeamKeyMetrics, getTeamRadarData } from "./queries";
+import { TeamKeyMetricsCard } from "./TeamKeyMetricsCard";
+import { RadarChart } from "./TeamRadarChart";
+import { TeamScopeControls } from "./TeamScopeControls";
 import { SelectTeam } from "./TeamSwitcher";
 
 const allTeams = await db.select().from(teamTable);
 
-export default async function TeamPage({ params }: { params: { teamNumber: string } }) {
+async function TeamKeyMetricsSection({
+  teamNum,
+  effectiveOrgId,
+  effectiveEventId,
+}: {
+  teamNum: number;
+  effectiveOrgId: string | null;
+  effectiveEventId: string | null;
+}) {
+  const metrics = await getTeamKeyMetrics(teamNum, {
+    organizationId: effectiveOrgId,
+    eventId: effectiveEventId,
+  });
+
+  if (!metrics) return null;
+  return <TeamKeyMetricsCard metrics={metrics} />;
+}
+
+async function TeamRadarSection({
+  teamNum,
+  effectiveOrgId,
+  effectiveEventId,
+}: {
+  teamNum: number;
+  effectiveOrgId: string | null;
+  effectiveEventId: string | null;
+}) {
+  const radarData = await getTeamRadarData(teamNum, {
+    organizationId: effectiveOrgId,
+    eventId: effectiveEventId,
+  });
+
+  return (
+    <RadarChart
+      data={radarData}
+      angleKey="subject"
+      valueKey="value"
+      name="Score"
+      domain={[0, 100]}
+    />
+  );
+}
+
+export default async function TeamPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ teamNumber: string }>;
+  searchParams: Promise<{ orgScope?: string; eventId?: string }>;
+}) {
   const { teamNumber } = await params;
-  const teamResults = await db
-    .select()
-    .from(teamTable)
-    .where(eq(teamTable.teamNumber, parseInt(teamNumber, 10)));
+  const { orgScope, eventId: eventIdParam } = await searchParams;
+
+  const teamNum = parseInt(teamNumber, 10);
+  const teamResults = await db.select().from(teamTable).where(eq(teamTable.teamNumber, teamNum));
   if (!teamResults || teamResults.length === 0)
     return (
-      <Card className="w-full p-6 rounded-lg shadow-md">
-        <div className="p-4">
-          <h1 className="text-4xl font-mono">Team {teamNumber} Not Found</h1>
-        </div>
-      </Card>
+      <div className="p-6">
+        <p className="font-mono text-4xl">Team {teamNumber} Not Found</p>
+      </div>
     );
 
   const teamRow = teamResults[0] as NonNullable<(typeof teamResults)[0]>;
 
-  const standForms = await db
-    .select({
-      id: standForm.id,
-      oofTimeSeconds: standForm.oofTimeSeconds,
-      teamMatchId: standForm.teamMatchId,
-    })
-    .from(standForm)
-    .innerJoin(teamMatch, eq(standForm.teamMatchId, teamMatch.id))
-    .where(eq(teamMatch.teamNumber, parseInt(teamNumber, 10)))
-    .limit(1);
+  // Optional auth — no redirect, page is public
+  let activeMember = null;
+  try {
+    activeMember = await auth.api.getActiveMember({ headers: await headers() });
+  } catch {
+    // not signed in
+  }
 
-  const pitFormData = await db
-    .select()
-    .from(pitForm)
-    .where(eq(pitForm.teamNumber, parseInt(teamNumber, 10)))
-    .limit(1);
+  const organizationId = activeMember?.organizationId ?? null;
+
+  // Resolve effective scope from search params
+  // Event filter is independent of org scope
+  const effectiveEventId = eventIdParam ?? null;
+  const useOrgScope = orgScope === "1" && organizationId !== null;
+  const effectiveOrgId = useOrgScope ? organizationId : null;
+
+  const eventSelectShape = {
+    id: event.id,
+    name: event.name,
+    eventCode: event.eventCode,
+    startDate: event.startDate,
+  };
+
+  const [pitFormData, globalTeamEvents, orgTeamEvents] = await Promise.all([
+    db.select().from(pitForm).where(eq(pitForm.teamNumber, teamNum)).limit(1),
+
+    // All events this team has any team_match record for
+    db
+      .selectDistinct(eventSelectShape)
+      .from(teamMatch)
+      .innerJoin(event, eq(event.id, teamMatch.eventId))
+      .where(eq(teamMatch.teamNumber, teamNum))
+      .orderBy(desc(event.startDate)),
+
+    // Events where this org has scouted this team
+    organizationId
+      ? db
+          .selectDistinct(eventSelectShape)
+          .from(teamMatch)
+          .innerJoin(event, eq(event.id, teamMatch.eventId))
+          .innerJoin(
+            standForm,
+            and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
+          )
+          .innerJoin(member, eq(member.id, standForm.scoutMemberId))
+          .where(and(eq(teamMatch.teamNumber, teamNum), eq(member.organizationId, organizationId)))
+          .orderBy(desc(event.startDate))
+      : Promise.resolve(
+          [] as { id: string; name: string; eventCode: string; startDate: Date | null }[]
+        ),
+  ]);
 
   const pitData = pitFormData[0];
 
-  if (!standForms || standForms.length === 0) {
-    return (
-      <Card className="w-full p-6 rounded-lg shadow-md">
-        <h1 className="text-4xl font-mono">No Stand Form Data for Team {teamNumber}</h1>
-      </Card>
-    );
-  }
-
-  const totalMatches = standForms.length;
-
-  const radarData = [
-    { subject: "Auto Scoring", value: 80 },
-    { subject: "Teleop Scoring", value: 90 },
-    { subject: "Climb Points", value: 75 },
-    { subject: "Consistency", value: 80 },
-    { subject: "Reliability", value: 70 },
-  ];
-
   return (
-    <div className="p-4 space-y-4">
-      <Card className="w-full p-6 rounded-lg shadow-md">
-        <h1 className="text-4xl font-mono">Team {teamRow.teamNumber}</h1>
-        <p className="mt-2 text-muted-foreground">Team Name: {teamRow.teamName}</p>
-        <SelectTeam teams={allTeams} />
-        <ScrollToBottomButton />
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <TeamRadarChart data={radarData} />
-
-        <Card className="w-full p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-mono mb-4">Metrics</h2>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span>Auto:</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Teleop:</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Climb:</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Consistency:</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Reliability:</span>
-            </div>
-            <div className="flex justify-between">
-              <span> Total matches Scouted: {totalMatches}</span>
-            </div>
-            <h1 className="font-bold text-3xl"> add backend </h1>
+    <div className="p-4 space-y-4 container mx-auto">
+      {/* Page header — intentionally not a Card */}
+      <div className="pb-4 border-b">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-1">
+              Team Analysis
+            </p>
+            <h1 className="text-3xl tracking-tight">{teamRow.teamName}</h1>
+            <p className="mt-1 text-muted-foreground">Team {teamRow.teamNumber}</p>
+            <SelectTeam teams={allTeams} />
           </div>
 
-          {/* Avg auto points
-Avg teleop points
-Avg climb points
-Avg uptime % (reliability)
-Avg downtime per match (oofTime in seconds)
-Total matches scouted
-Broke in X/Y matches (count where oofTime > 0)
- */}
-        </Card>
-        {/* fix the UI of this it looks horrid  */}
-        <Card className="w-full bg-black pb-32">
+          <TeamScopeControls
+            hasOrg={organizationId !== null}
+            globalTeamEvents={globalTeamEvents}
+            orgTeamEvents={orgTeamEvents}
+          />
+        </div>
+      </div>
+
+      <Suspense fallback={<Skeleton className="h-56 w-full" />}>
+        <TeamKeyMetricsSection
+          teamNum={teamNum}
+          effectiveOrgId={effectiveOrgId}
+          effectiveEventId={effectiveEventId}
+        />
+      </Suspense>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Suspense fallback={<Skeleton className="h-90 w-full" />}>
+          <TeamRadarSection
+            teamNum={teamNum}
+            effectiveOrgId={effectiveOrgId}
+            effectiveEventId={effectiveEventId}
+          />
+        </Suspense>
+
+        <Card className="w-full pb-32" id="pit-data">
           <CardHeader>
             <CardTitle>Pit Scouting Data</CardTitle>
           </CardHeader>
@@ -142,10 +212,10 @@ Broke in X/Y matches (count where oofTime > 0)
                     <TableCell>{pitData.capacity}</TableCell>
                     <TableCell>{pitData.climbType || "N/A"}</TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         {pitData.canTrench && <Badge>Trench</Badge>}
                         {pitData.canBump && <Badge>Bump</Badge>}
-                        {pitData.canShuttle && <Badge> Shuttle</Badge>}
+                        {pitData.canShuttle && <Badge>Shuttle</Badge>}
                       </div>
                     </TableCell>
                   </TableRow>
