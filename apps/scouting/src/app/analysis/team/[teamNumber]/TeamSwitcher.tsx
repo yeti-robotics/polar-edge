@@ -58,7 +58,9 @@ export function SelectTeam() {
 
   const highlightedTeam = teams[highlightedIndex];
   const activeDescendant =
-    highlightedIndex >= 0 && highlightedTeam ? `team-option-${highlightedTeam.teamNumber}` : undefined;
+    highlightedIndex >= 0 && highlightedTeam
+      ? `team-option-${highlightedTeam.teamNumber}`
+      : undefined;
 
   const selectTeam = useCallback(
     (team: Team) => {
