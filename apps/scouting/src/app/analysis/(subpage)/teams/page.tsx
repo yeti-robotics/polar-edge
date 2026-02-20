@@ -99,14 +99,14 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
               <TableRow key={teamData.teamNumber} className="cursor-pointer hover:bg-muted/50">
                 <TableCell>
                   <Link
-                    href={`/analysis/teams/${teamData.teamNumber}`}
+                    href={`/analysis/team/${teamData.teamNumber}`}
                     className="font-medium text-primary hover:underline"
                   >
                     {teamData.teamNumber}
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <Link href={`/analysis/teams/${teamData.teamNumber}`} className="hover:underline">
+                  <Link href={`/analysis/team/${teamData.teamNumber}`} className="hover:underline">
                     {teamData.teamName || (
                       <span className="text-muted-foreground italic">No name</span>
                     )}

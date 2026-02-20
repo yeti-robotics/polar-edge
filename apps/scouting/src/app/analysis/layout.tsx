@@ -30,7 +30,7 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
             </Button>
           </div>
         </aside>
-        <div className="h-full overflow-y-auto overflow-x-hidden">{children}</div>
+        <div className="h-full overflow-y-auto min-w-0">{children}</div>
       </div>
     </div>
   );
