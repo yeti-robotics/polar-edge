@@ -1,11 +1,19 @@
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@repo/ui/components/breadcrumb";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { MatchHistoryTable } from "@/app/data/(subpage)/teams/[team]/MatchHistoryTable";
-import { PitPhotoImage } from "@/app/data/(subpage)/teams/[team]/PitPhotoImage";
 import { OrganizationFilterToggle } from "@/components/teams/OrganizationFilterToggle";
 import { auth } from "@/lib/auth";
 import { getTeamInfo, getTeamMatchDetails, getTeamMatchHistory, getTeamPitPhotos } from "./actions";
+import { MatchHistoryTable } from "./MatchHistoryTable";
+import { PitPhotoImage } from "./PitPhotoImage";
 
 interface TeamPageProps {
   params: Promise<{ team: string }>;
@@ -58,6 +66,17 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
 
   return (
     <div className="space-y-6">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/analysis/teams">Teams</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Team {teamInfo.teamNumber + teamInfo.teamName}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl">{teamInfo.teamName}</h1>

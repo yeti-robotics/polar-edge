@@ -29,12 +29,12 @@ const navItems = [
     href: "/forms/stand",
   },
   {
-    label: "Data",
-    href: "/data",
+    label: "Analysis",
+    href: "/analysis",
   },
   {
     label: "Picklist",
-    href: "/analysis/picklist",
+    href: "/picklist",
   },
 ];
 

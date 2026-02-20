@@ -13,11 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import type {
-  ClimbSummary,
-  CycleSummary,
-  MatchDetails,
-} from "@/app/data/(subpage)/teams/[team]/actions";
+import type { ClimbSummary, CycleSummary, MatchDetails } from "./actions";
 
 interface MatchDetailsExpansionProps {
   details: MatchDetails | null;
