@@ -54,6 +54,7 @@ async function getGraphData(): Promise<LineGraphProps["data"]> {
     },
   ];
 }
+// the data is hardcoded @anirvin-dev
 
 export default async function GraphDataPage() {
   const data = await getGraphData();
@@ -66,7 +67,9 @@ export default async function GraphDataPage() {
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl">Team Performance Charts</h1>
-                <p className="mt-1 text-muted-foreground">(mock data for now).</p>
+                <p className="mt-1 text-muted-foreground">
+                  (mock data for now).
+                </p>
               </div>
               <LineGraphPerformanceCharts data={dataSorted} />
             </div>
