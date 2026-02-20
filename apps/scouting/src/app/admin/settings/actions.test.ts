@@ -7,6 +7,7 @@ vi.mock("@/lib/auth", () => ({
   auth: {
     api: {
       getActiveMember: vi.fn(),
+      hasPermission: vi.fn(),
       updateOrganization: vi.fn(),
     },
   },
@@ -33,6 +34,7 @@ function makeFormData(fields: Record<string, string>): FormData {
 describe("updateOrganizationNameAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: true } as any);
   });
 
   it("should return error if not authenticated", async () => {
@@ -57,6 +59,7 @@ describe("updateOrganizationNameAction", () => {
       userId: "user-123",
       createdAt: new Date(),
     } as any);
+    vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: false } as any);
 
     const result = await updateOrganizationNameAction(
       initialState,

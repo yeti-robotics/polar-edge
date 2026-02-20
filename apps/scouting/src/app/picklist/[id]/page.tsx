@@ -1,10 +1,9 @@
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { ArrowLeftIcon, Trash2Icon } from "lucide-react";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getPicklistWithTeams } from "../queries";
 import { DeletePicklistButton } from "./DeletePicklistButton";
 import { PicklistTeamsTable } from "./PicklistTeamsTable";
@@ -16,13 +15,7 @@ interface PicklistDetailPageProps {
 
 export default async function PicklistDetailPage({ params }: PicklistDetailPageProps) {
   const { id } = await params;
-  const requestHeaders = await headers();
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-
-  if (!activeMember) {
-    redirect("/");
-  }
-
+  const activeMember = await requireActiveMember();
   const data = await getPicklistWithTeams(id, activeMember.organizationId);
 
   if (!data) {

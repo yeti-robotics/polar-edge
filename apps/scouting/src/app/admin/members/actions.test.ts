@@ -12,6 +12,7 @@ vi.mock("@/lib/auth", () => ({
   auth: {
     api: {
       getActiveMember: vi.fn(),
+      hasPermission: vi.fn(),
     },
   },
 }));
@@ -41,6 +42,7 @@ vi.mock("next/headers", () => ({
 describe("removeMember", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: true } as any);
   });
 
   it("should return error if not authenticated", async () => {
@@ -62,6 +64,7 @@ describe("removeMember", () => {
       userId: "user-123",
       createdAt: new Date(),
     } as any);
+    vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: false } as any);
 
     const result = await removeMember("member-456");
 
@@ -225,6 +228,7 @@ describe("removeMember", () => {
       userId: "user-123",
       createdAt: new Date(),
     } as any);
+    vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: false } as any);
 
     vi.mocked(db.query.member.findFirst).mockResolvedValue({
       id: "active-member-123",

@@ -20,11 +20,18 @@ export async function updateOrganizationNameAction(
     const requestHeaders = await headers();
     const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
 
-    if (
-      !activeMember ||
-      activeMember.organizationId !== organizationId ||
-      (activeMember.role !== "admin" && activeMember.role !== "owner")
-    ) {
+    if (!activeMember || activeMember.organizationId !== organizationId) {
+      return {
+        data: null,
+        error: "Only organization admins and owners can update settings",
+      };
+    }
+
+    const { success: canUpdate } = await auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permission: { organization: ["update"] } },
+    });
+    if (!canUpdate) {
       return {
         data: null,
         error: "Only organization admins and owners can update settings",

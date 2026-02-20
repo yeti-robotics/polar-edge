@@ -1,19 +1,27 @@
-import { headers } from "next/headers";
+import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 
-export async function proxy(request: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+// Only check cookie existence per Better Auth's Next.js proxy recommendation.
+// Avoid DB/API calls in middleware to prevent blocking requests.
+// Actual session validity and org membership are verified at the page/action level.
 
-  if (!session) {
-    return NextResponse.redirect(new URL("/login", request.url));
+export function proxy(request: NextRequest) {
+  const sessionCookie = getSessionCookie(request);
+
+  if (!sessionCookie) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard"],
+  matcher: [
+    "/admin/:path*",
+    "/analysis/:path*",
+    "/auto-path/:path*",
+    "/forms/:path*",
+    "/organization/:path*",
+    "/profile/:path*",
+  ],
 };

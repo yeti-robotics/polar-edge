@@ -1,9 +1,7 @@
 import { Card, CardContent } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { auth } from "@/lib/auth";
+import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
 import { ActiveEventForm } from "./ActiveEventForm";
 import { SyncFromTBAForm } from "./SyncFromTBAForm";
@@ -20,13 +18,7 @@ function LoadingForm() {
 }
 
 async function EventContent() {
-  const requestHeaders = await headers();
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-
-  if (activeMember?.role !== "admin" && activeMember?.role !== "owner") {
-    redirect("/");
-  }
-
+  const activeMember = await requireAdminMember();
   const organizationId = activeMember.organizationId;
   const [activeEvent, events] = await Promise.all([
     getActiveEventForOrganization(organizationId),

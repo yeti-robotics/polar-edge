@@ -1,13 +1,5 @@
 "use client";
 
-import { Badge } from "@repo/ui/components/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/ui/components/select";
 import {
   Table,
   TableBody,
@@ -17,7 +9,6 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 import Link from "next/link";
-import { useState } from "react";
 import { QuickAddTeamButton } from "./QuickAddTeamButton";
 
 interface TeamWithMetrics {

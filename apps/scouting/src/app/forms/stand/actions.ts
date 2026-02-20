@@ -92,6 +92,23 @@ export async function submitStandForm(data: unknown) {
     // Validate with Zod
     const validated = StandFormSchema.parse(data);
 
+    // Validate teamMatchId belongs to the org's active event
+    const activeEvent = await getActiveEventForOrganization(activeMember.organizationId);
+    if (!activeEvent?.event) {
+      return { error: "No active event" };
+    }
+
+    const validTeamMatch = await db
+      .select({ id: teamMatch.id })
+      .from(teamMatch)
+      .innerJoin(match, eq(teamMatch.matchId, match.id))
+      .where(and(eq(teamMatch.id, validated.teamMatchId), eq(match.eventId, activeEvent.event.id)))
+      .limit(1);
+
+    if (validTeamMatch.length === 0) {
+      return { error: "Invalid match for current event" };
+    }
+
     // Database transaction (all-or-nothing)
     await db.transaction(async (tx) => {
       // Insert stand_form
