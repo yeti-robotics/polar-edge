@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.1...basecamp-v1.0.2) (2026-02-20)
+
+
+### Bug Fixes
+
+* **basecamp:** update dependencies and improve Dockerfile structure to reduce image size ([f4c2f3f](https://github.com/yeti-robotics/polar-edge/commit/f4c2f3fb85abf35def27d1cf72c4361fa67aa099))
+
 ## [1.0.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.0...basecamp-v1.0.1) (2026-02-07)
 
 
