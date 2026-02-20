@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.2...basecamp-v1.0.3) (2026-02-20)
+
+
+### Bug Fixes
+
+* **basecamp:** update Dockerfile and webpack configuration for improved file structure ([0eb35cd](https://github.com/yeti-robotics/polar-edge/commit/0eb35cd4aa66ea170dfbaa09e5f5289f4deea838))
+
 ## [1.0.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.1...basecamp-v1.0.2) (2026-02-20)
 
 

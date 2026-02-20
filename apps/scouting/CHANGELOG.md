@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.4.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.3.0...scouting-v2026.4.0) (2026-02-20)
+
+
+### Features
+
+* **scouting:** add ui for offline indicators ([#420](https://github.com/yeti-robotics/polar-edge/issues/420)) ([336e3fb](https://github.com/yeti-robotics/polar-edge/commit/336e3fb6035fa48edd9050a9c868daca35fa93be))
+
 ## [2026.3.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.4...scouting-v2026.3.0) (2026-02-20)
 
 
