@@ -59,7 +59,7 @@ function UserAvatarFallback() {
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 py-2 overflow-x-hidden border-b bg-background h-(--header-height) flex flex-col justify-between">
+    <header className="sticky top-0 z-50 py-2 min-w-0 border-b bg-background h-(--header-height) flex flex-col justify-between">
       <div className="flex items-center justify-between w-full px-6">
         <div className="flex items-center gap-4">
           <span className="hidden md:block uppercase font-mono text-sm">Polar Edge</span>

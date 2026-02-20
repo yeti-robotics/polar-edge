@@ -5,7 +5,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@repo/ui/components/breadcrumb";
 import { ChevronLeftIcon } from "lucide-react";
@@ -15,7 +14,7 @@ export default function DataSubpageLayout({ children }: { children: React.ReactN
   const pathname = usePathname();
   const hideBreadcrumb =
     pathname === "/analysis/teams" ||
-    pathname.startsWith("/analysis/teams/") ||
+    pathname.startsWith("/analysis/team/") ||
     pathname === "/analysis/comparison"; //used ai to help becayse i couldnt figure out how to do with an actual routing and such
 
   return (

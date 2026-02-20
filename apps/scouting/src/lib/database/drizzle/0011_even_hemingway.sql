@@ -1,7 +1,12 @@
-import { sql } from "drizzle-orm";
-import { bigint, integer, numeric, pgView, text, uuid } from "drizzle-orm/pg-core";
+-- Drop the entire view chain in one shot (CASCADE handles all dependents)
+DROP VIEW "public"."v_stand_form_expected" CASCADE;--> statement-breakpoint
 
-const BPS_MIDPOINT_CASE_SQL = sql`
+-- 1. v_stand_form_expected (base view — now includes pure_climb_* columns)
+CREATE VIEW "public"."v_stand_form_expected" AS (
+  with cycle_fuel as (
+    select
+      c.stand_form_id,
+      sum( (
   case c.bucket
     when 0 then 0.0
     when 1 then 1.0
@@ -11,25 +16,7 @@ const BPS_MIDPOINT_CASE_SQL = sql`
     when 5 then 8.0
     else 0.0
   end
-`;
-export const vStandFormExpected = pgView("v_stand_form_expected", {
-  standFormId: uuid("stand_form_id").notNull(),
-  teamMatchId: bigint("team_match_id", { mode: "number" }).notNull(),
-
-  expFuelActive: numeric("exp_fuel_active", { precision: 18, scale: 6 }).notNull(),
-  expTower: numeric("exp_tower", { precision: 18, scale: 6 }).notNull(),
-  clankMatch: numeric("clank_match", { precision: 18, scale: 6 }).notNull(),
-
-  pureClimbTotal: numeric("pure_climb_total", { precision: 18, scale: 6 }).notNull(),
-  pureClimbAuto: numeric("pure_climb_auto", { precision: 18, scale: 6 }).notNull(),
-  pureClimbTeleop: numeric("pure_climb_teleop", { precision: 18, scale: 6 }).notNull(),
-
-  cyclesCount: integer("cycles_count").notNull(),
-}).as(sql`
-  with cycle_fuel as (
-    select
-      c.stand_form_id,
-      sum( (${BPS_MIDPOINT_CASE_SQL}) * greatest(coalesce(c.dump_duration, 0.0), 0.0) ) as fuel_active,
+) * greatest(coalesce(c.dump_duration, 0.0), 0.0) ) as fuel_active,
       count(*) as cycles_count
     from cycle c
     group by c.stand_form_id
@@ -91,8 +78,8 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
     coalesce(cp.total_climb_pts, 0.0) as exp_tower,
     coalesce(cp.total_climb_pts, 0.0) as clank_match,
 
-    coalesce(cp.pure_climb_total, 0.0) as pure_climb_total,
-    coalesce(cp.pure_climb_auto,  0.0) as pure_climb_auto,
+    coalesce(cp.pure_climb_total,  0.0) as pure_climb_total,
+    coalesce(cp.pure_climb_auto,   0.0) as pure_climb_auto,
     coalesce(cp.pure_climb_teleop, 0.0) as pure_climb_teleop,
 
     coalesce(cf.cycles_count, 0)::int as cycles_count
@@ -100,20 +87,10 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
   left join cycle_fuel cf on cf.stand_form_id = sf.id
   left join climb_pts cp on cp.stand_form_id = sf.id
   where sf.deleted_at is null
-`);
+);--> statement-breakpoint
 
-export const vTeamMatchScoutLatest = pgView("v_team_match_scout_latest", {
-  teamMatchId: bigint("team_match_id", { mode: "number" }).notNull(),
-  scoutMemberId: text("scout_member_id").notNull(), // now a "voter id"
-
-  expFuelActive: numeric("exp_fuel_active", { precision: 18, scale: 6 }).notNull(),
-  expTower: numeric("exp_tower", { precision: 18, scale: 6 }).notNull(),
-  clankMatch: numeric("clank_match", { precision: 18, scale: 6 }).notNull(),
-
-  pureClimbTotal: numeric("pure_climb_total", { precision: 18, scale: 6 }).notNull(),
-  pureClimbAuto: numeric("pure_climb_auto", { precision: 18, scale: 6 }).notNull(),
-  pureClimbTeleop: numeric("pure_climb_teleop", { precision: 18, scale: 6 }).notNull(),
-}).as(sql`
+-- 2. v_team_match_scout_latest (depends on v_stand_form_expected)
+CREATE VIEW "public"."v_team_match_scout_latest" AS (
     with ranked as (
       select
         sf.team_match_id,
@@ -147,21 +124,10 @@ export const vTeamMatchScoutLatest = pgView("v_team_match_scout_latest", {
       pure_climb_teleop
     from ranked
     where rn = 1
-  `);
+  );--> statement-breakpoint
 
-export const vTeamMatchConsensus = pgView("v_team_match_consensus", {
-  teamMatchId: bigint("team_match_id", { mode: "number" }).notNull(),
-
-  expFuelActive: numeric("exp_fuel_active", { precision: 18, scale: 6 }).notNull(),
-  expTower: numeric("exp_tower", { precision: 18, scale: 6 }).notNull(),
-  clank: numeric("clank", { precision: 18, scale: 6 }).notNull(),
-
-  pureClimbTotal: numeric("pure_climb_total", { precision: 18, scale: 6 }).notNull(),
-  pureClimbAuto: numeric("pure_climb_auto", { precision: 18, scale: 6 }).notNull(),
-  pureClimbTeleop: numeric("pure_climb_teleop", { precision: 18, scale: 6 }).notNull(),
-
-  nScouts: integer("n_scouts").notNull(),
-}).as(sql`
+-- 3. v_team_match_consensus (depends on v_team_match_scout_latest)
+CREATE VIEW "public"."v_team_match_consensus" AS (
     select
       l.team_match_id,
       percentile_cont(0.5) within group (order by l.exp_fuel_active)    as exp_fuel_active,
@@ -173,50 +139,29 @@ export const vTeamMatchConsensus = pgView("v_team_match_consensus", {
       count(*)::int as n_scouts
     from v_team_match_scout_latest l
     group by l.team_match_id
-  `);
+  );--> statement-breakpoint
 
-export const vMatchExpectedTotals = pgView("v_match_expected_totals", {
-  matchId: uuid("match_id").notNull(),
-
-  expRedFuelActive: numeric("exp_red_fuel_active", { precision: 18, scale: 6 }).notNull(),
-  expBlueFuelActive: numeric("exp_blue_fuel_active", { precision: 18, scale: 6 }).notNull(),
-
-  expRedTower: numeric("exp_red_tower", { precision: 18, scale: 6 }).notNull(),
-  expBlueTower: numeric("exp_blue_tower", { precision: 18, scale: 6 }).notNull(),
-
-  expRedScore: numeric("exp_red_score", { precision: 18, scale: 6 }).notNull(),
-  expBlueScore: numeric("exp_blue_score", { precision: 18, scale: 6 }).notNull(),
-}).as(sql`
+-- 4. v_match_expected_totals (depends on v_team_match_consensus)
+CREATE VIEW "public"."v_match_expected_totals" AS (
     select
       tm.match_id,
-  
+
       sum(case when tm.alliance='red'  then coalesce(c.exp_fuel_active, 0.0) else 0.0 end) as exp_red_fuel_active,
       sum(case when tm.alliance='blue' then coalesce(c.exp_fuel_active, 0.0) else 0.0 end) as exp_blue_fuel_active,
-  
+
       sum(case when tm.alliance='red'  then coalesce(c.exp_tower, 0.0) else 0.0 end) as exp_red_tower,
       sum(case when tm.alliance='blue' then coalesce(c.exp_tower, 0.0) else 0.0 end) as exp_blue_tower,
-  
+
       sum(case when tm.alliance='red'  then (coalesce(c.exp_fuel_active,0.0)+coalesce(c.exp_tower,0.0)) else 0.0 end) as exp_red_score,
       sum(case when tm.alliance='blue' then (coalesce(c.exp_fuel_active,0.0)+coalesce(c.exp_tower,0.0)) else 0.0 end) as exp_blue_score
-  
+
     from team_match tm
     left join v_team_match_consensus c on c.team_match_id = tm.id
     group by tm.match_id
-  `);
+  );--> statement-breakpoint
 
-export const vMatchGoblin = pgView("v_match_goblin", {
-  matchId: uuid("match_id").notNull(),
-  redScore: integer("red_score"),
-  blueScore: integer("blue_score"),
-
-  expRedScore: numeric("exp_red_score", { precision: 18, scale: 6 }).notNull(),
-  expBlueScore: numeric("exp_blue_score", { precision: 18, scale: 6 }).notNull(),
-
-  actualMargin: integer("actual_margin"),
-  expMargin: numeric("exp_margin", { precision: 18, scale: 6 }).notNull(),
-
-  goblinMatch: numeric("goblin_match", { precision: 18, scale: 6 }).notNull(),
-}).as(sql`
+-- 5. v_match_goblin (depends on v_match_expected_totals)
+CREATE VIEW "public"."v_match_goblin" AS (
     select
       m.id as match_id,
       m.red_score,
@@ -229,13 +174,10 @@ export const vMatchGoblin = pgView("v_match_goblin", {
     from match m
     join v_match_expected_totals met on met.match_id = m.id
     where m.red_score is not null and m.blue_score is not null
-  `);
+  );--> statement-breakpoint
 
-export const vTeamGoblinMatch = pgView("v_team_goblin_match", {
-  teamNumber: integer("team_number").notNull(),
-  matchId: uuid("match_id").notNull(),
-  goblinTeamMatch: numeric("goblin_team_match", { precision: 18, scale: 6 }).notNull(),
-}).as(sql`
+-- 6. v_team_goblin_match (depends on v_match_goblin)
+CREATE VIEW "public"."v_team_goblin_match" AS (
     select
       tm.team_number,
       tm.match_id,
@@ -245,14 +187,10 @@ export const vTeamGoblinMatch = pgView("v_team_goblin_match", {
       end as goblin_team_match
     from team_match tm
     join v_match_goblin mg on mg.match_id = tm.match_id
-  `);
+  );--> statement-breakpoint
 
-export const vTeamGoblin = pgView("v_team_goblin", {
-  teamNumber: integer("team_number").notNull(),
-  goblinPerMatch: numeric("goblin_per_match", { precision: 18, scale: 6 }).notNull(),
-  goblinTotal: numeric("goblin_total", { precision: 18, scale: 6 }).notNull(),
-  matchesCount: integer("matches_count").notNull(),
-}).as(sql`
+-- 7. v_team_goblin (depends on v_team_goblin_match)
+CREATE VIEW "public"."v_team_goblin" AS (
     select
       team_number,
       avg(goblin_team_match) as goblin_per_match,
@@ -260,17 +198,21 @@ export const vTeamGoblin = pgView("v_team_goblin", {
       count(*)::int as matches_count
     from v_team_goblin_match
     group by team_number
-  `);
+  );--> statement-breakpoint
 
-export const vTeamRpMagicMatch = pgView("v_team_rpmagic_match", {
-  teamNumber: integer("team_number").notNull(),
-  matchId: uuid("match_id").notNull(),
+-- 8. v_team_clank (depends on v_team_match_consensus)
+CREATE VIEW "public"."v_team_clank" AS (
+    select
+      tm.team_number,
+      avg(coalesce(c.clank, 0.0)) as clank_per_match,
+      count(*)::int as matches_count
+    from team_match tm
+    left join v_team_match_consensus c on c.team_match_id = tm.id
+    group by tm.team_number
+  );--> statement-breakpoint
 
-  rpmagicFuel100: numeric("rpmagic_fuel_100", { precision: 18, scale: 6 }).notNull(),
-  rpmagicFuel360: numeric("rpmagic_fuel_360", { precision: 18, scale: 6 }).notNull(),
-  rpmagicTower: numeric("rpmagic_tower", { precision: 18, scale: 6 }).notNull(),
-  rpmagicTotal: numeric("rpmagic_total", { precision: 18, scale: 6 }).notNull(),
-}).as(sql`
+-- 9. v_team_rpmagic_match (depends on v_team_match_consensus)
+CREATE VIEW "public"."v_team_rpmagic_match" AS (
     with per_team as (
       select
         tm.match_id,
@@ -312,25 +254,25 @@ export const vTeamRpMagicMatch = pgView("v_team_rpmagic_match", {
     select
       c.team_number,
       c.match_id,
-  
+
       (
         (1.0 / (1.0 + exp(-((c.f_with    - k.th100) / k.sf100))))
         -
         (1.0 / (1.0 + exp(-((c.f_without - k.th100) / k.sf100))))
       ) as rpmagic_fuel_100,
-  
+
       (
         (1.0 / (1.0 + exp(-((c.f_with    - k.th360) / k.sf360))))
         -
         (1.0 / (1.0 + exp(-((c.f_without - k.th360) / k.sf360))))
       ) as rpmagic_fuel_360,
-  
+
       (
         (1.0 / (1.0 + exp(-((c.t_with    - k.thT) / k.sT))))
         -
         (1.0 / (1.0 + exp(-((c.t_without - k.thT) / k.sT))))
       ) as rpmagic_tower,
-  
+
       (
         (
           (1.0 / (1.0 + exp(-((c.f_with    - k.th100) / k.sf100))))
@@ -352,22 +294,10 @@ export const vTeamRpMagicMatch = pgView("v_team_rpmagic_match", {
       ) as rpmagic_total
     from calc c
     cross join consts k
-  `);
+  );--> statement-breakpoint
 
-export const vTeamRpMagic = pgView("v_team_rpmagic", {
-  teamNumber: integer("team_number").notNull(),
-  rpmagicPerMatch: numeric("rpmagic_per_match", { precision: 18, scale: 6 }).notNull(),
-  rpmagicFuel100PerMatch: numeric("rpmagic_fuel_100_per_match", {
-    precision: 18,
-    scale: 6,
-  }).notNull(),
-  rpmagicFuel360PerMatch: numeric("rpmagic_fuel_360_per_match", {
-    precision: 18,
-    scale: 6,
-  }).notNull(),
-  rpmagicTowerPerMatch: numeric("rpmagic_tower_per_match", { precision: 18, scale: 6 }).notNull(),
-  matchesCount: integer("matches_count").notNull(),
-}).as(sql`
+-- 10. v_team_rpmagic (depends on v_team_rpmagic_match)
+CREATE VIEW "public"."v_team_rpmagic" AS (
     select
       team_number,
       avg(rpmagic_total)    as rpmagic_per_match,
@@ -377,18 +307,4 @@ export const vTeamRpMagic = pgView("v_team_rpmagic", {
       count(*)::int         as matches_count
     from v_team_rpmagic_match
     group by team_number
-  `);
-
-export const vTeamClank = pgView("v_team_clank", {
-  teamNumber: integer("team_number").notNull(),
-  clankPerMatch: numeric("clank_per_match", { precision: 18, scale: 6 }).notNull(),
-  matchesCount: integer("matches_count").notNull(),
-}).as(sql`
-    select
-      tm.team_number,
-      avg(coalesce(c.clank, 0.0)) as clank_per_match,
-      count(*)::int as matches_count
-    from team_match tm
-    left join v_team_match_consensus c on c.team_match_id = tm.id
-    group by tm.team_number
-  `);
+  );
