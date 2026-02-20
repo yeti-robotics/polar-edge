@@ -38,7 +38,7 @@ const navItems = [
   },
   {
     label: "Picklist",
-    href: "/analysis/picklist",
+    href: "/picklist",
   },
 ];
 
