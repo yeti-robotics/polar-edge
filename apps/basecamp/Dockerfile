@@ -36,6 +36,6 @@ RUN adduser --system --uid 1001 nodejs
 USER nodejs
 
 # Everything is bundled into a single file — no node_modules needed
-COPY --from=installer --chown=nodejs:nodejs /app/apps/basecamp/dist/main.js ./main.js
+COPY --from=installer --chown=nodejs:nodejs /app/apps/basecamp/dist/main.js ./apps/basecamp/dist/main.js
 
-CMD ["node", "main.js"]
+CMD ["node", "apps/basecamp/dist/main.js"]
