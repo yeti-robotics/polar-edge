@@ -1,18 +1,16 @@
 import { cacheLife, cacheTag } from "next/cache";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { searchTeams } from "@/app/analysis/team/[teamNumber]/actions";
 
-export async function GET(request: Request) {
+async function cachedSearchTeams(q: string) {
   "use cache";
   cacheLife("hours");
   cacheTag("teams-search");
+  return searchTeams(q);
+}
 
-  const { searchParams } = new URL(request.url);
-  const q = searchParams.get("q") ?? "";
-
-  const teams = await searchTeams(q);
-
-  const response = NextResponse.json(teams);
-  response.headers.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
-  return response;
+export async function GET(request: NextRequest) {
+  const q = request.nextUrl.searchParams.get("q") ?? "";
+  const teams = await cachedSearchTeams(q);
+  return NextResponse.json(teams);
 }
