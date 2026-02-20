@@ -219,7 +219,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     });
 
     revalidatePath("/admin/event");
-    revalidateTag("teams-search");
+    revalidateTag("teams-search", "max");
     return {
       data: { success: true, eventId, matchCount, teamMatchCount },
       error: null,
