@@ -1,8 +1,8 @@
 "use client";
+import { CalendarIcon, SettingsIcon, UserPlusIcon, UsersIcon } from "lucide-react";
 import { NavSidebar } from "@/components/NavSidebar";
 import { SidebarSheet } from "@/components/SidebarSheet";
 import { routes } from "@/lib/routes";
-import { CalendarIcon, SettingsIcon, UserPlusIcon, UsersIcon } from "lucide-react";
 
 const adminLinks = [
   { href: routes.admin.members, label: "Members", icon: UsersIcon },

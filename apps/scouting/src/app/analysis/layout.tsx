@@ -1,8 +1,8 @@
 "use client";
+import { ArrowLeftRightIcon, LayoutDashboardIcon, ShieldIcon } from "lucide-react";
 import { NavSidebar } from "@/components/NavSidebar";
 import { SidebarSheet } from "@/components/SidebarSheet";
 import { routes } from "@/lib/routes";
-import { ArrowLeftRightIcon, LayoutDashboardIcon, ShieldIcon } from "lucide-react";
 
 const analysisLinks = [
   { href: routes.analysis.root, label: "Overview", icon: LayoutDashboardIcon, exact: true },

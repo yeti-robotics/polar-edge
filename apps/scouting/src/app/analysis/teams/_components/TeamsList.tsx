@@ -12,9 +12,9 @@ import { asc, count, eq, ilike, or } from "drizzle-orm";
 import { ChevronRight, SearchX } from "lucide-react";
 import { cacheLife, cacheTag } from "next/cache";
 import Link from "next/link";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { team } from "@/lib/database/schema/tables/team";
-import { cacheTags } from "@/lib/cache";
 import { routes } from "@/lib/routes";
 
 const ITEMS_PER_PAGE = 25;
