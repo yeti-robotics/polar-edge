@@ -1,4 +1,3 @@
-import { Skeleton } from "@repo/ui/components/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/tabs";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { ClipboardList, MapIcon, Trophy, Wrench } from "lucide-react";
@@ -49,10 +48,7 @@ function TabContentFallback() {
   return (
     <>
       <TabsContent value="stand" className="space-y-6 pt-2">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-8 w-52 rounded-md" />
-        </div>
-        <LoadingSkeleton />
+        <LoadingSkeleton showScopeToggle />
       </TabsContent>
       <TabsContent value="pit" className="space-y-6 pt-2">
         <LoadingSkeleton />

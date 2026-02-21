@@ -42,9 +42,14 @@ function RankRowSkeleton() {
   );
 }
 
-export function LoadingSkeleton() {
+export function LoadingSkeleton({ showScopeToggle = false }: { showScopeToggle?: boolean }) {
   return (
     <div className="space-y-6">
+      {showScopeToggle && (
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-52 rounded-md" />
+        </div>
+      )}
       <div className="mx-auto max-w-sm">
         <PodiumSkeleton />
       </div>

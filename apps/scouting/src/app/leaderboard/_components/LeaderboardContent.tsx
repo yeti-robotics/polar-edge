@@ -18,7 +18,7 @@ export async function LeaderboardContent({ searchParams }: Props) {
   return (
     <>
       <TabsContent value="stand" className="space-y-6 pt-2">
-        <Suspense fallback={<LoadingSkeleton />}>
+        <Suspense fallback={<LoadingSkeleton showScopeToggle />}>
           <StandTabContent organizationId={organizationId} eventParam={eventParam ?? null} />
         </Suspense>
       </TabsContent>
