@@ -31,7 +31,9 @@ import { StandFormTabs } from "./StandFormTabs";
 
 async function StandFormContent() {
   const member = await requireActiveMember();
-  const activeEvent = await getActiveEventForOrganization(member.organizationId);
+  const activeEvent = await getActiveEventForOrganization(
+    member.organizationId,
+  );
 
   if (!activeEvent) {
     return <NoActiveEvent />;
@@ -59,7 +61,7 @@ async function StandFormContent() {
 export default function StandFormPage() {
   return (
     <div className="py-6 max-w-3xl w-full mx-auto px-4">
-      <h1 className="mb-6 text-3xl tracking-tight">Stand Form</h1>
+      <h1 className="mb-6 text-3xl tracking-tight font-bold">Stand Form</h1>
 
       <main className="w-full">
         <Suspense fallback={<StandFormSkeleton />}>

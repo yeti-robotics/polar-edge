@@ -32,7 +32,9 @@ function LoadingPicklists() {
 
 async function PicklistContent() {
   const activeMember = await requireActiveMember();
-  const activeEvent = await getActiveEventForOrganization(activeMember.organizationId);
+  const activeEvent = await getActiveEventForOrganization(
+    activeMember.organizationId,
+  );
 
   if (!activeEvent?.event) {
     return (
@@ -46,7 +48,10 @@ async function PicklistContent() {
     );
   }
 
-  const picklists = await getPicklistsForEvent(activeMember.organizationId, activeEvent.event.id);
+  const picklists = await getPicklistsForEvent(
+    activeMember.organizationId,
+    activeEvent.event.id,
+  );
 
   if (picklists.length === 0) {
     return (
@@ -74,7 +79,8 @@ async function PicklistContent() {
             <CardHeader>
               <CardTitle>{picklist.name}</CardTitle>
               <CardDescription>
-                {picklist.teamCount} {picklist.teamCount === 1 ? "team" : "teams"} • Created{" "}
+                {picklist.teamCount}{" "}
+                {picklist.teamCount === 1 ? "team" : "teams"} • Created{" "}
                 {new Date(picklist.createdAt).toLocaleDateString()}
               </CardDescription>
             </CardHeader>
@@ -90,7 +96,7 @@ export default function PicklistPage() {
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl tracking-tight">Picklists</h1>
+          <h1 className="text-3xl tracking-tight font-bold">Picklists</h1>
           <p className="mt-2 text-muted-foreground">
             Create and manage team picklists for alliance selection
           </p>

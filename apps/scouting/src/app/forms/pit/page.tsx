@@ -31,7 +31,9 @@ import { PitForm } from "./PitForm";
 
 async function PitFormContent() {
   const member = await requireActiveMember();
-  const activeEvent = await getActiveEventForOrganization(member.organizationId);
+  const activeEvent = await getActiveEventForOrganization(
+    member.organizationId,
+  );
 
   if (!activeEvent) {
     return <NoActiveEvent />;
@@ -53,7 +55,7 @@ async function PitFormContent() {
 export default function PitFormPage() {
   return (
     <main className="container mx-auto max-w-3xl px-5 py-6">
-      <h1 className="mb-6 text-3xl tracking-tight">Pit Scout</h1>
+      <h1 className="mb-6 text-3xl tracking-tight font-bold">Pit Scout</h1>
       <Suspense fallback={<PitFormSkeleton />}>
         <PitFormContent />
       </Suspense>
