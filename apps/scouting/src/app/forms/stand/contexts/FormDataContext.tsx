@@ -9,11 +9,13 @@ export type FormDataState = {
   completedCycles: CompletedCycle[];
   completedClimbs: CompletedClimb[];
   teamMatchId: number | null;
+  matchNumber: number | null;
+  teamNumber: number | null;
   comments: string;
 };
 
 export type FormDataAction =
-  | { type: "set_team_match_id"; payload: number }
+  | { type: "set_team_match_id"; payload: { teamMatchId: number; matchNumber: number; teamNumber: number } }
   | { type: "set_comments"; payload: string }
   | { type: "add_cycle"; payload: CompletedCycle }
   | { type: "add_climb"; payload: CompletedClimb }
@@ -26,7 +28,9 @@ function formDataReducer(state: FormDataState, action: FormDataAction): FormData
     case "set_team_match_id":
       return {
         ...state,
-        teamMatchId: action.payload,
+        teamMatchId: action.payload.teamMatchId,
+        matchNumber: action.payload.matchNumber,
+        teamNumber: action.payload.teamNumber,
       };
 
     case "set_comments":
@@ -48,7 +52,7 @@ function formDataReducer(state: FormDataState, action: FormDataAction): FormData
       };
 
     case "reset":
-      return { completedCycles: [], completedClimbs: [], teamMatchId: null, comments: "" };
+      return { completedCycles: [], completedClimbs: [], teamMatchId: null, matchNumber: null, teamNumber: null, comments: "" };
 
     default:
       return state;
@@ -71,6 +75,8 @@ export function FormDataProvider({ children }: { children: React.ReactNode }) {
     completedCycles: [],
     completedClimbs: [],
     teamMatchId: null,
+    matchNumber: null,
+    teamNumber: null,
     comments: "",
   });
 

@@ -32,7 +32,14 @@ export function MatchSelectionTab() {
       if (result.error) {
         setError(result.error);
       } else if (result.teamMatchId) {
-        dispatch({ type: "set_team_match_id", payload: result.teamMatchId });
+        dispatch({
+          type: "set_team_match_id",
+          payload: {
+            teamMatchId: result.teamMatchId,
+            matchNumber: parseInt(matchNumber, 10),
+            teamNumber: parseInt(teamNumber, 10),
+          },
+        });
       } else {
         setError("Team match not found");
       }

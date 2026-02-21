@@ -10,9 +10,6 @@ import { useActionState } from "../contexts/ActionStateContext";
 import { useFormData } from "../contexts/FormDataContext";
 import { useNavigation } from "../contexts/NavigationContext";
 
-/**
- * Final submission dialog with server action call.
- */
 export function SubmitDialog() {
   const { state: formData, dispatch: dispatchFormData } = useFormData();
   const { state: actionState, dispatch: dispatchActionState } = useActionState();
@@ -44,12 +41,9 @@ export function SubmitDialog() {
         toast.error(result.error, { position: "top-right" });
       } else {
         toast.success("Stand form submitted successfully!", { position: "top-right" });
-
-        // Reset all contexts so the form is fresh for the next scout
         dispatchFormData({ type: "reset" });
         dispatchActionState({ type: "reset" });
         dispatchNavigation({ type: "reset" });
-
         router.refresh();
       }
     } catch (err) {
@@ -69,63 +63,101 @@ export function SubmitDialog() {
   const cycleCount = formData.completedCycles.length;
   const climbCount = formData.completedClimbs.length;
   const commentsPreview =
-    formData.comments.length > 80
-      ? `${formData.comments.slice(0, 80)}…`
-      : formData.comments;
+    formData.comments.length > 120 ? `${formData.comments.slice(0, 120)}…` : formData.comments;
 
   return (
     <Dialog open>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-3xl font-semibold text-center">
-            Submit Scouting Form
+      <DialogContent className="p-0 gap-0 overflow-hidden max-w-sm">
+        {/* Header band */}
+        <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
+          <DialogTitle className="text-base font-medium font-mono tracking-wide uppercase text-muted-foreground">
+            Confirm Submission
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3 py-2">
-          <p className="text-sm text-muted-foreground text-center">
-            Review your scouting data before submitting.
-          </p>
-
-          <div className="rounded-md border bg-muted/40 p-3 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Match</span>
-              <span className="font-medium">#{formData.teamMatchId}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Cycles</span>
-              <span className="font-medium">{cycleCount}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Climbs</span>
-              <span className="font-medium">{climbCount}</span>
-            </div>
-            {actionState.oofCumulativeSeconds > 0 && (
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Oof time</span>
-                <span className="font-medium">{actionState.oofCumulativeSeconds}s</span>
-              </div>
-            )}
-            {commentsPreview && (
-              <div className="pt-1 border-t">
-                <p className="text-muted-foreground mb-0.5">Comments</p>
-                <p className="italic text-xs leading-snug">{commentsPreview}</p>
-              </div>
-            )}
+        {/* Hero: team + match */}
+        <div className="grid grid-cols-2 divide-x divide-border border-b border-border">
+          <div className="px-6 py-5">
+            <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-1.5">
+              Team
+            </p>
+            <p className="text-4xl font-medium tabular-nums text-foreground leading-none">
+              {formData.teamNumber}
+            </p>
           </div>
-
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          <div className="px-6 py-5">
+            <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-1.5">
+              Match
+            </p>
+            <p className="text-4xl font-medium tabular-nums text-foreground leading-none">
+              {formData.matchNumber}
+            </p>
+          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="secondary" onClick={handleCancel} disabled={loading}>
+        {/* Stats row */}
+        <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
+          <StatCell label="Cycles" value={cycleCount} />
+          <StatCell label="Climbs" value={climbCount} />
+          <StatCell
+            label="Oof"
+            value={
+              actionState.oofCumulativeSeconds > 0 ? `${actionState.oofCumulativeSeconds}s` : "—"
+            }
+            dim={actionState.oofCumulativeSeconds === 0}
+          />
+        </div>
+
+        {/* Comments */}
+        {commentsPreview && (
+          <div className="px-6 py-4 border-b border-border">
+            <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-2">
+              Comments
+            </p>
+            <p className="text-sm text-foreground/80 leading-relaxed">{commentsPreview}</p>
+          </div>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div className="px-6 pt-3">
+            <p className="text-sm text-destructive">{error}</p>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="px-6 py-4 flex gap-2">
+          <Button variant="secondary" onClick={handleCancel} disabled={loading} className="flex-1">
             Cancel
           </Button>
-          <Button variant="default" onClick={handleSubmit} disabled={loading}>
-            {loading ? "Submitting..." : "Submit"}
+          <Button variant="default" onClick={handleSubmit} disabled={loading} className="flex-1">
+            {loading ? "Submitting…" : "Submit"}
           </Button>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function StatCell({
+  label,
+  value,
+  dim = false,
+}: {
+  label: string;
+  value: string | number;
+  dim?: boolean;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center py-4 gap-0.5">
+      <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      <span
+        className={`text-2xl font-normal tabular-nums leading-none ${dim ? "text-muted-foreground/40" : "text-foreground"}`}
+      >
+        {value}
+      </span>
+    </div>
   );
 }
