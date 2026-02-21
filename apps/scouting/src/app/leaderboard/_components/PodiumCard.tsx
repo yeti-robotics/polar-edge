@@ -33,6 +33,13 @@ const stepConfig: Record<
   },
 };
 
+// Sequence: 3rd → 2nd → 1st
+const podiumDelayMs: Record<MedalRank, number> = {
+  3: 0,
+  2: 350,
+  1: 700,
+};
+
 function PodiumSlot({
   scout,
   rank,
@@ -43,12 +50,18 @@ function PodiumSlot({
   countLabel: string;
 }) {
   const cfg = stepConfig[rank];
+  const barDelay = podiumDelayMs[rank];
+  const userDelay = barDelay + 400;
 
   if (!scout) {
     return (
       <div className="flex flex-col items-center gap-2 opacity-20">
         <div className="size-10 rounded-full border border-dashed border-muted-foreground/40" />
         <div
+          style={{
+            transformOrigin: "bottom",
+            animation: `podium-rise 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) ${barDelay}ms both`,
+          }}
           className={cn(
             "w-full rounded-t-xl border-dashed",
             cfg.height,
@@ -61,7 +74,12 @@ function PodiumSlot({
 
   return (
     <div className="flex flex-col items-center gap-2.5">
-      <div className="group relative">
+      <div
+        style={{
+          animation: `podium-fade-up 0.4s ease-out ${userDelay}ms both`,
+        }}
+        className="group relative"
+      >
         <Avatar
           className={cn(
             "ring-2 ring-offset-2 ring-offset-background",
@@ -81,7 +99,12 @@ function PodiumSlot({
         )}
       </div>
 
-      <div className="space-y-0.5 text-center">
+      <div
+        style={{
+          animation: `podium-fade-up 0.4s ease-out ${userDelay + 30}ms both`,
+        }}
+        className="space-y-0.5 text-center"
+      >
         <p
           className={cn(
             "truncate font-medium leading-tight",
@@ -98,8 +121,11 @@ function PodiumSlot({
         <p className="text-[10px] text-muted-foreground">{countLabel}</p>
       </div>
 
-      {/* Podium step */}
       <div
+        style={{
+          transformOrigin: "bottom",
+          animation: `podium-rise 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) ${barDelay}ms both`,
+        }}
         className={cn(
           "w-full rounded-t-xl flex items-center justify-center font-bold text-sm",
           cfg.height,
@@ -121,10 +147,23 @@ type Props = {
 
 export function PodiumCard({ scouts, countLabel }: Props) {
   return (
-    <div className="grid grid-cols-3 items-end gap-1.5">
-      <PodiumSlot scout={scouts[1]} rank={2} countLabel={countLabel} />
-      <PodiumSlot scout={scouts[0]} rank={1} countLabel={countLabel} />
-      <PodiumSlot scout={scouts[2]} rank={3} countLabel={countLabel} />
-    </div>
+    <>
+      {/* Inline keyframes ensure styles exist before elements paint — prevents fill-mode flash */}
+      <style>{`
+        @keyframes podium-rise {
+          from { transform: scaleY(0); }
+          to { transform: scaleY(1); }
+        }
+        @keyframes podium-fade-up {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+      <div className="grid grid-cols-3 items-end gap-1.5">
+        <PodiumSlot scout={scouts[1]} rank={2} countLabel={countLabel} />
+        <PodiumSlot scout={scouts[0]} rank={1} countLabel={countLabel} />
+        <PodiumSlot scout={scouts[2]} rank={3} countLabel={countLabel} />
+      </div>
+    </>
   );
 }
