@@ -27,7 +27,10 @@ export function EnrichTeamNamesForm({ organizationId }: { organizationId: string
     const count = result.data?.enrichedCount ?? 0;
     setMessage({
       type: "success",
-      text: count > 0 ? `Enriched ${count} team name(s) from TBA.` : "All team names are already filled in.",
+      text:
+        count > 0
+          ? `Enriched ${count} team name(s) from TBA.`
+          : "All team names are already filled in.",
     });
     startTransition(() => {
       router.refresh();
