@@ -2,12 +2,7 @@ import { Button } from "@repo/ui/components/button";
 import Link from "next/link";
 import { SidebarSheet } from "@/components/SidebarSheet";
 
-const analysisLinks = [
-  { href: "/analysis/comparison", label: "Comparison" },
-  { href: "/analysis/graphs", label: "Graph" },
-  { href: "/analysis/teams", label: "Teams" },
-  { href: "/analysis/events", label: "Events" },
-];
+const analysisLinks = [{ href: "/analysis/teams", label: "Teams" }];
 
 export default function DataLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,25 +10,17 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] h-full">
         <aside className="h-full border-r hidden md:block overflow-y-auto">
           <div className="flex flex-col px-2 py-4">
-            <span className="text-xs text-muted-foreground uppercase font-mono mb-1 px-2">Scouting Data</span>
-            <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis/comparison">
-                Comparison
-              </Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis/graphs">
-                Graph
-              </Link>
-            </Button>
+            <span className="text-xs text-muted-foreground uppercase font-mono mb-1 px-2">
+              Scouting Data
+            </span>
             <Button variant="ghost" size="sm" asChild>
               <Link className="text-sm w-full justify-start" href="/analysis/teams">
                 Teams
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis/events">
-                Events
+              <Link className="text-sm w-full justify-start" href="/analysis/comparison">
+                Comparison
               </Link>
             </Button>
           </div>
