@@ -71,7 +71,7 @@ export async function createPicklistAction(
       return { data: null, error: "Failed to create picklist" };
     }
 
-    revalidatePath("/analysis/picklist");
+    revalidatePath("/picklist");
     return { data: { success: true, picklistId: newPicklist.id }, error: null };
   } catch (error) {
     console.error("Create picklist error:", error);
@@ -275,7 +275,7 @@ export async function deletePicklist(data: unknown) {
     return { error: "Failed to delete picklist" };
   }
 
-  redirect("/analysis/picklist");
+  redirect("/picklist");
 }
 
 /**

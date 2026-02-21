@@ -19,7 +19,7 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
   const data = await getPicklistWithTeams(id, activeMember.organizationId);
 
   if (!data) {
-    redirect("/analysis/picklist");
+    redirect("/picklist");
   }
 
   const { picklist, teams } = data;
@@ -28,7 +28,7 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8">
         <Link
-          href="/analysis/picklist"
+          href="/picklist"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeftIcon className="size-4 mr-2" />

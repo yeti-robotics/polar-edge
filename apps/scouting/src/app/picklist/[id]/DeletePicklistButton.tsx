@@ -34,7 +34,7 @@ export function DeletePicklistButton({ picklistId, children }: DeletePicklistBut
       return;
     }
 
-    router.push("/analysis/picklist");
+    router.push("/picklist");
     router.refresh();
   };
 
