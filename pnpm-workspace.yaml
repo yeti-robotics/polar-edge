@@ -19,6 +19,8 @@ catalog:
 
 onlyBuiltDependencies:
   - sharp
+  - '@swc/core'
+  - esbuild
 
 overrides:
   esbuild: ^0.25.0
