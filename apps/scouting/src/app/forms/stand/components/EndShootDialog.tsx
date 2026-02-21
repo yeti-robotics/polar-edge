@@ -30,7 +30,12 @@ type EndShootDialogProps = {
  * - 4: Fast (5-7 balls/sec)
  * - 5: Very Fast (7+ balls/sec)
  */
-export function EndShootDialog({ onComplete, onOpen, onCancel, disabled = false }: EndShootDialogProps) {
+export function EndShootDialog({
+  onComplete,
+  onOpen,
+  onCancel,
+  disabled = false,
+}: EndShootDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
 

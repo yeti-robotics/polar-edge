@@ -28,7 +28,12 @@ type EndClimbDialogProps = {
  * - Level 0 (No Climb) + not attempted = Cancel action (don't create record)
  * - Level 1/2/3 = { climbLevel: 1|2|3, climbSuccess: true } (assume success)
  */
-export function EndClimbDialog({ onComplete, onOpen, onCancel, disabled = false }: EndClimbDialogProps) {
+export function EndClimbDialog({
+  onComplete,
+  onOpen,
+  onCancel,
+  disabled = false,
+}: EndClimbDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<string>("");
   const [attempted, setAttempted] = useState(false);
@@ -125,7 +130,13 @@ export function EndClimbDialog({ onComplete, onOpen, onCancel, disabled = false 
           )}
         </div>
         <div className="flex justify-end gap-2 pt-4">
-          <Button variant="secondary" onClick={() => { onCancel?.(); handleClose(); }}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              onCancel?.();
+              handleClose();
+            }}
+          >
             Cancel
           </Button>
           <Button variant="default" onClick={handleConfirm} disabled={!selectedLevel}>

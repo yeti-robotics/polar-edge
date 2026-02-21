@@ -16,7 +16,10 @@ export function ShootingActiveLayout() {
   const { state: actionState } = useActionState();
   const { cancelAction, completeShootingCycle } = useStandFormActions();
   const [dialogOpenedAt, setDialogOpenedAt] = useState<number | null>(null);
-  const elapsedSeconds = useElapsedTime(actionState.activeAction?.startedAt ?? null, dialogOpenedAt);
+  const elapsedSeconds = useElapsedTime(
+    actionState.activeAction?.startedAt ?? null,
+    dialogOpenedAt
+  );
 
   const handleDialogOpen = () => setDialogOpenedAt(Date.now());
   const handleDialogCancel = () => setDialogOpenedAt(null);
