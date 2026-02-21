@@ -42,7 +42,9 @@ export default function ProfilePage() {
     authClient.signOut();
   }
 
-  const currentMember = activeOrg?.members?.find((m) => m.userId === session?.user?.id);
+  const currentMember = activeOrg?.members?.find(
+    (m) => m.userId === session?.user?.id,
+  );
   const isOwner = currentMember?.role === "owner";
   // const isOwner = currentMember?.role === "member";
 
@@ -116,7 +118,9 @@ export default function ProfilePage() {
       <div className="min-h-screen flex items-center justify-center bg-black text-white p-8">
         <div className="max-w-xl w-full text-center">
           <h2 className="text-2xl font-semibold mb-2">You're not signed in</h2>
-          <p className="text-sm text-neutral-400">Sign in to view your profile and progress.</p>
+          <p className="text-sm text-neutral-400">
+            Sign in to view your profile and progress.
+          </p>
         </div>
       </div>
     );
@@ -148,17 +152,22 @@ export default function ProfilePage() {
         </header>
 
         <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full mt-10">
-          <h3 className="text-2xl font-semibold text-foreground-white mb-3">Account</h3>
+          <h3 className="text-2xl font-semibold text-foreground-white mb-3">
+            Account
+          </h3>
           <PasskeyManager />
         </section>
 
         <Card className="rounded-lg p-6 ring-ring mb-8 size-full mt-10">
-          <h3 className="text-2xl font-semibold text-foreground-white mb-3">Leave Organization</h3>
+          <h3 className="text-2xl font-semibold text-foreground-white mb-3">
+            Leave Organization
+          </h3>
 
           {isOwner ? (
             <div className="flex flex-col gap-3">
               <p className="text-sm text-muted-foreground">
-                You are the owner. Transfer ownership to another member before you can leave.
+                You are the owner. Transfer ownership to another member before
+                you can leave.
               </p>
 
               <Dialog
@@ -189,7 +198,10 @@ export default function ProfilePage() {
                       No other members to transfer ownership into.
                     </p>
                   ) : (
-                    <Select value={selectedMemberId} onValueChange={setSelectedMemberId}>
+                    <Select
+                      value={selectedMemberId}
+                      onValueChange={setSelectedMemberId}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a member" />
                       </SelectTrigger>
@@ -204,7 +216,9 @@ export default function ProfilePage() {
                   )}
 
                   {transferError && (
-                    <p className="text-sm text-destructive px-1">{transferError}</p>
+                    <p className="text-sm text-destructive px-1">
+                      {transferError}
+                    </p>
                   )}
 
                   <DialogFooter>
@@ -219,7 +233,9 @@ export default function ProfilePage() {
                       variant="destructive"
                       onClick={handleTransferOwnership}
                       disabled={
-                        isTransferring || !selectedMemberId || transferableMembers.length === 0
+                        isTransferring ||
+                        !selectedMemberId ||
+                        transferableMembers.length === 0
                       }
                     >
                       {isTransferring ? "Transferring..." : "Confirm Transfer"}
@@ -247,15 +263,22 @@ export default function ProfilePage() {
                 <DialogHeader>
                   <DialogTitle>Are you sure you want to leave?</DialogTitle>
                   <DialogDescription>
-                    This cannot be undone. You will lose access to all organization scouting data.
-                    If this is your only organization, your account will be permanently deleted.
+                    This cannot be undone. You will lose access to all
+                    organization scouting data. If this is your only
+                    organization, your account will be permanently deleted.
                   </DialogDescription>
                 </DialogHeader>
 
-                {leaveError && <p className="text-sm text-destructive px-1">{leaveError}</p>}
+                {leaveError && (
+                  <p className="text-sm text-destructive px-1">{leaveError}</p>
+                )}
 
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setOpen(false)} disabled={isLeaving}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setOpen(false)}
+                    disabled={isLeaving}
+                  >
                     Cancel
                   </Button>
                   <Button
