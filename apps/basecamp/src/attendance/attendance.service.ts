@@ -12,7 +12,7 @@ import {
   MS_PER_HOUR,
   SHEET_RANGE_APPEND,
   SHEET_RANGE_READ,
-  STALE_SIGNIN_THRESHOLD_MS,
+  STALE_SIGNIN_MIN_HOURS_MS,
   TEAM_NAMES,
 } from "./attendance.constants";
 import { getTotalPossibleHoursToDate } from "./schedule.util";
@@ -157,8 +157,31 @@ export class AttendanceService {
     return null;
   }
 
-  private isStaleSession(lastSignIn: Date): boolean {
-    return Date.now() - lastSignIn.getTime() > STALE_SIGNIN_THRESHOLD_MS;
+  private isStaleSession(signInTime: Date): boolean {
+    const toEasternYMD = (date: Date) => {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).formatToParts(date);
+      return {
+        year: Number(parts.find((p) => p.type === "year")!.value),
+        month: Number(parts.find((p) => p.type === "month")!.value),
+        day: Number(parts.find((p) => p.type === "day")!.value),
+      };
+    };
+
+    const now = new Date();
+    const signInEastern = toEasternYMD(signInTime);
+    const nowEastern = toEasternYMD(now);
+
+    const differentDay =
+      nowEastern.year !== signInEastern.year ||
+      nowEastern.month !== signInEastern.month ||
+      nowEastern.day !== signInEastern.day;
+    const enoughTimeElapsed = now.getTime() - signInTime.getTime() > STALE_SIGNIN_MIN_HOURS_MS;
+    return differentDay && enoughTimeElapsed;
   }
 
   private async handleForgotToSignOut(
@@ -184,7 +207,10 @@ export class AttendanceService {
           "You signed in last meeting but did not sign out. You were credited with 1.5 hours of attendance for that meeting. You are now signed in.",
       };
     }
-    return { success: false, message: "Failed to sign in" };
+    return {
+      success: false,
+      message: "Failed to sign in. Please try again or let a mentor know.",
+    };
   }
 
   private async recordSignIn(
@@ -197,10 +223,10 @@ export class AttendanceService {
       if (success) {
         return { success: true };
       }
-      return { success: false, message: "Failed to sign in." };
+      return { success: false, message: "Failed to sign in. Please try again or let a mentor know." };
     } catch (error) {
       this.logger.error(`Failed to sign in: ${error}`);
-      return { success: false, message: "Failed to sign in." };
+      return { success: false, message: "Failed to sign in. Please try again or let a mentor know." };
     }
   }
 
@@ -214,10 +240,10 @@ export class AttendanceService {
       if (success) {
         return { success: true };
       }
-      return { success: false, message: "Failed to sign out." };
+      return { success: false, message: "Failed to sign out. Please try again or let a mentor know." };
     } catch (error) {
       this.logger.error(`Failed to sign out: ${error}`);
-      return { success: false, message: "Failed to sign out." };
+      return { success: false, message: "Failed to sign out. Please try again or let a mentor know." };
     }
   }
 
@@ -237,12 +263,10 @@ export class AttendanceService {
 
     const lastOperation = await this.getLastAttendanceRecord(discordId);
 
-    // Not currently signed in - simple sign in
     if (!lastOperation?.isSigningIn) {
       return this.recordSignIn(discordId, discordName, guildId);
     }
 
-    // Already signed in - check if session is stale
     const lastDate = new Date(lastOperation.date);
     if (this.isStaleSession(lastDate)) {
       return this.handleForgotToSignOut(discordId, discordName, guildId, lastDate);
@@ -274,7 +298,6 @@ export class AttendanceService {
       };
     }
 
-    // If session expired, treat as new sign-in (admin bypasses this check)
     const lastDate = new Date(lastOperation.date);
     if (!skipTwofa && Date.now() - lastDate.getTime() > EXPIRED_SESSION_THRESHOLD_MS) {
       return this.signIn(discordId, guildId, discordName, code, skipTwofa);
@@ -308,11 +331,6 @@ export class AttendanceService {
     return this.calculateHoursFromRecords(attendance);
   }
 
-  /**
-   * Gets the total possible hours to date based on the meeting schedule
-   * @param asOfDate Optional date to calculate hours up to (defaults to today)
-   * @returns Total possible hours from the start of the season to the given date
-   */
   public getTotalPossibleHoursToDate(asOfDate?: Date): number {
     return getTotalPossibleHoursToDate(asOfDate);
   }
@@ -359,7 +377,6 @@ export class AttendanceService {
         userData.records.push(record);
       }
 
-      // Calculate hours for each user and convert to array
       const usersWithHours = Array.from(userRecords.entries())
         .map(([_, { userName, records }]) => ({
           userName,
