@@ -113,7 +113,9 @@ function PodiumSlot({
         >
           {scout.userName}
         </p>
-        <p className={cn("font-bold tabular-nums leading-none", rank === 1 ? "text-2xl" : "text-lg")}>
+        <p
+          className={cn("font-bold tabular-nums leading-none", rank === 1 ? "text-2xl" : "text-lg")}
+        >
           {scout.count}
         </p>
         <p className="text-[10px] text-muted-foreground">{countLabel}</p>
