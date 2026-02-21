@@ -1,21 +1,24 @@
 import { Button } from "@repo/ui/components/button";
+import { TypographyLabel } from "@repo/ui/components/typography";
 import Link from "next/link";
+import { SidebarSheet } from "@/components/SidebarSheet";
+
+const analysisLinks = [
+  { href: "/analysis", label: "Overview" },
+  { href: "/analysis/teams", label: "Teams" },
+  { href: "/analysis/comparison", label: "Comparison" },
+];
 
 export default function DataLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="fixed inset-x-0 top-(--header-height) bottom-0 overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] h-full">
         <aside className="h-full border-r hidden md:block overflow-y-auto">
-          <div className="flex flex-col p-5">
-            <span className="text-xs text-muted-foreground uppercase font-mono">Scouting Data</span>
+          <div className="flex flex-col px-2 py-4">
+            <TypographyLabel className="mb-1 px-2">Scouting Data</TypographyLabel>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis/comparison">
-                Comparison
-              </Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis/graphs">
-                Graph
+              <Link className="text-sm w-full justify-start" href="/analysis">
+                Overview
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
@@ -24,13 +27,18 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis/events">
-                Events
+              <Link className="text-sm w-full justify-start" href="/analysis/comparison">
+                Comparison
               </Link>
             </Button>
           </div>
         </aside>
-        <div className="h-full overflow-y-auto min-w-0">{children}</div>
+        <div className="h-full overflow-y-auto min-w-0">
+          <div className="sticky top-0 z-40 bg-background border-b px-2 py-1 md:hidden">
+            <SidebarSheet title="Scouting Data" links={analysisLinks} />
+          </div>
+          {children}
+        </div>
       </div>
     </div>
   );
