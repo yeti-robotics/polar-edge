@@ -2,12 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { routes } from "@/lib/routes";
 import { acceptInviteLink as acceptLink } from "@/lib/server/invite-links";
 
 export async function acceptInviteLink(token: string) {
   try {
     await acceptLink(token);
-    revalidatePath("/");
+    revalidatePath(routes.home);
     return { data: { success: true }, error: null };
   } catch (error) {
     return {

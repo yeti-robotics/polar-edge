@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { z } from "zod";
 import { createAutoPath, type getTeams as GetTeamsType } from "@/app/auto-path/actions";
+import { routes } from "@/lib/routes";
 import { PathCanvas, type PathData } from "./PathCanvas";
 
 const autoPathSchema = z.object({
@@ -86,7 +87,7 @@ export function AutoPathForm({ teams, onSuccess }: AutoPathFormProps) {
         if (onSuccess) {
           onSuccess();
         } else {
-          router.push("/auto-path");
+          router.push(routes.autoPath.root);
           router.refresh();
         }
       } catch (err) {

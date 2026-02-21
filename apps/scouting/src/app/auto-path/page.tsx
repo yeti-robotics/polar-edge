@@ -13,6 +13,7 @@ import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { EyeIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { routes } from "@/lib/routes";
 import { getAutoPaths } from "./actions";
 
 function formatDate(date: Date): string {
@@ -100,7 +101,7 @@ async function AutoPathsContent() {
               </TableCell>
               <TableCell>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href={`/auto-path/${path.id}`}>
+                  <Link href={routes.autoPath.detail(path.id)}>
                     <EyeIcon className="mr-2 size-4" />
                     View
                   </Link>
@@ -123,7 +124,7 @@ export default function AutoPathsPage() {
           <TypographyMuted className="mt-2">View and manage robot auto paths</TypographyMuted>
         </div>
         <Button asChild>
-          <Link href="/auto-path/create">
+          <Link href={routes.autoPath.create}>
             <PlusIcon className="mr-2 size-4" />
             Create Path
           </Link>

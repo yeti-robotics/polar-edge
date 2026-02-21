@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 
 export async function signOut() {
   const headerList = await headers();
@@ -11,5 +12,5 @@ export async function signOut() {
     headers: headerList,
   });
 
-  redirect("/");
+  redirect(routes.home);
 }

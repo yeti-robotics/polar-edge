@@ -9,13 +9,14 @@ import {
 } from "@repo/ui/components/breadcrumb";
 import { ChevronLeftIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { routes } from "@/lib/routes";
 
 export default function DataSubpageLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const hideBreadcrumb =
-    pathname === "/analysis/teams" ||
+    pathname === routes.analysis.teams ||
     pathname.startsWith("/analysis/team/") ||
-    pathname === "/analysis/comparison"; //used ai to help becayse i couldnt figure out how to do with an actual routing and such
+    pathname === routes.analysis.comparison; //used ai to help becayse i couldnt figure out how to do with an actual routing and such
 
   return (
     <>
@@ -27,7 +28,7 @@ export default function DataSubpageLayout({ children }: { children: React.ReactN
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/"> Analysis </BreadcrumbLink>
+                    <BreadcrumbLink href={routes.analysis.root}> Analysis </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>

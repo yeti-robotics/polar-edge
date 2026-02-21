@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/ca
 import { ArrowLeftIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { routes } from "@/lib/routes";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getPicklistWithTeams } from "../queries";
 import { DeletePicklistButton } from "./DeletePicklistButton";
@@ -19,7 +20,7 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
   const data = await getPicklistWithTeams(id, activeMember.organizationId);
 
   if (!data) {
-    redirect("/picklist");
+    redirect(routes.picklist.root);
   }
 
   const { picklist, teams } = data;
@@ -28,7 +29,7 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8">
         <Link
-          href="/picklist"
+          href={routes.picklist.root}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeftIcon className="size-4 mr-2" />

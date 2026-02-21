@@ -1,15 +1,16 @@
 "use client";
 import { TypographyLabel } from "@repo/ui/components/typography";
 import Link from "next/link";
+import { routes } from "@/lib/routes";
 export function FormSidebar() {
   return (
     <aside className="sticky top-0 border-r z-40">
       <div className="flex flex-col gap-2 p-4">
         <TypographyLabel>Form Hub</TypographyLabel>
-        <Link className="text-sm" href="/forms/pit">
+        <Link className="text-sm" href={routes.forms.pit}>
           Pit Form
         </Link>
-        <Link className="text-sm" href="/form/stand">
+        <Link className="text-sm" href={routes.forms.stand}>
           {/* It will eventually be the stand form page for now this is empty */}
           Stand Form
         </Link>

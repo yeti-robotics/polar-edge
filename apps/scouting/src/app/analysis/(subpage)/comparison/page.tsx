@@ -5,17 +5,18 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@repo/ui/components/breadcrumb";
+import { routes } from "@/lib/routes";
 
 function ComparisonPageBreadCrumbComponent() {
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/analysis">Analysis</BreadcrumbLink>
+          <BreadcrumbLink href={routes.analysis.root}>Analysis</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/analysis/comparison">Compare</BreadcrumbLink>
+          <BreadcrumbLink href={routes.analysis.comparison}>Compare</BreadcrumbLink>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

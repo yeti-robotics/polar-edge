@@ -2,12 +2,13 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { AutoPathForm } from "@/components/auto-path/AutoPathForm";
 import { auth } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 import { getTeams } from "../actions";
 
 export default async function CreateAutoPathPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
-    redirect("/");
+    redirect(routes.home);
   }
 
   const [teams] = await Promise.all([getTeams()]);

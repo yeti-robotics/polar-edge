@@ -5,6 +5,7 @@ import { Input } from "@repo/ui/components/input";
 import { SearchIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useTransition } from "react";
+import { routes } from "@/lib/routes";
 
 interface TeamsSearchProps {
   initialSearch?: string;
@@ -28,7 +29,7 @@ export function TeamsSearch({ initialSearch }: TeamsSearchProps) {
     }
 
     startTransition(() => {
-      router.push(`/analysis/teams?${params.toString()}`);
+      router.push(`${routes.analysis.teams}?${params.toString()}`);
     });
   };
 

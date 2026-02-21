@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { routes } from "@/lib/routes";
 import {
   generateInviteLink as generateLink,
   revokeInviteLink as revokeLink,
@@ -31,7 +32,7 @@ export async function generateInviteLink() {
 export async function revokeInviteLink(token: string) {
   try {
     await revokeLink(token);
-    revalidatePath("/admin/invites");
+    revalidatePath(routes.admin.invites);
     return { data: { success: true }, error: null };
   } catch (error) {
     return {

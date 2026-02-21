@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
+import { routes } from "@/lib/routes";
 import { SignInForm } from "./SignInForm";
 
 async function AllowSuperPerms() {
@@ -16,7 +17,7 @@ async function AllowSuperPerms() {
 
   return (
     <div>
-      <Link href="/organization/create">
+      <Link href={routes.organization.create}>
         <Button> Create Organization </Button>
       </Link>
     </div>
