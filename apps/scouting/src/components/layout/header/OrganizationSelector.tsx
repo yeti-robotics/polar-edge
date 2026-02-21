@@ -70,8 +70,8 @@ export function OrganizationSelector({ isSuperAdmin = false }: OrganizationSelec
             {organizations?.map((organization) => (
               <DropdownMenuItem
                 key={organization.id}
-                onClick={() => {
-                  authClient.organization.setActive({ organizationId: organization.id });
+                onClick={async () => {
+                  await authClient.organization.setActive({ organizationId: organization.id });
                   router.refresh();
                 }}
               >

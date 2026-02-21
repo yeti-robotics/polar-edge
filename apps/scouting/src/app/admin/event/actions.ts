@@ -4,6 +4,7 @@ import { eq, sql } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { event, match, team, teamMatch } from "@/lib/database/schema/tables";
 import { routes } from "@/lib/routes";
@@ -222,7 +223,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     });
 
     revalidatePath(routes.admin.event);
-    revalidateTag("teams-search", "max");
+    revalidateTag(cacheTags.teamsList, "max");
     return {
       data: { success: true, eventId, matchCount, teamMatchCount },
       error: null,
@@ -288,7 +289,7 @@ export async function enrichTeamNamesAction(organizationId: string) {
         });
     }
 
-    revalidateTag("teams-search", "max");
+    revalidateTag(cacheTags.teamsList, "max");
     return { data: { enrichedCount: enriched.length }, error: null };
   } catch (error) {
     return {

@@ -8,7 +8,7 @@ import {
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { cacheTags } from "@/lib/cache-tags";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { pitForm, pitPhoto } from "@/lib/database/schema";
 import { FormSchema, formOpts } from "./shared";

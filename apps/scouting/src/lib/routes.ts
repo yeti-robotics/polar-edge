@@ -22,7 +22,7 @@ export const routes = {
     events: "/analysis/events",
     graphs: "/analysis/graphs",
     overview: "/analysis/overview",
-    team: (teamNumber: number | string) => `/analysis/team/${teamNumber}` as const,
+    team: (teamNumber: number | string) => `/analysis/teams/${teamNumber}` as const,
   },
 
   // Auto Path
