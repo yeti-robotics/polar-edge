@@ -11,7 +11,7 @@ import {
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { CheckCircleIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 type EndShootDialogProps = {
   onComplete: (bucket: number) => void;
@@ -33,27 +33,24 @@ type EndShootDialogProps = {
 export function EndShootDialog({ onComplete, onOpen, onCancel, disabled = false }: EndShootDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
-  const closingViaConfirm = useRef(false);
 
+  // onOpenChange is only called by Radix for user interactions (ESC, backdrop),
+  // not for programmatic setOpen(false) calls.
   const handleOpenChange = (isOpen: boolean) => {
-    if (isOpen) {
-      onOpen?.();
-    } else if (!closingViaConfirm.current) {
-      onCancel?.();
-    }
-    closingViaConfirm.current = false;
+    if (isOpen) onOpen?.();
+    else onCancel?.();
     setOpen(isOpen);
   };
 
   const handleConfirm = () => {
     if (!selectedBucket) return;
-    closingViaConfirm.current = true;
     onComplete(parseInt(selectedBucket, 10));
     setOpen(false);
     setSelectedBucket("");
   };
 
   const handleCancel = () => {
+    onCancel?.();
     setOpen(false);
     setSelectedBucket("");
   };

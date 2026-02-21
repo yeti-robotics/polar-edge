@@ -12,7 +12,7 @@ import {
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { CheckCircleIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 type EndClimbDialogProps = {
   onComplete: (climbLevel: number, climbSuccess: boolean) => void;
@@ -32,15 +32,12 @@ export function EndClimbDialog({ onComplete, onOpen, onCancel, disabled = false 
   const [open, setOpen] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<string>("");
   const [attempted, setAttempted] = useState(false);
-  const closingViaConfirm = useRef(false);
 
+  // onOpenChange is only called by Radix for user interactions (ESC, backdrop),
+  // not for programmatic setOpen(false) calls.
   const handleOpenChange = (isOpen: boolean) => {
-    if (isOpen) {
-      onOpen?.();
-    } else if (!closingViaConfirm.current) {
-      onCancel?.();
-    }
-    closingViaConfirm.current = false;
+    if (isOpen) onOpen?.();
+    else onCancel?.();
     setOpen(isOpen);
   };
 
@@ -51,12 +48,11 @@ export function EndClimbDialog({ onComplete, onOpen, onCancel, disabled = false 
 
     if (level === 0 && !attempted) {
       // No climb and not attempted: just close dialog (don't record anything)
-      // Leave closingViaConfirm false so onCancel fires and timer resumes
+      onCancel?.();
       handleClose();
       return;
     }
 
-    closingViaConfirm.current = true;
     if (level === 0) {
       // No climb but attempted: record as failed attempt
       onComplete(0, false);
@@ -129,7 +125,7 @@ export function EndClimbDialog({ onComplete, onOpen, onCancel, disabled = false 
           )}
         </div>
         <div className="flex justify-end gap-2 pt-4">
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={() => { onCancel?.(); handleClose(); }}>
             Cancel
           </Button>
           <Button variant="default" onClick={handleConfirm} disabled={!selectedLevel}>
