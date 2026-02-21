@@ -38,7 +38,7 @@ export default function LeaveOrganizationCard({ session, activeOrg }: any) {
     (m: any) => m.userId === session?.user?.id,
   );
 
-  const isOwner = currentMember?.role === "owner";
+  const isOwner = currentMember?.role === "member";
   //  test with changing the role. == too different things.
 
   const transferableMembers =
@@ -113,13 +113,17 @@ export default function LeaveOrganizationCard({ session, activeOrg }: any) {
 
           <Dialog open={transferOpen} onOpenChange={setTransferOpen}>
             <DialogTrigger asChild>
-              <Button variant="destructive">Transfer Ownership</Button>
+              <Button variant="destructive" className="w-38">
+                Transfer Ownership
+              </Button>
             </DialogTrigger>
 
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Transfer Ownership</DialogTitle>
-                <DialogDescription>Choose a new owner.</DialogDescription>
+                <DialogDescription>
+                  Choose a new owner for the organization before leaving.
+                </DialogDescription>
               </DialogHeader>
 
               <Select
@@ -157,13 +161,18 @@ export default function LeaveOrganizationCard({ session, activeOrg }: any) {
       ) : (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button variant="destructive">Leave Organization</Button>
+            <Button variant="destructive" className="w-36">
+              Leave Organization
+            </Button>
           </DialogTrigger>
 
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Leave Organization?</DialogTitle>
-              <DialogDescription>This cannot be undone.</DialogDescription>
+              <DialogDescription>
+                This cannot be undone. You will lose access to the
+                organization.{" "}
+              </DialogDescription>
             </DialogHeader>
 
             {leaveError && (
