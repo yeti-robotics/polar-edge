@@ -3,7 +3,6 @@
 import { ActionPhaseTab } from "./components/ActionPhaseTab";
 import { CommentsTab } from "./components/CommentsTab";
 import { MatchSelectionTab } from "./components/MatchSelectionTab";
-import { SubmitDialog } from "./components/SubmitDialog";
 import { useNavigation } from "./contexts/NavigationContext";
 
 /**
@@ -22,7 +21,5 @@ export function StandFormTabs() {
       return <ActionPhaseTab phase="teleop" />;
     case "comments":
       return <CommentsTab />;
-    case "submit":
-      return <SubmitDialog />;
   }
 }

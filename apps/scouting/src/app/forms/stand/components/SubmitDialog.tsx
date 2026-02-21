@@ -10,7 +10,7 @@ import { useActionState } from "../contexts/ActionStateContext";
 import { useFormData } from "../contexts/FormDataContext";
 import { useNavigation } from "../contexts/NavigationContext";
 
-export function SubmitDialog() {
+export function SubmitDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { state: formData, dispatch: dispatchFormData } = useFormData();
   const { state: actionState, dispatch: dispatchActionState } = useActionState();
   const { dispatch: dispatchNavigation } = useNavigation();
@@ -57,7 +57,7 @@ export function SubmitDialog() {
   };
 
   const handleCancel = () => {
-    dispatchNavigation({ type: "decrement_stage" });
+    onClose();
   };
 
   const cycleCount = formData.completedCycles.length;
@@ -66,7 +66,7 @@ export function SubmitDialog() {
     formData.comments.length > 120 ? `${formData.comments.slice(0, 120)}…` : formData.comments;
 
   return (
-    <Dialog open>
+    <Dialog open={open}>
       <DialogContent className="p-0 gap-0 overflow-hidden max-w-sm">
         {/* Header band */}
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
