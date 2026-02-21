@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.5.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.5.0...scouting-v2026.5.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** improve stand form submission flow with dialog and validation ([#427](https://github.com/yeti-robotics/polar-edge/issues/427)) ([428c565](https://github.com/yeti-robotics/polar-edge/commit/428c5652fd7cef3fa6e47618b28bd898be555237))
+
 ## [2026.5.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.4.0...scouting-v2026.5.0) (2026-02-21)
 
 
