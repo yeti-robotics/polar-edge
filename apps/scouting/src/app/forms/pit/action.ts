@@ -103,6 +103,13 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
         }))
       );
     }
+
+    revalidateTag(cacheTags.leaderboardPit(activeMember.organizationId), "hours");
+
+    return {
+      ...initialFormState,
+      _success: true,
+    };
   } catch (error) {
     if (error instanceof ServerValidateError) {
       return error.formState;
@@ -114,11 +121,4 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       _error: "Something went wrong. Please try again.",
     };
   }
-
-  revalidateTag(cacheTags.leaderboardPit(activeMember.organizationId), "hours");
-
-  return {
-    ...initialFormState,
-    _success: true,
-  };
 }
