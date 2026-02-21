@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026.7.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.6.0...scouting-v2026.7.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** add leaderboard feature with caching and animations ([dbbdde4](https://github.com/yeti-robotics/polar-edge/commit/dbbdde44d7602af03e4d62cfc168e44d5a6cbfdc))
+
+
+### Bug Fixes
+
+* **scouting:** streamline pit form submission by moving revalidation logic ([f78ec49](https://github.com/yeti-robotics/polar-edge/commit/f78ec49661989cb60e24caab27ebc852486b8790))
+
 ## [2026.6.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.5.1...scouting-v2026.6.0) (2026-02-21)
 
 
