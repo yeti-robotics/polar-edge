@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.9.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.8.0...scouting-v2026.9.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** animate the podium ([#438](https://github.com/yeti-robotics/polar-edge/issues/438)) ([58746ae](https://github.com/yeti-robotics/polar-edge/commit/58746ae1b8a97bdd361131aff44f23bc892726eb))
+
 ## [2026.8.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.7.1...scouting-v2026.8.0) (2026-02-21)
 
 
