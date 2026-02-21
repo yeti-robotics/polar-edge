@@ -44,53 +44,40 @@ async function AnalysisStats() {
   const pitFormCount = pitFormsResult[0]?.count ?? 0;
 
   return (
-    <div className="space-y-8">
-      <div>
-        <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
-      </div>
-
-      <div className="grid grid-cols-3 gap-3">
-        <Card>
-          <CardContent className="pt-5 pb-4">
-            <TypographyLabel className="mb-1">Teams</TypographyLabel>
-            <p className="text-3xl font-semibold tabular-nums">{teamCount}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-5 pb-4">
-            <TypographyLabel className="mb-1">Stand Forms</TypographyLabel>
-            <p className="text-3xl font-semibold tabular-nums">{standFormCount}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-5 pb-4">
-            <TypographyLabel className="mb-1">Pit Forms</TypographyLabel>
-            <p className="text-3xl font-semibold tabular-nums">{pitFormCount}</p>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="grid grid-cols-3 gap-3">
+      <Card>
+        <CardContent className="pt-5 pb-4">
+          <TypographyLabel className="mb-1">Teams</TypographyLabel>
+          <p className="text-3xl font-semibold tabular-nums">{teamCount}</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="pt-5 pb-4">
+          <TypographyLabel className="mb-1">Stand Forms</TypographyLabel>
+          <p className="text-3xl font-semibold tabular-nums">{standFormCount}</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="pt-5 pb-4">
+          <TypographyLabel className="mb-1">Pit Forms</TypographyLabel>
+          <p className="text-3xl font-semibold tabular-nums">{pitFormCount}</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
 function StatsSkeleton() {
   return (
-    <div className="space-y-8">
-      <div>
-        <Skeleton className="h-9 w-48 mb-2" />
-        <Skeleton className="h-4 w-64" />
-      </div>
-      <div className="grid grid-cols-3 gap-3">
-        {["a", "b", "c"].map((k) => (
-          <Card key={k}>
-            <CardContent className="pt-5 pb-4">
-              <Skeleton className="h-3 w-16 mb-2" />
-              <Skeleton className="h-8 w-10" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <div className="grid grid-cols-3 gap-3">
+      {["a", "b", "c"].map((k) => (
+        <Card key={k}>
+          <CardContent className="pt-5 pb-4">
+            <Skeleton className="h-3 w-16 mb-2" />
+            <Skeleton className="h-8 w-10" />
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
@@ -98,6 +85,11 @@ function StatsSkeleton() {
 export default function AnalysisPage() {
   return (
     <div className="space-y-8">
+      <div>
+        <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
+        <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
+      </div>
+
       <Suspense fallback={<StatsSkeleton />}>
         <AnalysisStats />
       </Suspense>
