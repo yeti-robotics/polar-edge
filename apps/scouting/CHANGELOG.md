@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.8.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.7.1...scouting-v2026.8.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** standardize sidebars, team search cleanup ([#436](https://github.com/yeti-robotics/polar-edge/issues/436)) ([16af308](https://github.com/yeti-robotics/polar-edge/commit/16af308ec4a487f664be716187e4ab810d1aaa64))
+
 ## [2026.7.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.7.0...scouting-v2026.7.1) (2026-02-21)
 
 
