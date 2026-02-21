@@ -7,7 +7,7 @@ import { useActionState } from "./contexts/ActionStateContext";
 import { useFormData } from "./contexts/FormDataContext";
 import { useNavigation } from "./contexts/NavigationContext";
 import { useStandFormActions } from "./hooks/useStandFormActions";
-import { STAGES } from "./types";
+import { COMMENTS_MIN_LENGTH, STAGES } from "./types";
 
 export function StandFormNavigation() {
   const { state, dispatch } = useNavigation();
@@ -46,9 +46,9 @@ export function StandFormNavigation() {
       return "Select a match to continue";
     }
 
-    // Block 4: Comments required (min 32 chars) before submit
-    if (isOnComments && formData.comments.trim().length < 32) {
-      return "Comments must be at least 32 characters";
+    // Block 4: Comments required before submit
+    if (isOnComments && formData.comments.trim().length < COMMENTS_MIN_LENGTH) {
+      return `Comments must be at least ${COMMENTS_MIN_LENGTH} characters`;
     }
 
     // No blocks - can progress

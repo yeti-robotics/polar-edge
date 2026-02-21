@@ -4,6 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
 import { Textarea } from "@repo/ui/components/textarea";
 import { InfoIcon } from "lucide-react";
 import { useFormData } from "../contexts/FormDataContext";
+import { COMMENTS_MIN_LENGTH } from "../types";
 
 /**
  * Comments tab with textarea for additional notes.
@@ -29,14 +30,19 @@ export function CommentsTab() {
             </ul>
           </AlertDescription>
         </Alert>
-        <Textarea
-          id="comments"
-          name="comments"
-          placeholder="Enter Comments"
-          className="w-full flex-1 resize-none h-full"
-          value={state.comments}
-          onChange={(e) => dispatch({ type: "set_comments", payload: e.target.value })}
-        />
+        <div className="flex-1 flex flex-col gap-1 min-h-0">
+          <Textarea
+            id="comments"
+            name="comments"
+            placeholder="Enter Comments"
+            className="w-full flex-1 resize-none h-full"
+            value={state.comments}
+            onChange={(e) => dispatch({ type: "set_comments", payload: e.target.value })}
+          />
+          <p className={`text-xs text-right tabular-nums ${state.comments.trim().length >= COMMENTS_MIN_LENGTH ? "text-muted-foreground" : "text-muted-foreground/50"}`}>
+            {state.comments.trim().length} / {COMMENTS_MIN_LENGTH}
+          </p>
+        </div>
       </div>
     </div>
   );

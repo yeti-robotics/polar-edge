@@ -61,9 +61,11 @@ export const ClimbSchema = z
     message: "End time must be after start time",
   });
 
+export const COMMENTS_MIN_LENGTH = 32;
+
 export const StandFormSchema = z.object({
   teamMatchId: z.number().positive(),
-  comments: z.string().min(32, "Comments must be at least 32 characters"),
+  comments: z.string().min(COMMENTS_MIN_LENGTH, `Comments must be at least ${COMMENTS_MIN_LENGTH} characters`),
   oofTimeSeconds: z.number().int().min(0),
   cycles: z.array(CycleSchema),
   climbs: z.array(ClimbSchema),
