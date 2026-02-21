@@ -140,21 +140,6 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
         .where(eq(match.eventId, eventId));
       const matchIdByKey = new Map(matchRows.map((r) => [`${r.matchNumber}:${r.matchType}`, r.id]));
 
-      if (tbaTeams.length > 0) {
-        await tx
-          .insert(team)
-          .values(
-            tbaTeams.map((t) => ({
-              teamNumber: t.team_number,
-              teamName: t.nickname ?? t.name ?? "",
-            }))
-          )
-          .onConflictDoUpdate({
-            target: team.teamNumber,
-            set: { teamName: sql`excluded.team_name` },
-          });
-      }
-
       const teamMatchRows: Array<{
         eventId: string;
         matchId: string;
@@ -197,6 +182,23 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
         }
       }
 
+      const matchTeamNumbers = [...new Set(teamMatchRows.map((r) => r.teamNumber))];
+      const tbaTeamMap = new Map(tbaTeams.map((t) => [t.team_number, t.nickname ?? t.name ?? ""]));
+      const allTeamValues = matchTeamNumbers.map((n) => ({
+        teamNumber: n,
+        teamName: tbaTeamMap.get(n) ?? "",
+      }));
+
+      if (allTeamValues.length > 0) {
+        await tx
+          .insert(team)
+          .values(allTeamValues)
+          .onConflictDoUpdate({
+            target: team.teamNumber,
+            set: { teamName: sql`excluded.team_name` },
+          });
+      }
+
       if (teamMatchRows.length > 0) {
         await tx
           .insert(teamMatch)
@@ -228,6 +230,69 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     return {
       data: null,
       error: error instanceof Error ? error.message : "Failed to sync event from TBA",
+    };
+  }
+}
+
+export async function enrichTeamNamesAction(organizationId: string) {
+  try {
+    const requestHeaders = await headers();
+    const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+
+    if (!activeMember || activeMember.organizationId !== organizationId) {
+      return { data: null, error: "Unauthorized" };
+    }
+
+    const { success: canSync } = await auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permission: { event: ["sync"] } },
+    });
+    if (!canSync) {
+      return { data: null, error: "Only organization admins and owners can enrich team names" };
+    }
+
+    const unnamedTeams = await db
+      .select({ teamNumber: team.teamNumber })
+      .from(team)
+      .where(eq(team.teamName, ""));
+
+    if (unnamedTeams.length === 0) {
+      return { data: { enrichedCount: 0 }, error: null };
+    }
+
+    const tba = getTBAClient();
+    const results = await Promise.allSettled(
+      unnamedTeams.map((t) => tba.teams.getSimple(t.teamNumber))
+    );
+
+    const enriched: Array<{ teamNumber: number; teamName: string }> = [];
+    for (const [i, result] of results.entries()) {
+      if (result.status !== "fulfilled") continue;
+      const teamData = result.value;
+      if (!teamData) continue;
+      const name = teamData.nickname ?? teamData.name ?? "";
+      if (name) {
+        const unnamedTeam = unnamedTeams[i];
+        if (unnamedTeam) enriched.push({ teamNumber: unnamedTeam.teamNumber, teamName: name });
+      }
+    }
+
+    if (enriched.length > 0) {
+      await db
+        .insert(team)
+        .values(enriched)
+        .onConflictDoUpdate({
+          target: team.teamNumber,
+          set: { teamName: sql`excluded.team_name` },
+        });
+    }
+
+    revalidateTag("teams-search", "max");
+    return { data: { enrichedCount: enriched.length }, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : "Failed to enrich team names",
     };
   }
 }
