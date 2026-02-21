@@ -10,7 +10,9 @@
     "typecheck": "turbo run typecheck",
     "db:start": "turbo run db:start",
     "dev:scouting": "turbo run dev --filter=scouting",
-    "dev:basecamp": "turbo run dev --filter=basecamp --filter=basecamp-fe"
+    "dev:basecamp": "turbo run dev --filter=basecamp --filter=basecamp-fe",
+    "coverage": "turbo run test && turbo run collect-json-reports && turbo run merge-json-reports && turbo run report",
+    "view-report": "turbo run view-report"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
