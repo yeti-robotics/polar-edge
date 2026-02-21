@@ -17,6 +17,7 @@ import { NotesCell } from "./NotesCell";
 import { PickedCheckbox } from "./PickedCheckbox";
 import { RemoveTeamButton } from "./RemoveTeamButton";
 import { ReorderButtons } from "./ReorderButtons";
+import { routes } from "@/lib/routes";
 
 interface Team {
   teamNumber: number;
@@ -159,7 +160,7 @@ export function PicklistTeamsTable({ picklistId, initialTeams }: PicklistTeamsTa
             <TableCell className="font-mono font-medium">{team.rank}</TableCell>
             <TableCell className={`font-mono font-bold ${team.picked ? "line-through" : ""}`}>
               <Link
-                href={`/data/teams/${team.teamNumber}`}
+                href={routes.analysis.team(team.teamNumber)}
                 className="text-primary hover:underline"
               >
                 {team.teamNumber}

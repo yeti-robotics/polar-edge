@@ -32,7 +32,7 @@ export default function DataSubpageLayout({ children }: { children: React.ReactN
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/components">Components</BreadcrumbLink>
+                    <BreadcrumbLink href={routes.analysis.overview}>Overview</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                 </BreadcrumbList>
