@@ -44,6 +44,7 @@ export function SubmitDialog({ open, onClose }: { open: boolean; onClose: () => 
         dispatchFormData({ type: "reset" });
         dispatchActionState({ type: "reset" });
         dispatchNavigation({ type: "reset" });
+        onClose();
         router.refresh();
       }
     } catch (err) {
