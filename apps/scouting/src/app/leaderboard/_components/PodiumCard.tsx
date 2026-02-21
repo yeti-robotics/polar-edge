@@ -34,10 +34,12 @@ const stepConfig: Record<
 };
 
 // Sequence: 3rd → 2nd → 1st
+// Bar animates 550ms; user content finishes at barDelay+830ms (user starts +400ms, label +30ms, fades 400ms).
+// Next slot starts at barDelay+1000ms — ~170ms emphasis pause after the user is fully revealed.
 const podiumDelayMs: Record<MedalRank, number> = {
   3: 0,
-  2: 350,
-  1: 700,
+  2: 1000,
+  1: 2000,
 };
 
 function PodiumSlot({
@@ -108,7 +110,7 @@ function PodiumSlot({
         <p
           className={cn(
             "truncate font-medium leading-tight",
-            rank === 1 ? "max-w-[96px] text-sm" : "max-w-[76px] text-xs text-muted-foreground"
+            rank === 1 ? "max-w-24 text-sm" : "max-w-20 text-xs text-muted-foreground"
           )}
         >
           {scout.userName}
