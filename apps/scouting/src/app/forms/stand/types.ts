@@ -4,15 +4,9 @@ import { z } from "zod";
 
 export type ActionType = "shooting" | "climbing";
 export type Phase = "auto" | "teleop";
-export type StandFormStage = "match_selection" | "autonomous" | "teleop" | "comments" | "submit";
+export type StandFormStage = "match_selection" | "autonomous" | "teleop" | "comments";
 
-export const STAGES: StandFormStage[] = [
-  "match_selection",
-  "autonomous",
-  "teleop",
-  "comments",
-  "submit",
-];
+export const STAGES: StandFormStage[] = ["match_selection", "autonomous", "teleop", "comments"];
 
 export type ActiveAction = {
   type: ActionType;
@@ -62,9 +56,13 @@ export const ClimbSchema = z
     message: "End time must be after start time",
   });
 
+export const COMMENTS_MIN_LENGTH = 32;
+
 export const StandFormSchema = z.object({
   teamMatchId: z.number().positive(),
-  comments: z.string(),
+  comments: z
+    .string()
+    .min(COMMENTS_MIN_LENGTH, `Comments must be at least ${COMMENTS_MIN_LENGTH} characters`),
   oofTimeSeconds: z.number().int().min(0),
   cycles: z.array(CycleSchema),
   climbs: z.array(ClimbSchema),

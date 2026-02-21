@@ -12,7 +12,8 @@ export type NavigationState = {
 export type NavigationAction =
   | { type: "increment_stage" }
   | { type: "decrement_stage" }
-  | { type: "set_stage"; payload: StandFormStage };
+  | { type: "set_stage"; payload: StandFormStage }
+  | { type: "reset" };
 
 // ===== REDUCER =====
 
@@ -41,6 +42,9 @@ function navigationReducer(state: NavigationState, action: NavigationAction): Na
         ...state,
         currentStage: action.payload,
       };
+
+    case "reset":
+      return { currentStage: "match_selection" };
 
     default:
       return state;

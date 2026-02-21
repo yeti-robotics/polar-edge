@@ -1,17 +1,20 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
+import { useState } from "react";
+import { SubmitDialog } from "./components/SubmitDialog";
 import { useActionState } from "./contexts/ActionStateContext";
 import { useFormData } from "./contexts/FormDataContext";
 import { useNavigation } from "./contexts/NavigationContext";
 import { useStandFormActions } from "./hooks/useStandFormActions";
-import { STAGES } from "./types";
+import { COMMENTS_MIN_LENGTH, STAGES } from "./types";
 
 export function StandFormNavigation() {
   const { state, dispatch } = useNavigation();
   const { state: formData } = useFormData();
   const { state: actionState } = useActionState();
   const { prepareForPhaseTransition } = useStandFormActions();
+  const [submitOpen, setSubmitOpen] = useState(false);
 
   const isOnComments = state.currentStage === "comments";
   const isOnMatchSelection = state.currentStage === "match_selection";
@@ -43,6 +46,11 @@ export function StandFormNavigation() {
       return "Select a match to continue";
     }
 
+    // Block 4: Comments required before submit
+    if (isOnComments && formData.comments.trim().length < COMMENTS_MIN_LENGTH) {
+      return `Comments must be at least ${COMMENTS_MIN_LENGTH} characters`;
+    }
+
     // No blocks - can progress
     return null;
   };
@@ -51,6 +59,10 @@ export function StandFormNavigation() {
   const isNextDisabled = progressionBlock !== null;
 
   const handleNext = () => {
+    if (isOnComments) {
+      setSubmitOpen(true);
+      return;
+    }
     // When transitioning from auto to teleop, prepare for phase transition
     if (isOnAutonomous) {
       prepareForPhaseTransition();
@@ -95,37 +107,42 @@ export function StandFormNavigation() {
   const isBackDisabled = backButtonBlock !== null;
 
   return (
-    <div className="flex w-full justify-between">
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={handleBack}
-        disabled={isBackDisabled}
-        title={backButtonBlock || undefined}
-      >
-        Back
-      </Button>
-      <Button
-        type="button"
-        onClick={handleNext}
-        disabled={isNextDisabled}
-        title={progressionBlock || undefined}
-      >
-        {isOnComments ? "Submit" : "Next"}
-      </Button>
-    </div>
+    <>
+      <div className="flex w-full justify-between">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={handleBack}
+          disabled={isBackDisabled}
+          title={backButtonBlock || undefined}
+        >
+          Back
+        </Button>
+        <Button
+          type="button"
+          onClick={handleNext}
+          disabled={isNextDisabled}
+          title={progressionBlock || undefined}
+        >
+          {isOnComments ? "Submit" : "Next"}
+        </Button>
+      </div>
+
+      <SubmitDialog open={submitOpen} onClose={() => setSubmitOpen(false)} />
+    </>
   );
 }
 
 export function StandFormProgress() {
   const { state } = useNavigation();
+  const index = STAGES.indexOf(state.currentStage);
   return (
     <div className="mb-4">
       <div className="h-2 bg-muted rounded-full overflow-hidden">
         <div
           className="h-full bg-primary transition-all duration-200 ease-in-out"
           style={{
-            width: `${(STAGES.indexOf(state.currentStage) / (STAGES.length - 1)) * 100}%`,
+            width: `${(index / (STAGES.length - 1)) * 100}%`,
           }}
         />
       </div>
