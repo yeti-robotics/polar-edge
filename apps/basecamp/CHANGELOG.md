@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.5...basecamp-v1.0.6) (2026-02-21)
+
+
+### Bug Fixes
+
+* **basecamp:** stale signin handling and error bubbling ([#433](https://github.com/yeti-robotics/polar-edge/issues/433)) ([0ec2e0b](https://github.com/yeti-robotics/polar-edge/commit/0ec2e0b9ecb9ff27a1f9f887d0109e8b579a9ffa))
+
 ## [1.0.5](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.4...basecamp-v1.0.5) (2026-02-20)
 
 
