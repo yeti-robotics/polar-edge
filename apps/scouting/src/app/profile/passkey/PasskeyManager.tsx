@@ -11,6 +11,7 @@ import {
 import { Input } from "@repo/ui/components/input";
 import { Separator } from "@repo/ui/components/separator";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { TypographyMuted } from "@repo/ui/components/typography";
 import { cn } from "@repo/ui/lib/utils";
 import {
   Check,
@@ -119,7 +120,7 @@ export default function PasskeyManager() {
 
         {/* List Section */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-muted-foreground px-1">Your Passkeys</h3>
+          <TypographyMuted className="font-medium px-1">Your Passkeys</TypographyMuted>
 
           {loading && passkeys.length === 0 ? (
             <div className="space-y-3">

@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@repo/ui/components/button";
+import { TypographyH2 } from "@repo/ui/components/typography";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import PasskeyManager from "./passkey/PasskeyManager";
@@ -22,7 +23,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white p-8">
         <div className="max-w-xl w-full text-center">
-          <h2 className="text-2xl font-semibold mb-2">You're not signed in</h2>
+          <TypographyH2 className="mb-2">You're not signed in</TypographyH2>
           <p className="text-sm text-neutral-400">Sign in to view your profile and progress.</p>
         </div>
       </div>
@@ -54,11 +55,11 @@ export default function ProfilePage() {
           <Button onClick={handleLogOut}>Log Out</Button>
         </header>
         <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full mt-10">
-          <h3 className="text-2xl font-semibold text-foreground-white mb-3">Account</h3>
+          <TypographyH2 className="text-foreground-white mb-3">Account</TypographyH2>
           <PasskeyManager />
         </section>
         <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full mt-10">
-          <h3 className="text-2xl font-semibold text-foreground-white mb-3"> Recent activity</h3>
+          <TypographyH2 className="text-foreground-white mb-3">Recent activity</TypographyH2>
           <ul>
             <li className="py-3 flex items-start justify-between">
               <div>

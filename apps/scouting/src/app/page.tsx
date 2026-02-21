@@ -1,5 +1,10 @@
 import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
+import {
+  TypographyH1,
+  TypographyH3,
+  TypographyMuted,
+} from "@repo/ui/components/typography";
 import { headers } from "next/headers";
 import Link from "next/link";
 
@@ -34,13 +39,13 @@ export default async function Home({
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className="flex flex-col items-center gap-4">
-          <h1 className="text-2xl font-bold">Welcome to Polar Edge Analytics</h1>
+          <TypographyH1>Welcome to Polar Edge Analytics</TypographyH1>
           {signupParam === "restricted" && (
             <p className="rounded-md bg-destructive/15 px-4 py-2 text-sm text-destructive">
               Sign-up is invite-only. Use an invite link from your organization or contact an admin.
             </p>
           )}
-          <p className="text-muted-foreground">Sign in to continue</p>
+          <TypographyMuted>Sign in to continue</TypographyMuted>
           <SignInForm redirectUrl={redirectParam} />
         </div>
       </main>
@@ -50,7 +55,7 @@ export default async function Home({
   return (
     <main className="container mx-auto p-8">
       <Card className="container">
-        <h1 className="text-xl font-bold mb-4">Welcome to Polar Edge Analytics!</h1>
+        <TypographyH3 className="mb-4">Welcome to Polar Edge Analytics!</TypographyH3>
         <p>Hello, {session.user.name || session.user.email}!</p>
 
         <AllowSuperPerms />

@@ -22,6 +22,7 @@ import {
   teamMatch,
   team as teamTable,
 } from "@/lib/database/schema";
+import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
 import { getTeamKeyMetrics, getTeamRadarData } from "./queries";
 import { TeamKeyMetricsCard } from "./TeamKeyMetricsCard";
 import { RadarChart } from "./TeamRadarChart";
@@ -152,11 +153,9 @@ export default async function TeamPage({
       <div className="pb-4 border-b">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-1">
-              Team Analysis
-            </p>
-            <h1 className="text-3xl tracking-tight">{teamRow.teamName}</h1>
-            <p className="mt-1 text-muted-foreground">Team {teamRow.teamNumber}</p>
+            <TypographyLabel className="mb-1">Team Analysis</TypographyLabel>
+            <TypographyH1>{teamRow.teamName}</TypographyH1>
+            <TypographyMuted className="mt-1">Team {teamRow.teamNumber}</TypographyMuted>
             <SelectTeam />
           </div>
 

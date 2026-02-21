@@ -1,6 +1,7 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
+import { TypographyH4 } from "@repo/ui/components/typography";
 import { Textarea } from "@repo/ui/components/textarea";
 import { InfoIcon } from "lucide-react";
 import { useFormData } from "../contexts/FormDataContext";
@@ -14,7 +15,7 @@ export function CommentsTab() {
 
   return (
     <div className="flex flex-col gap-2 h-full">
-      <h2 className="text-lg text-foreground">Comments</h2>
+      <TypographyH4>Comments</TypographyH4>
       <div className="flex-1 flex flex-col py-4 min-h-[280px] gap-4">
         <Alert>
           <AlertTitle className="flex items-center gap-2">

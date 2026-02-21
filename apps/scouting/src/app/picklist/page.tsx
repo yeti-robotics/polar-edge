@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
@@ -90,10 +91,10 @@ export default function PicklistPage() {
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl tracking-tight">Picklists</h1>
-          <p className="mt-2 text-muted-foreground">
+          <TypographyH1>Picklists</TypographyH1>
+          <TypographyMuted className="mt-2">
             Create and manage team picklists for alliance selection
-          </p>
+          </TypographyMuted>
         </div>
         <CreatePicklistDialog>
           <Button>

@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
+import { TypographyH4 } from "@repo/ui/components/typography";
 import { useState } from "react";
 import { lookupTeamMatch } from "../actions";
 import { useFormData } from "../contexts/FormDataContext";
@@ -53,7 +54,7 @@ export function MatchSelectionTab() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg text-foreground">Match Selection</h2>
+      <TypographyH4>Match Selection</TypographyH4>
       <div className="space-y-4">
         <Input
           type="number"

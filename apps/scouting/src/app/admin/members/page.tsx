@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
@@ -168,8 +169,8 @@ export default function MembersPage() {
   return (
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl tracking-tight">Team Members</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Manage and view members</p>
+        <TypographyH1>Team Members</TypographyH1>
+        <TypographyMuted className="mt-2">Manage and view members</TypographyMuted>
       </div>
       <Suspense fallback={<LoadingTable />}>
         <MembersContent />

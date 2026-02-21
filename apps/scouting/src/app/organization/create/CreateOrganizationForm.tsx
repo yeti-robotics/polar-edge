@@ -10,6 +10,7 @@ import {
 } from "@repo/ui/components/card";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
+import { TypographyH3, TypographyMuted } from "@repo/ui/components/typography";
 import { BuildingIcon, CheckCircle2Icon, Loader2Icon, PlusIcon, SparklesIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -98,8 +99,8 @@ export function CreateOrganizationForm() {
             <div className="absolute inset-0 animate-ping rounded-full bg-green-400/30" />
             <CheckCircle2Icon className="relative size-16 text-green-500" />
           </div>
-          <h3 className="mt-6 text-xl font-semibold">Organization Created!</h3>
-          <p className="mt-2 text-muted-foreground">Redirecting you now...</p>
+          <TypographyH3 className="mt-6">Organization Created!</TypographyH3>
+          <TypographyMuted className="mt-2">Redirecting you now...</TypographyMuted>
         </CardContent>
       </Card>
     );

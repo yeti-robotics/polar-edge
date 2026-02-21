@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
+import { TypographyH3, TypographyMuted } from "@repo/ui/components/typography";
 import { CheckCircle2Icon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -68,10 +69,10 @@ export function AcceptInviteLinkForm({
           <div className="absolute inset-0 animate-ping rounded-full bg-green-400/30" />
           <CheckCircle2Icon className="relative size-16 text-green-500" />
         </div>
-        <h3 className="mt-6 text-xl font-semibold">Joined Successfully!</h3>
-        <p className="mt-2 text-center text-muted-foreground">
+        <TypographyH3 className="mt-6">Joined Successfully!</TypographyH3>
+        <TypographyMuted className="mt-2 text-center">
           You&apos;ve successfully joined {organizationName}. Redirecting you now...
-        </p>
+        </TypographyMuted>
       </div>
     );
   }

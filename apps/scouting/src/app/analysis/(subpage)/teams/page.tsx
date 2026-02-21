@@ -7,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import {
   Table,
   TableBody,
@@ -235,8 +236,8 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl">Teams</h1>
-          <p className="text-muted-foreground mt-1">Browse all teams in the database</p>
+          <TypographyH1>Teams</TypographyH1>
+          <TypographyMuted className="mt-1">Browse all teams in the database</TypographyMuted>
         </div>
       </div>
 
