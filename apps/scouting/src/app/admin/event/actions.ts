@@ -5,8 +5,8 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { routes } from "@/lib/routes";
 import { event, match, team, teamMatch } from "@/lib/database/schema/tables";
+import { routes } from "@/lib/routes";
 import { setActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { getTBAClient } from "@/lib/server/tba";
 

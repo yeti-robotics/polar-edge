@@ -108,7 +108,10 @@ async function TeamsTable({ page, searchQuery }: { page: number; searchQuery?: s
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <Link href={routes.analysis.team(teamData.teamNumber)} className="hover:underline">
+                  <Link
+                    href={routes.analysis.team(teamData.teamNumber)}
+                    className="hover:underline"
+                  >
                     {teamData.teamName || (
                       <span className="text-muted-foreground italic">No name</span>
                     )}

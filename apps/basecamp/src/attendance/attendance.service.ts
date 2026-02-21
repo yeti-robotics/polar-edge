@@ -165,10 +165,15 @@ export class AttendanceService {
         month: "2-digit",
         day: "2-digit",
       }).formatToParts(date);
+      const getPart = (type: "year" | "month" | "day") => {
+        const part = parts.find((p) => p.type === type);
+        if (part == null) throw new Error(`Missing ${type} in date parts`);
+        return Number(part.value);
+      };
       return {
-        year: Number(parts.find((p) => p.type === "year")!.value),
-        month: Number(parts.find((p) => p.type === "month")!.value),
-        day: Number(parts.find((p) => p.type === "day")!.value),
+        year: getPart("year"),
+        month: getPart("month"),
+        day: getPart("day"),
       };
     };
 
@@ -223,10 +228,16 @@ export class AttendanceService {
       if (success) {
         return { success: true };
       }
-      return { success: false, message: "Failed to sign in. Please try again or let a mentor know." };
+      return {
+        success: false,
+        message: "Failed to sign in. Please try again or let a mentor know.",
+      };
     } catch (error) {
       this.logger.error(`Failed to sign in: ${error}`);
-      return { success: false, message: "Failed to sign in. Please try again or let a mentor know." };
+      return {
+        success: false,
+        message: "Failed to sign in. Please try again or let a mentor know.",
+      };
     }
   }
 
@@ -240,10 +251,16 @@ export class AttendanceService {
       if (success) {
         return { success: true };
       }
-      return { success: false, message: "Failed to sign out. Please try again or let a mentor know." };
+      return {
+        success: false,
+        message: "Failed to sign out. Please try again or let a mentor know.",
+      };
     } catch (error) {
       this.logger.error(`Failed to sign out: ${error}`);
-      return { success: false, message: "Failed to sign out. Please try again or let a mentor know." };
+      return {
+        success: false,
+        message: "Failed to sign out. Please try again or let a mentor know.",
+      };
     }
   }
 
