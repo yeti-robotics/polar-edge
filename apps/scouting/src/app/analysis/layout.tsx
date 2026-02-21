@@ -1,8 +1,13 @@
 import { Button } from "@repo/ui/components/button";
+import { TypographyLabel } from "@repo/ui/components/typography";
 import Link from "next/link";
 import { SidebarSheet } from "@/components/SidebarSheet";
 
-const analysisLinks = [{ href: "/analysis/teams", label: "Teams" }];
+const analysisLinks = [
+  { href: "/analysis", label: "Overview" },
+  { href: "/analysis/teams", label: "Teams" },
+  { href: "/analysis/comparison", label: "Comparison" },
+];
 
 export default function DataLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,9 +15,12 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] h-full">
         <aside className="h-full border-r hidden md:block overflow-y-auto">
           <div className="flex flex-col px-2 py-4">
-            <span className="text-xs text-muted-foreground uppercase font-mono mb-1 px-2">
-              Scouting Data
-            </span>
+            <TypographyLabel className="mb-1 px-2">Scouting Data</TypographyLabel>
+            <Button variant="ghost" size="sm" asChild>
+              <Link className="text-sm w-full justify-start" href="/analysis">
+                Overview
+              </Link>
+            </Button>
             <Button variant="ghost" size="sm" asChild>
               <Link className="text-sm w-full justify-start" href="/analysis/teams">
                 Teams
