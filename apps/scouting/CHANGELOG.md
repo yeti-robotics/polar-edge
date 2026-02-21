@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.9.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.2...scouting-v2026.9.3) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** fix climbing and shooting layouts with dialog management and elapsed time tracking ([aea5c04](https://github.com/yeti-robotics/polar-edge/commit/aea5c045bcd9c0f75a1c79b82ff0632e1d46c55d))
+
 ## [2026.9.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.1...scouting-v2026.9.2) (2026-02-21)
 
 
