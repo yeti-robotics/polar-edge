@@ -102,33 +102,33 @@ async function InvitesContent() {
                 </TableHeader>
                 <TableBody>
                   {inviteLinks.map((link) => {
-                  const baseUrl =
-                    process.env.NEXT_PUBLIC_APP_URL ||
-                    (process.env.VERCEL_URL
-                      ? `https://${process.env.VERCEL_URL}`
-                      : "http://localhost:3000");
-                  const url = `${baseUrl}/join/${link.token}`;
-                  return (
-                    <TableRow key={link.id}>
-                      <TableCell>
-                        <InviteLinkCopy url={url} revoked={link.revoked} />
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={link.revoked ? "destructive" : "outline"}>
-                          {link.revoked ? "Revoked" : "Active"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground whitespace-nowrap">
-                        {formatDate(new Date(link.createdAt))}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {!link.revoked && <RevokeButton token={link.token} />}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                    const baseUrl =
+                      process.env.NEXT_PUBLIC_APP_URL ||
+                      (process.env.VERCEL_URL
+                        ? `https://${process.env.VERCEL_URL}`
+                        : "http://localhost:3000");
+                    const url = `${baseUrl}/join/${link.token}`;
+                    return (
+                      <TableRow key={link.id}>
+                        <TableCell>
+                          <InviteLinkCopy url={url} revoked={link.revoked} />
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={link.revoked ? "destructive" : "outline"}>
+                            {link.revoked ? "Revoked" : "Active"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground whitespace-nowrap">
+                          {formatDate(new Date(link.createdAt))}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {!link.revoked && <RevokeButton token={link.token} />}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>

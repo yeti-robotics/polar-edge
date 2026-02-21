@@ -15,18 +15,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] h-full">
         <aside className="h-full border-r hidden md:block overflow-y-auto">
           <div className="flex flex-col px-2 py-4">
-            <span className="text-xs text-muted-foreground uppercase font-mono mb-1 px-2">Admin Hub</span>
+            <span className="text-xs text-muted-foreground uppercase font-mono mb-1 px-2">
+              Admin Hub
+            </span>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="w-full justify-start" href="/admin/members">Members</Link>
+              <Link className="w-full justify-start" href="/admin/members">
+                Members
+              </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="w-full justify-start" href="/admin/invites">Invites</Link>
+              <Link className="w-full justify-start" href="/admin/invites">
+                Invites
+              </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="w-full justify-start" href="/admin/event">Active Event</Link>
+              <Link className="w-full justify-start" href="/admin/event">
+                Active Event
+              </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="w-full justify-start" href="/admin/settings">Settings</Link>
+              <Link className="w-full justify-start" href="/admin/settings">
+                Settings
+              </Link>
             </Button>
           </div>
         </aside>

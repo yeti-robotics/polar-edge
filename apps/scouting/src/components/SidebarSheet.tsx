@@ -49,7 +49,7 @@ export function SidebarSheet({ title, links }: SidebarSheetProps) {
                 className={cn(
                   "w-full justify-start",
                   (pathname === href || pathname.startsWith(`${href}/`)) &&
-                    "bg-muted text-foreground font-medium",
+                    "bg-muted text-foreground font-medium"
                 )}
               >
                 <Link href={href}>{label}</Link>

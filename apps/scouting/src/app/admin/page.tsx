@@ -7,18 +7,8 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import {
-  TypographyH1,
-  TypographyLabel,
-  TypographyMuted,
-} from "@repo/ui/components/typography";
-import {
-  CalendarIcon,
-  ChevronRightIcon,
-  MailIcon,
-  Settings2Icon,
-  UsersIcon,
-} from "lucide-react";
+import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
+import { CalendarIcon, ChevronRightIcon, MailIcon, Settings2Icon, UsersIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -103,9 +93,7 @@ async function AdminStats() {
           <CardContent className="pt-5 pb-4">
             <TypographyLabel className="mb-1">Event</TypographyLabel>
             <p className="mt-1 text-sm font-medium leading-tight truncate">
-              {activeEvent?.event.name ?? (
-                <span className="text-muted-foreground">None set</span>
-              )}
+              {activeEvent?.event.name ?? <span className="text-muted-foreground">None set</span>}
             </p>
           </CardContent>
         </Card>
