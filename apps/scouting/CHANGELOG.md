@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026.5.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.4.0...scouting-v2026.5.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** implement team name enrichment functionality ([680bf14](https://github.com/yeti-robotics/polar-edge/commit/680bf143a3e3809dde10443b8ddd2826de623d0b))
+
+
+### Bug Fixes
+
+* **scouting:** format success message in EnrichTeamNamesForm for better readability ([2a545bf](https://github.com/yeti-robotics/polar-edge/commit/2a545bfff56a80ed783ae06eeac5d1e5258163ef))
+
 ## [2026.4.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.3.0...scouting-v2026.4.0) (2026-02-20)
 
 
