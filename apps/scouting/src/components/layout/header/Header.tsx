@@ -81,9 +81,30 @@ export function Header() {
             {item.label}
           </Link>
         ))}
+        <Suspense fallback={null}>
+          <LeaderboardNavItem />
+        </Suspense>
         <nav />
       </nav>
     </header>
+  );
+}
+
+async function LeaderboardNavItem() {
+  try {
+    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    if (!activeMember) return null;
+  } catch {
+    return null;
+  }
+
+  return (
+    <Link
+      className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+      href="/leaderboard"
+    >
+      Leaderboard
+    </Link>
   );
 }
 

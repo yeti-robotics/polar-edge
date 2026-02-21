@@ -1,8 +1,10 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { cacheTags } from "@/lib/cache-tags";
 import { db } from "@/lib/database";
 import { climb, cycle, match, standForm, teamMatch } from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
@@ -153,6 +155,7 @@ export async function submitStandForm(data: unknown) {
       }
     });
 
+    revalidateTag(cacheTags.leaderboardStand(activeMember.organizationId), "hours");
     return { success: true };
   } catch (error) {
     console.error("Submit stand form error:", error);

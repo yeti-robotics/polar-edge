@@ -2,10 +2,12 @@
 
 import { and, desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import type { PathData } from "@/components/auto-path/PathCanvas";
 import { auth } from "@/lib/auth";
+import { cacheTags } from "@/lib/cache-tags";
 import { db } from "@/lib/database";
 import { autoPath, event, match, member, team } from "@/lib/database/schema";
 
@@ -66,6 +68,7 @@ export async function createAutoPath(data: z.infer<typeof createAutoPathSchema>)
     createdByMemberId: activeMember.id,
   });
 
+  revalidateTag(cacheTags.leaderboardAuto(activeOrganization), "hours");
   return { id };
 }
 
@@ -178,6 +181,7 @@ export async function updateAutoPath(
 
   await db.update(autoPath).set(updateData).where(eq(autoPath.id, id));
 
+  revalidateTag(cacheTags.leaderboardAuto(activeOrganization), "hours");
   return { id };
 }
 
@@ -207,6 +211,7 @@ export async function deleteAutoPath(id: string) {
 
   await db.delete(autoPath).where(eq(autoPath.id, id));
 
+  revalidateTag(cacheTags.leaderboardAuto(activeOrganization), "hours");
   return { id };
 }
 

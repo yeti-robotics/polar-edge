@@ -5,8 +5,10 @@ import {
   initialFormState,
   ServerValidateError,
 } from "@tanstack/react-form-nextjs";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { cacheTags } from "@/lib/cache-tags";
 import { db } from "@/lib/database";
 import { pitForm, pitPhoto } from "@/lib/database/schema";
 import { FormSchema, formOpts } from "./shared";
@@ -112,6 +114,8 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       _error: "Something went wrong. Please try again.",
     };
   }
+
+  revalidateTag(cacheTags.leaderboardPit(activeMember.organizationId), "hours");
 
   return {
     ...initialFormState,
