@@ -9,6 +9,7 @@ import { Skeleton } from "@repo/ui/components/skeleton";
 import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
 import { ChevronRightIcon, TableIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { getPitFormCount, getStandFormCount, getTeamCount } from "./queries";
 
@@ -55,16 +56,19 @@ function StatItemSkeleton() {
 // ── Async stat components ─────────────────────────────────────────────────────
 
 async function TeamCountStat() {
+  await connection();
   const count = await getTeamCount();
   return <StatItem label="Teams" value={count} />;
 }
 
 async function StandFormCountStat() {
+  await connection();
   const count = await getStandFormCount();
   return <StatItem label="Stand Forms" value={count} />;
 }
 
 async function PitFormCountStat() {
+  await connection();
   const count = await getPitFormCount();
   return <StatItem label="Pit Forms" value={count} />;
 }
