@@ -19,7 +19,7 @@ import { useState } from "react";
 
 const frameworks = ["YETI", "AVALANCHE", "MOCK#", "REX", "MORe Teams"];
 
-export function ExampleCombobox() {
+export function TeamSwitcher() {
   const [open, setOpen] = useState(false);
 
   //   const teamItems = teams.map(
