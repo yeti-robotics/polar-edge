@@ -12,10 +12,12 @@ import {
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { CheckCircleIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type EndClimbDialogProps = {
   onComplete: (climbLevel: number, climbSuccess: boolean) => void;
+  onOpen?: () => void;
+  onCancel?: () => void;
   disabled?: boolean;
 };
 
@@ -26,22 +28,36 @@ type EndClimbDialogProps = {
  * - Level 0 (No Climb) + not attempted = Cancel action (don't create record)
  * - Level 1/2/3 = { climbLevel: 1|2|3, climbSuccess: true } (assume success)
  */
-export function EndClimbDialog({ onComplete, disabled = false }: EndClimbDialogProps) {
+export function EndClimbDialog({ onComplete, onOpen, onCancel, disabled = false }: EndClimbDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<string>("");
   const [attempted, setAttempted] = useState(false);
+  const closingViaConfirm = useRef(false);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      onOpen?.();
+    } else if (!closingViaConfirm.current) {
+      onCancel?.();
+    }
+    closingViaConfirm.current = false;
+    setOpen(isOpen);
+  };
 
   const handleConfirm = () => {
     if (!selectedLevel) return;
 
     const level = parseInt(selectedLevel, 10);
 
+    if (level === 0 && !attempted) {
+      // No climb and not attempted: just close dialog (don't record anything)
+      // Leave closingViaConfirm false so onCancel fires and timer resumes
+      handleClose();
+      return;
+    }
+
+    closingViaConfirm.current = true;
     if (level === 0) {
-      if (!attempted) {
-        // No climb and not attempted: just close dialog (don't record anything)
-        handleClose();
-        return;
-      }
       // No climb but attempted: record as failed attempt
       onComplete(0, false);
     } else {
@@ -59,7 +75,7 @@ export function EndClimbDialog({ onComplete, disabled = false }: EndClimbDialogP
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="default" className="w-full h-full" disabled={disabled}>
           <CheckCircleIcon className="mr-2 h-5 w-5" />

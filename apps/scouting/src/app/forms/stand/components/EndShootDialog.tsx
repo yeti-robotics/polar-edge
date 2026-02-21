@@ -11,10 +11,12 @@ import {
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { CheckCircleIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type EndShootDialogProps = {
   onComplete: (bucket: number) => void;
+  onOpen?: () => void;
+  onCancel?: () => void;
   disabled?: boolean;
 };
 
@@ -28,12 +30,24 @@ type EndShootDialogProps = {
  * - 4: Fast (5-7 balls/sec)
  * - 5: Very Fast (7+ balls/sec)
  */
-export function EndShootDialog({ onComplete, disabled = false }: EndShootDialogProps) {
+export function EndShootDialog({ onComplete, onOpen, onCancel, disabled = false }: EndShootDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
+  const closingViaConfirm = useRef(false);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      onOpen?.();
+    } else if (!closingViaConfirm.current) {
+      onCancel?.();
+    }
+    closingViaConfirm.current = false;
+    setOpen(isOpen);
+  };
 
   const handleConfirm = () => {
     if (!selectedBucket) return;
+    closingViaConfirm.current = true;
     onComplete(parseInt(selectedBucket, 10));
     setOpen(false);
     setSelectedBucket("");
@@ -45,7 +59,7 @@ export function EndShootDialog({ onComplete, disabled = false }: EndShootDialogP
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="default" className="w-full h-full" disabled={disabled}>
           <CheckCircleIcon className="mr-2 h-5 w-5" />

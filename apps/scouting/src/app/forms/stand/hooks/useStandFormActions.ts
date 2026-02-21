@@ -45,14 +45,14 @@ export function useStandFormActions() {
    * Complete a shooting cycle with the selected bucket.
    * Updates both ActionState (clears activeAction) and FormData (adds cycle).
    */
-  const completeShootingCycle = (bucket: number) => {
+  const completeShootingCycle = (bucket: number, endedAt?: number) => {
     if (!actionState.activeAction || actionState.activeAction.type !== "shooting") {
       console.warn("Cannot complete shooting cycle: no active shooting action");
       return;
     }
 
     const activeAction = actionState.activeAction;
-    const endedAt = Date.now();
+    const resolvedEndedAt = endedAt ?? Date.now();
     const cycleNumber =
       formData.completedCycles.filter((c) => c.phase === activeAction.phase).length + 1;
 
@@ -63,7 +63,7 @@ export function useStandFormActions() {
         phase: activeAction.phase,
         cycleNumber,
         startedAt: activeAction.startedAt,
-        endedAt,
+        endedAt: resolvedEndedAt,
         bucket,
       },
     });
@@ -76,13 +76,13 @@ export function useStandFormActions() {
    * Complete a climb with level and success status.
    * Updates both ActionState (clears activeAction) and FormData (adds climb).
    */
-  const completeClimb = (climbLevel: number, climbSuccess: boolean) => {
+  const completeClimb = (climbLevel: number, climbSuccess: boolean, endedAt?: number) => {
     if (!actionState.activeAction || actionState.activeAction.type !== "climbing") {
       console.warn("Cannot complete climb: no active climbing action");
       return;
     }
 
-    const endedAt = Date.now();
+    const resolvedEndedAt = endedAt ?? Date.now();
 
     // Add to FormData
     dispatchFormData({
@@ -90,7 +90,7 @@ export function useStandFormActions() {
       payload: {
         phase: actionState.activeAction.phase,
         startedAt: actionState.activeAction.startedAt,
-        endedAt,
+        endedAt: resolvedEndedAt,
         climbLevel,
         climbSuccess,
       },

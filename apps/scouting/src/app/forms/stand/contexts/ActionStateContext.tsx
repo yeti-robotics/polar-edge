@@ -15,6 +15,7 @@ export type ActionStateContextValue = {
 export type ActionStateAction =
   | { type: "oof_start" }
   | { type: "oof_end" }
+  | { type: "oof_cancel" }
   | { type: "action_start"; payload: { actionType: ActionType; phase: Phase } }
   | { type: "action_cancel" }
   | { type: "action_complete" }
@@ -54,6 +55,15 @@ function actionStateReducer(
         oofCumulativeSeconds: state.oofCumulativeSeconds + segmentSeconds,
       };
     }
+
+    case "oof_cancel":
+      // Discard the current oof segment without accumulating time
+      if (!state.isOofed) return state;
+      return {
+        ...state,
+        isOofed: false,
+        oofStartedAt: null,
+      };
 
     case "action_start":
       // Enforce mutual exclusivity: can't start action if oofed or another action is active

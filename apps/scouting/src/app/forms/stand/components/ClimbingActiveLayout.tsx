@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/ui/components/button";
 import { XIcon } from "lucide-react";
+import { useState } from "react";
 import { useActionState } from "../contexts/ActionStateContext";
 import { useElapsedTime } from "../hooks/useElapsedTime";
 import { useStandFormActions } from "../hooks/useStandFormActions";
@@ -14,7 +15,15 @@ import { EndClimbDialog } from "./EndClimbDialog";
 export function ClimbingActiveLayout() {
   const { state: actionState } = useActionState();
   const { cancelAction, completeClimb } = useStandFormActions();
-  const elapsedSeconds = useElapsedTime(actionState.activeAction?.startedAt ?? null);
+  const [dialogOpenedAt, setDialogOpenedAt] = useState<number | null>(null);
+  const elapsedSeconds = useElapsedTime(actionState.activeAction?.startedAt ?? null, dialogOpenedAt);
+
+  const handleDialogOpen = () => setDialogOpenedAt(Date.now());
+  const handleDialogCancel = () => setDialogOpenedAt(null);
+  const handleComplete = (climbLevel: number, climbSuccess: boolean) => {
+    completeClimb(climbLevel, climbSuccess, dialogOpenedAt ?? undefined);
+    setDialogOpenedAt(null);
+  };
 
   return (
     <div className="flex flex-col items-center gap-4 py-4 min-h-[280px]">
@@ -27,7 +36,11 @@ export function ClimbingActiveLayout() {
           <XIcon className="mr-2 h-4 w-4" />
           Cancel
         </Button>
-        <EndClimbDialog onComplete={completeClimb} />
+        <EndClimbDialog
+          onComplete={handleComplete}
+          onOpen={handleDialogOpen}
+          onCancel={handleDialogCancel}
+        />
       </div>
     </div>
   );
