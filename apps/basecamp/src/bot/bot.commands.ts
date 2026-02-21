@@ -139,11 +139,11 @@ export class BotCommands {
         await interaction.channel.send(`<@${interaction.user.id}> has signed in.`);
       }
       return interaction.editReply({
-        content: "Signed in successfully",
+        content: result.message ?? "Signed in successfully",
       });
     } else {
       return interaction.editReply({
-        content: "Failed to sign in!",
+        content: result.message ?? "Failed to sign in.",
       });
     }
   }
@@ -178,11 +178,11 @@ export class BotCommands {
         await interaction.channel.send(`<@${interaction.user.id}> has signed out.`);
       }
       return interaction.editReply({
-        content: "Signed out successfully",
+        content: result.message ?? "Signed out successfully",
       });
     } else {
       return interaction.editReply({
-        content: "Failed to sign out!",
+        content: result.message ?? "Failed to sign out.",
       });
     }
   }
@@ -230,7 +230,7 @@ export class BotCommands {
       });
     } else {
       return interaction.editReply({
-        content: `Failed to sign in ${nickname}.`,
+        content: result.message ?? `Failed to sign in ${nickname}.`,
       });
     }
   }
@@ -278,7 +278,7 @@ export class BotCommands {
       });
     } else {
       return interaction.editReply({
-        content: `Failed to sign out ${nickname}.`,
+        content: result.message ?? `Failed to sign out ${nickname}.`,
       });
     }
   }
