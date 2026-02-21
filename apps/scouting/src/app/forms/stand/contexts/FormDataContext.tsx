@@ -16,7 +16,8 @@ export type FormDataAction =
   | { type: "set_team_match_id"; payload: number }
   | { type: "set_comments"; payload: string }
   | { type: "add_cycle"; payload: CompletedCycle }
-  | { type: "add_climb"; payload: CompletedClimb };
+  | { type: "add_climb"; payload: CompletedClimb }
+  | { type: "reset" };
 
 // ===== REDUCER =====
 
@@ -45,6 +46,9 @@ function formDataReducer(state: FormDataState, action: FormDataAction): FormData
         ...state,
         completedClimbs: [...state.completedClimbs, action.payload],
       };
+
+    case "reset":
+      return { completedCycles: [], completedClimbs: [], teamMatchId: null, comments: "" };
 
     default:
       return state;

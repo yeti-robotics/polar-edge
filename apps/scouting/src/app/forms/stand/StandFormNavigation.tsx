@@ -43,6 +43,11 @@ export function StandFormNavigation() {
       return "Select a match to continue";
     }
 
+    // Block 4: Comments required (min 32 chars) before submit
+    if (isOnComments && formData.comments.trim().length < 32) {
+      return "Comments must be at least 32 characters";
+    }
+
     // No blocks - can progress
     return null;
   };

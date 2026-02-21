@@ -18,7 +18,8 @@ export type ActionStateAction =
   | { type: "action_start"; payload: { actionType: ActionType; phase: Phase } }
   | { type: "action_cancel" }
   | { type: "action_complete" }
-  | { type: "reset_for_phase_transition" };
+  | { type: "reset_for_phase_transition" }
+  | { type: "reset" };
 
 // ===== REDUCER =====
 
@@ -88,6 +89,9 @@ function actionStateReducer(
         activeAction: null,
         // Keep isOofed, oofStartedAt, oofCumulativeSeconds unchanged
       };
+
+    case "reset":
+      return { activeAction: null, isOofed: false, oofStartedAt: null, oofCumulativeSeconds: 0 };
 
     default:
       return state;

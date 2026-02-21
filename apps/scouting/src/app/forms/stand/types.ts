@@ -64,7 +64,7 @@ export const ClimbSchema = z
 
 export const StandFormSchema = z.object({
   teamMatchId: z.number().positive(),
-  comments: z.string(),
+  comments: z.string().min(32, "Comments must be at least 32 characters"),
   oofTimeSeconds: z.number().int().min(0),
   cycles: z.array(CycleSchema),
   climbs: z.array(ClimbSchema),
