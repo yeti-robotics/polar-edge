@@ -5,10 +5,10 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { routes } from "@/lib/routes";
 import { member } from "@/lib/database/schema/tables/member";
 import { session } from "@/lib/database/schema/tables/session";
 import { user } from "@/lib/database/schema/tables/user";
+import { routes } from "@/lib/routes";
 
 export async function updateMemberRole(memberId: string, role: string) {
   try {

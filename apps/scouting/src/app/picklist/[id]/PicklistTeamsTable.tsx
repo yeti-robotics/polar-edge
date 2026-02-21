@@ -12,12 +12,12 @@ import { cn } from "@repo/ui/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { startTransition, useOptimistic } from "react";
+import { routes } from "@/lib/routes";
 import { removeTeamFromPicklist, reorderPicklistTeam, togglePickedStatus } from "../actions";
 import { NotesCell } from "./NotesCell";
 import { PickedCheckbox } from "./PickedCheckbox";
 import { RemoveTeamButton } from "./RemoveTeamButton";
 import { ReorderButtons } from "./ReorderButtons";
-import { routes } from "@/lib/routes";
 
 interface Team {
   teamNumber: number;

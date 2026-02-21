@@ -6,8 +6,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { routes } from "@/lib/routes";
 import { picklist, picklistTeam } from "@/lib/database/schema";
+import { routes } from "@/lib/routes";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import {
   AddTeamToPicklistSchema,
