@@ -35,6 +35,7 @@ function formatDate(date: Date): string {
 
 function LoadingTable() {
   return (
+    <div className="overflow-x-auto">
     <Table>
       <TableHeader>
         <TableRow>
@@ -69,6 +70,7 @@ function LoadingTable() {
         ))}
       </TableBody>
     </Table>
+    </div>
   );
 }
 
@@ -114,6 +116,7 @@ async function MembersContent() {
   };
 
   return (
+    <div className="overflow-x-auto">
     <Table>
       <TableHeader>
         <TableRow>
@@ -162,6 +165,7 @@ async function MembersContent() {
         ))}
       </TableBody>
     </Table>
+    </div>
   );
 }
 
