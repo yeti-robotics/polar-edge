@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.7.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.7.0...scouting-v2026.7.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** broken picklist links using wrong /analysis/picklist path ([#434](https://github.com/yeti-robotics/polar-edge/issues/434)) ([453b7ae](https://github.com/yeti-robotics/polar-edge/commit/453b7aef271d00e9506d73913416969fb0b3681b))
+
 ## [2026.7.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.6.0...scouting-v2026.7.0) (2026-02-21)
 
 
