@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import type { PathData } from "@/components/auto-path/PathCanvas";
 import { auth } from "@/lib/auth";
-import { cacheTags } from "@/lib/cache-tags";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { autoPath, event, match, member, team } from "@/lib/database/schema";
 

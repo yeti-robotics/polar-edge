@@ -22,7 +22,7 @@ import { Suspense } from "react";
 import { db } from "@/lib/database";
 import { team } from "@/lib/database/schema/tables/team";
 import { routes } from "@/lib/routes";
-import { TeamsSearch } from "./TeamsSearch";
+import { TeamsSearch } from "./_components/TeamsSearch";
 
 const ITEMS_PER_PAGE = 25;
 

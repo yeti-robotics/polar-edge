@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, countDistinct, desc, eq, isNull } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
-import { cacheTags } from "@/lib/cache-tags";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
   autoPath,

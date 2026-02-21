@@ -1,13 +1,13 @@
-import { Button } from "@repo/ui/components/button";
-import { TypographyLabel } from "@repo/ui/components/typography";
-import Link from "next/link";
+"use client";
+import { NavSidebar } from "@/components/NavSidebar";
 import { SidebarSheet } from "@/components/SidebarSheet";
 import { routes } from "@/lib/routes";
+import { ArrowLeftRightIcon, LayoutDashboardIcon, ShieldIcon } from "lucide-react";
 
 const analysisLinks = [
-  { href: routes.analysis.root, label: "Overview" },
-  { href: routes.analysis.teams, label: "Teams" },
-  { href: routes.analysis.comparison, label: "Comparison" },
+  { href: routes.analysis.root, label: "Overview", icon: LayoutDashboardIcon, exact: true },
+  { href: routes.analysis.teams, label: "Teams", icon: ShieldIcon },
+  { href: routes.analysis.comparison, label: "Comparison", icon: ArrowLeftRightIcon },
 ];
 
 export default function DataLayout({ children }: { children: React.ReactNode }) {
@@ -15,30 +15,13 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
     <div className="fixed inset-x-0 top-(--header-height) bottom-0 overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] h-full">
         <aside className="h-full border-r hidden md:block overflow-y-auto">
-          <div className="flex flex-col px-2 py-4">
-            <TypographyLabel className="mb-1 px-2">Scouting Data</TypographyLabel>
-            <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href={routes.analysis.root}>
-                Overview
-              </Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href={routes.analysis.teams}>
-                Teams
-              </Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href={routes.analysis.comparison}>
-                Comparison
-              </Link>
-            </Button>
-          </div>
+          <NavSidebar title="Scouting Data" links={analysisLinks} />
         </aside>
         <div className="h-full overflow-y-auto min-w-0">
           <div className="sticky top-0 z-40 bg-background border-b px-2 py-1 md:hidden">
             <SidebarSheet title="Scouting Data" links={analysisLinks} />
           </div>
-          {children}
+          <div className="p-4 md:p-8 pb-8">{children}</div>
         </div>
       </div>
     </div>

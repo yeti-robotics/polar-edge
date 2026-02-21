@@ -97,7 +97,7 @@ function StatsSkeleton() {
 
 export default function AnalysisPage() {
   return (
-    <main className="container mx-auto max-w-5xl px-4 py-8 space-y-8">
+    <div className="space-y-8">
       <Suspense fallback={<StatsSkeleton />}>
         <AnalysisStats />
       </Suspense>
@@ -125,6 +125,6 @@ export default function AnalysisPage() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
