@@ -15,27 +15,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@repo/ui/components/dialog";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const frameworks = ["YETI", "AVALANCHE", "MOCK#", "REX", "MORe Teams"];
 
-interface Team {
-  teamNumber: number;
-  teamName: string;
-}
-
-interface TeamSwitcherProps {
-  teams: Team[];
-  currentTeamNumber: number;
-}
-
-export function ExampleCombobox({
-  teams,
-  currentTeamNumber,
-}: TeamSwitcherProps) {
+export function ExampleCombobox() {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
 
   //   const teamItems = teams.map(
   //     (team) => `${team.teamNumber} - ${team.teamName}`,
