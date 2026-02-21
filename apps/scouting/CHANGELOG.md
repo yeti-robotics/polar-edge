@@ -1,5 +1,15 @@
 # Changelog
 
+## [2026.9.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.1...scouting-v2026.9.2) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** enhance LoadingSkeleton component with showScopeToggle prop for improved loading state display ([e1da27d](https://github.com/yeti-robotics/polar-edge/commit/e1da27da6b70a9e84dfc63cd5bc760172086a13c))
+* **scouting:** establish connection for async stat components on analysis page ([d9bad20](https://github.com/yeti-robotics/polar-edge/commit/d9bad20293fe1f93de84d1fcd6214c8cffde93bd))
+* **scouting:** loading perf on analysis page, add cache ([49493d8](https://github.com/yeti-robotics/polar-edge/commit/49493d8c1a4871ce4388e80736556ce0fc2d0ddf))
+* **scouting:** update podium and rank table animations for improved visual flow ([62a8d86](https://github.com/yeti-robotics/polar-edge/commit/62a8d86e3c452edd13cd1a2525269ef78974f612))
+
 ## [2026.9.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.0...scouting-v2026.9.1) (2026-02-21)
 
 
