@@ -7,7 +7,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import {
   Table,
   TableBody,
@@ -16,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import Link from "next/link";
 import { Suspense } from "react";

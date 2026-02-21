@@ -1,5 +1,4 @@
 import { Badge } from "@repo/ui/components/badge";
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import {
   Card,
   CardContent,
@@ -16,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Suspense } from "react";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { listInviteLinks } from "@/lib/server/invite-links";

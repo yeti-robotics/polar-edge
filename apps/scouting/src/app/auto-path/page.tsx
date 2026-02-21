@@ -1,6 +1,5 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
@@ -10,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { EyeIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";

@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { Suspense } from "react";
@@ -22,7 +23,6 @@ import {
   teamMatch,
   team as teamTable,
 } from "@/lib/database/schema";
-import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
 import { getTeamKeyMetrics, getTeamRadarData } from "./queries";
 import { TeamKeyMetricsCard } from "./TeamKeyMetricsCard";
 import { RadarChart } from "./TeamRadarChart";

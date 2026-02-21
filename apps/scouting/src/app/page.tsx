@@ -1,10 +1,6 @@
 import { Button } from "@repo/ui/components/button";
 import { Card } from "@repo/ui/components/card";
-import {
-  TypographyH1,
-  TypographyH3,
-  TypographyMuted,
-} from "@repo/ui/components/typography";
+import { TypographyH1, TypographyH3, TypographyMuted } from "@repo/ui/components/typography";
 import { headers } from "next/headers";
 import Link from "next/link";
 

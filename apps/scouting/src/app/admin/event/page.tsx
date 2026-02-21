@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@repo/ui/components/card";
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Suspense } from "react";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";

@@ -6,8 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
