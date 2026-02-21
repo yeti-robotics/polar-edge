@@ -39,7 +39,9 @@ export function CommentsTab() {
             value={state.comments}
             onChange={(e) => dispatch({ type: "set_comments", payload: e.target.value })}
           />
-          <p className={`text-xs text-right tabular-nums ${state.comments.trim().length >= COMMENTS_MIN_LENGTH ? "text-muted-foreground" : "text-muted-foreground/50"}`}>
+          <p
+            className={`text-xs text-right tabular-nums ${state.comments.trim().length >= COMMENTS_MIN_LENGTH ? "text-muted-foreground" : "text-muted-foreground/50"}`}
+          >
             {state.comments.trim().length} / {COMMENTS_MIN_LENGTH}
           </p>
         </div>

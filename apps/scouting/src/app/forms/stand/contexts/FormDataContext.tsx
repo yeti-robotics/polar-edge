@@ -15,7 +15,10 @@ export type FormDataState = {
 };
 
 export type FormDataAction =
-  | { type: "set_team_match_id"; payload: { teamMatchId: number; matchNumber: number; teamNumber: number } }
+  | {
+      type: "set_team_match_id";
+      payload: { teamMatchId: number; matchNumber: number; teamNumber: number };
+    }
   | { type: "set_comments"; payload: string }
   | { type: "add_cycle"; payload: CompletedCycle }
   | { type: "add_climb"; payload: CompletedClimb }
@@ -52,7 +55,14 @@ function formDataReducer(state: FormDataState, action: FormDataAction): FormData
       };
 
     case "reset":
-      return { completedCycles: [], completedClimbs: [], teamMatchId: null, matchNumber: null, teamNumber: null, comments: "" };
+      return {
+        completedCycles: [],
+        completedClimbs: [],
+        teamMatchId: null,
+        matchNumber: null,
+        teamNumber: null,
+        comments: "",
+      };
 
     default:
       return state;
