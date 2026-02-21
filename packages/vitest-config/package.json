@@ -25,7 +25,11 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "collect-json-reports": "node dist/scripts/collect-json-outputs.mjs",
+    "merge-json-reports": "nyc merge coverage/raw coverage/merged/merged-coverage.json",
+    "report": "nyc report -t coverage/merged --report-dir coverage/report --reporter=html --exclude-after-remap false",
+    "view-report": "open coverage/report/index.html"
   },
   "dependencies": {
     "@vitest/coverage-istanbul": "catalog:",
@@ -35,6 +39,8 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
+    "glob": "^11.0.1",
+    "nyc": "^17.1.0",
     "tsdown": "0.19.0",
     "typescript": "catalog:"
   }
