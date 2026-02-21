@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026.6.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.5.1...scouting-v2026.6.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** admin/analysis layout responsiveness, overview pages ([#431](https://github.com/yeti-robotics/polar-edge/issues/431)) ([b61cefb](https://github.com/yeti-robotics/polar-edge/commit/b61cefb21e51fd59da8dcdb1282b46c2d9a0bad9))
+* **scouting:** integrate new typography components across various pages ([#429](https://github.com/yeti-robotics/polar-edge/issues/429)) ([b53f9e5](https://github.com/yeti-robotics/polar-edge/commit/b53f9e5fd6c65549a42724e28f2b97580bbe8c99))
+
 ## [2026.5.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.5.0...scouting-v2026.5.1) (2026-02-21)
 
 
