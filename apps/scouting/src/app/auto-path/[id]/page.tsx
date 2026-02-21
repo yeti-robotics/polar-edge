@@ -5,6 +5,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PathViewer } from "@/components/auto-path/PathViewer";
+import { routes } from "@/lib/routes";
 import { getAutoPath } from "../actions";
 
 function formatDate(date: Date): string {
@@ -29,7 +30,7 @@ async function AutoPathDetail({ id }: { id: string }) {
             <p className="mt-2 text-sm text-muted-foreground">Team {path.teamNumber}</p>
           </div>
           <Button variant="outline" asChild>
-            <Link href="/auto-path">
+            <Link href={routes.autoPath.root}>
               <ArrowLeftIcon className="mr-2 size-4" />
               Back to List
             </Link>

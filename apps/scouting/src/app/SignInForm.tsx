@@ -5,13 +5,14 @@ import { KeyRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Discord } from "@/components/logo/discord";
 import { authClient } from "@/lib/auth-client";
+import { routes } from "@/lib/routes";
 import { signInDiscord } from "./signIn";
 
 async function signInPasskey() {
   await authClient.signIn.passkey({
     fetchOptions: {
       onSuccess(_context) {
-        window.location.href = "/";
+        window.location.href = routes.home;
       },
       onError(context) {
         console.error("Authentication failed:", context.error.message);
@@ -31,7 +32,7 @@ export function SignInForm({ redirectUrl }: SignInFormProps) {
     setHasPasskeySupport(typeof window !== "undefined" && "PublicKeyCredential" in window);
   }, [hasPasskeySupport]);
 
-  const callbackURL = redirectUrl ?? "/";
+  const callbackURL = redirectUrl ?? routes.home;
 
   return (
     <div className="relative flex flex-col items-center justify-center my-4">

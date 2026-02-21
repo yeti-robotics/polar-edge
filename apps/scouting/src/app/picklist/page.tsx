@@ -11,6 +11,7 @@ import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { routes } from "@/lib/routes";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { CreatePicklistDialog } from "./CreatePicklistDialog";
@@ -70,7 +71,7 @@ async function PicklistContent() {
   return (
     <div className="flex flex-col gap-4">
       {picklists.map((picklist) => (
-        <Link key={picklist.id} href={`/analysis/picklist/${picklist.id}`}>
+        <Link key={picklist.id} href={routes.picklist.detail(picklist.id)}>
           <Card className="hover:border-primary transition-colors cursor-pointer">
             <CardHeader>
               <CardTitle>{picklist.name}</CardTitle>

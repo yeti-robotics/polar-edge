@@ -3,6 +3,7 @@ import "server-only";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 
 /**
  * Require an authenticated user with an active organization membership.
@@ -16,9 +17,9 @@ export async function requireActiveMember() {
   try {
     member = await auth.api.getActiveMember({ headers: await headers() });
   } catch {
-    redirect("/");
+    redirect(routes.home);
   }
-  if (!member) redirect("/");
+  if (!member) redirect(routes.home);
   return member;
 }
 
@@ -28,7 +29,7 @@ export async function requireActiveMember() {
 export async function requireAdminMember() {
   const member = await requireActiveMember();
   if (member.role !== "admin" && member.role !== "owner") {
-    redirect("/");
+    redirect(routes.home);
   }
   return member;
 }

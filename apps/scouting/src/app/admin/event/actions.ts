@@ -5,6 +5,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
+import { routes } from "@/lib/routes";
 import { event, match, team, teamMatch } from "@/lib/database/schema/tables";
 import { setActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { getTBAClient } from "@/lib/server/tba";
@@ -33,7 +34,7 @@ export async function setActiveEventAction(organizationId: string, eventId: stri
     }
 
     await setActiveEventForOrganization(organizationId, eventId);
-    revalidatePath("/admin/event");
+    revalidatePath(routes.admin.event);
     return { data: { success: true }, error: null };
   } catch (error) {
     return {
@@ -220,7 +221,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
       };
     });
 
-    revalidatePath("/admin/event");
+    revalidatePath(routes.admin.event);
     revalidateTag("teams-search", "max");
     return {
       data: { success: true, eventId, matchCount, teamMatchCount },

@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/pop
 import { ArrowLeftRight, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { routes } from "@/lib/routes";
 
 type Team = { teamNumber: number; teamName: string };
 
@@ -65,7 +66,7 @@ export function SelectTeam() {
   const selectTeam = useCallback(
     (team: Team) => {
       setOpen(false);
-      router.push(`/analysis/team/${team.teamNumber}`);
+      router.push(routes.analysis.team(team.teamNumber));
     },
     [router]
   );

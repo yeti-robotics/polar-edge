@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 
 /**
  * Server action to sign out the current user and redirect to home page.
@@ -15,5 +16,5 @@ export async function signOut() {
     headers: headerList,
   });
 
-  redirect("/");
+  redirect(routes.home);
 }

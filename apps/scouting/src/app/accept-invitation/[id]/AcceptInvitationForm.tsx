@@ -6,6 +6,7 @@ import { CheckCircle2Icon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { routes } from "@/lib/routes";
 
 interface AcceptInvitationFormProps {
   invitationId: string;
@@ -32,7 +33,7 @@ export function AcceptInvitationForm({
       if (!session?.data?.user) {
         // Redirect to sign in, then back to this page
         const currentUrl = window.location.href;
-        router.push(`/?redirect=${encodeURIComponent(currentUrl)}`);
+        router.push(`${routes.home}?redirect=${encodeURIComponent(currentUrl)}`);
         return;
       }
 
@@ -49,7 +50,7 @@ export function AcceptInvitationForm({
       setSuccess(true);
       // Redirect to home page after a brief delay
       setTimeout(() => {
-        router.push("/");
+        router.push(routes.home);
         router.refresh();
       }, 1500);
     } catch (_err) {

@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 import Link from "next/link";
+import { routes } from "@/lib/routes";
 import { QuickAddTeamButton } from "./QuickAddTeamButton";
 
 interface TeamWithMetrics {
@@ -71,7 +72,7 @@ export function TeamsAtEventClient({
                 </TableCell>
                 <TableCell className="font-mono font-bold">
                   <Link
-                    href={`/data/teams/${team.teamNumber}`}
+                    href={routes.analysis.team(team.teamNumber)}
                     className="text-primary hover:underline"
                   >
                     {team.teamNumber}

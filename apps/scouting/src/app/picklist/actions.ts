@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
+import { routes } from "@/lib/routes";
 import { picklist, picklistTeam } from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import {
@@ -71,7 +72,7 @@ export async function createPicklistAction(
       return { data: null, error: "Failed to create picklist" };
     }
 
-    revalidatePath("/analysis/picklist");
+    revalidatePath(routes.picklist.root);
     return { data: { success: true, picklistId: newPicklist.id }, error: null };
   } catch (error) {
     console.error("Create picklist error:", error);
@@ -275,7 +276,7 @@ export async function deletePicklist(data: unknown) {
     return { error: "Failed to delete picklist" };
   }
 
-  redirect("/analysis/picklist");
+  redirect(routes.picklist.root);
 }
 
 /**

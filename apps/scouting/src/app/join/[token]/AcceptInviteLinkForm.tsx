@@ -6,6 +6,7 @@ import { CheckCircle2Icon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { routes } from "@/lib/routes";
 import { acceptInviteLink, setPendingInviteCookie } from "./actions";
 
 interface AcceptInviteLinkFormProps {
@@ -36,7 +37,7 @@ export function AcceptInviteLinkForm({
         // Set cookie before redirecting so OAuth callback knows about the invite
         await setPendingInviteCookie(token);
         const currentUrl = window.location.href;
-        router.push(`/?redirect=${encodeURIComponent(currentUrl)}`);
+        router.push(`${routes.home}?redirect=${encodeURIComponent(currentUrl)}`);
         return;
       }
 
@@ -54,7 +55,7 @@ export function AcceptInviteLinkForm({
       await authClient.organization.setActive({ organizationId });
       setTimeout(() => {
         router.refresh();
-        router.push("/");
+        router.push(routes.home);
       }, 1500);
     } catch (_err) {
       setError("An unexpected error occurred. Please try again.");

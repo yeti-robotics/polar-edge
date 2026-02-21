@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
+import { routes } from "@/lib/routes";
 import { setDefaultOrganizationIfNeeded } from "@/lib/server/organization/default-organization";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
 import { LogoutButton } from "./LogoutButton";
@@ -22,19 +23,19 @@ import { ThemeToggle } from "./ThemeToggle";
 const navItems = [
   {
     label: "Pit Form",
-    href: "/forms/pit",
+    href: routes.forms.pit,
   },
   {
     label: "Stand Form",
-    href: "/forms/stand",
+    href: routes.forms.stand,
   },
   {
     label: "Analysis",
-    href: "/analysis",
+    href: routes.analysis.root,
   },
   {
     label: "Picklist",
-    href: "/picklist",
+    href: routes.picklist.root,
   },
 ];
 
@@ -101,7 +102,7 @@ async function LeaderboardNavItem() {
   return (
     <Link
       className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-      href="/leaderboard"
+      href={routes.leaderboard}
     >
       Leaderboard
     </Link>
@@ -150,16 +151,16 @@ async function UserAvatar() {
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="end" className="min-w-36">
           <DropdownMenuGroup>
-            <DropdownMenuItemLink href="/">
+            <DropdownMenuItemLink href={routes.home}>
               <HomeIcon className="size-4 text-current" />
               <span>Home</span>
             </DropdownMenuItemLink>
-            <DropdownMenuItemLink href="/profile">
+            <DropdownMenuItemLink href={routes.profile}>
               <UserIcon className="size-4 text-current" />
               <span>Profile</span>
             </DropdownMenuItemLink>
             {isAdminOrOwner && (
-              <DropdownMenuItemLink href="/admin">
+              <DropdownMenuItemLink href={routes.admin.root}>
                 <ShieldCheckIcon className="size-4 text-current" />
                 <span>Admin</span>
               </DropdownMenuItemLink>

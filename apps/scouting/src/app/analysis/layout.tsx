@@ -2,11 +2,12 @@ import { Button } from "@repo/ui/components/button";
 import { TypographyLabel } from "@repo/ui/components/typography";
 import Link from "next/link";
 import { SidebarSheet } from "@/components/SidebarSheet";
+import { routes } from "@/lib/routes";
 
 const analysisLinks = [
-  { href: "/analysis", label: "Overview" },
-  { href: "/analysis/teams", label: "Teams" },
-  { href: "/analysis/comparison", label: "Comparison" },
+  { href: routes.analysis.root, label: "Overview" },
+  { href: routes.analysis.teams, label: "Teams" },
+  { href: routes.analysis.comparison, label: "Comparison" },
 ];
 
 export default function DataLayout({ children }: { children: React.ReactNode }) {
@@ -17,17 +18,17 @@ export default function DataLayout({ children }: { children: React.ReactNode }) 
           <div className="flex flex-col px-2 py-4">
             <TypographyLabel className="mb-1 px-2">Scouting Data</TypographyLabel>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis">
+              <Link className="text-sm w-full justify-start" href={routes.analysis.root}>
                 Overview
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis/teams">
+              <Link className="text-sm w-full justify-start" href={routes.analysis.teams}>
                 Teams
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="text-sm w-full justify-start" href="/analysis/comparison">
+              <Link className="text-sm w-full justify-start" href={routes.analysis.comparison}>
                 Comparison
               </Link>
             </Button>

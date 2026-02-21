@@ -13,6 +13,7 @@ import {
 } from "@repo/ui/components/alert-dialog";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useState } from "react";
+import { routes } from "@/lib/routes";
 import { deletePicklist } from "../actions";
 
 interface DeletePicklistButtonProps {
@@ -34,7 +35,7 @@ export function DeletePicklistButton({ picklistId, children }: DeletePicklistBut
       return;
     }
 
-    router.push("/analysis/picklist");
+    router.push(routes.picklist.root);
     router.refresh();
   };
 

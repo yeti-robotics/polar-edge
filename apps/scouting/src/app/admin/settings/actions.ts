@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 
 export type UpdateOrganizationNameState = {
   data: { success: true } | null;
@@ -51,7 +52,7 @@ export async function updateOrganizationNameAction(
       headers: requestHeaders,
     });
 
-    revalidatePath("/admin/settings");
+    revalidatePath(routes.admin.settings);
     return { data: { success: true }, error: null };
   } catch (error) {
     return {

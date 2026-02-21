@@ -1,12 +1,13 @@
 import { Button } from "@repo/ui/components/button";
 import Link from "next/link";
 import { SidebarSheet } from "@/components/SidebarSheet";
+import { routes } from "@/lib/routes";
 
 const adminLinks = [
-  { href: "/admin/members", label: "Members" },
-  { href: "/admin/invites", label: "Invites" },
-  { href: "/admin/event", label: "Active Event" },
-  { href: "/admin/settings", label: "Settings" },
+  { href: routes.admin.members, label: "Members" },
+  { href: routes.admin.invites, label: "Invites" },
+  { href: routes.admin.event, label: "Active Event" },
+  { href: routes.admin.settings, label: "Settings" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -19,22 +20,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               Admin Hub
             </span>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="w-full justify-start" href="/admin/members">
+              <Link className="w-full justify-start" href={routes.admin.members}>
                 Members
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="w-full justify-start" href="/admin/invites">
+              <Link className="w-full justify-start" href={routes.admin.invites}>
                 Invites
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="w-full justify-start" href="/admin/event">
+              <Link className="w-full justify-start" href={routes.admin.event}>
                 Active Event
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link className="w-full justify-start" href="/admin/settings">
+              <Link className="w-full justify-start" href={routes.admin.settings}>
                 Settings
               </Link>
             </Button>
