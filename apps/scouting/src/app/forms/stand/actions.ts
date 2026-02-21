@@ -155,7 +155,8 @@ export async function submitStandForm(data: unknown) {
       }
     });
 
-    revalidateTag(cacheTags.leaderboardStand(activeMember.organizationId), "hours");
+    revalidateTag(cacheTags.leaderboardStand(activeMember.organizationId), "max");
+    revalidateTag(cacheTags.analysisStandFormCount, "max");
     return { success: true };
   } catch (error) {
     console.error("Submit stand form error:", error);

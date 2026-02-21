@@ -104,7 +104,8 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       );
     }
 
-    revalidateTag(cacheTags.leaderboardPit(activeMember.organizationId), "hours");
+    revalidateTag(cacheTags.leaderboardPit(activeMember.organizationId), "max");
+    revalidateTag(cacheTags.analysisPitFormCount, "max");
 
     return {
       ...initialFormState,

@@ -7,12 +7,10 @@ import {
 } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
-import { countDistinct, isNull } from "drizzle-orm";
 import { ChevronRightIcon, TableIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { db } from "@/lib/database";
-import { pitForm, standForm, team } from "@/lib/database/schema/tables";
+import { getPitFormCount, getStandFormCount, getTeamCount } from "./queries";
 
 const navCards = [
   {
@@ -29,57 +27,46 @@ const navCards = [
   },
 ];
 
-async function AnalysisStats() {
-  const [teamsResult, standFormsResult, pitFormsResult] = await Promise.all([
-    db.select({ count: countDistinct(team.teamNumber) }).from(team),
-    db
-      .select({ count: countDistinct(standForm.id) })
-      .from(standForm)
-      .where(isNull(standForm.deletedAt)),
-    db.select({ count: countDistinct(pitForm.id) }).from(pitForm),
-  ]);
+// ── Presentation ──────────────────────────────────────────────────────────────
 
-  const teamCount = teamsResult[0]?.count ?? 0;
-  const standFormCount = standFormsResult[0]?.count ?? 0;
-  const pitFormCount = pitFormsResult[0]?.count ?? 0;
-
+function StatItem({ label, value }: { label: string; value: number }) {
   return (
-    <div className="grid grid-cols-3 gap-3">
-      <Card>
-        <CardContent className="pt-5 pb-4">
-          <TypographyLabel className="mb-1">Teams</TypographyLabel>
-          <p className="text-3xl font-semibold tabular-nums">{teamCount}</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="pt-5 pb-4">
-          <TypographyLabel className="mb-1">Stand Forms</TypographyLabel>
-          <p className="text-3xl font-semibold tabular-nums">{standFormCount}</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="pt-5 pb-4">
-          <TypographyLabel className="mb-1">Pit Forms</TypographyLabel>
-          <p className="text-3xl font-semibold tabular-nums">{pitFormCount}</p>
-        </CardContent>
-      </Card>
+    <div>
+      <p className="text-sm uppercase tracking-widest text-muted-foreground font-mono mb-2.5">
+        {label}
+      </p>
+      <p className="text-4xl tabular-nums leading-none tracking-normal mb-3">
+        {value.toLocaleString()}
+      </p>
     </div>
   );
 }
 
-function StatsSkeleton() {
+function StatItemSkeleton() {
   return (
-    <div className="grid grid-cols-3 gap-3">
-      {["a", "b", "c"].map((k) => (
-        <Card key={k}>
-          <CardContent className="pt-5 pb-4">
-            <Skeleton className="h-3 w-16 mb-2" />
-            <Skeleton className="h-8 w-10" />
-          </CardContent>
-        </Card>
-      ))}
+    <div>
+      <Skeleton className="h-2.5 w-16 mb-2.5" />
+      <Skeleton className="h-11 w-20 mb-3" />
+      <Skeleton className="h-0.5 w-8" />
     </div>
   );
+}
+
+// ── Async stat components ─────────────────────────────────────────────────────
+
+async function TeamCountStat() {
+  const count = await getTeamCount();
+  return <StatItem label="Teams" value={count} />;
+}
+
+async function StandFormCountStat() {
+  const count = await getStandFormCount();
+  return <StatItem label="Stand Forms" value={count} />;
+}
+
+async function PitFormCountStat() {
+  const count = await getPitFormCount();
+  return <StatItem label="Pit Forms" value={count} />;
 }
 
 export default function AnalysisPage() {
@@ -90,9 +77,23 @@ export default function AnalysisPage() {
         <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
       </div>
 
-      <Suspense fallback={<StatsSkeleton />}>
-        <AnalysisStats />
-      </Suspense>
+      <div className="rounded-xl border bg-muted/20 grid grid-cols-1 max-md:divide-y md:grid-cols-3">
+        <div className="px-6 py-5 border-r">
+          <Suspense fallback={<StatItemSkeleton />}>
+            <TeamCountStat />
+          </Suspense>
+        </div>
+        <div className="px-6 py-5 border-r">
+          <Suspense fallback={<StatItemSkeleton />}>
+            <StandFormCountStat />
+          </Suspense>
+        </div>
+        <div className="px-6 py-5">
+          <Suspense fallback={<StatItemSkeleton />}>
+            <PitFormCountStat />
+          </Suspense>
+        </div>
+      </div>
 
       <div>
         <TypographyLabel className="mb-3">Quick Access</TypographyLabel>
