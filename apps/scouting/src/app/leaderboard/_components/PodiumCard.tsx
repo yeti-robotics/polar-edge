@@ -37,9 +37,9 @@ const stepConfig: Record<
 // Bar animates 550ms; user content finishes at barDelay+830ms (user starts +400ms, label +30ms, fades 400ms).
 // Next slot starts at barDelay+1000ms — ~170ms emphasis pause after the user is fully revealed.
 const podiumDelayMs: Record<MedalRank, number> = {
-  3: 0,
-  2: 1000,
-  1: 2000,
+  3: 150,
+  2: 1150,
+  1: 2150,
 };
 
 function PodiumSlot({
