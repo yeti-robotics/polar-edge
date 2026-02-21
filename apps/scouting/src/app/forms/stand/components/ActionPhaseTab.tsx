@@ -1,5 +1,6 @@
 "use client";
 
+import { TypographyH4 } from "@repo/ui/components/typography";
 import { useActionState } from "../contexts/ActionStateContext";
 import type { Phase } from "../types";
 import { ClimbingActiveLayout } from "./ClimbingActiveLayout";
@@ -31,7 +32,7 @@ export function ActionPhaseTab({ phase }: ActionPhaseTabProps) {
 
   return (
     <div className="space-y-2">
-      <h2 className="text-lg text-foreground">{phase === "auto" ? "Autonomous" : "Teleop"}</h2>
+      <TypographyH4>{phase === "auto" ? "Autonomous" : "Teleop"}</TypographyH4>
 
       {/* Render all layouts simultaneously, use CSS transitions for smooth crossfade */}
       <div className="relative min-h-[280px]">

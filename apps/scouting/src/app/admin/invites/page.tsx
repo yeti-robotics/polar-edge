@@ -1,4 +1,5 @@
 import { Badge } from "@repo/ui/components/badge";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import {
   Card,
   CardContent,
@@ -136,10 +137,10 @@ export default function InvitesPage() {
   return (
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl tracking-tight font-bold">Invite Links</h1>
-        <p className="mt-2 text-muted-foreground">
+        <TypographyH1>Invite Links</TypographyH1>
+        <TypographyMuted className="mt-2">
           Generate shareable invite links for your organization
-        </p>
+        </TypographyMuted>
       </div>
       <Suspense fallback={<LoadingTable />}>
         <InvitesContent />

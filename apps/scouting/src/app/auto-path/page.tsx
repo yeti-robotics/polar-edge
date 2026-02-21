@@ -1,5 +1,6 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
@@ -118,8 +119,8 @@ export default function AutoPathsPage() {
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl tracking-tight">Auto Paths</h1>
-          <p className="mt-2 text-sm text-muted-foreground">View and manage robot auto paths</p>
+          <TypographyH1>Auto Paths</TypographyH1>
+          <TypographyMuted className="mt-2">View and manage robot auto paths</TypographyMuted>
         </div>
         <Button asChild>
           <Link href="/auto-path/create">

@@ -21,6 +21,7 @@ function StandFormSkeleton() {
   );
 }
 
+import { TypographyH1 } from "@repo/ui/components/typography";
 import { NoActiveEvent } from "@/components/NoActiveEvent";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
@@ -59,7 +60,7 @@ async function StandFormContent() {
 export default function StandFormPage() {
   return (
     <div className="py-6 max-w-3xl w-full mx-auto px-4">
-      <h1 className="mb-6 text-3xl tracking-tight">Stand Form</h1>
+      <TypographyH1 className="mb-6">Stand Form</TypographyH1>
 
       <main className="w-full">
         <Suspense fallback={<StandFormSkeleton />}>
