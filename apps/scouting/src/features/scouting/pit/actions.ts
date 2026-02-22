@@ -9,9 +9,8 @@ import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
-import { db } from "@/lib/database";
-import { pitForm, pitPhoto } from "@/lib/database/schema";
-import { FormSchema, formOpts } from "./shared";
+import { FormSchema, formOpts } from "./types";
+import { insertPitForm } from "./logic";
 
 const serverValidate = createServerValidate({
   ...formOpts,
@@ -48,7 +47,6 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
         const parsed = JSON.parse(photoKeysJson);
         if (Array.isArray(parsed)) {
           photoKeys = parsed.filter((key): key is string => {
-            // Validate: must be a non-empty string and start with org prefix
             return (
               typeof key === "string" &&
               key.length > 0 &&
@@ -56,7 +54,6 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
             );
           });
 
-          // Ensure max 5 photos
           if (photoKeys.length > 5) {
             return {
               ...initialFormState,
@@ -72,10 +69,8 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       }
     }
 
-    // Insert pit form and get the ID
-    const [insertedForm] = await db
-      .insert(pitForm)
-      .values({
+    await insertPitForm(
+      {
         teamNumber: Number(validated.teamNumber),
         drivetrainType: validated.drivetrainType === "" ? "other" : validated.drivetrainType,
         canTrench: validated.canTrench ?? false,
@@ -90,19 +85,9 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
               ? null
               : validated.climbType,
         scoutMemberId: activeMember.id,
-      })
-      .returning({ id: pitForm.id });
-
-    // Insert photo references if any
-    if (photoKeys.length > 0 && insertedForm) {
-      await db.insert(pitPhoto).values(
-        photoKeys.map((storageKey, index) => ({
-          pitFormId: insertedForm.id,
-          storageKey,
-          index,
-        }))
-      );
-    }
+      },
+      photoKeys
+    );
 
     revalidateTag(cacheTags.leaderboardPit(activeMember.organizationId), "max");
     revalidateTag(cacheTags.analysisPitFormCount, "max");

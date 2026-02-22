@@ -24,8 +24,8 @@ import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
 import { startTransition, useActionState, useCallback, useEffect, useRef } from "react";
-import { submitPitForm } from "./action";
-import { usePhotoUpload } from "./hooks/use-photo-upload";
+import { submitPitForm } from "../actions";
+import { usePhotoUpload } from "../hooks/use-photo-upload";
 import {
   PhotoCompressionProgress,
   PhotoUploadError,
@@ -33,7 +33,7 @@ import {
   PitPhotoUpload,
   type PitPhotoUploadRef,
 } from "./PitPhotoUpload";
-import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "./shared";
+import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "../types";
 
 const DRIVING_ABILITIES = [
   { name: "canTrench", id: "can_trench", label: "Can Trench" },

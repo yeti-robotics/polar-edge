@@ -27,7 +27,7 @@ import { db } from "@/lib/database";
 import { team, teamMatch } from "@/lib/database/schema";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { PitForm } from "./PitForm";
+import { PitForm } from "@/features/scouting/pit/components/PitForm";
 
 async function PitFormContent() {
   const member = await requireActiveMember();

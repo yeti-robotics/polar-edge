@@ -16,7 +16,7 @@ import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { z } from "zod";
-import { createAutoPath, type getTeams as GetTeamsType } from "@/app/auto-path/actions";
+import { createAutoPath, type getTeams as GetTeamsType } from "../actions";
 import { routes } from "@/lib/routes";
 import { PathCanvas, type PathData } from "./PathCanvas";
 
