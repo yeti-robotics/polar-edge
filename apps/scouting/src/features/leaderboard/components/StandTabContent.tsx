@@ -5,7 +5,7 @@ import {
 import { EmptyState } from "./EmptyState";
 import { LeaderboardScopeToggle } from "./LeaderboardScopeToggle";
 import { PodiumCard } from "./PodiumCard";
-import { getStandFormCounts } from "./queries";
+import { getStandFormCounts } from "../queries";
 import { RankTable } from "./RankTable";
 
 type Props = {

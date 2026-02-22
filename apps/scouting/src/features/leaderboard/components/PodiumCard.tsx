@@ -1,8 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
 import { cn } from "@repo/ui/lib/utils";
 import { CrownIcon } from "lucide-react";
-import type { MemberCount } from "./queries";
-import { getInitials } from "./utils";
+import type { MemberCount } from "../queries";
+import { getInitials } from "../utils";
 
 type MedalRank = 1 | 2 | 3;
 

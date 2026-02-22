@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
-import type { MemberCount } from "./queries";
-import { getInitials } from "./utils";
+import type { MemberCount } from "../queries";
+import { getInitials } from "../utils";
 
 // Rows begin fading in after the podium's 1st-place content is fully visible (~2800ms).
 // Each row staggers by 80ms with a slight overlap for a fluid cascade effect.

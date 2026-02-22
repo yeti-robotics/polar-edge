@@ -2,8 +2,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/ta
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { ClipboardList, MapIcon, Trophy, Wrench } from "lucide-react";
 import { Suspense } from "react";
-import { LeaderboardContent } from "./_components/LeaderboardContent";
-import { LoadingSkeleton } from "./_components/LoadingSkeleton";
+import { LeaderboardContent } from "@/features/leaderboard/components/LeaderboardContent";
+import { LoadingSkeleton } from "@/features/leaderboard/components/LoadingSkeleton";
 
 type PageProps = {
   searchParams: Promise<{ event?: string }>;
