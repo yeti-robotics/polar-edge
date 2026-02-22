@@ -11,11 +11,11 @@ import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { CreatePicklistDialog } from "@/features/picklist/components/CreatePicklistDialog";
+import { getPicklistsForEvent } from "@/features/picklist/queries";
 import { routes } from "@/lib/routes";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { CreatePicklistDialog } from "@/features/picklist/components/CreatePicklistDialog";
-import { getPicklistsForEvent } from "@/features/picklist/queries";
 
 function LoadingPicklists() {
   return (

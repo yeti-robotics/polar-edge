@@ -3,11 +3,10 @@ import { Card } from "@repo/ui/components/card";
 import { TypographyH1, TypographyH3, TypographyMuted } from "@repo/ui/components/typography";
 import { headers } from "next/headers";
 import Link from "next/link";
-
+import { SignInForm } from "@/features/auth/components/SignInForm";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
 import { routes } from "@/lib/routes";
-import { SignInForm } from "@/features/auth/components/SignInForm";
 
 async function AllowSuperPerms() {
   const session = await auth.api.getSession({ headers: await headers() });

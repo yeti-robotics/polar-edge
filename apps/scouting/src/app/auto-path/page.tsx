@@ -13,8 +13,8 @@ import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { EyeIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { routes } from "@/lib/routes";
 import { getAutoPaths } from "@/features/scouting/auto-path/actions";
+import { routes } from "@/lib/routes";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-US", {

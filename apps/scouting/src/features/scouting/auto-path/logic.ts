@@ -1,9 +1,9 @@
 import { and, desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
-import type { PathData } from "./components/PathCanvas";
 import { db } from "@/lib/database";
 import { autoPath, event, match, member, team } from "@/lib/database/schema";
+import type { PathData } from "./components/PathCanvas";
 
 export const createAutoPathSchema = z.object({
   teamNumber: z.number().int().positive(),
@@ -21,10 +21,7 @@ export const createAutoPathSchema = z.object({
   fieldImageUrl: z.string().nullable().optional(),
 });
 
-export async function insertAutoPath(
-  data: z.infer<typeof createAutoPathSchema>,
-  memberId: string
-) {
+export async function insertAutoPath(data: z.infer<typeof createAutoPathSchema>, memberId: string) {
   const validated = createAutoPathSchema.parse(data);
 
   const teamExists = await db
@@ -52,10 +49,7 @@ export async function insertAutoPath(
   return { id };
 }
 
-export async function queryAutoPaths(
-  organizationId: string,
-  filters?: { teamNumber?: number }
-) {
+export async function queryAutoPaths(organizationId: string, filters?: { teamNumber?: number }) {
   const conditions = [eq(member.organizationId, organizationId)];
 
   if (filters?.teamNumber) {

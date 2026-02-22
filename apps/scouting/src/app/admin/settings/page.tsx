@@ -3,9 +3,9 @@ import { Skeleton } from "@repo/ui/components/skeleton";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { OrganizationSettingsForm } from "@/features/org/settings/components/OrganizationSettingsForm";
 import { auth } from "@/lib/auth";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
-import { OrganizationSettingsForm } from "@/features/org/settings/components/OrganizationSettingsForm";
 
 function LoadingForm() {
   return (

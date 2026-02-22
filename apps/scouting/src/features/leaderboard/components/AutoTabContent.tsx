@@ -1,6 +1,6 @@
+import { getAutoPathCounts } from "../queries";
 import { EmptyState } from "./EmptyState";
 import { PodiumCard } from "./PodiumCard";
-import { getAutoPathCounts } from "../queries";
 import { RankTable } from "./RankTable";
 
 type Props = {

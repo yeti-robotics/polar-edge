@@ -13,6 +13,11 @@ import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/compone
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import { TeamKeyMetricsCard } from "@/features/analysis/components/TeamKeyMetricsCard";
+import { RadarChart } from "@/features/analysis/components/TeamRadarChart";
+import { TeamScopeControls } from "@/features/analysis/components/TeamScopeControls";
+import { SelectTeam } from "@/features/analysis/components/TeamSwitcher";
+import { getTeamKeyMetrics, getTeamRadarData } from "@/features/analysis/team-queries";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import {
@@ -23,11 +28,6 @@ import {
   teamMatch,
   team as teamTable,
 } from "@/lib/database/schema";
-import { getTeamKeyMetrics, getTeamRadarData } from "@/features/analysis/team-queries";
-import { TeamKeyMetricsCard } from "@/features/analysis/components/TeamKeyMetricsCard";
-import { RadarChart } from "@/features/analysis/components/TeamRadarChart";
-import { TeamScopeControls } from "@/features/analysis/components/TeamScopeControls";
-import { SelectTeam } from "@/features/analysis/components/TeamSwitcher";
 
 async function TeamKeyMetricsSection({
   teamNum,

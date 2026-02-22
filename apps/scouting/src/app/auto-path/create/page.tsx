@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getTeams } from "@/features/scouting/auto-path/actions";
 import { AutoPathForm } from "@/features/scouting/auto-path/components/AutoPathForm";
 import { auth } from "@/lib/auth";
 import { routes } from "@/lib/routes";
-import { getTeams } from "@/features/scouting/auto-path/actions";
 
 export default async function CreateAutoPathPage() {
   const session = await auth.api.getSession({ headers: await headers() });

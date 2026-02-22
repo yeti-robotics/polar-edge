@@ -2,11 +2,11 @@ import { Card, CardContent } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Suspense } from "react";
-import { requireAdminMember } from "@/lib/server/auth/require-member";
-import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
 import { ActiveEventForm } from "@/features/events/components/ActiveEventForm";
 import { EnrichTeamNamesForm } from "@/features/events/components/EnrichTeamNamesForm";
 import { SyncFromTBAForm } from "@/features/events/components/SyncFromTBAForm";
+import { requireAdminMember } from "@/lib/server/auth/require-member";
+import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
 
 function LoadingForm() {
   return (

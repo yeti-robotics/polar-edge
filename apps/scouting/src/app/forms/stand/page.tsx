@@ -23,15 +23,15 @@ function StandFormSkeleton() {
 
 import { TypographyH1 } from "@repo/ui/components/typography";
 import { NoActiveEvent } from "@/components/NoActiveEvent";
-import { requireActiveMember } from "@/lib/server/auth/require-member";
-import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { UnsavedChangesWarning } from "@/features/scouting/stand/components/UnsavedChangesWarning";
 import {
   StandFormNavigation,
   StandFormProgress,
 } from "@/features/scouting/stand/components/StandFormNavigation";
 import { StandFormProvider } from "@/features/scouting/stand/components/StandFormProvider";
 import { StandFormTabs } from "@/features/scouting/stand/components/StandFormTabs";
+import { UnsavedChangesWarning } from "@/features/scouting/stand/components/UnsavedChangesWarning";
+import { requireActiveMember } from "@/lib/server/auth/require-member";
+import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 
 async function StandFormContent() {
   const member = await requireActiveMember();

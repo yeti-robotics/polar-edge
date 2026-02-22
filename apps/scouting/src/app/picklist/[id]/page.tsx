@@ -3,12 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/ca
 import { ArrowLeftIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { routes } from "@/lib/routes";
-import { requireActiveMember } from "@/lib/server/auth/require-member";
-import { getPicklistWithTeams } from "@/features/picklist/queries";
 import { DeletePicklistButton } from "@/features/picklist/components/DeletePicklistButton";
 import { PicklistTeamsTable } from "@/features/picklist/components/PicklistTeamsTable";
 import { TeamsAtEventList } from "@/features/picklist/components/TeamsAtEventList";
+import { getPicklistWithTeams } from "@/features/picklist/queries";
+import { routes } from "@/lib/routes";
+import { requireActiveMember } from "@/lib/server/auth/require-member";
 
 interface PicklistDetailPageProps {
   params: Promise<{ id: string }>;

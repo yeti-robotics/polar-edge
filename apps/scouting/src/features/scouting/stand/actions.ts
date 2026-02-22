@@ -4,11 +4,11 @@ import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
-import { StandFormSchema } from "./types";
 import {
   lookupTeamMatch as lookupTeamMatchLogic,
   submitStandForm as submitStandFormLogic,
 } from "./logic";
+import { StandFormSchema } from "./types";
 
 export async function lookupTeamMatch(matchNumber: number, teamNumber: number) {
   try {
@@ -42,7 +42,11 @@ export async function submitStandForm(data: unknown) {
     }
 
     const validated = StandFormSchema.parse(data);
-    const result = await submitStandFormLogic(validated, activeMember.id, activeMember.organizationId);
+    const result = await submitStandFormLogic(
+      validated,
+      activeMember.id,
+      activeMember.organizationId
+    );
 
     if ("success" in result) {
       revalidateTag(cacheTags.leaderboardStand(activeMember.organizationId), "max");

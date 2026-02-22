@@ -26,6 +26,7 @@ import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/re
 import { startTransition, useActionState, useCallback, useEffect, useRef } from "react";
 import { submitPitForm } from "../actions";
 import { usePhotoUpload } from "../hooks/use-photo-upload";
+import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "../types";
 import {
   PhotoCompressionProgress,
   PhotoUploadError,
@@ -33,7 +34,6 @@ import {
   PitPhotoUpload,
   type PitPhotoUploadRef,
 } from "./PitPhotoUpload";
-import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "../types";
 
 const DRIVING_ABILITIES = [
   { name: "canTrench", id: "can_trench", label: "Can Trench" },

@@ -11,10 +11,10 @@ import {
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { headers } from "next/headers";
 import { Suspense } from "react";
-import { auth } from "@/lib/auth";
-import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { RemoveMemberButton } from "@/features/org/members/components/RemoveMemberButton";
 import { RoleSelect } from "@/features/org/members/components/RoleSelect";
+import { auth } from "@/lib/auth";
+import { requireAdminMember } from "@/lib/server/auth/require-member";
 
 function getInitials(name: string): string {
   return name

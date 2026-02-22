@@ -1,6 +1,6 @@
+import { getPitFormCounts } from "../queries";
 import { EmptyState } from "./EmptyState";
 import { PodiumCard } from "./PodiumCard";
-import { getPitFormCounts } from "../queries";
 import { RankTable } from "./RankTable";
 
 type Props = {

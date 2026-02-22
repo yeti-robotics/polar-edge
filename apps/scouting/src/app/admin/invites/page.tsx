@@ -17,11 +17,11 @@ import {
 } from "@repo/ui/components/table";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Suspense } from "react";
-import { requireAdminMember } from "@/lib/server/auth/require-member";
-import { listInviteLinks } from "@/lib/server/invite-links";
 import { InviteLinkCopy } from "@/features/org/invites/components/InviteLinkCopy";
 import { InviteLinkManager } from "@/features/org/invites/components/InviteLinkManager";
 import { RevokeButton } from "@/features/org/invites/components/RevokeButton";
+import { requireAdminMember } from "@/lib/server/auth/require-member";
+import { listInviteLinks } from "@/lib/server/invite-links";
 
 function LoadingTable() {
   return (
