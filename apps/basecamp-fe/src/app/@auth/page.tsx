@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import { Suspense } from "react";
-import { validateToken } from "@/lib/auth";
 import { FlipperWrapper } from "@/features/totp/components/FlipperWrapper";
 import { TeamDisplay } from "@/features/totp/components/TeamDisplay";
-import teamsData from "@/features/totp/teams.json";
-import { TOTPProvider } from "@/features/totp/contexts/TOTPContext";
 import { TOTPProgressBar } from "@/features/totp/components/TOTPProgressBar";
 import { TOTPTimer } from "@/features/totp/components/TOTPTimer";
+import { TOTPProvider } from "@/features/totp/contexts/TOTPContext";
+import teamsData from "@/features/totp/teams.json";
+import { validateToken } from "@/lib/auth";
 
 export default async function AuthPage() {
   const cookieStore = await cookies();
