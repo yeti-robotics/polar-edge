@@ -48,7 +48,7 @@ jobs:
         run: pnpm install
 
       - name: Generate coverage report
-        run: pnpm test coverage
+        run: pnpm coverage
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
