@@ -32,7 +32,7 @@
     "view-report": "open coverage/report/index.html"
   },
   "dependencies": {
-    "@vitest/coverage-istanbul": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "vitest": "catalog:",
     "jsdom": "^25.0.1"
   },
