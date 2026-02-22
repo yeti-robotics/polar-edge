@@ -27,7 +27,7 @@
     "@repo/typescript-config": "workspace:*",
     "@repo/vitest-config": "workspace:*",
     "@types/node": "catalog:",
-    "@vitest/coverage-istanbul": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "openapi-typescript": "^7.13.0",
     "tsdown": "0.19.0",
     "typescript": "catalog:",
