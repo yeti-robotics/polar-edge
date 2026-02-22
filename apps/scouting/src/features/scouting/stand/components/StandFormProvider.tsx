@@ -1,8 +1,8 @@
 "use client";
 
-import { ActionStateProvider } from "./contexts/ActionStateContext";
-import { FormDataProvider } from "./contexts/FormDataContext";
-import { NavigationProvider } from "./contexts/NavigationContext";
+import { ActionStateProvider } from "../contexts/ActionStateContext";
+import { FormDataProvider } from "../contexts/FormDataContext";
+import { NavigationProvider } from "../contexts/NavigationContext";
 
 /**
  * Split context architecture for performance optimization.
@@ -21,4 +21,4 @@ export function StandFormProvider({ children }: { children: React.ReactNode }) {
 }
 
 // Re-export stage constants for backward compatibility
-export { STAGES, type StandFormStage } from "./types";
+export { STAGES, type StandFormStage } from "../types";

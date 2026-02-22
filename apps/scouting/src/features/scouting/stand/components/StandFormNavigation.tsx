@@ -2,12 +2,12 @@
 
 import { Button } from "@repo/ui/components/button";
 import { useState } from "react";
-import { SubmitDialog } from "./components/SubmitDialog";
-import { useActionState } from "./contexts/ActionStateContext";
-import { useFormData } from "./contexts/FormDataContext";
-import { useNavigation } from "./contexts/NavigationContext";
-import { useStandFormActions } from "./hooks/useStandFormActions";
-import { COMMENTS_MIN_LENGTH, STAGES } from "./types";
+import { SubmitDialog } from "./SubmitDialog";
+import { useActionState } from "../contexts/ActionStateContext";
+import { useFormData } from "../contexts/FormDataContext";
+import { useNavigation } from "../contexts/NavigationContext";
+import { useStandFormActions } from "../hooks/useStandFormActions";
+import { COMMENTS_MIN_LENGTH, STAGES } from "../types";
 
 export function StandFormNavigation() {
   const { state, dispatch } = useNavigation();

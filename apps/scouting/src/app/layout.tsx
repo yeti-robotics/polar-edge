@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Libre_Franklin } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@repo/ui/components/sonner";
 import { Header } from "@/components/layout/header/Header";
@@ -7,11 +6,6 @@ import { OfflineStatusBar } from "@/components/offline/OfflineStatusBar";
 import { OfflineToastListener } from "@/components/offline/OfflineToastListener";
 import { ThemeProvider } from "@/components/theme";
 import { QueueCountProvider } from "@/lib/offline/queue-count-context";
-
-const libreFranklin = Libre_Franklin({
-  subsets: ["latin"],
-  variable: "--font-libre-franklin",
-});
 
 export const metadata: Metadata = {
   title: "Polar Edge Analytics",
@@ -28,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${libreFranklin.variable} bg-background dark:prose-invert min-h-screen font-sans overscroll-none`}
+        className="bg-background dark:prose-invert min-h-screen font-sans overscroll-none"
       >
         <ThemeProvider
           attribute="class"
