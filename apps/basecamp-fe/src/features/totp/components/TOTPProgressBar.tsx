@@ -1,6 +1,6 @@
 "use client";
 
-import { useTOTP } from "./totp-context";
+import { useTOTP } from "../contexts/TOTPContext";
 
 export function TOTPProgressBar() {
   const { secondsLeft, progress } = useTOTP();
