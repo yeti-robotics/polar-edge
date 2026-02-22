@@ -9,7 +9,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "eslint": "^9.39.3",
     "tailwindcss": "^4.2.0",
     "tailwindcss-animate": "^1.0.7"
   },

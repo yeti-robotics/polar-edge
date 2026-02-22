@@ -15,7 +15,6 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
     "@repo/typescript-config": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.2.0",
