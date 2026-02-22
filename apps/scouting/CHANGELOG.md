@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026.10.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.4...scouting-v2026.10.0) (2026-02-22)
+
+
+### Features
+
+* **scouting:** implement caching for team metrics and update event ID handling ([5a6bf96](https://github.com/yeti-robotics/polar-edge/commit/5a6bf9616bf177d7f55a7001ae6eb578df8854be))
+
+
+### Bug Fixes
+
+* **scouting:** simplify TeamPage layout by removing unnecessary container ([#452](https://github.com/yeti-robotics/polar-edge/issues/452)) ([79e4c71](https://github.com/yeti-robotics/polar-edge/commit/79e4c713091756894c3154bd89a5c1653998a3a3))
+
 ## [2026.9.4](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.3...scouting-v2026.9.4) (2026-02-22)
 
 
