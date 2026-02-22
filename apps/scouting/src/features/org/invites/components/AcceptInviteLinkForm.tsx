@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { routes } from "@/lib/routes";
-import { acceptInviteLink, setPendingInviteCookie } from "./actions";
+import { acceptInviteLink, setPendingInviteCookie } from "../actions";
 
 interface AcceptInviteLinkFormProps {
   token: string;

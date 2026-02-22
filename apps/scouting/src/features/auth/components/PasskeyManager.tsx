@@ -27,7 +27,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { usePasskey } from "./usePasskey";
+import { usePasskey } from "../hooks/usePasskey";
 
 export default function PasskeyManager() {
   const [newPasskeyName, setNewPasskeyName] = useState("");

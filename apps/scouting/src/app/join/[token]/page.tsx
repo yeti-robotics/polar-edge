@@ -7,11 +7,11 @@ import {
 } from "@repo/ui/components/card";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { AcceptInviteLinkForm } from "@/features/org/invites/components/AcceptInviteLinkForm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { organization } from "@/lib/database/schema/tables";
 import { getInviteLinkByToken } from "@/lib/server/invite-links";
-import { AcceptInviteLinkForm } from "./AcceptInviteLinkForm";
 
 async function getOrganization(organizationId: string) {
   const org = await db
