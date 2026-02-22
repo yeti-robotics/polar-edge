@@ -14,7 +14,7 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { toast } from "@repo/ui/components/sonner";
 import { type ReactNode, useActionState, useEffect, useRef, useState } from "react";
-import { type CreatePicklistState, createPicklistAction } from "./actions";
+import { type CreatePicklistState, createPicklistAction } from "../actions";
 
 interface CreatePicklistDialogProps {
   children: ReactNode;
