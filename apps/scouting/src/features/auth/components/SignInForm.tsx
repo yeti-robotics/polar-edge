@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Discord } from "@/components/logo/discord";
 import { authClient } from "@/lib/auth-client";
 import { routes } from "@/lib/routes";
-import { signInDiscord } from "./signIn";
+import { signInDiscord } from "../actions";
 
 async function signInPasskey() {
   await authClient.signIn.passkey({
