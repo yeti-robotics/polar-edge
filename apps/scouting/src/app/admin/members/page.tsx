@@ -13,8 +13,8 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
-import { RemoveMemberButton } from "./RemoveMemberButton";
-import { RoleSelect } from "./RoleSelect";
+import { RemoveMemberButton } from "@/features/org/members/components/RemoveMemberButton";
+import { RoleSelect } from "@/features/org/members/components/RoleSelect";
 
 function getInitials(name: string): string {
   return name

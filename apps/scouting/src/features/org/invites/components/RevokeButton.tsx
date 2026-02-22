@@ -4,7 +4,7 @@ import { Button } from "@repo/ui/components/button";
 import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { revokeInviteLink } from "./actions";
+import { revokeInviteLink } from "../actions";
 
 interface RevokeButtonProps {
   token: string;

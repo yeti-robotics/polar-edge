@@ -13,7 +13,7 @@ import { Label } from "@repo/ui/components/label";
 import { toast } from "@repo/ui/components/sonner";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { type UpdateOrganizationNameState, updateOrganizationNameAction } from "./actions";
+import { type UpdateOrganizationNameState, updateOrganizationNameAction } from "../actions";
 
 const initialState: UpdateOrganizationNameState = { data: null, error: null };
 

@@ -18,7 +18,7 @@ import {
 } from "@repo/ui/components/select";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { updateMemberRole } from "./actions";
+import { updateMemberRole } from "../actions";
 
 interface RoleSelectProps {
   memberId: string;

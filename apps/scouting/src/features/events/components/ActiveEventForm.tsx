@@ -17,7 +17,7 @@ import {
 } from "@repo/ui/components/select";
 import { useRouter } from "next/navigation";
 import { useRef, useTransition } from "react";
-import { setActiveEventAction } from "./actions";
+import { setActiveEventAction } from "../actions";
 
 type EventOption = {
   id: string;

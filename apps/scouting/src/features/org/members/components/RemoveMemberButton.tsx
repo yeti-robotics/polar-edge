@@ -11,7 +11,7 @@ import {
 } from "@repo/ui/components/dialog";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { removeMember } from "./actions";
+import { removeMember } from "../actions";
 
 interface RemoveMemberButtonProps {
   memberId: string;

@@ -12,7 +12,7 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { syncEventFromTBAAction } from "./actions";
+import { syncEventFromTBAAction } from "../actions";
 
 export function SyncFromTBAForm({ organizationId }: { organizationId: string }) {
   const router = useRouter();

@@ -10,7 +10,7 @@ import {
 } from "@repo/ui/components/card";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { enrichTeamNamesAction } from "./actions";
+import { enrichTeamNamesAction } from "../actions";
 
 export function EnrichTeamNamesForm({ organizationId }: { organizationId: string }) {
   const router = useRouter();
