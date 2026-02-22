@@ -6,8 +6,8 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { headers } from "next/headers";
+import { AcceptInvitationForm } from "@/features/org/invites/components/AcceptInvitationForm";
 import { auth } from "@/lib/auth";
-import { AcceptInvitationForm } from "./AcceptInvitationForm";
 
 async function getInvitation(invitationId: string) {
   const requestHeaders = await headers();

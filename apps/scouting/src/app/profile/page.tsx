@@ -2,8 +2,8 @@
 import { Button } from "@repo/ui/components/button";
 import { TypographyH2 } from "@repo/ui/components/typography";
 import Image from "next/image";
+import PasskeyManager from "@/features/auth/components/PasskeyManager";
 import { authClient } from "@/lib/auth-client";
-import PasskeyManager from "./passkey/PasskeyManager";
 
 export default function ProfilePage() {
   function handleLogOut() {

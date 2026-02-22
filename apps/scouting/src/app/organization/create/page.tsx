@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 import { unauthorized } from "next/navigation";
 import { Suspense } from "react";
+import { CreateOrganizationForm } from "@/features/org/create/components/CreateOrganizationForm";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
-import { CreateOrganizationForm } from "./CreateOrganizationForm";
 
 function LoadingCard() {
   return (
