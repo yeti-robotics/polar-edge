@@ -52,7 +52,7 @@
     "@types/pg": "^8.16.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitest/coverage-istanbul": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.9",
     "postcss": "^8.5.6",

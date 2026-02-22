@@ -11,7 +11,7 @@
     "db:start": "turbo run db:start",
     "dev:scouting": "turbo run dev --filter=scouting",
     "dev:basecamp": "turbo run dev --filter=basecamp --filter=basecamp-fe",
-    "coverage": "turbo run test collect-json-reports merge-json-reports report",
+    "coverage": "turbo run test && turbo run collect-json-reports merge-json-reports report",
     "view-report": "turbo run view-report"
   },
   "devDependencies": {

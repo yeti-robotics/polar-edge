@@ -16,7 +16,7 @@
       "outputs": ["coverage.json"]
     },
     "collect-json-reports": {
-      "dependsOn": ["@repo/vitest-config#build"],
+      "dependsOn": ["@repo/vitest-config#build", "^test"],
       "inputs": ["$TURBO_ROOT$/apps/*/coverage.json", "$TURBO_ROOT$/packages/*/coverage.json"],
       "outputs": ["coverage/raw/**"]
     },
