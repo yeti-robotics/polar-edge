@@ -10,10 +10,9 @@ export const baseConfig = defineConfig({
           {
             file: "../coverage.json",
           },
-        ] as const,
+        ] as ["json", { file: string }],
       ],
       enabled: true,
-      all: true,
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
         "src/**/*.d.ts",
