@@ -4,6 +4,7 @@ export const baseConfig = defineConfig({
   test: {
     coverage: {
       provider: "v8",
+      all: true,
       reporter: [
         [
           "json",
