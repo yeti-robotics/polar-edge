@@ -14,7 +14,7 @@ import { EyeIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { routes } from "@/lib/routes";
-import { getAutoPaths } from "./actions";
+import { getAutoPaths } from "@/features/scouting/auto-path/actions";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-US", {

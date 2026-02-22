@@ -14,8 +14,8 @@ import { Suspense } from "react";
 import { routes } from "@/lib/routes";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { CreatePicklistDialog } from "./CreatePicklistDialog";
-import { getPicklistsForEvent } from "./queries";
+import { CreatePicklistDialog } from "@/features/picklist/components/CreatePicklistDialog";
+import { getPicklistsForEvent } from "@/features/picklist/queries";
 
 function LoadingPicklists() {
   return (

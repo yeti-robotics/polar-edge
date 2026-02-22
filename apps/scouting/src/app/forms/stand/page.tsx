@@ -25,10 +25,13 @@ import { TypographyH1 } from "@repo/ui/components/typography";
 import { NoActiveEvent } from "@/components/NoActiveEvent";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { UnsavedChangesWarning } from "./components/UnsavedChangesWarning";
-import { StandFormNavigation, StandFormProgress } from "./StandFormNavigation";
-import { StandFormProvider } from "./StandFormProvider";
-import { StandFormTabs } from "./StandFormTabs";
+import { UnsavedChangesWarning } from "@/features/scouting/stand/components/UnsavedChangesWarning";
+import {
+  StandFormNavigation,
+  StandFormProgress,
+} from "@/features/scouting/stand/components/StandFormNavigation";
+import { StandFormProvider } from "@/features/scouting/stand/components/StandFormProvider";
+import { StandFormTabs } from "@/features/scouting/stand/components/StandFormTabs";
 
 async function StandFormContent() {
   const member = await requireActiveMember();

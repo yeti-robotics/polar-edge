@@ -7,7 +7,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
 import { routes } from "@/lib/routes";
-import { SignInForm } from "./SignInForm";
+import { SignInForm } from "@/features/auth/components/SignInForm";
 
 async function AllowSuperPerms() {
   const session = await auth.api.getSession({ headers: await headers() });

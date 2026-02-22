@@ -4,9 +4,9 @@ import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Suspense } from "react";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
-import { ActiveEventForm } from "./ActiveEventForm";
-import { EnrichTeamNamesForm } from "./EnrichTeamNamesForm";
-import { SyncFromTBAForm } from "./SyncFromTBAForm";
+import { ActiveEventForm } from "@/features/events/components/ActiveEventForm";
+import { EnrichTeamNamesForm } from "@/features/events/components/EnrichTeamNamesForm";
+import { SyncFromTBAForm } from "@/features/events/components/SyncFromTBAForm";
 
 function LoadingForm() {
   return (

@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
-import { OrganizationSettingsForm } from "./OrganizationSettingsForm";
+import { OrganizationSettingsForm } from "@/features/org/settings/components/OrganizationSettingsForm";
 
 function LoadingForm() {
   return (

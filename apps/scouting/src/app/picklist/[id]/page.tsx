@@ -5,10 +5,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
-import { getPicklistWithTeams } from "../queries";
-import { DeletePicklistButton } from "./DeletePicklistButton";
-import { PicklistTeamsTable } from "./PicklistTeamsTable";
-import { TeamsAtEventList } from "./TeamsAtEventList";
+import { getPicklistWithTeams } from "@/features/picklist/queries";
+import { DeletePicklistButton } from "@/features/picklist/components/DeletePicklistButton";
+import { PicklistTeamsTable } from "@/features/picklist/components/PicklistTeamsTable";
+import { TeamsAtEventList } from "@/features/picklist/components/TeamsAtEventList";
 
 interface PicklistDetailPageProps {
   params: Promise<{ id: string }>;

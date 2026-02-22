@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/ca
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PathViewer } from "@/components/auto-path/PathViewer";
+import { PathViewer } from "@/features/scouting/auto-path/components/PathViewer";
 import { routes } from "@/lib/routes";
-import { getAutoPath } from "../actions";
+import { getAutoPath } from "@/features/scouting/auto-path/actions";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-US", {
