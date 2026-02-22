@@ -145,6 +145,13 @@ Backend service providing Discord bot integration and Google Sheets automation.
 #### `apps/basecamp-fe` (Next.js)
 Minimal frontend for Basecamp features (team displays, authentication).
 
+**Structure:**
+- `src/app/@auth/` and `src/app/@unauth/` — Parallel routes for conditional auth display
+- `src/features/auth/` — Sign-in actions and `SignInForm` component
+- `src/features/totp/` — TOTP code display: components, contexts, and `teams.json`
+- `src/lib/auth.ts` — Token validation and login helpers
+- `src/lib/routes.ts` — Centralized route definitions
+
 ### Packages
 
 - `@repo/ui` - Shared UI components built on Radix UI primitives
@@ -207,6 +214,38 @@ if (!isSuperAdmin(user.email)) {
 }
 ```
 
+### Data Queries Pattern
+
+Database reads live in `src/features/<feature>/queries.ts`. Always start with `import "server-only"` to prevent accidental client-side imports. Use the `"use cache"` directive with `cacheLife` and `cacheTag` for expensive or frequently-called reads:
+
+```typescript
+import "server-only";
+import { cacheLife, cacheTag } from "next/cache";
+import { cacheTags } from "@/lib/cache";
+
+export async function getStandFormCounts(organizationId: string, eventId: string | null) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(cacheTags.leaderboardStand(organizationId));
+
+  return db.select({ ... }).from(standForm).where(...);
+}
+```
+
+All cache tag strings are centralized in `src/lib/cache.ts` via the `cacheTags` object — never hardcode tag strings at the call site. When a mutation invalidates cached data, call `revalidateTag(cacheTags.<tag>(id))` in the relevant server action.
+
+### Centralized Routes
+
+All route paths are defined in `src/lib/routes.ts`. Never hardcode URL strings in components or actions:
+
+```typescript
+import { routes } from "@/lib/routes";
+
+<Link href={routes.admin.members}>Members</Link>
+<Link href={routes.analysis.team(teamNumber)}>Team</Link>
+redirect(routes.home);
+```
+
 ### Server Actions Pattern
 
 Server actions live in `src/features/<feature>/actions.ts` and follow this pattern:
@@ -240,6 +279,10 @@ export async function exampleAction(input: unknown) {
   return { success: true, data: result };
 }
 ```
+
+## Architecture Reference
+
+Full architecture documentation (patterns, decision trees, quick reference) is in [`docs/architecture.md`](./docs/architecture.md).
 
 ## Versioning & Releases
 

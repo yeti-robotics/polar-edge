@@ -68,7 +68,7 @@ export function TOTPProvider({ secret, intervalMs = INTERVAL_MS, children }: TOT
       const msToNextBoundary = intervalMs - (Date.now() % intervalMs);
       setSecondsLeft(Math.ceil(msToNextBoundary / 1000));
       setProgress((msToNextBoundary / intervalMs) * 100);
-    }, 100); // Update more frequently for smoother progress bar
+    }, 100);
 
     const scheduleNextCode = () => {
       const msToNextBoundary = intervalMs - (Date.now() % intervalMs);

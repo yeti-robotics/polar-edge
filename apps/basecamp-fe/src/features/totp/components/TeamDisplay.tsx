@@ -1,6 +1,6 @@
 "use client";
 
-import { useTOTP } from "./totp-context";
+import { useTOTP } from "../contexts/TOTPContext";
 
 type TeamLocation = {
   city: string | null;
@@ -21,21 +21,17 @@ export function TeamDisplay({ teams }: { teams: Teams }) {
   const padded = code !== null ? code.toString().padStart(4, "0") : "0000";
   const teamData = code !== null && teams ? teams[padded] || teams[code.toString()] || null : null;
 
-  // Format location string based on available data
   const formatLocation = (location: TeamLocation | undefined): string | null => {
     if (!location) return null;
 
     const { city, state_prov, country } = location;
 
-    // If city or country is missing, omit location entirely
     if (!city || !country) return null;
 
-    // If state_prov is missing, show city and country only
     if (!state_prov) {
       return `${city}, ${country}`;
     }
 
-    // Show full location
     return `${city}, ${state_prov}, ${country}`;
   };
 
@@ -43,7 +39,6 @@ export function TeamDisplay({ teams }: { teams: Teams }) {
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
-      {/* Team Name and Location */}
       <div className="flex flex-col items-center gap-2 text-center">
         {teamData ? (
           <>

@@ -1,5 +1,7 @@
 "use server";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { login } from "@/lib/auth";
 
 export async function signIn(formData: FormData) {
@@ -14,4 +16,11 @@ export async function signIn(formData: FormData) {
   if (!success) {
     return;
   }
+}
+
+export async function signOut() {
+  const cookieStore = await cookies();
+  cookieStore.delete("toofaToken");
+  cookieStore.delete("toofaSecret");
+  redirect("/");
 }

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 "use client";
 
 import { Button, buttonVariants } from "@repo/ui/components/button";

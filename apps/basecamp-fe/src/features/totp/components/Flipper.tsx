@@ -1,7 +1,7 @@
 "use client";
 
 import NumberFlow, { continuous, type Format } from "@number-flow/react";
-import { useTOTP } from "./totp-context";
+import { useTOTP } from "../contexts/TOTPContext";
 
 const format: Format = {
   notation: "standard",
