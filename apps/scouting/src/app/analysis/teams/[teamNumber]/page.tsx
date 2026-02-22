@@ -148,7 +148,7 @@ export default async function TeamPage({
   const pitData = pitFormData[0];
 
   return (
-    <div className="p-4 space-y-4 container mx-auto">
+    <div className="space-y-4">
       {/* Page header — intentionally not a Card */}
       <div className="pb-4 border-b">
         <div className="flex items-start justify-between gap-4 flex-wrap">
