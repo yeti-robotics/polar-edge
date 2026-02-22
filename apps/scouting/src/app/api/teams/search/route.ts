@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
-import { searchTeams } from "@/app/analysis/teams/[teamNumber]/actions";
+import { searchTeams } from "@/features/analysis/actions";
 
 async function cachedSearchTeams(q: string) {
   "use cache";

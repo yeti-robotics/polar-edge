@@ -23,11 +23,11 @@ import {
   teamMatch,
   team as teamTable,
 } from "@/lib/database/schema";
-import { getTeamKeyMetrics, getTeamRadarData } from "./queries";
-import { TeamKeyMetricsCard } from "./TeamKeyMetricsCard";
-import { RadarChart } from "./TeamRadarChart";
-import { TeamScopeControls } from "./TeamScopeControls";
-import { SelectTeam } from "./TeamSwitcher";
+import { getTeamKeyMetrics, getTeamRadarData } from "@/features/analysis/team-queries";
+import { TeamKeyMetricsCard } from "@/features/analysis/components/TeamKeyMetricsCard";
+import { RadarChart } from "@/features/analysis/components/TeamRadarChart";
+import { TeamScopeControls } from "@/features/analysis/components/TeamScopeControls";
+import { SelectTeam } from "@/features/analysis/components/TeamSwitcher";
 
 async function TeamKeyMetricsSection({
   teamNum,

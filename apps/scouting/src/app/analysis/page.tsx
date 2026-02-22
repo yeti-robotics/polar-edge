@@ -4,7 +4,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
-import { getPitFormCount, getStandFormCount, getTeamCount } from "./queries";
+import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
 
 const navCards = [
   {

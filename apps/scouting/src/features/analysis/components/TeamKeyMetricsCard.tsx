@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/tabs";
-import type { TeamKeyMetrics } from "./queries";
+import type { TeamKeyMetrics } from "../team-queries";
 
 function MetricTile({
   label,

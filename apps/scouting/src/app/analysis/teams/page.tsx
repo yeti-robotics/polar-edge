@@ -1,9 +1,9 @@
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Suspense } from "react";
-import { TeamSearchWrapper } from "./_components/TeamSearchWrapper";
-import { TeamsList } from "./_components/TeamsList";
-import { TeamsListSkeleton } from "./_components/TeamsListSkeleton";
+import { TeamSearchWrapper } from "@/features/analysis/components/TeamSearchWrapper";
+import { TeamsList } from "@/features/analysis/components/TeamsList";
+import { TeamsListSkeleton } from "@/features/analysis/components/TeamsListSkeleton";
 
 interface TeamsPageProps {
   searchParams: Promise<{ page?: string; search?: string }>;

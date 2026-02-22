@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState, useTransition } from "react";
-import type { TeamSearchResult } from "@/app/analysis/teams/[teamNumber]/actions";
+import type { TeamSearchResult } from "@/features/analysis/actions";
 
 export function useTeamSearch({ initialQuery = "", debounceMs = 100 } = {}) {
   const [query, setQueryState] = useState(initialQuery);

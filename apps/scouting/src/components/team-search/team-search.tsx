@@ -11,7 +11,7 @@ import {
 import { ChevronRight, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
-import type { TeamSearchResult } from "@/app/analysis/teams/[teamNumber]/actions";
+import type { TeamSearchResult } from "@/features/analysis/actions";
 import { routes } from "@/lib/routes";
 import { useTeamSearch } from "./use-team-search";
 
