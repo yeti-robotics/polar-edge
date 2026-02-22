@@ -1,6 +1,8 @@
 import "server-only";
 
 import { and, count, eq, notInArray, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
   climb,
@@ -143,6 +145,10 @@ export interface TeamMetrics {
  * Returns metrics including avg points, climb success %, uptime %, and match count
  */
 export async function getTeamMetricsForEvent(eventId: string): Promise<Map<number, TeamMetrics>> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(cacheTags.teamMetrics(eventId));
+
   // Get avg points and match count with consensus data
   const pointsData = await db
     .select({

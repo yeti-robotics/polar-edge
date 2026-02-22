@@ -51,6 +51,9 @@ export async function submitStandForm(data: unknown) {
     if ("success" in result) {
       revalidateTag(cacheTags.leaderboardStand(activeMember.organizationId), "max");
       revalidateTag(cacheTags.analysisStandFormCount, "max");
+      if (result.eventId) {
+        revalidateTag(cacheTags.teamMetrics(result.eventId), "max");
+      }
     }
 
     return result;

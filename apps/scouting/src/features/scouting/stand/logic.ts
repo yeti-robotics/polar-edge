@@ -116,5 +116,5 @@ export async function submitStandForm(
     }
   });
 
-  return { success: true };
+  return { success: true, eventId: activeEvent.event.id };
 }
