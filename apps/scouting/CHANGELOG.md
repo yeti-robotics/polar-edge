@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.9.4](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.3...scouting-v2026.9.4) (2026-02-22)
+
+
+### Bug Fixes
+
+* **scouting:** improve admin page load perf / fix suspense patterns ([#445](https://github.com/yeti-robotics/polar-edge/issues/445)) ([fad4ce3](https://github.com/yeti-robotics/polar-edge/commit/fad4ce3bd8a2c18a9bf96194487237035b3c95bb))
+
 ## [2026.9.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.2...scouting-v2026.9.3) (2026-02-21)
 
 
