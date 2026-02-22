@@ -97,17 +97,11 @@ async function InviteCountStat() {
 
 async function ActiveEventStat() {
   const activeMember = await requireAdminMember();
-  const activeEvent = await getActiveEventForOrganization(
-    activeMember.organizationId,
-  );
+  const activeEvent = await getActiveEventForOrganization(activeMember.organizationId);
   return (
     <StatItem
       label="Event"
-      value={
-        activeEvent?.event.name ?? (
-          <span className="text-muted-foreground">None set</span>
-        )
-      }
+      value={activeEvent?.event.name ?? <span className="text-muted-foreground">None set</span>}
     />
   );
 }
