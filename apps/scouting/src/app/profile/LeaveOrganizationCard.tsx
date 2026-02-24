@@ -34,16 +34,13 @@ export default function LeaveOrganizationCard({ session, activeOrg }: any) {
   const [isTransferring, setIsTransferring] = useState(false);
   const [transferError, setTransferError] = useState<string | null>(null);
 
-  const currentMember = activeOrg?.members?.find(
-    (m: any) => m.userId === session?.user?.id,
-  );
+  const currentMember = activeOrg?.members?.find((m: any) => m.userId === session?.user?.id);
 
   const isOwner = currentMember?.role === "member";
   //  test with changing the role. == too different things.
 
   const transferableMembers =
-    activeOrg?.members?.filter((m: any) => m.userId !== session?.user?.id) ??
-    [];
+    activeOrg?.members?.filter((m: any) => m.userId !== session?.user?.id) ?? [];
 
   async function handleTransferOwnership() {
     if (!activeOrg?.id || !selectedMemberId) return;
@@ -101,15 +98,11 @@ export default function LeaveOrganizationCard({ session, activeOrg }: any) {
 
   return (
     <Card className="rounded-lg p-6 ring-ring mb-8 size-full mt-10">
-      <h3 className="text-2xl font-semibold text-foreground-white mb-3">
-        Leave Organization
-      </h3>
+      <h3 className="text-2xl font-semibold text-foreground-white mb-3">Leave Organization</h3>
 
       {isOwner ? (
         <div className="flex flex-col gap-3">
-          <p className="text-sm text-muted-foreground">
-            Transfer ownership before leaving.
-          </p>
+          <p className="text-sm text-muted-foreground">Transfer ownership before leaving.</p>
 
           <Dialog open={transferOpen} onOpenChange={setTransferOpen}>
             <DialogTrigger asChild>
@@ -126,10 +119,7 @@ export default function LeaveOrganizationCard({ session, activeOrg }: any) {
                 </DialogDescription>
               </DialogHeader>
 
-              <Select
-                value={selectedMemberId}
-                onValueChange={setSelectedMemberId}
-              >
+              <Select value={selectedMemberId} onValueChange={setSelectedMemberId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select member" />
                 </SelectTrigger>
@@ -142,9 +132,7 @@ export default function LeaveOrganizationCard({ session, activeOrg }: any) {
                 </SelectContent>
               </Select>
 
-              {transferError && (
-                <p className="text-sm text-destructive">{transferError}</p>
-              )}
+              {transferError && <p className="text-sm text-destructive">{transferError}</p>}
 
               <DialogFooter>
                 <Button
@@ -170,21 +158,14 @@ export default function LeaveOrganizationCard({ session, activeOrg }: any) {
             <DialogHeader>
               <DialogTitle>Leave Organization?</DialogTitle>
               <DialogDescription>
-                This cannot be undone. You will lose access to the
-                organization.{" "}
+                This cannot be undone. You will lose access to the organization.{" "}
               </DialogDescription>
             </DialogHeader>
 
-            {leaveError && (
-              <p className="text-sm text-destructive">{leaveError}</p>
-            )}
+            {leaveError && <p className="text-sm text-destructive">{leaveError}</p>}
 
             <DialogFooter>
-              <Button
-                variant="destructive"
-                onClick={handleLeaveOrganization}
-                disabled={isLeaving}
-              >
+              <Button variant="destructive" onClick={handleLeaveOrganization} disabled={isLeaving}>
                 {isLeaving ? "Leaving..." : "Leave"}
               </Button>
             </DialogFooter>
