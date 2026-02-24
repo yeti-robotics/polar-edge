@@ -7,7 +7,7 @@ import {
 } from "@repo/ui/components/breadcrumb";
 import { routes } from "@/lib/routes";
 
-function ComparisonPageBreadCrumbComponent() {
+function EventOverviewPageBreadCrumbComponent() {
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -23,11 +23,11 @@ function ComparisonPageBreadCrumbComponent() {
   );
 }
 
-export default function ComparisonPage() {
+export default function EventOverviewPage() {
   return (
     <div className="space-y-6">
       <span>
-        <ComparisonPageBreadCrumbComponent />
+        <EventOverviewPageBreadCrumbComponent />
       </span>
       <h1 className="text-2xl font-bold tracking-tight mt-4">Event Overview</h1>
       <p className="text-muted-foreground">Skeleton for the event overview page here</p>
