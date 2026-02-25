@@ -510,7 +510,7 @@ export class BotCommands {
       }
 
       return interaction.reply({
-        content: response.text,
+        content: `**Question:** ${question}\n\n**Answer:** ${response.text}`,
         allowedMentions: { parse: [] }, // Don't ping anyone
       });
     } catch (error) {
