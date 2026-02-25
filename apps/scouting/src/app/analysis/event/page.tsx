@@ -23,7 +23,7 @@ function EventOverviewPageBreadCrumbComponent() {
   );
 }
 
-export function EventOverviewPage() {
+function EventOverviewPage() {
   return (
     <div className="space-y-6">
       <span>
@@ -34,3 +34,9 @@ export function EventOverviewPage() {
     </div>
   );
 }
+
+const pageConfig = {
+  default: EventOverviewPage,
+};
+
+export default pageConfig;
