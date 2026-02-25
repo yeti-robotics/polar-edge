@@ -35,8 +35,4 @@ function EventOverviewPage() {
   );
 }
 
-const pageConfig = {
-  default: EventOverviewPage,
-};
-
-export default pageConfig;
+export default EventOverviewPage;
