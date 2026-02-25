@@ -1,5 +1,5 @@
 "use client";
-import { ArrowLeftRightIcon, LayoutDashboardIcon, ShieldIcon } from "lucide-react";
+import { ArrowLeftRightIcon, LayoutDashboardIcon, ShieldIcon, TableIcon } from "lucide-react";
 import { NavSidebar } from "@/components/NavSidebar";
 import { SidebarSheet } from "@/components/SidebarSheet";
 import { routes } from "@/lib/routes";
@@ -8,6 +8,7 @@ const analysisLinks = [
   { href: routes.analysis.root, label: "Overview", icon: LayoutDashboardIcon, exact: true },
   { href: routes.analysis.teams, label: "Teams", icon: ShieldIcon },
   { href: routes.analysis.comparison, label: "Comparison", icon: ArrowLeftRightIcon },
+  { href: routes.analysis.events, label: "Events", icon: TableIcon },
 ];
 
 export default function DataLayout({ children }: { children: React.ReactNode }) {

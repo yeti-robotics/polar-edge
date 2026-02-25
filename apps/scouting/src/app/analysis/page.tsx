@@ -1,5 +1,5 @@
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
-import { TableIcon, UsersIcon } from "lucide-react";
+import { GitGraphIcon, TableIcon, UsersIcon } from "lucide-react";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
@@ -15,9 +15,16 @@ const navCards = [
   },
   {
     href: "/analysis/comparison",
-    icon: TableIcon,
+    icon: GitGraphIcon,
     title: "Comparison",
     description: "Compare multiple teams side-by-side across key performance metrics.",
+  },
+  {
+    href: "/analysis/events",
+    icon: TableIcon,
+    title: "Events",
+    description:
+      "Ranked table of all teams at the event so that I can identify underrated teams that other alliances might overlook.",
   },
 ];
 
