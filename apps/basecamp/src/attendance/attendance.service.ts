@@ -352,36 +352,35 @@ export class AttendanceService {
     return getTotalPossibleHoursToDate(asOfDate);
   }
 
-  public async getTopMembersByHours(limit: number = DEFAULT_LEADERBOARD_LIMIT) {
-    try {
-      const allAttendance = await this.sheetService.getSheetValues(
-        this.attendanceSheetId,
-        SHEET_RANGE_READ
-      );
+  private async getAllMembersSortedByHours(): Promise<
+    Array<{ discordId: string; userName: string; totalHours: number }>
+  > {
+    const allAttendance = await this.sheetService.getSheetValues(
+      this.attendanceSheetId,
+      SHEET_RANGE_READ
+    );
 
-      if (!allAttendance?.length) return [];
+    if (!allAttendance?.length) return [];
 
-      const userRecords = new Map<string, { userName: string; records: AttendanceRecord[] }>();
+    const userRecords = new Map<string, { userName: string; records: AttendanceRecord[] }>();
 
-      for (let i = 1; i < allAttendance.length; i++) {
-        const row = allAttendance[i];
-        if (!row?.[COLUMN_INDICES.IS_SIGNING_IN]) continue;
+    for (let i = 1; i < allAttendance.length; i++) {
+      const row = allAttendance[i];
+      if (!row?.[COLUMN_INDICES.IS_SIGNING_IN]) continue;
 
-        const discordId = String(row[COLUMN_INDICES.DISCORD_ID]);
-        const discordName = String(row[COLUMN_INDICES.DISCORD_NAME]);
+      const discordId = String(row[COLUMN_INDICES.DISCORD_ID]);
+      const discordName = String(row[COLUMN_INDICES.DISCORD_NAME]);
 
-        if (!discordId || !discordName) continue;
+      if (!discordId || !discordName) continue;
 
-        let userData = userRecords.get(discordId);
-        if (!userData) {
-          userData = {
-            userName: discordName,
-            records: [],
-          };
-          userRecords.set(discordId, userData);
-        }
+      let userData = userRecords.get(discordId);
+      if (!userData) {
+        userData = { userName: discordName, records: [] };
+        userRecords.set(discordId, userData);
+      }
 
-        const record = AttendanceSchema.parse({
+      userData.records.push(
+        AttendanceSchema.parse({
           discordId: row[COLUMN_INDICES.DISCORD_ID],
           team: row[COLUMN_INDICES.TEAM],
           discordName: row[COLUMN_INDICES.DISCORD_NAME],
@@ -389,28 +388,43 @@ export class AttendanceService {
           isSigningIn:
             row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE ||
             row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE_UPPERCASE,
-        });
+        })
+      );
+    }
 
-        userData.records.push(record);
-      }
+    return Array.from(userRecords.entries())
+      .map(([id, { userName, records }]) => ({
+        discordId: id,
+        userName,
+        totalHours: this.calculateHoursFromRecords(records),
+      }))
+      .filter((u) => u.totalHours > 0)
+      .sort((a, b) => b.totalHours - a.totalHours);
+  }
 
-      const usersWithHours = Array.from(userRecords.entries())
-        .map(([_, { userName, records }]) => ({
-          userName,
-          totalHours: this.calculateHoursFromRecords(records),
-        }))
-        .filter((user) => user.totalHours > 0)
-        .sort((a, b) => b.totalHours - a.totalHours)
+  public async getTopMembersByHours(limit: number = DEFAULT_LEADERBOARD_LIMIT) {
+    try {
+      const sorted = await this.getAllMembersSortedByHours();
+      return sorted
         .slice(0, limit)
         .map(({ userName, totalHours }) => ({
           userName,
           totalHours: parseFloat(totalHours.toFixed(2)),
         }));
-
-      return usersWithHours;
     } catch (error) {
       this.logger.error(`Error getting attendance leaderboard:`, error);
       return [];
+    }
+  }
+
+  public async getUserRank(discordId: string): Promise<number | null> {
+    try {
+      const sorted = await this.getAllMembersSortedByHours();
+      const index = sorted.findIndex((u) => u.discordId === discordId);
+      return index === -1 ? null : index + 1;
+    } catch (error) {
+      this.logger.error(`Error getting rank for user ${discordId}:`, error);
+      return null;
     }
   }
 }

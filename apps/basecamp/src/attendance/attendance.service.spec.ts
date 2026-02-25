@@ -728,6 +728,51 @@ describe("AttendanceService", () => {
     });
   });
 
+  describe("getUserRank", () => {
+    const mockAllAttendance = [
+      ["discordId", "team", "discordName", "date", "isSigningIn"],
+      ["user1", "YETI Robotics", "Test User 1", "2025-01-01T10:00:00Z", "true"],
+      ["user1", "YETI Robotics", "Test User 1", "2025-01-01T12:00:00Z", "false"],
+      ["user2", "YETI Robotics", "Test User 2", "2025-01-01T10:00:00Z", "true"],
+      ["user2", "YETI Robotics", "Test User 2", "2025-01-01T13:00:00Z", "false"],
+      ["user3", "YETI Robotics", "Test User 3", "2025-01-01T10:00:00Z", "true"],
+      ["user3", "YETI Robotics", "Test User 3", "2025-01-01T15:00:00Z", "false"],
+    ];
+    // user3 = 5h (rank 1), user2 = 3h (rank 2), user1 = 2h (rank 3)
+
+    it("returns 1 for the user with the most hours", async () => {
+      sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
+      expect(await service.getUserRank("user3")).toBe(1);
+    });
+
+    it("returns the correct rank for a mid-range user", async () => {
+      sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
+      expect(await service.getUserRank("user2")).toBe(2);
+    });
+
+    it("returns the last rank for the user with fewest hours", async () => {
+      sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
+      expect(await service.getUserRank("user1")).toBe(3);
+    });
+
+    it("returns null for a user not present in the sheet", async () => {
+      sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
+      expect(await service.getUserRank("unknown")).toBeNull();
+    });
+
+    it("returns null when the sheet has only a header row", async () => {
+      sheetService.getSheetValues.mockResolvedValue([
+        ["discordId", "team", "discordName", "date", "isSigningIn"],
+      ]);
+      expect(await service.getUserRank("user1")).toBeNull();
+    });
+
+    it("returns null on API error", async () => {
+      sheetService.getSheetValues.mockRejectedValue(new Error("API Error"));
+      expect(await service.getUserRank("user1")).toBeNull();
+    });
+  });
+
   it("should handle users with same total hours correctly", async () => {
     const tiedData = [
       ["discordId", "team", "discordName", "date", "isSigningIn"],
