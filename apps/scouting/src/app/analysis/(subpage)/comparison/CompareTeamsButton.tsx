@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@repo/ui/components/button";
 import {
   DropdownMenu,
@@ -9,52 +10,62 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
 import { Scale } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+
+
 
 type Team = {
   teamNumber: number;
-  teamName?: string;
+  teamName: string;
 };
 
-export default function CompareTeamsButton() {
-  const [teams, setTeams] = useState<Team[]>([]);
+interface CompareTeamsButtonProps {
+  teams: Team[];
+}
 
-  useEffect(() => {
-    let mounted = true;
-    fetch("/api/teams/search")
-      .then((res) => res.json())
-      .then((data) => {
-        if (!mounted) return;
-        setTeams(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {
-        if (mounted) setTeams([]);
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
+
+
+export default function CompareTeamsButton({ teams }: CompareTeamsButtonProps) {
+
+  const router = useRouter() 
+  const searchParams = useSearchParams()
+  const pathName = usePathname()
+
+const changeTeam = (number: number) => {
+  const params = new URLSearchParams(searchParams.toString())
+  params.set("team1", number.toString())
+  router.push(`${pathName}?${params.toString()}`)
+  
+}
+
+const selectedTeam = teams.find(
+  (t) => t.teamNumber === Number(searchParams.get("team1"))
+);
+
+   
   return (
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="default">
-            <Scale /> Compare Team
+        <Button variant="default">
+            <Scale className="mr-2 h-4 w-4" /> 
+            {selectedTeam ? `Team: ${selectedTeam.teamName}` : "Compare Team"}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuGroup>
-            <DropdownMenuLabel>Select a Team</DropdownMenuLabel>
-            {teams.length === 0 ? (
-              <DropdownMenuItem disabled>No teams found</DropdownMenuItem>
-            ) : (
+        <DropdownMenuGroup>
+            {teams.length > 0 ? (
               teams.map((team) => (
-                <DropdownMenuItem key={team.teamNumber}>
-                  Team {team.teamNumber}
-                  {team.teamName ? ` — ${team.teamName}` : null}
+                <DropdownMenuItem
+                  key={team.teamNumber}
+                  onSelect={() => changeTeam(team.teamNumber)}
+                >
+                  {team.teamName} ({team.teamNumber})
                 </DropdownMenuItem>
               ))
+            ) : (
+              <DropdownMenuItem disabled>No teams found</DropdownMenuItem>
             )}
           </DropdownMenuGroup>
         </DropdownMenuContent>
