@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
 import { Scale } from "lucide-react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 
 
@@ -21,12 +21,20 @@ type Team = {
 
 interface CompareTeamsButtonProps {
   teams: Team[];
+  teamParam: "team1" | "team2";
+  label: string;
+  variant: "default" | "outline";
 }
 
 
 
 
-export default function CompareTeamsButton({ teams }: CompareTeamsButtonProps) {
+export default function CompareTeamsButton({
+  teams,
+  teamParam,
+  label,
+  variant,
+}: CompareTeamsButtonProps) {
 
   const router = useRouter() 
   const searchParams = useSearchParams()
@@ -34,13 +42,13 @@ export default function CompareTeamsButton({ teams }: CompareTeamsButtonProps) {
 
 const changeTeam = (number: number) => {
   const params = new URLSearchParams(searchParams.toString())
-  params.set("team1", number.toString())
+  params.set(teamParam, number.toString())
   router.push(`${pathName}?${params.toString()}`)
   
 }
 
 const selectedTeam = teams.find(
-  (t) => t.teamNumber === Number(searchParams.get("team1"))
+  (t) => t.teamNumber === Number(searchParams.get(teamParam))
 );
 
    
@@ -48,9 +56,9 @@ const selectedTeam = teams.find(
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-        <Button variant="default">
+        <Button variant={variant}>
             <Scale className="mr-2 h-4 w-4" /> 
-            {selectedTeam ? `Team: ${selectedTeam.teamName}` : "Compare Team"}
+            {selectedTeam ? `${label}: ${selectedTeam.teamName}` : label}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -73,3 +81,6 @@ const selectedTeam = teams.find(
     </div>
   );
 }
+
+
+
