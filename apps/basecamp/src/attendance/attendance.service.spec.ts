@@ -771,6 +771,53 @@ describe("AttendanceService", () => {
       sheetService.getSheetValues.mockRejectedValue(new Error("API Error"));
       expect(await service.getUserRank("user1")).toBeNull();
     });
+
+    describe("handles ties with dense ranking", () => {
+      // joe=5h (rank 1), jim=4h (rank 2), sally/kyle/marvin=3h (rank 3), baxter=2h (rank 4)
+      const tiedMockData = [
+        ["discordId", "team", "discordName", "date", "isSigningIn"],
+        ["joe", "YETI Robotics", "Joe", "2025-01-01T10:00:00Z", "true"],
+        ["joe", "YETI Robotics", "Joe", "2025-01-01T15:00:00Z", "false"],
+        ["jim", "YETI Robotics", "Jim", "2025-01-01T10:00:00Z", "true"],
+        ["jim", "YETI Robotics", "Jim", "2025-01-01T14:00:00Z", "false"],
+        ["sally", "YETI Robotics", "Sally", "2025-01-01T10:00:00Z", "true"],
+        ["sally", "YETI Robotics", "Sally", "2025-01-01T13:00:00Z", "false"],
+        ["kyle", "YETI Robotics", "Kyle", "2025-01-01T10:00:00Z", "true"],
+        ["kyle", "YETI Robotics", "Kyle", "2025-01-01T13:00:00Z", "false"],
+        ["marvin", "YETI Robotics", "Marvin", "2025-01-01T10:00:00Z", "true"],
+        ["marvin", "YETI Robotics", "Marvin", "2025-01-01T13:00:00Z", "false"],
+        ["baxter", "YETI Robotics", "Baxter", "2025-01-01T10:00:00Z", "true"],
+        ["baxter", "YETI Robotics", "Baxter", "2025-01-01T12:00:00Z", "false"],
+      ];
+
+      beforeEach(() => {
+        sheetService.getSheetValues.mockResolvedValue(tiedMockData);
+      });
+
+      it("returns rank 1 for the user with the most hours", async () => {
+        expect(await service.getUserRank("joe")).toBe(1);
+      });
+
+      it("returns rank 2 for the second-place user", async () => {
+        expect(await service.getUserRank("jim")).toBe(2);
+      });
+
+      it("returns rank 3 for the first tied user", async () => {
+        expect(await service.getUserRank("sally")).toBe(3);
+      });
+
+      it("returns rank 3 for a mid tied user", async () => {
+        expect(await service.getUserRank("kyle")).toBe(3);
+      });
+
+      it("returns rank 3 for the last tied user", async () => {
+        expect(await service.getUserRank("marvin")).toBe(3);
+      });
+
+      it("returns rank 4 (not 6) for the user after the tied group", async () => {
+        expect(await service.getUserRank("baxter")).toBe(4);
+      });
+    });
   });
 
   it("should handle users with same total hours correctly", async () => {

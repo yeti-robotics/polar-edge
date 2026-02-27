@@ -420,8 +420,12 @@ export class AttendanceService {
   public async getUserRank(discordId: string): Promise<number | null> {
     try {
       const sorted = await this.getAllMembersSortedByHours();
-      const index = sorted.findIndex((u) => u.discordId === discordId);
-      return index === -1 ? null : index + 1;
+      const userEntry = sorted.find((u) => u.discordId === discordId);
+      if (!userEntry) return null;
+      const distinctHigher = new Set(
+        sorted.filter((u) => u.totalHours > userEntry.totalHours).map((u) => u.totalHours)
+      );
+      return distinctHigher.size + 1;
     } catch (error) {
       this.logger.error(`Error getting rank for user ${discordId}:`, error);
       return null;
