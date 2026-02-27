@@ -1,13 +1,21 @@
 import { Card } from "@repo/ui/components/card";
 import CompareTeamsButton from "./CompareTeamsButton";
 import { db } from "@/lib/database";
-import { team } from "@/lib/database/schema";
+import { climb, team } from "@/lib/database/schema";
 import AnalysisRadarChart from "./CompareTeamsRadarChart";
+import OverLayChart from "./OverLayChart";
+import MetricsTable from "./MetricsTable";
+
 
 async function getAllTeams() {
   return await db.select().from(team);
 }
 
+async function getTeamDataMetric() {
+  return await db.select().from(climb).limit(20);
+}
+
+// for now i limited iti need to make 
 
 export default async function CompareTeamsAnalysis({
   searchParams,
@@ -19,6 +27,8 @@ export default async function CompareTeamsAnalysis({
 
   const team1 = teams.find((t) => t.teamNumber === Number(params.team1));
   const team2 = teams.find((t) => t.teamNumber === Number(params.team2));
+
+  const climbData = await getTeamDataMetric();
   
   return (
     <div className="p-8 space-y-4">
@@ -83,6 +93,18 @@ export default async function CompareTeamsAnalysis({
     </p>
   )}
 </Card>
+
+{/* this is for the overly for both teams
+<div className="flex items-center justify-center min-h-screen"> 
+  <Card>
+    <OverLayChart/>
+  </Card>
+</div> */}
+<div>
+  <Card>
+    <MetricsTable climbs={climbData} />
+  </Card>
+</div>
     </div>
   );
 }
