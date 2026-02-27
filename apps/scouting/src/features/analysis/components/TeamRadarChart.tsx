@@ -1,5 +1,6 @@
 "use client";
 import { Card } from "@repo/ui/components/card";
+import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Legend,
   PolarAngleAxis,
@@ -9,6 +10,16 @@ import {
   RadarChart as RechartsRadarChart,
   ResponsiveContainer,
 } from "recharts";
+
+export function RadarChartSkeleton() {
+  return (
+    <Card className="w-full p-6 rounded-lg shadow-md">
+      <div className="flex items-center justify-center" style={{ height: 360 }}>
+        <Skeleton className="h-56 w-56 rounded-full" />
+      </div>
+    </Card>
+  );
+}
 
 export type RadarChartDataPoint = Record<string, string | number>;
 

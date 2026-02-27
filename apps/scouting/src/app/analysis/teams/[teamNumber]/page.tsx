@@ -1,6 +1,5 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
-import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
   TableBody,
@@ -13,8 +12,8 @@ import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/compone
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { Suspense } from "react";
-import { TeamKeyMetricsCard } from "@/features/analysis/components/TeamKeyMetricsCard";
-import { RadarChart } from "@/features/analysis/components/TeamRadarChart";
+import { TeamKeyMetricsCard, TeamKeyMetricsCardSkeleton } from "@/features/analysis/components/TeamKeyMetricsCard";
+import { RadarChart, RadarChartSkeleton } from "@/features/analysis/components/TeamRadarChart";
 import { TeamScopeControls } from "@/features/analysis/components/TeamScopeControls";
 import { SelectTeam } from "@/features/analysis/components/TeamSwitcher";
 import { getTeamKeyMetrics, getTeamRadarData } from "@/features/analysis/team-queries";
@@ -167,7 +166,7 @@ export default async function TeamPage({
         </div>
       </div>
 
-      <Suspense fallback={<Skeleton className="h-56 w-full" />}>
+      <Suspense fallback={<TeamKeyMetricsCardSkeleton />}>
         <TeamKeyMetricsSection
           teamNum={teamNum}
           effectiveOrgId={effectiveOrgId}
@@ -176,7 +175,7 @@ export default async function TeamPage({
       </Suspense>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Suspense fallback={<Skeleton className="h-90 w-full" />}>
+        <Suspense fallback={<RadarChartSkeleton />}>
           <TeamRadarSection
             teamNum={teamNum}
             effectiveOrgId={effectiveOrgId}

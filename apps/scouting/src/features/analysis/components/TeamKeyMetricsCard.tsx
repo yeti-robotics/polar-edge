@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
+import { Skeleton } from "@repo/ui/components/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/tabs";
 import type { TeamKeyMetrics } from "../team-queries";
 
@@ -59,6 +60,51 @@ function AdvancedMetricTile({
       </p>
       <p className="text-xs text-muted-foreground/70 leading-tight">{description}</p>
     </div>
+  );
+}
+
+function MetricTileSkeleton({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">{label}</p>
+      <Skeleton className="h-7 w-14" />
+    </div>
+  );
+}
+
+export function TeamKeyMetricsCardSkeleton() {
+  return (
+    <Card className="relative pt-0 gap-y-1">
+      <CardHeader className="py-0 flex items-center justify-end sm:justify-between px-0">
+        <CardTitle className="py-3 hidden sm:block text-xs font-mono uppercase tracking-widest text-muted-foreground font-medium pl-6">
+          Performance Summary
+        </CardTitle>
+        <Skeleton className="h-9 w-44 mb-4 rounded-tl-none rounded-br-none self-end sm:self-center" />
+      </CardHeader>
+      <CardContent className="space-y-5">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
+          <MetricTileSkeleton label="Avg Auto" />
+          <MetricTileSkeleton label="Avg Teleop" />
+          <MetricTileSkeleton label="Matches Scouted" />
+        </div>
+
+        <div className="border-t" />
+
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
+          <MetricTileSkeleton label="Avg Climb" />
+          <MetricTileSkeleton label="Auto Climb" />
+          <MetricTileSkeleton label="Teleop Climb" />
+        </div>
+
+        <div className="border-t" />
+
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
+          <MetricTileSkeleton label="Avg Uptime" />
+          <MetricTileSkeleton label="Avg Downtime" />
+          <MetricTileSkeleton label="Broke" />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
