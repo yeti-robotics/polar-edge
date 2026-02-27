@@ -72,7 +72,7 @@ export async function setActiveEventForOrganization(organizationId: string, even
       });
   });
 
-  revalidateTag(cacheTags.activeEvent(organizationId));
+  revalidateTag(cacheTags.activeEvent(organizationId), "max");
 }
 
 export async function listEvents() {

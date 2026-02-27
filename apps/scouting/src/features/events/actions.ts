@@ -8,7 +8,10 @@ import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { event, match, team, teamMatch } from "@/lib/database/schema/tables";
 import { routes } from "@/lib/routes";
-import { setActiveEventForOrganization } from "@/lib/server/organization/active-event";
+import {
+  getActiveEventForOrganization,
+  setActiveEventForOrganization,
+} from "@/lib/server/organization/active-event";
 import { getTBAClient } from "@/lib/server/tba";
 
 function parseTeamKey(teamKey: string): number {
@@ -224,6 +227,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
 
     revalidatePath(routes.admin.event);
     revalidateTag(cacheTags.teamsList, "max");
+    revalidateTag(cacheTags.eventTeams(eventId), "max");
     return {
       data: { success: true, eventId, matchCount, teamMatchCount },
       error: null,
@@ -290,6 +294,10 @@ export async function enrichTeamNamesAction(organizationId: string) {
     }
 
     revalidateTag(cacheTags.teamsList, "max");
+    const activeEvent = await getActiveEventForOrganization(organizationId);
+    if (activeEvent) {
+      revalidateTag(cacheTags.eventTeams(activeEvent.eventId), "max");
+    }
     return { data: { enrichedCount: enriched.length }, error: null };
   } catch (error) {
     return {
