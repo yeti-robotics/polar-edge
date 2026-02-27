@@ -30,9 +30,7 @@ export interface MainEventOverviewRow {
 
 const round1 = (value: number) => Math.round(value * 10) / 10;
 
-export async function getMainEventOverviewRows(
-  eventId: string
-): Promise<getMainEventOverviewRows[]> {
+export async function getMainEventOverviewRow(eventId: string): Promise<MainEventOverviewRow[]> {
   "use cache";
   cacheLife("minutes");
   cacheTag(cacheTags.teamMetrics(eventId));
