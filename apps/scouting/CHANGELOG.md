@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026.11.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.10.0...scouting-v2026.11.0) (2026-02-27)
+
+
+### Features
+
+* **scouting:** enhance caching for active events and event teams ([f5ac594](https://github.com/yeti-robotics/polar-edge/commit/f5ac594afd3de7543bac8865b3c91e82fc872b43))
+* **scouting:** improved cache handling for active event and event teams ([2a90983](https://github.com/yeti-robotics/polar-edge/commit/2a9098367b129d7efbe2923305ccacf70766abe5))
+
 ## [2026.10.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.4...scouting-v2026.10.0) (2026-02-22)
 
 
