@@ -1,36 +1,50 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@repo/ui/components/breadcrumb";
+import { Card, CardContent } from "@repo/ui/components/card";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
+import Link from "next/link";
 import { routes } from "@/lib/routes";
+import { requireActiveMember } from "@/lib/server/auth/require-member";
+import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
+import { getMainEventOverviewRows } from "./actions";
+import { EventOverviewTableClient } from "./EventOverviewTable";
+import { EventSummaryCard } from "./EventSummaryCard";
 
-function EventOverviewPageBreadCrumbComponent() {
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href={routes.analysis.root}>Analysis</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink href={routes.analysis.comparison}>event-overview</BreadcrumbLink>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
-}
+export default async function EventOverviewPage() {
+  const activeMember = await requireActiveMember();
+  const activeEvent = await getActiveEventForOrganization(activeMember.organizationId);
 
-export default function EventOverviewPage() {
+  if (!activeEvent?.event) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <TypographyH1>Event Overview</TypographyH1>
+          <TypographyMuted className="mt-1">
+            Set an active event to view team rankings and reliability.
+          </TypographyMuted>
+        </div>
+        <Card>
+          <CardContent className="py-10 text-center text-muted-foreground">
+            No active event is set for your organization. Configure one in{" "}
+            <Link href={routes.admin.event} className="text-primary hover:underline">
+              Admin → Active Event
+            </Link>
+            .
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const rows = await getMainEventOverviewRows(activeEvent.event.id);
+
   return (
     <div className="space-y-6">
-      <span>
-        <EventOverviewPageBreadCrumbComponent />
-      </span>
-      <h1 className="text-2xl font-bold tracking-tight mt-4">Event Overview</h1>
-      <p className="text-muted-foreground">Skeleton for the event overview page here</p>
+      <div>
+        <TypographyH1>Event Overview</TypographyH1>
+        <TypographyMuted className="mt-1"></TypographyMuted>
+      </div>
+
+      <EventSummaryCard rows={rows} />
+      <EventOverviewTableClient rows={rows} />
     </div>
   );
 }
