@@ -30,8 +30,7 @@ const METRIC_ROWS: MetricRow[] = [
   {
     label: "Total Points",
     unit: "avg",
-    getValue: (m) =>
-      Math.round((m.avgAutoPoints + m.avgTeleopPoints + m.avgClimbPoints) * 10) / 10,
+    getValue: (m) => Math.round((m.avgAutoPoints + m.avgTeleopPoints + m.avgClimbPoints) * 10) / 10,
     formatValue: (v) => v.toFixed(1),
     higherIsBetter: true,
   },
@@ -118,10 +117,7 @@ const METRIC_ROWS: MetricRow[] = [
   },
 ];
 
-function getWinnerIndex(
-  row: MetricRow,
-  metricsPerTeam: (TeamKeyMetrics | null)[]
-): number | null {
+function getWinnerIndex(row: MetricRow, metricsPerTeam: (TeamKeyMetrics | null)[]): number | null {
   const values = metricsPerTeam.map((m) => (m ? row.getValue(m) : null));
   const validValues = values.filter((v) => v !== null) as number[];
   if (validValues.length < 2) return null;
@@ -159,7 +155,7 @@ export function ComparisonMetricsTable({ teamNumbers, teamNames, metricsPerTeam 
             </TableRow>
           </TableHeader>
           <TableBody>
-            {METRIC_ROWS.map((row, rowIdx) => {
+            {METRIC_ROWS.map((row, _rowIdx) => {
               const winnerIdx = getWinnerIndex(row, metricsPerTeam);
               const isTotal = row.label === "Total Points";
               return (
@@ -178,7 +174,9 @@ export function ComparisonMetricsTable({ teamNumbers, teamNames, metricsPerTeam 
                     const rawValue = metrics ? row.getValue(metrics) : null;
                     const displayValue =
                       rawValue !== null
-                        ? (row.formatValue ? row.formatValue(rawValue) : String(rawValue))
+                        ? row.formatValue
+                          ? row.formatValue(rawValue)
+                          : String(rawValue)
                         : null;
                     const healthClass = metrics ? row.getValueClass?.(metrics) : undefined;
 

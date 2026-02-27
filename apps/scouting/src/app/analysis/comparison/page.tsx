@@ -16,7 +16,10 @@ import { ComparisonScopeControls } from "@/features/analysis/components/Comparis
 import { ComparisonTeamHeader } from "@/features/analysis/components/ComparisonTeamHeader";
 import { ComparisonTeamSelector } from "@/features/analysis/components/ComparisonTeamSelector";
 import type { MultiTeamRadarDataPoint } from "@/features/analysis/components/MultiTeamRadarChart";
-import { MultiTeamRadarChart, TEAM_COLORS } from "@/features/analysis/components/MultiTeamRadarChart";
+import {
+  MultiTeamRadarChart,
+  TEAM_COLORS,
+} from "@/features/analysis/components/MultiTeamRadarChart";
 import { RadarChart } from "@/features/analysis/components/TeamRadarChart";
 import type { RadarPoint } from "@/features/analysis/team-queries";
 import { getTeamKeyMetrics, getTeamRadarData } from "@/features/analysis/team-queries";
