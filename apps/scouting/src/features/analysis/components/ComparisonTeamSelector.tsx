@@ -11,7 +11,7 @@ import {
   CommandList,
 } from "@repo/ui/components/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/popover";
-import { PlusIcon, XIcon, Loader2 } from "lucide-react";
+import { Loader2, PlusIcon, XIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTeamSearch } from "@/components/team-search/use-team-search";
@@ -123,9 +123,7 @@ export function ComparisonTeamSelector({ selectedTeams, maxTeams = 5 }: Props) {
         </PopoverContent>
       </Popover>
 
-      {atMax && (
-        <span className="text-xs text-muted-foreground">Maximum {maxTeams} teams</span>
-      )}
+      {atMax && <span className="text-xs text-muted-foreground">Maximum {maxTeams} teams</span>}
     </div>
   );
 }

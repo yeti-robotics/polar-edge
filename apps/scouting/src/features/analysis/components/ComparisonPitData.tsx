@@ -18,7 +18,7 @@ function PitCard({
 }: {
   teamNumber: number;
   teamName: string | null;
-  data: (typeof pitForm.$inferSelect) | undefined;
+  data: typeof pitForm.$inferSelect | undefined;
 }) {
   return (
     <Card className="overflow-hidden">
@@ -32,17 +32,13 @@ function PitCard({
       </CardHeader>
       <CardContent className="pt-4">
         {!data ? (
-          <p className="text-sm text-muted-foreground/60 py-4 text-center">
-            No pit data scouted
-          </p>
+          <p className="text-sm text-muted-foreground/60 py-4 text-center">No pit data scouted</p>
         ) : (
           <div className="space-y-3">
             <Row label="Drivetrain" value={formatDrivetrain(data.drivetrainType)} />
             <Row label="Weight" value={data.weight ? `${data.weight} lbs` : "—"} />
             <Row label="Capacity" value={data.capacity ? `${data.capacity}` : "—"} />
-            {data.climbType && (
-              <Row label="Climb Type" value={formatClimbType(data.climbType)} />
-            )}
+            {data.climbType && <Row label="Climb Type" value={formatClimbType(data.climbType)} />}
             <div className="flex items-start gap-3">
               <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground w-24 shrink-0 pt-0.5">
                 Capabilities
@@ -108,10 +104,7 @@ function formatClimbType(type: string): string {
 }
 
 export async function ComparisonPitData({ teamNumbers, teamNames }: Props) {
-  const pitRows = await db
-    .select()
-    .from(pitForm)
-    .where(inArray(pitForm.teamNumber, teamNumbers));
+  const pitRows = await db.select().from(pitForm).where(inArray(pitForm.teamNumber, teamNumbers));
 
   const pitByTeam = new Map(pitRows.map((r) => [r.teamNumber, r]));
 
