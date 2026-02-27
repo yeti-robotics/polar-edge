@@ -32,7 +32,9 @@ export function ComparisonTeamHeader({ teamNumbers, teamNames }: Props) {
           <div className="grid grid-cols-[1fr_auto_1fr]">
             {/* Left team */}
             <div className="flex flex-col items-center justify-center gap-2 px-8 py-8 border-r border-border/50">
-              <TeamTile num={teamNumbers[0]!} name={teamNames[0] ?? null} />
+              {teamNumbers[0] !== undefined && (
+                <TeamTile num={teamNumbers[0]} name={teamNames[0] ?? null} />
+              )}
             </div>
 
             {/* VS column */}
@@ -46,7 +48,9 @@ export function ComparisonTeamHeader({ teamNumbers, teamNames }: Props) {
 
             {/* Right team */}
             <div className="flex flex-col items-center justify-center gap-2 px-8 py-8 border-l border-border/50">
-              <TeamTile num={teamNumbers[1]!} name={teamNames[1] ?? null} />
+              {teamNumbers[1] !== undefined && (
+                <TeamTile num={teamNumbers[1]} name={teamNames[1] ?? null} />
+              )}
             </div>
           </div>
         </CardContent>
