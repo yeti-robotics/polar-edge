@@ -6,4 +6,6 @@ export const cacheTags = {
   analysisStandFormCount: "analysis-stand-form-count",
   analysisPitFormCount: "analysis-pit-form-count",
   teamMetrics: (eventId: string) => `team-metrics-${eventId}`,
+  activeEvent: (organizationId: string) => `active-event-${organizationId}`,
+  eventTeams: (eventId: string) => `event-teams-${eventId}`,
 };

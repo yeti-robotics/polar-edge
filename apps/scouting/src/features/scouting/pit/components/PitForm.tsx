@@ -167,11 +167,19 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                   <Combobox
                     id={field.name}
                     name={field.name}
-                    value={field.state.value}
+                    value={
+                      typeof field.state.value === "number" && field.state.value > 0
+                        ? String(field.state.value)
+                        : ""
+                    }
                     onValueChange={(v) => {
-                      v && field.handleChange(v);
+                      v && field.handleChange(Number(v));
                     }}
                     items={teams}
+                    itemToStringLabel={(v) => {
+                      const team = teams.find((t) => t.teamNumber.toString() === v);
+                      return team ? `${team.teamNumber} - ${team.teamName}` : (v ?? "");
+                    }}
                   >
                     <ComboboxInput
                       onBlur={field.handleBlur}
@@ -215,7 +223,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                     onBlur={field.handleBlur}
                     aria-invalid={isInvalid}
                     aria-label="Drivetrain Type"
-                    value={field.state.value}
+                    value={typeof field.state.value === "string" ? field.state.value : ""}
                     onValueChange={(v) =>
                       field.handleChange(v as (typeof DRIVETRAIN_OPTIONS)[number])
                     }
@@ -265,7 +273,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                         <Checkbox
                           id={id}
                           name={name}
-                          checked={field.state.value}
+                          checked={field.state.value ?? false}
                           onBlur={field.handleBlur}
                           onCheckedChange={(checked) => field.handleChange(checked === true)}
                           aria-invalid={isInvalid}
@@ -361,7 +369,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                     onBlur={field.handleBlur}
                     aria-invalid={isInvalid}
                     aria-label="Climb Type"
-                    value={field.state.value}
+                    value={typeof field.state.value === "string" ? field.state.value : ""}
                     onValueChange={(v) =>
                       field.handleChange(v as (typeof CLIMB_TYPE_OPTIONS)[number])
                     }

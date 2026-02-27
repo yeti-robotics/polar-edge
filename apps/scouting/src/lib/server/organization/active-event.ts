@@ -1,12 +1,18 @@
 import "server-only";
 
 import { and, desc, eq } from "drizzle-orm";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { event, organizationEvent } from "@/lib/database/schema/tables";
 
 export async function getActiveEventForOrganization(organizationId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(cacheTags.activeEvent(organizationId));
+
   const row = await db.query.organizationEvent.findFirst({
     where: and(
       eq(organizationEvent.organizationId, organizationId),
@@ -65,6 +71,8 @@ export async function setActiveEventForOrganization(organizationId: string, even
         set: { isActive: true },
       });
   });
+
+  revalidateTag(cacheTags.activeEvent(organizationId), "max");
 }
 
 export async function listEvents() {
