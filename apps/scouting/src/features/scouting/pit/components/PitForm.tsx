@@ -173,9 +173,13 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                         : ""
                     }
                     onValueChange={(v) => {
-                      v && field.handleChange(v);
+                      v && field.handleChange(Number(v));
                     }}
                     items={teams}
+                    itemToStringLabel={(v) => {
+                      const team = teams.find((t) => t.teamNumber.toString() === v);
+                      return team ? `${team.teamNumber} - ${team.teamName}` : (v ?? "");
+                    }}
                   >
                     <ComboboxInput
                       onBlur={field.handleBlur}
@@ -269,7 +273,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                         <Checkbox
                           id={id}
                           name={name}
-                          checked={field.state.value}
+                          checked={field.state.value ?? false}
                           onBlur={field.handleBlur}
                           onCheckedChange={(checked) => field.handleChange(checked === true)}
                           aria-invalid={isInvalid}
