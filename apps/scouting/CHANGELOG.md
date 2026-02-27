@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.12.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.11.1...scouting-v2026.12.0) (2026-02-27)
+
+
+### Features
+
+* **scouting:** build out team comp ([76018ee](https://github.com/yeti-robotics/polar-edge/commit/76018ee17deebdbe358e00d9aaa4c09b08a7beeb))
+
 ## [2026.11.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.11.0...scouting-v2026.11.1) (2026-02-27)
 
 
