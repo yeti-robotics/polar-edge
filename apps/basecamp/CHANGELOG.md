@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.6...basecamp-v1.0.7) (2026-02-27)
+
+
+### Bug Fixes
+
+* **basecamp:** missing question in handbook command ([#458](https://github.com/yeti-robotics/polar-edge/issues/458)) ([797ac43](https://github.com/yeti-robotics/polar-edge/commit/797ac43864abf4ce9126ad4d6f87b63b91e6fb8d))
+
 ## [1.0.6](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.5...basecamp-v1.0.6) (2026-02-21)
 
 
