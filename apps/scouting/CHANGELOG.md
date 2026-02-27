@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.11.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.11.0...scouting-v2026.11.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* **scouting:** ensure proper value handling and display for team selection ([d75244e](https://github.com/yeti-robotics/polar-edge/commit/d75244ebcc444272f1715871a0913550aeac3f5d))
+
 ## [2026.11.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.10.0...scouting-v2026.11.0) (2026-02-27)
 
 
