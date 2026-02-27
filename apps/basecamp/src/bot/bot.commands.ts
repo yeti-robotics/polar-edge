@@ -342,16 +342,12 @@ export class BotCommands {
       ]);
       const totalPossibleHours = this.attendanceService.getTotalPossibleHoursToDate();
 
-      //Floors hours to the nearest integer
       const hoursString = Math.floor(hours);
-      //Calculates hoursPercentage based on hours to date
       const hoursPercentage = totalPossibleHours > 0 ? (hours / totalPossibleHours) * 100 : 0;
-      //Rounds hoursPercentage to 2 decimal places
       const hoursPercentageString = hoursPercentage.toFixed(2);
 
       const rankString = rank != null ? ` and ranked ${getOrdinalSuffix(rank)} overall` : "";
 
-      // Calculate required hours based on percentage of hours to date
       const memberRequiredHours = totalPossibleHours * MEMBER_REQUIRED_PERCENTAGE;
       const leadershipRequiredHours = totalPossibleHours * LEADERSHIP_REQUIRED_PERCENTAGE;
 

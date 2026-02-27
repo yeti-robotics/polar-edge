@@ -738,7 +738,6 @@ describe("AttendanceService", () => {
       ["user3", "YETI Robotics", "Test User 3", "2025-01-01T10:00:00Z", "true"],
       ["user3", "YETI Robotics", "Test User 3", "2025-01-01T15:00:00Z", "false"],
     ];
-    // user3 = 5h (rank 1), user2 = 3h (rank 2), user1 = 2h (rank 3)
 
     it("returns 1 for the user with the most hours", async () => {
       sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
@@ -773,7 +772,6 @@ describe("AttendanceService", () => {
     });
 
     describe("handles ties with dense ranking", () => {
-      // joe=5h (rank 1), jim=4h (rank 2), sally/kyle/marvin=3h (rank 3), baxter=2h (rank 4)
       const tiedMockData = [
         ["discordId", "team", "discordName", "date", "isSigningIn"],
         ["joe", "YETI Robotics", "Joe", "2025-01-01T10:00:00Z", "true"],
