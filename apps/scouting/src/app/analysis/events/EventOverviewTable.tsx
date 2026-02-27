@@ -21,7 +21,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { routes } from "@/lib/routes";
-import type { EventOverviewRow } from "./actions";
+import { MainEventOverviewRow } from "./actions";
 
 type SortKey =
   | "teamNumber"
@@ -34,7 +34,7 @@ type SortKey =
   | "matchesScouted"
   | "overallScore";
 
-function SortButton({
+function SortingButton({
   label,
   active,
   dir,
@@ -61,7 +61,7 @@ function SortButton({
   );
 }
 
-export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] }) {
+export function EventOverviewTableClient({ rows }: { rows: MainEventOverviewRow[] }) {
   const [sortKey, setSortKey] = useState<SortKey>("overallScore");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
@@ -265,7 +265,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
             <TableHeader>
               <TableRow>
                 <TableHead>
-                  <SortButton
+                  <SortingButton
                     label="Team #"
                     active={sortKey === "teamNumber"}
                     dir={sortDir}
@@ -273,7 +273,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
                   />
                 </TableHead>
                 <TableHead>
-                  <SortButton
+                  <SortingButton
                     label="Team Name"
                     active={sortKey === "teamName"}
                     dir={sortDir}
@@ -281,7 +281,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
                   />
                 </TableHead>
                 <TableHead className="text-right">
-                  <SortButton
+                  <SortingButton
                     label="Avg Auto"
                     active={sortKey === "avgAutoPoints"}
                     dir={sortDir}
@@ -290,7 +290,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
                   />
                 </TableHead>
                 <TableHead className="text-right">
-                  <SortButton
+                  <SortingButton
                     label="Avg Teleop"
                     active={sortKey === "avgTeleopPoints"}
                     dir={sortDir}
@@ -299,7 +299,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
                   />
                 </TableHead>
                 <TableHead className="text-right">
-                  <SortButton
+                  <SortingButton
                     label="Avg Climb"
                     active={sortKey === "avgClimbPoints"}
                     dir={sortDir}
@@ -308,7 +308,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
                   />
                 </TableHead>
                 <TableHead className="text-right">
-                  <SortButton
+                  <SortingButton
                     label="Avg Total"
                     active={sortKey === "avgTotalPoints"}
                     dir={sortDir}
@@ -317,7 +317,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
                   />
                 </TableHead>
                 <TableHead className="text-right">
-                  <SortButton
+                  <SortingButton
                     label="Uptime %"
                     active={sortKey === "uptimePct"}
                     dir={sortDir}
@@ -326,7 +326,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
                   />
                 </TableHead>
                 <TableHead className="text-right">
-                  <SortButton
+                  <SortingButton
                     label="Matches"
                     active={sortKey === "matchesScouted"}
                     dir={sortDir}
@@ -335,7 +335,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
                   />
                 </TableHead>
                 <TableHead className="text-right">
-                  <SortButton
+                  <SortingButton
                     label="Overall Rank"
                     active={sortKey === "overallScore"}
                     dir={sortDir}
@@ -385,7 +385,7 @@ export function EventOverviewTableClient({ rows }: { rows: EventOverviewRow[] })
 
       {visibleRows.length === 0 && (
         <div className="rounded-lg border p-6 text-center text-muted-foreground">
-          No teams match these filters.
+          No teams match the filter that are selected.
         </div>
       )}
     </div>
