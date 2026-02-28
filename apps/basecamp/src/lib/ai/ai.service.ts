@@ -1,16 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { createGradientProvider } from "@repo/ai";
+import { AppConfigService } from "src/config/config.service";
 
 @Injectable()
 export class AiService {
   private readonly gradientProvider: ReturnType<typeof createGradientProvider>;
 
-  constructor(private readonly configService: ConfigService) {
-    const apiKey = this.configService.get<string>("DO_MODEL_ACCESS_KEY");
-    if (!apiKey) {
-      throw new Error("DO_MODEL_ACCESS_KEY is not set");
-    }
+  constructor(private readonly config: AppConfigService) {
+    const apiKey = this.config.get("doModelAccessKey");
     this.gradientProvider = createGradientProvider(apiKey);
   }
 
