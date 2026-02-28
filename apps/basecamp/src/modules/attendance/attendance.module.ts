@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { AppConfigService } from "src/config/config.service";
-import { type SheetCredentials, SheetService } from "src/lib/sheet/sheet.service";
+import { SheetService } from "src/lib/sheet/sheet.service";
 import { AttendanceRepository } from "./attendance.repository";
 import { AttendanceService } from "./attendance.service";
 import { TwofaController } from "./twofa/twofa.controller";
