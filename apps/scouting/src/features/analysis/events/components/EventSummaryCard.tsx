@@ -7,9 +7,9 @@ import {
 } from "@repo/ui/components/card";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
-import type { MainEventOverviewRow } from "../queries";
+import type { TeamEventOverviewRow } from "../types";
 
-export function EventSummaryCard({ rows }: { rows: MainEventOverviewRow[] }) {
+export function EventSummaryCard({ rows }: { rows: TeamEventOverviewRow[] }) {
   const totalTeams = rows.length;
   const teamsScouted = rows.filter((r) => r.matchesScouted >= 1).length;
   const totalMatchesScouted = rows.reduce((sum, r) => sum + r.matchesScouted, 0);

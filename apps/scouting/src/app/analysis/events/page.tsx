@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@repo/ui/components/card";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import Link from "next/link";
-import { EventOverviewTableClient } from "@/features/analysis/events/components/EventOverviewTable";
+import { EventOverviewTable } from "@/features/analysis/events/components/EventOverViewTable2";
 import { EventSummaryCard } from "@/features/analysis/events/components/EventSummaryCard";
 import { getMainEventOverviewRow } from "@/features/analysis/events/queries";
 import { routes } from "@/lib/routes";
@@ -44,7 +44,7 @@ export default async function EventOverviewPage() {
       </div>
 
       <EventSummaryCard rows={rows} />
-      <EventOverviewTableClient rows={rows} />
+      <EventOverviewTable rows={rows} />
     </div>
   );
 }

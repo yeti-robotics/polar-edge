@@ -12,31 +12,16 @@ import {
   teamMatch,
   vStandFormExpected,
 } from "@/lib/database/schema";
-
-export interface MainEventOverviewRow {
-  teamNumber: number;
-  teamName: string | null;
-  avgAutoPoints: number;
-  avgTeleopPoints: number;
-  avgClimbPoints: number;
-  avgTotalPoints: number;
-  uptimePct: number;
-  matchesScouted: number;
-  drivetrainType: string | null;
-  climbType: string | null;
-  overallScore: number;
-  overallRank: number;
-}
+import type { TeamEventOverviewRow } from "./types";
 
 const round1 = (value: number) => Math.round(value * 10) / 10;
 
-export async function getMainEventOverviewRow(eventId: string): Promise<MainEventOverviewRow[]> {
+export async function getMainEventOverviewRow(eventId: string): Promise<TeamEventOverviewRow[]> {
   "use cache";
   cacheLife("minutes");
   cacheTag(cacheTags.teamMetrics(eventId));
 
   const fuelPointsExpr = sql`
-  //took these cases from schema prior
     (case ${cycle.bucket}
       when 0 then 0.0
       when 1 then 1.0
