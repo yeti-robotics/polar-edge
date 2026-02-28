@@ -1,7 +1,9 @@
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
 import { eq } from "drizzle-orm";
+import { ChevronLeftIcon } from "lucide-react";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { EventOverviewTable } from "@/features/analysis/events/components/EventOverviewTable";
@@ -11,6 +13,7 @@ import { getMainEventOverviewRow } from "@/features/analysis/events/queries";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { event } from "@/lib/database/schema";
+import { routes } from "@/lib/routes";
 
 async function EventAnalysis({
   eventId,
@@ -75,6 +78,14 @@ export default async function EventDetailPage({
 
   return (
     <div className="space-y-6">
+      <Link
+        href={routes.analysis.events}
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <ChevronLeftIcon className="size-4" />
+        All Events
+      </Link>
+
       <div className="flex items-start justify-between border-b pb-4">
         <div>
           <TypographyLabel>Event Analysis</TypographyLabel>
