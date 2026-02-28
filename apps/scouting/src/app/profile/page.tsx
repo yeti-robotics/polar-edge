@@ -1,4 +1,3 @@
-import { Card } from "@repo/ui/components/card";
 import ProfileClient from "./ProfileClient";
 
 export default function ProfilePage() {
@@ -7,14 +6,6 @@ export default function ProfilePage() {
       <div className="max-w-5xl mx-auto">
         <ProfileClient />
       </div>
-      <section>
-        <Card>
-           
-      </Card>
-      </section>
-
-      
     </main>
   );
 }
-

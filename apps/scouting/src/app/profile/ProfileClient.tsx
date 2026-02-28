@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
-import LeaveOrganizationCard from "./LeaveOrganizationCard";
+import { LeaveOrganizationCard } from "./LeaveOrganizationCard";
 import LogoutButton from "./LogoutButton";
 import PasskeyManager from "./passkey/PasskeyManager";
 
@@ -23,7 +23,9 @@ export default function ProfileClient() {
       <div className="min-h-screen flex items-center justify-center bg-black text-white p-8">
         <div className="max-w-xl w-full text-center">
           <h2 className="text-2xl font-semibold mb-2">You're not signed in</h2>
-          <p className="text-sm text-neutral-400">Sign in to view your profile and progress.</p>
+          <p className="text-sm text-neutral-400">
+            Sign in to view your profile and progress.
+          </p>
         </div>
       </div>
     );
@@ -54,11 +56,13 @@ export default function ProfileClient() {
       </header>
 
       <section className="bg-muted-black rounded-lg p-6 ring-ring mb-8 size-full mt-10">
-        <h3 className="text-2xl font-semibold text-foreground-white mb-3">Account</h3>
+        <h3 className="text-2xl font-semibold text-foreground-white mb-3">
+          Account
+        </h3>
         <PasskeyManager />
       </section>
 
-      <LeaveOrganizationCard session={session} activeOrg={activeOrg} />
+      {/* <LeaveOrganizationCard session={session} activeOrg={activeOrg} /> */}
     </>
   );
 }
