@@ -1,11 +1,13 @@
 import "server-only";
 
-import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
   cycle,
+  event,
+  member,
   pitForm,
   standForm,
   team,
@@ -16,10 +18,34 @@ import type { TeamEventOverviewRow } from "./types";
 
 const round1 = (value: number) => Math.round(value * 10) / 10;
 
-export async function getMainEventOverviewRow(eventId: string): Promise<TeamEventOverviewRow[]> {
+export async function listAllEvents() {
+  "use cache";
+  cacheLife("hours");
+
+  return db
+    .select({
+      id: event.id,
+      eventCode: event.eventCode,
+      name: event.name,
+      startDate: event.startDate,
+      endDate: event.endDate,
+    })
+    .from(event)
+    .orderBy(desc(event.startDate));
+}
+
+export async function getMainEventOverviewRow(
+  eventId: string,
+  opts?: { organizationId?: string | null }
+): Promise<TeamEventOverviewRow[]> {
   "use cache";
   cacheLife("minutes");
   cacheTag(cacheTags.teamMetrics(eventId));
+
+  const organizationId = opts?.organizationId ?? null;
+  if (organizationId) {
+    cacheTag(cacheTags.teamMetrics(`${eventId}-${organizationId}`));
+  }
 
   const fuelPointsExpr = sql`
     (case ${cycle.bucket}
@@ -48,27 +74,32 @@ export async function getMainEventOverviewRow(eventId: string): Promise<TeamEven
       .groupBy(cycle.standFormId)
   );
 
+  const standPointsQuery = db
+    .select({
+      teamMatchId: standForm.teamMatchId,
+      autoPoints: sql<number>`
+        coalesce(${standCyclePoints.autoFuelPoints}, 0) + coalesce(${vStandFormExpected.pureClimbAuto}, 0)
+      `.as("auto_points"),
+      teleopPoints: sql<number>`
+        coalesce(${standCyclePoints.teleopFuelPoints}, 0) + coalesce(${vStandFormExpected.pureClimbTeleop}, 0)
+      `.as("teleop_points"),
+      climbPoints: sql<number>`
+        coalesce(${vStandFormExpected.pureClimbTotal}, 0)
+      `.as("climb_points"),
+      totalPoints: sql<number>`
+        coalesce(${vStandFormExpected.expFuelActive}, 0) + coalesce(${vStandFormExpected.expTower}, 0)
+      `.as("total_points"),
+    })
+    .from(standForm)
+    .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
+    .leftJoin(standCyclePoints, eq(standCyclePoints.standFormId, standForm.id));
+
   const standPoints = db.$with("stand_points").as(
-    db
-      .select({
-        teamMatchId: standForm.teamMatchId,
-        autoPoints: sql<number>`
-          coalesce(${standCyclePoints.autoFuelPoints}, 0) + coalesce(${vStandFormExpected.pureClimbAuto}, 0)
-        `.as("auto_points"),
-        teleopPoints: sql<number>`
-          coalesce(${standCyclePoints.teleopFuelPoints}, 0) + coalesce(${vStandFormExpected.pureClimbTeleop}, 0)
-        `.as("teleop_points"),
-        climbPoints: sql<number>`
-          coalesce(${vStandFormExpected.pureClimbTotal}, 0)
-        `.as("climb_points"),
-        totalPoints: sql<number>`
-          coalesce(${vStandFormExpected.expFuelActive}, 0) + coalesce(${vStandFormExpected.expTower}, 0)
-        `.as("total_points"),
-      })
-      .from(standForm)
-      .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
-      .leftJoin(standCyclePoints, eq(standCyclePoints.standFormId, standForm.id))
-      .where(isNull(standForm.deletedAt))
+    organizationId
+      ? standPointsQuery
+          .innerJoin(member, eq(member.id, standForm.scoutMemberId))
+          .where(and(isNull(standForm.deletedAt), eq(member.organizationId, organizationId)))
+      : standPointsQuery.where(isNull(standForm.deletedAt))
   );
 
   const teamMatchConsensusPoints = db.$with("team_match_consensus_points").as(
@@ -118,18 +149,31 @@ export async function getMainEventOverviewRow(eventId: string): Promise<TeamEven
       .groupBy(teamMatch.teamNumber)
   );
 
+  const teamUptimeQuery = db
+    .select({
+      teamNumber: teamMatch.teamNumber,
+      uptimePct: sql<number>`
+        avg((150.0 - least(${standForm.oofTimeSeconds}, 150)) / 150.0 * 100)
+      `.as("uptime_pct"),
+    })
+    .from(standForm)
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId));
+
   const teamUptime = db.$with("team_uptime").as(
-    db
-      .select({
-        teamNumber: teamMatch.teamNumber,
-        uptimePct: sql<number>`
-          avg((150.0 - least(${standForm.oofTimeSeconds}, 150)) / 150.0 * 100)
-        `.as("uptime_pct"),
-      })
-      .from(standForm)
-      .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
-      .where(and(eq(teamMatch.eventId, eventId), isNull(standForm.deletedAt)))
-      .groupBy(teamMatch.teamNumber)
+    organizationId
+      ? teamUptimeQuery
+          .innerJoin(member, eq(member.id, standForm.scoutMemberId))
+          .where(
+            and(
+              eq(teamMatch.eventId, eventId),
+              isNull(standForm.deletedAt),
+              eq(member.organizationId, organizationId)
+            )
+          )
+          .groupBy(teamMatch.teamNumber)
+      : teamUptimeQuery
+          .where(and(eq(teamMatch.eventId, eventId), isNull(standForm.deletedAt)))
+          .groupBy(teamMatch.teamNumber)
   );
 
   const latestPit = db.$with("latest_pit").as(
