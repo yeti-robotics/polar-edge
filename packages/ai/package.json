@@ -4,9 +4,13 @@
   "description": "",
   "private": true,
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "scripts": {
+    "build": "tsc",
     "check-types": "tsc --noEmit",
     "typecheck": "pnpm check-types"
   },
@@ -18,6 +22,6 @@
     "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "^2.0.13"
+    "@ai-sdk/openai-compatible": "^2.0.30"
   }
 }

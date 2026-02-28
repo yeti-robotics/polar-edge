@@ -1,13 +1,14 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { AutoPathForm } from "@/components/auto-path/AutoPathForm";
+import { getTeams } from "@/features/scouting/auto-path/actions";
+import { AutoPathForm } from "@/features/scouting/auto-path/components/AutoPathForm";
 import { auth } from "@/lib/auth";
-import { getTeams } from "../actions";
+import { routes } from "@/lib/routes";
 
 export default async function CreateAutoPathPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
-    redirect("/");
+    redirect(routes.home);
   }
 
   const [teams] = await Promise.all([getTeams()]);

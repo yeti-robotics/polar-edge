@@ -20,6 +20,10 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
   expTower: numeric("exp_tower", { precision: 18, scale: 6 }).notNull(),
   clankMatch: numeric("clank_match", { precision: 18, scale: 6 }).notNull(),
 
+  pureClimbTotal: numeric("pure_climb_total", { precision: 18, scale: 6 }).notNull(),
+  pureClimbAuto: numeric("pure_climb_auto", { precision: 18, scale: 6 }).notNull(),
+  pureClimbTeleop: numeric("pure_climb_teleop", { precision: 18, scale: 6 }).notNull(),
+
   cyclesCount: integer("cycles_count").notNull(),
 }).as(sql`
   with cycle_fuel as (
@@ -51,7 +55,30 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
           when cl.climb_duration >  6.0 then -2.0
           else 0.0
         end)
-      ) as total_climb_pts
+      ) as total_climb_pts,
+      sum(case
+        when cl.climb_success = false then 0.0
+        when cl.climb_level = 0 then 0.0
+        when cl.climb_level = 1 and cl.climb_phase = 'auto' then 15.0
+        when cl.climb_level = 1 then 10.0
+        when cl.climb_level = 2 then 20.0
+        when cl.climb_level = 3 then 30.0
+        else 0.0
+      end) as pure_climb_total,
+      sum(case
+        when cl.climb_success = false or cl.climb_phase != 'auto' then 0.0
+        when cl.climb_level = 1 then 15.0
+        when cl.climb_level = 2 then 20.0
+        when cl.climb_level = 3 then 30.0
+        else 0.0
+      end) as pure_climb_auto,
+      sum(case
+        when cl.climb_success = false or cl.climb_phase != 'teleop' then 0.0
+        when cl.climb_level = 1 then 10.0
+        when cl.climb_level = 2 then 20.0
+        when cl.climb_level = 3 then 30.0
+        else 0.0
+      end) as pure_climb_teleop
     from climb cl
     group by cl.stand_form_id
   )
@@ -63,6 +90,10 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
 
     coalesce(cp.total_climb_pts, 0.0) as exp_tower,
     coalesce(cp.total_climb_pts, 0.0) as clank_match,
+
+    coalesce(cp.pure_climb_total, 0.0) as pure_climb_total,
+    coalesce(cp.pure_climb_auto,  0.0) as pure_climb_auto,
+    coalesce(cp.pure_climb_teleop, 0.0) as pure_climb_teleop,
 
     coalesce(cf.cycles_count, 0)::int as cycles_count
   from stand_form sf
@@ -78,18 +109,25 @@ export const vTeamMatchScoutLatest = pgView("v_team_match_scout_latest", {
   expFuelActive: numeric("exp_fuel_active", { precision: 18, scale: 6 }).notNull(),
   expTower: numeric("exp_tower", { precision: 18, scale: 6 }).notNull(),
   clankMatch: numeric("clank_match", { precision: 18, scale: 6 }).notNull(),
+
+  pureClimbTotal: numeric("pure_climb_total", { precision: 18, scale: 6 }).notNull(),
+  pureClimbAuto: numeric("pure_climb_auto", { precision: 18, scale: 6 }).notNull(),
+  pureClimbTeleop: numeric("pure_climb_teleop", { precision: 18, scale: 6 }).notNull(),
 }).as(sql`
     with ranked as (
       select
         sf.team_match_id,
-  
+
         -- voter id: real scout if present, otherwise stand_form id (prevents dropping rows)
         coalesce(sf.scout_member_id, sf.id::text) as scout_member_id,
-  
+
         e.exp_fuel_active,
         e.exp_tower,
         e.clank_match,
-  
+        e.pure_climb_total,
+        e.pure_climb_auto,
+        e.pure_climb_teleop,
+
         row_number() over (
           partition by sf.team_match_id, coalesce(sf.scout_member_id, sf.id::text)
           order by sf.updated_at desc, sf.created_at desc
@@ -103,7 +141,10 @@ export const vTeamMatchScoutLatest = pgView("v_team_match_scout_latest", {
       scout_member_id,
       exp_fuel_active,
       exp_tower,
-      clank_match
+      clank_match,
+      pure_climb_total,
+      pure_climb_auto,
+      pure_climb_teleop
     from ranked
     where rn = 1
   `);
@@ -115,13 +156,20 @@ export const vTeamMatchConsensus = pgView("v_team_match_consensus", {
   expTower: numeric("exp_tower", { precision: 18, scale: 6 }).notNull(),
   clank: numeric("clank", { precision: 18, scale: 6 }).notNull(),
 
+  pureClimbTotal: numeric("pure_climb_total", { precision: 18, scale: 6 }).notNull(),
+  pureClimbAuto: numeric("pure_climb_auto", { precision: 18, scale: 6 }).notNull(),
+  pureClimbTeleop: numeric("pure_climb_teleop", { precision: 18, scale: 6 }).notNull(),
+
   nScouts: integer("n_scouts").notNull(),
 }).as(sql`
     select
       l.team_match_id,
-      percentile_cont(0.5) within group (order by l.exp_fuel_active) as exp_fuel_active,
-      percentile_cont(0.5) within group (order by l.exp_tower)       as exp_tower,
-      percentile_cont(0.5) within group (order by l.clank_match)     as clank,
+      percentile_cont(0.5) within group (order by l.exp_fuel_active)    as exp_fuel_active,
+      percentile_cont(0.5) within group (order by l.exp_tower)          as exp_tower,
+      percentile_cont(0.5) within group (order by l.clank_match)        as clank,
+      percentile_cont(0.5) within group (order by l.pure_climb_total)   as pure_climb_total,
+      percentile_cont(0.5) within group (order by l.pure_climb_auto)    as pure_climb_auto,
+      percentile_cont(0.5) within group (order by l.pure_climb_teleop)  as pure_climb_teleop,
       count(*)::int as n_scouts
     from v_team_match_scout_latest l
     group by l.team_match_id

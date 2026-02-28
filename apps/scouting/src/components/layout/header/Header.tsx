@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
+import { routes } from "@/lib/routes";
 import { setDefaultOrganizationIfNeeded } from "@/lib/server/organization/default-organization";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
 import { LogoutButton } from "./LogoutButton";
@@ -22,19 +23,19 @@ import { ThemeToggle } from "./ThemeToggle";
 const navItems = [
   {
     label: "Pit Form",
-    href: "/forms/pit",
+    href: routes.forms.pit,
   },
   {
     label: "Stand Form",
-    href: "/forms/stand",
+    href: routes.forms.stand,
   },
   {
-    label: "Data",
-    href: "/data",
+    label: "Analysis",
+    href: routes.analysis.root,
   },
   {
     label: "Picklist",
-    href: "/analysis/picklist",
+    href: routes.picklist.root,
   },
 ];
 
@@ -59,7 +60,7 @@ function UserAvatarFallback() {
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 py-2 overflow-x-hidden border-b bg-background h-(--header-height) flex flex-col justify-between">
+    <header className="sticky top-0 z-50 py-2 min-w-0 border-b bg-background h-(--header-height) flex flex-col justify-between">
       <div className="flex items-center justify-between w-full px-6">
         <div className="flex items-center gap-4">
           <span className="hidden md:block uppercase font-mono text-sm">Polar Edge</span>
@@ -81,9 +82,30 @@ export function Header() {
             {item.label}
           </Link>
         ))}
+        <Suspense fallback={null}>
+          <LeaderboardNavItem />
+        </Suspense>
         <nav />
       </nav>
     </header>
+  );
+}
+
+async function LeaderboardNavItem() {
+  try {
+    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    if (!activeMember) return null;
+  } catch {
+    return null;
+  }
+
+  return (
+    <Link
+      className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+      href={routes.leaderboard}
+    >
+      Leaderboard
+    </Link>
   );
 }
 
@@ -129,16 +151,16 @@ async function UserAvatar() {
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="end" className="min-w-36">
           <DropdownMenuGroup>
-            <DropdownMenuItemLink href="/">
+            <DropdownMenuItemLink href={routes.home}>
               <HomeIcon className="size-4 text-current" />
               <span>Home</span>
             </DropdownMenuItemLink>
-            <DropdownMenuItemLink href="/profile">
+            <DropdownMenuItemLink href={routes.profile}>
               <UserIcon className="size-4 text-current" />
               <span>Profile</span>
             </DropdownMenuItemLink>
             {isAdminOrOwner && (
-              <DropdownMenuItemLink href="/admin">
+              <DropdownMenuItemLink href={routes.admin.root}>
                 <ShieldCheckIcon className="size-4 text-current" />
                 <span>Admin</span>
               </DropdownMenuItemLink>

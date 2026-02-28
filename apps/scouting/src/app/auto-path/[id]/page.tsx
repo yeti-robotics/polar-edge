@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/ca
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PathViewer } from "@/components/auto-path/PathViewer";
-import { getAutoPath } from "../actions";
+import { getAutoPath } from "@/features/scouting/auto-path/actions";
+import { PathViewer } from "@/features/scouting/auto-path/components/PathViewer";
+import { routes } from "@/lib/routes";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-US", {
@@ -29,7 +30,7 @@ async function AutoPathDetail({ id }: { id: string }) {
             <p className="mt-2 text-sm text-muted-foreground">Team {path.teamNumber}</p>
           </div>
           <Button variant="outline" asChild>
-            <Link href="/auto-path">
+            <Link href={routes.autoPath.root}>
               <ArrowLeftIcon className="mr-2 size-4" />
               Back to List
             </Link>

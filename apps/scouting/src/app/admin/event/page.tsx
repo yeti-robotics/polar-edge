@@ -1,12 +1,12 @@
 import { Card, CardContent } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Suspense } from "react";
-import { auth } from "@/lib/auth";
+import { ActiveEventForm } from "@/features/events/components/ActiveEventForm";
+import { EnrichTeamNamesForm } from "@/features/events/components/EnrichTeamNamesForm";
+import { SyncFromTBAForm } from "@/features/events/components/SyncFromTBAForm";
+import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
-import { ActiveEventForm } from "./ActiveEventForm";
-import { SyncFromTBAForm } from "./SyncFromTBAForm";
 
 function LoadingForm() {
   return (
@@ -20,13 +20,7 @@ function LoadingForm() {
 }
 
 async function EventContent() {
-  const requestHeaders = await headers();
-  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-
-  if (activeMember?.role !== "admin" && activeMember?.role !== "owner") {
-    redirect("/");
-  }
-
+  const activeMember = await requireAdminMember();
   const organizationId = activeMember.organizationId;
   const [activeEvent, events] = await Promise.all([
     getActiveEventForOrganization(organizationId),
@@ -47,6 +41,7 @@ async function EventContent() {
         activeEventId={activeEvent?.eventId ?? null}
       />
       <SyncFromTBAForm organizationId={organizationId} />
+      <EnrichTeamNamesForm organizationId={organizationId} />
     </div>
   );
 }
@@ -55,10 +50,10 @@ export default function AdminEventPage() {
   return (
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Active Event</h1>
-        <p className="mt-2 text-muted-foreground">
+        <TypographyH1>Active Event</TypographyH1>
+        <TypographyMuted className="mt-2">
           Set the event your organization is currently focused on
-        </p>
+        </TypographyMuted>
       </div>
       <Suspense fallback={<LoadingForm />}>
         <EventContent />

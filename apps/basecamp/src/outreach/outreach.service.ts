@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { SheetService } from "src/sheet/sheet.service";
-import { roundToTenth } from "src/utils/math.utils";
+import { roundToHundredth, roundToTenth } from "src/utils/math.utils";
 import { z } from "zod";
 
 const OutreachColumnSchema = z.object({
@@ -93,7 +93,7 @@ export class OutreachService {
       // Sum all hours across all users
       const totalHours = outreachData.reduce((sum, entry) => sum + entry.hours, 0);
 
-      return Math.round(totalHours * 100) / 100;
+      return roundToHundredth(totalHours);
     } catch (error) {
       console.error("Error getting total team outreach hours:", error);
       return 0;

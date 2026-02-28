@@ -12,7 +12,26 @@
       "cache": false
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": ["coverage.json"]
+    },
+    "collect-json-reports": {
+      "dependsOn": ["@repo/vitest-config#build", "^test"],
+      "inputs": ["$TURBO_ROOT$/apps/*/coverage.json", "$TURBO_ROOT$/packages/*/coverage.json"],
+      "outputs": ["coverage/raw/**"]
+    },
+    "merge-json-reports": {
+      "dependsOn": ["collect-json-reports"],
+      "inputs": ["coverage/raw/**"],
+      "outputs": ["coverage/merged/**"]
+    },
+    "report": {
+      "dependsOn": ["merge-json-reports"],
+      "inputs": ["coverage/merged/**"],
+      "outputs": ["coverage/report/**"]
+    },
+    "transit": {
+      "dependsOn": ["^transit"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"],

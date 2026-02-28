@@ -17,10 +17,7 @@
       "component": "scouting",
       "release-type": "node",
       "changelog-path": "CHANGELOG.md",
-      "include-component-in-tag": true,
-      "versioning": "prerelease",
-      "prerelease": true,
-      "prerelease-type": "alpha"
+      "include-component-in-tag": true
     }
   },
   "bootstrap-sha": "5b48f3f0186f7114cde1fa1cb7bb16f2053ba7ba",

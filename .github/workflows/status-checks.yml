@@ -35,10 +35,26 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml', 'turbo.json', '**/package.json') }}
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml') }}-
+            ${{ runner.os }}-turbo-${{ github.ref_name }}-
             ${{ runner.os }}-turbo-
+
+      - name: Cache Next.js build (scouting)
+        uses: actions/cache@v4
+        with:
+          path: apps/scouting/.next/cache
+          key: ${{ runner.os }}-nextjs-scouting-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/scouting/**/*.ts', 'apps/scouting/**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-scouting-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - name: Cache Next.js build (basecamp-fe)
+        uses: actions/cache@v4
+        with:
+          path: apps/basecamp-fe/.next/cache
+          key: ${{ runner.os }}-nextjs-basecamp-fe-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/basecamp-fe/**/*.ts', 'apps/basecamp-fe/**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-basecamp-fe-${{ hashFiles('pnpm-lock.yaml') }}-
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4

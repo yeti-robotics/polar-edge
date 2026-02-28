@@ -9,10 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { EyeIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { getAutoPaths } from "./actions";
+import { getAutoPaths } from "@/features/scouting/auto-path/actions";
+import { routes } from "@/lib/routes";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-US", {
@@ -99,7 +101,7 @@ async function AutoPathsContent() {
               </TableCell>
               <TableCell>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href={`/auto-path/${path.id}`}>
+                  <Link href={routes.autoPath.detail(path.id)}>
                     <EyeIcon className="mr-2 size-4" />
                     View
                   </Link>
@@ -118,11 +120,11 @@ export default function AutoPathsPage() {
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl tracking-tight">Auto Paths</h1>
-          <p className="mt-2 text-sm text-muted-foreground">View and manage robot auto paths</p>
+          <TypographyH1>Auto Paths</TypographyH1>
+          <TypographyMuted className="mt-2">View and manage robot auto paths</TypographyMuted>
         </div>
         <Button asChild>
-          <Link href="/auto-path/create">
+          <Link href={routes.autoPath.create}>
             <PlusIcon className="mr-2 size-4" />
             Create Path
           </Link>

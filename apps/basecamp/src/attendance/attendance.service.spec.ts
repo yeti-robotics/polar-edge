@@ -2,11 +2,7 @@ import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { SheetService } from "../sheet/sheet.service";
-import {
-  EXPIRED_SESSION_THRESHOLD_MS,
-  FORGOT_SIGNOUT_CREDIT_MS,
-  STALE_SIGNIN_THRESHOLD_MS,
-} from "./attendance.constants";
+import { EXPIRED_SESSION_THRESHOLD_MS, FORGOT_SIGNOUT_CREDIT_MS } from "./attendance.constants";
 import { AttendanceService } from "./attendance.service";
 import { TwofaService } from "./twofa/twofa.service";
 
@@ -177,13 +173,14 @@ describe("AttendanceService", () => {
       expect(sheetService.appendSheetValues).not.toHaveBeenCalled();
     });
 
-    it("returns 'You are currently signed in.' at exactly the stale threshold", async () => {
-      const now = new Date("2025-01-02T04:00:00Z");
+    it("returns 'You are currently signed in.' when signed in earlier the same Eastern day", async () => {
+      // now = 2025-01-01T22:00:00 ET (03:00 UTC Jan 2), signIn = 2025-01-01T08:00:00 ET (13:00 UTC Jan 1)
+      // Same Eastern calendar day, 14h gap — should NOT be stale
+      const now = new Date("2025-01-02T03:00:00Z"); // 10pm ET Jan 1
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      // Exactly 18h ago — uses > not >=, so should NOT be stale
-      const signInTime = new Date(now.getTime() - STALE_SIGNIN_THRESHOLD_MS).toISOString();
+      const signInTime = new Date("2025-01-01T13:00:00Z").toISOString(); // 8am ET Jan 1
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
 
       const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
@@ -191,12 +188,14 @@ describe("AttendanceService", () => {
       expect(result).toEqual({ success: false, message: "You are currently signed in." });
     });
 
-    it("auto-credits 1.5h and signs in when session is stale", async () => {
-      const now = new Date("2025-01-02T05:00:00Z");
+    it("auto-credits 1.5h and signs in when session is stale (different Eastern day, >6h)", async () => {
+      // now = 2025-01-02T15:00:00Z (10am ET Jan 2), signIn = 2025-01-01T15:00:00Z (10am ET Jan 1)
+      // Different Eastern calendar day, 24h gap — should be stale
+      const now = new Date("2025-01-02T15:00:00Z");
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      const signInTime = new Date(now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1).toISOString();
+      const signInTime = new Date("2025-01-01T15:00:00Z").toISOString();
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
       sheetService.appendSheetValues.mockResolvedValue(successResult());
 
@@ -219,12 +218,12 @@ describe("AttendanceService", () => {
       expect(secondCallRow[4]).toBe("true"); // isSigningIn = true
     });
 
-    it("returns failure when auto sign-out append fails", async () => {
-      const now = new Date("2025-01-02T05:00:00Z");
+    it("returns failure when auto sign-out append fails (stale cross-day session)", async () => {
+      const now = new Date("2025-01-02T15:00:00Z");
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      const signInTime = new Date(now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1).toISOString();
+      const signInTime = new Date("2025-01-01T15:00:00Z").toISOString();
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
       sheetService.appendSheetValues.mockResolvedValue(failResult());
 
@@ -233,12 +232,12 @@ describe("AttendanceService", () => {
       expect(result.success).toBe(false);
     });
 
-    it("returns failure when new sign-in append fails after successful auto sign-out", async () => {
-      const now = new Date("2025-01-02T05:00:00Z");
+    it("returns failure when new sign-in append fails after successful auto sign-out (stale cross-day session)", async () => {
+      const now = new Date("2025-01-02T15:00:00Z");
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      const signInTime = new Date(now.getTime() - STALE_SIGNIN_THRESHOLD_MS - 1).toISOString();
+      const signInTime = new Date("2025-01-01T15:00:00Z").toISOString();
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
       sheetService.appendSheetValues
         .mockResolvedValueOnce(successResult())
@@ -249,22 +248,28 @@ describe("AttendanceService", () => {
       expect(result.success).toBe(false);
     });
 
-    it("returns 'Failed to sign in.' when append returns 0 updated rows", async () => {
+    it("returns failure message when append returns 0 updated rows", async () => {
       sheetService.getSheetValues.mockResolvedValue([]);
       sheetService.appendSheetValues.mockResolvedValue(failResult());
 
       const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
 
-      expect(result).toEqual({ success: false, message: "Failed to sign in." });
+      expect(result).toEqual({
+        success: false,
+        message: "Failed to sign in. Please try again or let a mentor know.",
+      });
     });
 
-    it("returns 'Failed to sign in.' when append throws", async () => {
+    it("returns failure message when append throws", async () => {
       sheetService.getSheetValues.mockResolvedValue([]);
       sheetService.appendSheetValues.mockRejectedValue(new Error("Sheet API error"));
 
       const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
 
-      expect(result).toEqual({ success: false, message: "Failed to sign in." });
+      expect(result).toEqual({
+        success: false,
+        message: "Failed to sign in. Please try again or let a mentor know.",
+      });
     });
 
     it("maps YETI guild to 'YETI Robotics'", async () => {
@@ -348,12 +353,14 @@ describe("AttendanceService", () => {
       expect(result).toEqual({ success: true });
     });
 
-    it("regular user at 18h+1ms gets 1.5h credit (expired session)", async () => {
-      const now = new Date("2025-01-02T04:00:01Z");
+    it("expired session on a different Eastern day gets 1.5h credit", async () => {
+      // now = 2025-01-02T15:00:00Z (10am ET Jan 2), signIn = 2025-01-01T15:00:00Z (10am ET Jan 1)
+      // Different Eastern day (>18h ago) → signOut redirects to signIn → isStaleSession=true → 1.5h credit
+      const now = new Date("2025-01-02T15:00:00Z");
       vi.useFakeTimers();
       vi.setSystemTime(now);
 
-      const signInTime = new Date(now.getTime() - EXPIRED_SESSION_THRESHOLD_MS - 1).toISOString();
+      const signInTime = new Date("2025-01-01T15:00:00Z").toISOString();
       sheetService.getSheetValues.mockResolvedValue([makeRow("user1", signInTime, true)]);
       sheetService.appendSheetValues.mockResolvedValue(successResult());
 
@@ -445,7 +452,7 @@ describe("AttendanceService", () => {
       expect(sheetService.appendSheetValues).toHaveBeenCalledTimes(1);
     });
 
-    it("returns 'Failed to sign out.' when append returns 0 updated rows", async () => {
+    it("returns failure message when append returns 0 updated rows", async () => {
       const now = new Date("2025-01-01T12:00:00Z");
       vi.useFakeTimers();
       vi.setSystemTime(now);
@@ -456,10 +463,13 @@ describe("AttendanceService", () => {
 
       const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
 
-      expect(result).toEqual({ success: false, message: "Failed to sign out." });
+      expect(result).toEqual({
+        success: false,
+        message: "Failed to sign out. Please try again or let a mentor know.",
+      });
     });
 
-    it("returns 'Failed to sign out.' when append throws", async () => {
+    it("returns failure message when append throws", async () => {
       const now = new Date("2025-01-01T12:00:00Z");
       vi.useFakeTimers();
       vi.setSystemTime(now);
@@ -470,7 +480,10 @@ describe("AttendanceService", () => {
 
       const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
 
-      expect(result).toEqual({ success: false, message: "Failed to sign out." });
+      expect(result).toEqual({
+        success: false,
+        message: "Failed to sign out. Please try again or let a mentor know.",
+      });
     });
   });
 
@@ -712,6 +725,96 @@ describe("AttendanceService", () => {
       expect(result[0].totalHours).toBe(5);
       expect(result[1].totalHours).toBe(3);
       expect(result[2].totalHours).toBe(2);
+    });
+  });
+
+  describe("getUserRank", () => {
+    const mockAllAttendance = [
+      ["discordId", "team", "discordName", "date", "isSigningIn"],
+      ["user1", "YETI Robotics", "Test User 1", "2025-01-01T10:00:00Z", "true"],
+      ["user1", "YETI Robotics", "Test User 1", "2025-01-01T12:00:00Z", "false"],
+      ["user2", "YETI Robotics", "Test User 2", "2025-01-01T10:00:00Z", "true"],
+      ["user2", "YETI Robotics", "Test User 2", "2025-01-01T13:00:00Z", "false"],
+      ["user3", "YETI Robotics", "Test User 3", "2025-01-01T10:00:00Z", "true"],
+      ["user3", "YETI Robotics", "Test User 3", "2025-01-01T15:00:00Z", "false"],
+    ];
+
+    it("returns 1 for the user with the most hours", async () => {
+      sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
+      expect(await service.getUserRank("user3")).toBe(1);
+    });
+
+    it("returns the correct rank for a mid-range user", async () => {
+      sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
+      expect(await service.getUserRank("user2")).toBe(2);
+    });
+
+    it("returns the last rank for the user with fewest hours", async () => {
+      sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
+      expect(await service.getUserRank("user1")).toBe(3);
+    });
+
+    it("returns null for a user not present in the sheet", async () => {
+      sheetService.getSheetValues.mockResolvedValue(mockAllAttendance);
+      expect(await service.getUserRank("unknown")).toBeNull();
+    });
+
+    it("returns null when the sheet has only a header row", async () => {
+      sheetService.getSheetValues.mockResolvedValue([
+        ["discordId", "team", "discordName", "date", "isSigningIn"],
+      ]);
+      expect(await service.getUserRank("user1")).toBeNull();
+    });
+
+    it("returns null on API error", async () => {
+      sheetService.getSheetValues.mockRejectedValue(new Error("API Error"));
+      expect(await service.getUserRank("user1")).toBeNull();
+    });
+
+    describe("handles ties with dense ranking", () => {
+      const tiedMockData = [
+        ["discordId", "team", "discordName", "date", "isSigningIn"],
+        ["joe", "YETI Robotics", "Joe", "2025-01-01T10:00:00Z", "true"],
+        ["joe", "YETI Robotics", "Joe", "2025-01-01T15:00:00Z", "false"],
+        ["jim", "YETI Robotics", "Jim", "2025-01-01T10:00:00Z", "true"],
+        ["jim", "YETI Robotics", "Jim", "2025-01-01T14:00:00Z", "false"],
+        ["sally", "YETI Robotics", "Sally", "2025-01-01T10:00:00Z", "true"],
+        ["sally", "YETI Robotics", "Sally", "2025-01-01T13:00:00Z", "false"],
+        ["kyle", "YETI Robotics", "Kyle", "2025-01-01T10:00:00Z", "true"],
+        ["kyle", "YETI Robotics", "Kyle", "2025-01-01T13:00:00Z", "false"],
+        ["marvin", "YETI Robotics", "Marvin", "2025-01-01T10:00:00Z", "true"],
+        ["marvin", "YETI Robotics", "Marvin", "2025-01-01T13:00:00Z", "false"],
+        ["baxter", "YETI Robotics", "Baxter", "2025-01-01T10:00:00Z", "true"],
+        ["baxter", "YETI Robotics", "Baxter", "2025-01-01T12:00:00Z", "false"],
+      ];
+
+      beforeEach(() => {
+        sheetService.getSheetValues.mockResolvedValue(tiedMockData);
+      });
+
+      it("returns rank 1 for the user with the most hours", async () => {
+        expect(await service.getUserRank("joe")).toBe(1);
+      });
+
+      it("returns rank 2 for the second-place user", async () => {
+        expect(await service.getUserRank("jim")).toBe(2);
+      });
+
+      it("returns rank 3 for the first tied user", async () => {
+        expect(await service.getUserRank("sally")).toBe(3);
+      });
+
+      it("returns rank 3 for a mid tied user", async () => {
+        expect(await service.getUserRank("kyle")).toBe(3);
+      });
+
+      it("returns rank 3 for the last tied user", async () => {
+        expect(await service.getUserRank("marvin")).toBe(3);
+      });
+
+      it("returns rank 4 (not 6) for the user after the tied group", async () => {
+        expect(await service.getUserRank("baxter")).toBe(4);
+      });
     });
   });
 
