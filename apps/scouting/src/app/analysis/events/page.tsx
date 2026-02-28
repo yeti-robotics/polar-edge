@@ -1,12 +1,12 @@
 import { Card, CardContent } from "@repo/ui/components/card";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import Link from "next/link";
+import { EventOverviewTableClient } from "@/features/analysis/events/components/EventOverviewTable";
+import { EventSummaryCard } from "@/features/analysis/events/components/EventSummaryCard";
+import { getMainEventOverviewRow } from "@/features/analysis/events/queries";
 import { routes } from "@/lib/routes";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { getMainEventOverviewRow } from "./actions";
-import { EventOverviewTableClient } from "./EventOverviewTable";
-import { EventSummaryCard } from "./EventSummaryCard";
 
 export default async function EventOverviewPage() {
   const activeMember = await requireActiveMember();

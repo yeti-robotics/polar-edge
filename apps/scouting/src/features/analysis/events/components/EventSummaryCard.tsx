@@ -7,7 +7,7 @@ import {
 } from "@repo/ui/components/card";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
-import type { MainEventOverviewRow } from "./actions";
+import type { MainEventOverviewRow } from "../queries";
 
 export function EventSummaryCard({ rows }: { rows: MainEventOverviewRow[] }) {
   const totalTeams = rows.length;

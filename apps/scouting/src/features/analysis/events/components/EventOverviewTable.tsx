@@ -23,7 +23,7 @@ import { ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { routes } from "@/lib/routes";
-import { MainEventOverviewRow } from "./actions";
+import { MainEventOverviewRow } from "../queries";
 
 type SortKey =
   | "teamNumber"
