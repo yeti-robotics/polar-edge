@@ -2,9 +2,9 @@ import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { IntentsBitField } from "discord.js";
 import { NecordModule } from "necord";
-import { AttendanceModule } from "src/attendance/attendance.module";
-import { OutreachModule } from "src/outreach/outreach.module";
-import { HandbookModule } from "../handbook/handbook.module";
+import { AttendanceModule } from "src/modules/attendance/attendance.module";
+import { OutreachModule } from "src/modules/outreach/outreach.module";
+import { HandbookModule } from "../modules/handbook/handbook.module";
 import { BotCommands } from "./bot.commands";
 
 @Module({

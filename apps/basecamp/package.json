@@ -35,6 +35,7 @@
     "express": "^5.2.1",
     "google-auth-library": "^10.6.1",
     "necord": "^6.12.4",
+    "neverthrow": "^8.2.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "zod": "catalog:"

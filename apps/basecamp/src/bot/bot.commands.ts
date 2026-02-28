@@ -2,25 +2,17 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { type ChatInputCommandInteraction, GuildMember, MessageFlags } from "discord.js";
 import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
+import { getOrdinalSuffix, roundToTenth } from "src/lib/utils/math.utils";
 import {
   AdminSignInDto,
   AdminSignOutDto,
   AttendanceSignInDto,
   AttendanceSignOutDto,
-} from "src/attendance/attendance.dto";
-import { AttendanceService } from "src/attendance/attendance.service";
-import { HandbookService } from "src/handbook/handbook.service";
-import { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
-import { OutreachService } from "src/outreach/outreach.service";
-import {
-  ceilToInteger,
-  floorToInteger,
-  formatPercentage,
-  getOrdinalSuffix,
-  msToSeconds,
-  roundProgressPercentage,
-  roundToTenth,
-} from "src/utils/math.utils";
+} from "src/modules/attendance/attendance.dto";
+import { AttendanceService } from "src/modules/attendance/attendance.service";
+import { HandbookService } from "src/modules/handbook/handbook.service";
+import { HandbookQuestionDto } from "src/modules/handbook/handbook-question.dto";
+import { OutreachService } from "src/modules/outreach/outreach.service";
 
 // Percentage requirements based on hours to date
 const MEMBER_REQUIRED_PERCENTAGE = 0.75; // 75% of hours to date
