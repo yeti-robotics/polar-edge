@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import {
@@ -17,7 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { cn } from "@repo/ui/lib/utils";
+import { ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { routes } from "@/lib/routes";
@@ -47,17 +49,24 @@ function SortingButton({
   onClick: () => void;
   right?: boolean;
 }) {
-  const Icon = !active ? ArrowUpDown : dir === "asc" ? ArrowUp : ArrowDown;
+  const Icon = ArrowUpDown;
 
   return (
-    <button
+    <Button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground ${right ? "ml-auto" : ""}`}
+      className={cn(
+        "inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground",
+        { "ml-auto": right }
+      )}
     >
       <span>{label}</span>
-      <Icon className="h-3.5 w-3.5" />
-    </button>
+      <Icon
+        className={`h-3.5 w-3.5 transform transition-transform ${
+          active ? (dir === "asc" ? "rotate-180" : "") : ""
+        }`}
+      />
+    </Button>
   );
 }
 

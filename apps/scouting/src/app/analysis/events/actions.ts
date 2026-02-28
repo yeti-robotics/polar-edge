@@ -256,5 +256,3 @@ export async function getMainEventOverviewRow(eventId: string): Promise<MainEven
     overallRank: rankByTeam.get(row.teamNumber) ?? withScore.length,
   }));
 }
-
-//godbless autocomplete...

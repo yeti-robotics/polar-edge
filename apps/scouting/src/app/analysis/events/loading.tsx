@@ -1,4 +1,3 @@
-//basic loading page made here, notes for later: can add some skeletons for the charts and tables to make it look nicer if we have time.
 import { Skeleton } from "@repo/ui/components/skeleton";
 
 export default function Loading() {

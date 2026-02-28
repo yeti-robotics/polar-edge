@@ -23,7 +23,7 @@ export function OofActiveLayout() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 py-4 min-h-[280px]">
+    <div className="flex flex-col items-center gap-4 py-4 min-h-70">
       <div className="flex flex-col items-center justify-center gap-2">
         <div>
           <div className="text-6xl font-bold tabular-nums animate-pulse">{elapsedSeconds}s</div>
