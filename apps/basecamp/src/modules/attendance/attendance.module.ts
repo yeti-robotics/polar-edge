@@ -26,10 +26,10 @@ import { TwofaService } from "./twofa/twofa.service";
     {
       provide: SheetService,
       useFactory: (config: AppConfigService) => {
-        const credentials = JSON.parse(
-          Buffer.from(config.get("googleCredentials"), "base64").toString("utf-8")
-        ) as SheetCredentials;
-        return new SheetService(credentials, config.get("attendanceSpreadsheetId"));
+        return new SheetService(
+          config.get("googleCredentials"),
+          config.get("attendanceSpreadsheetId")
+        );
       },
       inject: [AppConfigService],
     },
