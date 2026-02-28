@@ -12,7 +12,15 @@ import { AttendanceService } from "src/attendance/attendance.service";
 import { HandbookService } from "src/handbook/handbook.service";
 import { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
 import { OutreachService } from "src/outreach/outreach.service";
-import { getOrdinalSuffix, roundToTenth } from "src/utils/math.utils";
+import {
+  ceilToInteger,
+  floorToInteger,
+  formatPercentage,
+  getOrdinalSuffix,
+  msToSeconds,
+  roundProgressPercentage,
+  roundToTenth,
+} from "src/utils/math.utils";
 
 // Percentage requirements based on hours to date
 const MEMBER_REQUIRED_PERCENTAGE = 0.75; // 75% of hours to date
@@ -80,7 +88,7 @@ export class BotCommands {
     if (requests.length >= config.maxRequests) {
       const oldestRequest = requests[0];
       if (oldestRequest !== undefined) {
-        const waitTime = Math.ceil((oldestRequest + config.windowMs - now) / 1000);
+        const waitTime = msToSeconds(oldestRequest + config.windowMs - now);
         return { limited: true, waitTime };
       }
     }
@@ -305,15 +313,9 @@ export class BotCommands {
     let outreachString = `:snowflake: Outreach for ${nickname} :snowflake:\n\n**Total hours:** ${hourTotal}`;
 
     if (hourTotal < 50) {
-      outreachString += `\n- You need ${50 - hourTotal} more hours to reach the rookie minimum (${Math.round(
-        (100 * hourTotal) / 50
-      )}% complete)\n- You need ${100 - hourTotal} more hours to reach the veteran minimum (${Math.round(
-        (100 * hourTotal) / 100
-      )}% complete)`;
+      outreachString += `\n- You need ${50 - hourTotal} more hours to reach the rookie minimum (${roundProgressPercentage(hourTotal, 50)}% complete)\n- You need ${100 - hourTotal} more hours to reach the veteran minimum (${roundProgressPercentage(hourTotal, 100)}% complete)`;
     } else if (hourTotal < 100) {
-      outreachString += `\n- ✅ Rookie minimum achieved!\n- You need ${100 - hourTotal} more hours to reach the veteran minimum (${Math.round(
-        (100 * hourTotal) / 100
-      )}% complete)`;
+      outreachString += `\n- ✅ Rookie minimum achieved!\n- You need ${100 - hourTotal} more hours to reach the veteran minimum (${roundProgressPercentage(hourTotal, 100)}% complete)`;
     } else {
       outreachString += `\n- 🎉 Veteran minimum achieved! Great work!`;
     }
@@ -342,28 +344,29 @@ export class BotCommands {
       ]);
       const totalPossibleHours = this.attendanceService.getTotalPossibleHoursToDate();
 
-      const hoursString = Math.floor(hours);
+      const hoursString = floorToInteger(hours);
       const hoursPercentage = totalPossibleHours > 0 ? (hours / totalPossibleHours) * 100 : 0;
-      const hoursPercentageString = hoursPercentage.toFixed(2);
+      const hoursPercentageString = formatPercentage(hoursPercentage);
 
       const rankString = rank != null ? ` and ranked ${getOrdinalSuffix(rank)} overall` : "";
 
       const memberRequiredHours = totalPossibleHours * MEMBER_REQUIRED_PERCENTAGE;
       const leadershipRequiredHours = totalPossibleHours * LEADERSHIP_REQUIRED_PERCENTAGE;
 
+      const totalPossibleHoursDisplay = floorToInteger(totalPossibleHours);
       if (hours >= leadershipRequiredHours) {
         return interaction.reply(
-          `You're currently above the minimum hours for leadership${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! :tada:`
+          `You're currently above the minimum hours for leadership${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! :tada:`
         );
       } else if (hours >= memberRequiredHours) {
-        const remainingHours = Math.ceil(leadershipRequiredHours - hours);
+        const remainingHours = ceilToInteger(leadershipRequiredHours - hours);
         return interaction.reply(
-          `You've currently above the minimum hours for members${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
+          `You've currently above the minimum hours for members${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
         );
       } else {
-        const remainingHours = Math.ceil(memberRequiredHours - hours);
+        const remainingHours = ceilToInteger(memberRequiredHours - hours);
         return interaction.reply(
-          `You've got ${hoursString} hours${rankString} (${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
+          `You've got ${hoursString} hours${rankString} (${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
         );
       }
     } catch (error) {
