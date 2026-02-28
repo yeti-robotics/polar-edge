@@ -12,7 +12,7 @@ import { AttendanceService } from "src/attendance/attendance.service";
 import { HandbookService } from "src/handbook/handbook.service";
 import { HandbookQuestionDto } from "src/handbook/handbook-question.dto";
 import { OutreachService } from "src/outreach/outreach.service";
-import { roundToTenth } from "src/utils/math.utils";
+import { getOrdinalSuffix, roundToTenth } from "src/utils/math.utils";
 
 // Percentage requirements based on hours to date
 const MEMBER_REQUIRED_PERCENTAGE = 0.75; // 75% of hours to date
@@ -336,33 +336,34 @@ export class BotCommands {
     }
 
     try {
-      const hours = await this.attendanceService.getUserHours(interaction.user.id);
+      const [hours, rank] = await Promise.all([
+        this.attendanceService.getUserHours(interaction.user.id),
+        this.attendanceService.getUserRank(interaction.user.id),
+      ]);
       const totalPossibleHours = this.attendanceService.getTotalPossibleHoursToDate();
 
-      //Floors hours to the nearest integer
       const hoursString = Math.floor(hours);
-      //Calculates hoursPercentage based on hours to date
       const hoursPercentage = totalPossibleHours > 0 ? (hours / totalPossibleHours) * 100 : 0;
-      //Rounds hoursPercentage to 2 decimal places
       const hoursPercentageString = hoursPercentage.toFixed(2);
 
-      // Calculate required hours based on percentage of hours to date
+      const rankString = rank != null ? ` and ranked ${getOrdinalSuffix(rank)} overall` : "";
+
       const memberRequiredHours = totalPossibleHours * MEMBER_REQUIRED_PERCENTAGE;
       const leadershipRequiredHours = totalPossibleHours * LEADERSHIP_REQUIRED_PERCENTAGE;
 
       if (hours >= leadershipRequiredHours) {
         return interaction.reply(
-          `You're currently above the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! :tada:`
+          `You're currently above the minimum hours for leadership${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! :tada:`
         );
       } else if (hours >= memberRequiredHours) {
         const remainingHours = Math.ceil(leadershipRequiredHours - hours);
         return interaction.reply(
-          `You've currently above the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
+          `You've currently above the minimum hours for members${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
         );
       } else {
         const remainingHours = Math.ceil(memberRequiredHours - hours);
         return interaction.reply(
-          `You've got ${hoursString} hours (${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
+          `You've got ${hoursString} hours${rankString} (${hoursPercentageString}% of ${Math.floor(totalPossibleHours)} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
         );
       }
     } catch (error) {
