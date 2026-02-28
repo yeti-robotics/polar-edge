@@ -406,12 +406,10 @@ export class AttendanceService {
   public async getTopMembersByHours(limit: number = DEFAULT_LEADERBOARD_LIMIT) {
     try {
       const sorted = await this.getAllMembersSortedByHours();
-      return sorted
-        .slice(0, limit)
-        .map(({ userName, totalHours }) => ({
-          userName,
-          totalHours: roundToHundredth(totalHours),
-        }));
+      return sorted.slice(0, limit).map(({ userName, totalHours }) => ({
+        userName,
+        totalHours: roundToHundredth(totalHours.toFixed(2)),
+      }));
     } catch (error) {
       this.logger.error(`Error getting attendance leaderboard:`, error);
       return [];
