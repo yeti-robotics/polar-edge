@@ -30,12 +30,7 @@ export function EventScopeControls({ hasOrg }: Props) {
       <Label htmlFor="org-scope" className="text-sm text-muted-foreground">
         My Organization Only
       </Label>
-      <Switch
-        id="org-scope"
-        size="sm"
-        checked={orgScope}
-        onCheckedChange={handleOrgScopeChange}
-      />
+      <Switch id="org-scope" size="sm" checked={orgScope} onCheckedChange={handleOrgScopeChange} />
     </div>
   );
 }

@@ -30,12 +30,7 @@ export function EventSelectorControls({ hasOrg }: Props) {
       <Label htmlFor="org-only" className="text-sm text-muted-foreground">
         My Org Events Only
       </Label>
-      <Switch
-        id="org-only"
-        size="sm"
-        checked={orgOnly}
-        onCheckedChange={handleOrgOnlyChange}
-      />
+      <Switch id="org-only" size="sm" checked={orgOnly} onCheckedChange={handleOrgOnlyChange} />
     </div>
   );
 }

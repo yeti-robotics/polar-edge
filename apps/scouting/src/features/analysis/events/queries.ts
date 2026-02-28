@@ -94,13 +94,15 @@ export async function getMainEventOverviewRow(
     .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
     .leftJoin(standCyclePoints, eq(standCyclePoints.standFormId, standForm.id));
 
-  const standPoints = db.$with("stand_points").as(
-    organizationId
-      ? standPointsQuery
-          .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-          .where(and(isNull(standForm.deletedAt), eq(member.organizationId, organizationId)))
-      : standPointsQuery.where(isNull(standForm.deletedAt))
-  );
+  const standPoints = db
+    .$with("stand_points")
+    .as(
+      organizationId
+        ? standPointsQuery
+            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
+            .where(and(isNull(standForm.deletedAt), eq(member.organizationId, organizationId)))
+        : standPointsQuery.where(isNull(standForm.deletedAt))
+    );
 
   const teamMatchConsensusPoints = db.$with("team_match_consensus_points").as(
     db
