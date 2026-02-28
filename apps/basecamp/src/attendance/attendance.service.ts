@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { SheetService } from "src/sheet/sheet.service";
+import { roundToHundredth } from "src/utils/math.utils";
 import { z } from "zod";
 import {
   BOOLEAN_STRINGS,
@@ -407,7 +408,7 @@ export class AttendanceService {
       const sorted = await this.getAllMembersSortedByHours();
       return sorted.slice(0, limit).map(({ userName, totalHours }) => ({
         userName,
-        totalHours: parseFloat(totalHours.toFixed(2)),
+        totalHours: roundToHundredth(totalHours),
       }));
     } catch (error) {
       this.logger.error(`Error getting attendance leaderboard:`, error);
