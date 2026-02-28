@@ -36,7 +36,7 @@ export function SidebarSheet({ title, links }: SidebarSheetProps) {
           </SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col px-3 gap-1">
-          {links.map(({ href, label, icon: Icon, exact }) => {
+          {links.map(({ href, label, icon, exact }) => {
             const isActive = exact
               ? pathname === href
               : pathname === href || pathname.startsWith(`${href}/`);
@@ -50,7 +50,7 @@ export function SidebarSheet({ title, links }: SidebarSheetProps) {
                     isActive && "bg-sidebar-accent text-sidebar-foreground font-medium"
                   )}
                 >
-                  <Icon className="size-4 shrink-0" />
+                  {icon}
                   {label}
                 </Link>
               </SheetClose>
