@@ -1,5 +1,7 @@
 import { Test, type TestingModule } from "@nestjs/testing";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
+import { NecordThrottlerGuard } from "./handbook.guard";
 import { HandbookCommands } from "./handbook.commands";
 import { HandbookService } from "./handbook.service";
 
@@ -24,8 +26,10 @@ type MockHandbookService = {
 
 function makeModule() {
   return Test.createTestingModule({
+    imports: [ThrottlerModule.forRoot([{ name: "default", limit: 2, ttl: 60000 }])],
     providers: [
       HandbookCommands,
+      NecordThrottlerGuard,
       {
         provide: HandbookService,
         useValue: {
@@ -85,25 +89,6 @@ describe("HandbookCommands", () => {
   // ─── /handbook ────────────────────────────────────────────────────────────
 
   describe("onHandbook", () => {
-    it("replies with rate-limit message when global limit is exceeded", async () => {
-      const interaction = makeInteraction();
-
-      // Exhaust the global rate limit (maxRequests = 2)
-      service.askHandbookQuestion.mockResolvedValue(makeResponse());
-      await commands.onHandbook([interaction] as never, { question: "q1" });
-      await commands.onHandbook([interaction] as never, { question: "q2" });
-
-      // Third call should be rate-limited
-      const blockedInteraction = makeInteraction();
-      await commands.onHandbook([blockedInteraction] as never, { question: "q3" });
-
-      expect(blockedInteraction.reply).toHaveBeenCalledWith(
-        expect.objectContaining({
-          content: expect.stringContaining("The handbook is currently busy"),
-        })
-      );
-    });
-
     it("calls handbookService.askHandbookQuestion with the user's question", async () => {
       const interaction = makeInteraction();
       service.askHandbookQuestion.mockResolvedValue(makeResponse({ text: "The answer is 42." }));
@@ -163,6 +148,19 @@ describe("HandbookCommands", () => {
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("Prompt: 10"));
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("Completion: 20"));
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("Total: 30"));
+    });
+
+    it("does not log token usage when response.usage is absent", async () => {
+      const interaction = makeInteraction();
+      // biome-ignore lint/complexity/useLiteralKeys: accessing private field in test
+      const logSpy = vi.spyOn(commands["logger"], "log");
+      service.askHandbookQuestion.mockResolvedValue(
+        { text: "An answer.", usage: undefined, finishReason: "stop" } as unknown as HandbookResponse
+      );
+
+      await commands.onHandbook([interaction] as never, { question: "How?" });
+
+      expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining("Prompt:"));
     });
 
     it("throws error when service throws", async () => {

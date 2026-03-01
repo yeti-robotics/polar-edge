@@ -25,6 +25,7 @@
     "@nestjs/core": "^11.1.14",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/platform-express": "^11.1.14",
+    "@nestjs/throttler": "^6.5.0",
     "@repo/ai": "workspace:*",
     "@repo/twofa": "workspace:*",
     "ai": "catalog:",
