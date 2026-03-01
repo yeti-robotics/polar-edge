@@ -136,8 +136,22 @@ describe("envSchema", () => {
 });
 
 describe("validateEnv", () => {
+  const validRawEnv = {
+    DISCORD_TOKEN: "discord-token",
+    YETI_SERVER_ID: "yeti-server-id",
+    DEV_GUILD_ID: "dev-guild-id",
+    ADMIN_ROLE_ID: "admin-role-id",
+    GOOGLE_APPLICATION_CREDENTIALS: validGoogleCreds,
+    ATTENDANCE_SPREADSHEET_ID: "attendance-sheet-id",
+    OUTREACH_SPREADSHEET_ID: "outreach-sheet-id",
+    DO_MODEL_ACCESS_KEY: "do-model-key",
+    JWT_SECRET: "jwt-secret",
+    ATTENDANCE_2FA_SECRET: "2fa-secret",
+    ATTENDANCE_2FA_ENABLED: "false",
+  };
+
   it("returns the parsed env on a valid config", () => {
-    const result = validateEnv(validConfig);
+    const result = validateEnv(validRawEnv);
     expect(result.discordToken).toBe("discord-token");
     expect(result.yetiServerId).toBe("yeti-server-id");
     expect(result.jwtSecret).toBe("jwt-secret");
@@ -148,6 +162,6 @@ describe("validateEnv", () => {
   });
 
   it("includes schema error details in the thrown message", () => {
-    expect(() => validateEnv({ discordToken: "" })).toThrow("Environment validation failed:");
+    expect(() => validateEnv({ DISCORD_TOKEN: "" })).toThrow("Environment validation failed:");
   });
 });

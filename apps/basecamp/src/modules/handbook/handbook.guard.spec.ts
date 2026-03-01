@@ -50,14 +50,15 @@ describe("NecordThrottlerGuard", () => {
   });
 
   describe("getRequestResponse", () => {
-    it("returns the interaction as both req and res", () => {
+    it("returns the interaction as req and a header stub as res", () => {
       const interaction = makeInteraction();
       const context = makeContext(interaction);
 
       const { req, res } = internal.getRequestResponse(context);
 
       expect(req).toBe(interaction);
-      expect(res).toBe(interaction);
+      expect(res).toHaveProperty("header");
+      expect(typeof (res as { header: unknown }).header).toBe("function");
     });
   });
 
