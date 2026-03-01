@@ -1,4 +1,3 @@
-import { ConfigService } from "@nestjs/config";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { AiService } from "src/lib/ai/ai.service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -11,15 +10,6 @@ describe("HandbookService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         HandbookService,
-        {
-          provide: ConfigService,
-          useValue: {
-            get: vi.fn((key: string) => {
-              if (key === "DO_MODEL_ID") return "test-model-id";
-              return undefined;
-            }),
-          },
-        },
         {
           provide: AiService,
           useValue: {
