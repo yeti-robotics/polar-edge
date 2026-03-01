@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.3...basecamp-v1.1.4) (2026-03-01)
+
+
+### Performance Improvements
+
+* **basecamp:** integrate cache manager for sheet service and update dependencies ([e669c48](https://github.com/yeti-robotics/polar-edge/commit/e669c487ec48b23704217b230a9af3ba9251fbb5))
+
 ## [1.1.3](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.2...basecamp-v1.1.3) (2026-03-01)
 
 
