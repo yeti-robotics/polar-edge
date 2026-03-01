@@ -18,11 +18,14 @@ import { OutreachModule } from "./modules/outreach/outreach.module";
     LifecycleModule,
     OutreachModule,
     NecordModule.forRootAsync({
-      useFactory: (configService: AppConfigService) => ({
-        token: configService.get("discordToken"),
-        development: configService.get("devGuildId") ? [configService.get("devGuildId")] : false,
-        intents: [IntentsBitField.Flags.Guilds],
-      }),
+      useFactory: (configService: AppConfigService) => {
+        const devGuildId = configService.get("devGuildId");
+        return {
+          token: configService.get("discordToken"),
+          development: devGuildId ? [devGuildId] : false,
+          intents: [IntentsBitField.Flags.Guilds],
+        };
+      },
       inject: [AppConfigService],
     }),
   ],
