@@ -1,7 +1,8 @@
 import { Test, type TestingModule } from "@nestjs/testing";
 import { errAsync, okAsync } from "neverthrow";
 import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
-import { type OutreachRecord, OutreachRepository } from "./outreach.repository";
+import { OutreachRepository } from "./outreach.repository";
+import { type OutreachRecord } from "./outreach.schema";
 import { OutreachService } from "./outreach.service";
 
 describe("OutreachService", () => {
@@ -12,12 +13,42 @@ describe("OutreachService", () => {
   };
 
   const mockRecords: OutreachRecord[] = [
-    { date: "2024-01-01", userName: "John Doe", event: "Event 1", eventType: "Workshop", hours: 10 },
-    { date: "2024-01-02", userName: "Jane Smith", event: "Event 2", eventType: "Competition", hours: 15 },
+    {
+      date: "2024-01-01",
+      userName: "John Doe",
+      event: "Event 1",
+      eventType: "Workshop",
+      hours: 10,
+    },
+    {
+      date: "2024-01-02",
+      userName: "Jane Smith",
+      event: "Event 2",
+      eventType: "Competition",
+      hours: 15,
+    },
     { date: "2024-01-03", userName: "John Doe", event: "Event 3", eventType: "Workshop", hours: 5 },
-    { date: "2024-01-04", userName: "Bob Johnson", event: "Event 4", eventType: "Outreach", hours: 20 },
-    { date: "2024-01-05", userName: "Jane Smith", event: "Event 5", eventType: "Workshop", hours: 8 },
-    { date: "2024-01-06", userName: "Alice Brown", event: "Event 6", eventType: "Competition", hours: 12 },
+    {
+      date: "2024-01-04",
+      userName: "Bob Johnson",
+      event: "Event 4",
+      eventType: "Outreach",
+      hours: 20,
+    },
+    {
+      date: "2024-01-05",
+      userName: "Jane Smith",
+      event: "Event 5",
+      eventType: "Workshop",
+      hours: 8,
+    },
+    {
+      date: "2024-01-06",
+      userName: "Alice Brown",
+      event: "Event 6",
+      eventType: "Competition",
+      hours: 12,
+    },
   ];
 
   beforeEach(async () => {
@@ -49,7 +80,8 @@ describe("OutreachService", () => {
 
       const result = await service.getUserOutreach("John Doe");
 
-      expect(result).toEqual([
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual([
         {
           date: "2024-01-01",
           userName: "John Doe",
@@ -67,12 +99,12 @@ describe("OutreachService", () => {
       ]);
     });
 
-    it("should return null when fetch fails", async () => {
+    it("should return err when fetch fails", async () => {
       repository.findByUserName.mockReturnValue(errAsync(new Error("Sheet API error")));
 
       const result = await service.getUserOutreach("John Doe");
 
-      expect(result).toBeNull();
+      expect(result.isErr()).toBe(true);
     });
 
     it("should return empty array when user has no outreach", async () => {
@@ -80,7 +112,8 @@ describe("OutreachService", () => {
 
       const result = await service.getUserOutreach("NonExistentUser");
 
-      expect(result).toEqual([]);
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual([]);
     });
   });
 
@@ -88,20 +121,22 @@ describe("OutreachService", () => {
     it("should return empty array when no outreach data", async () => {
       repository.findAll.mockReturnValue(okAsync([]));
       const result = await service.getTopMembersByHours(5);
-      expect(result).toEqual([]);
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual([]);
     });
 
-    it("should handle fetch errors and return empty array", async () => {
+    it("should return err when fetch fails", async () => {
       repository.findAll.mockReturnValue(errAsync(new Error("API Error")));
       const result = await service.getTopMembersByHours(5);
-      expect(result).toEqual([]);
+      expect(result.isErr()).toBe(true);
     });
 
     it("should return top 5 members sorted by total hours in descending order", async () => {
       repository.findAll.mockReturnValue(okAsync(mockRecords));
       const result = await service.getTopMembersByHours(5);
 
-      expect(result).toEqual([
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual([
         { userName: "Jane Smith", totalHours: 23 },
         { userName: "Bob Johnson", totalHours: 20 },
         { userName: "John Doe", totalHours: 15 },
@@ -114,8 +149,9 @@ describe("OutreachService", () => {
 
       const result = await service.getTopMembersByHours(3);
 
-      expect(result).toHaveLength(3);
-      expect(result).toEqual([
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toHaveLength(3);
+      expect(result._unsafeUnwrap()).toEqual([
         { userName: "Jane Smith", totalHours: 23 },
         { userName: "Bob Johnson", totalHours: 20 },
         { userName: "John Doe", totalHours: 15 },
@@ -125,34 +161,73 @@ describe("OutreachService", () => {
     it("should return empty array when sheet data is empty", async () => {
       repository.findAll.mockReturnValue(okAsync([]));
       const result = await service.getTopMembersByHours(5);
-      expect(result).toEqual([]);
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual([]);
     });
 
     it("should handle single user with multiple entries correctly", async () => {
       const singleUserData: OutreachRecord[] = [
-        { date: "2024-01-01", userName: "John Doe", event: "Event 1", eventType: "Workshop", hours: 10 },
-        { date: "2024-01-02", userName: "John Doe", event: "Event 2", eventType: "Competition", hours: 15 },
-        { date: "2024-01-03", userName: "John Doe", event: "Event 3", eventType: "Workshop", hours: 5 },
+        {
+          date: "2024-01-01",
+          userName: "John Doe",
+          event: "Event 1",
+          eventType: "Workshop",
+          hours: 10,
+        },
+        {
+          date: "2024-01-02",
+          userName: "John Doe",
+          event: "Event 2",
+          eventType: "Competition",
+          hours: 15,
+        },
+        {
+          date: "2024-01-03",
+          userName: "John Doe",
+          event: "Event 3",
+          eventType: "Workshop",
+          hours: 5,
+        },
       ];
       repository.findAll.mockReturnValue(okAsync(singleUserData));
 
       const result = await service.getTopMembersByHours(5);
 
-      expect(result).toEqual([{ userName: "John Doe", totalHours: 30 }]);
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual([{ userName: "John Doe", totalHours: 30 }]);
     });
 
     it("should handle users with same total hours correctly", async () => {
       const tiedData: OutreachRecord[] = [
-        { date: "2024-01-01", userName: "User A", event: "Event 1", eventType: "Workshop", hours: 10 },
-        { date: "2024-01-02", userName: "User B", event: "Event 2", eventType: "Competition", hours: 10 },
-        { date: "2024-01-03", userName: "User C", event: "Event 3", eventType: "Workshop", hours: 10 },
+        {
+          date: "2024-01-01",
+          userName: "User A",
+          event: "Event 1",
+          eventType: "Workshop",
+          hours: 10,
+        },
+        {
+          date: "2024-01-02",
+          userName: "User B",
+          event: "Event 2",
+          eventType: "Competition",
+          hours: 10,
+        },
+        {
+          date: "2024-01-03",
+          userName: "User C",
+          event: "Event 3",
+          eventType: "Workshop",
+          hours: 10,
+        },
       ];
       repository.findAll.mockReturnValue(okAsync(tiedData));
 
       const result = await service.getTopMembersByHours(3);
 
-      expect(result).toHaveLength(3);
-      expect(result.every((entry) => entry.totalHours === 10)).toBe(true);
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toHaveLength(3);
+      expect(result._unsafeUnwrap().every((entry) => entry.totalHours === 10)).toBe(true);
     });
 
     it("should return default limit of 5 when no limit is specified", async () => {
@@ -160,8 +235,9 @@ describe("OutreachService", () => {
 
       const result = await service.getTopMembersByHours();
 
-      expect(result).toHaveLength(4); // Only 4 unique users in mock data
-      expect(result).toEqual([
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toHaveLength(4); // Only 4 unique users in mock data
+      expect(result._unsafeUnwrap()).toEqual([
         { userName: "Jane Smith", totalHours: 23 },
         { userName: "Bob Johnson", totalHours: 20 },
         { userName: "John Doe", totalHours: 15 },
@@ -171,17 +247,48 @@ describe("OutreachService", () => {
 
     it("should correctly sum hours for users with multiple entries", async () => {
       const multipleEntriesData: OutreachRecord[] = [
-        { date: "2024-01-01", userName: "John Doe", event: "Event 1", eventType: "Workshop", hours: 5 },
-        { date: "2024-01-02", userName: "John Doe", event: "Event 2", eventType: "Competition", hours: 10 },
-        { date: "2024-01-03", userName: "John Doe", event: "Event 3", eventType: "Workshop", hours: 15 },
-        { date: "2024-01-04", userName: "Jane Smith", event: "Event 4", eventType: "Outreach", hours: 8 },
-        { date: "2024-01-05", userName: "Jane Smith", event: "Event 5", eventType: "Workshop", hours: 12 },
+        {
+          date: "2024-01-01",
+          userName: "John Doe",
+          event: "Event 1",
+          eventType: "Workshop",
+          hours: 5,
+        },
+        {
+          date: "2024-01-02",
+          userName: "John Doe",
+          event: "Event 2",
+          eventType: "Competition",
+          hours: 10,
+        },
+        {
+          date: "2024-01-03",
+          userName: "John Doe",
+          event: "Event 3",
+          eventType: "Workshop",
+          hours: 15,
+        },
+        {
+          date: "2024-01-04",
+          userName: "Jane Smith",
+          event: "Event 4",
+          eventType: "Outreach",
+          hours: 8,
+        },
+        {
+          date: "2024-01-05",
+          userName: "Jane Smith",
+          event: "Event 5",
+          eventType: "Workshop",
+          hours: 12,
+        },
       ];
       repository.findAll.mockReturnValue(okAsync(multipleEntriesData));
 
       const result = await service.getTopMembersByHours(5);
 
-      expect(result).toEqual([
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual([
         { userName: "John Doe", totalHours: 30 },
         { userName: "Jane Smith", totalHours: 20 },
       ]);
@@ -196,15 +303,16 @@ describe("OutreachService", () => {
 
       // John Doe: 10 + 5 = 15, Jane Smith: 15 + 8 = 23, Bob Johnson: 20, Alice Brown: 12
       // Total: 15 + 23 + 20 + 12 = 70
-      expect(result).toBe(70);
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toBe(70);
     });
 
-    it("should return 0 when fetch fails", async () => {
+    it("should return err when fetch fails", async () => {
       repository.findAll.mockReturnValue(errAsync(new Error("Sheet API error")));
 
       const result = await service.getTotalTeamOutreachHours();
 
-      expect(result).toBe(0);
+      expect(result.isErr()).toBe(true);
     });
 
     it("should return 0 when sheet data is empty", async () => {
@@ -212,7 +320,8 @@ describe("OutreachService", () => {
 
       const result = await service.getTotalTeamOutreachHours();
 
-      expect(result).toBe(0);
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toBe(0);
     });
 
     it("should return 0 when sheet has only headers", async () => {
@@ -220,7 +329,8 @@ describe("OutreachService", () => {
 
       const result = await service.getTotalTeamOutreachHours();
 
-      expect(result).toBe(0);
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toBe(0);
     });
   });
 });

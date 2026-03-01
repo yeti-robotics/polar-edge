@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { type ChatInputCommandInteraction, GuildMember, MessageFlags } from "discord.js";
 import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
+import { getNickname } from "src/lib/utils/discord.utils";
 import { getOrdinalSuffix } from "src/lib/utils/math.utils";
 import {
   AdminSignInDto,
@@ -39,11 +40,6 @@ export class AttendanceCommands {
     this.adminRoleId = this.configService.get<string>("ADMIN_ROLE_ID") || "";
   }
 
-  private async getNickname(interaction: ChatInputCommandInteraction) {
-    const member = await interaction.guild?.members.fetch(interaction.user.id);
-    return member?.nickname || null;
-  }
-
   @SlashCommand({
     name: "signin",
     description: "Sign in to a YETI meeting at the zone",
@@ -54,9 +50,9 @@ export class AttendanceCommands {
   ) {
     await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
-    const nickname = await this.getNickname(interaction);
+    const nicknameResult = await getNickname(interaction);
 
-    if (!nickname) {
+    if (nicknameResult.isErr()) {
       return interaction.editReply({
         content: "You must have a nickname to sign in",
       });
@@ -65,7 +61,7 @@ export class AttendanceCommands {
     const opResult = await this.attendanceService.signIn(
       interaction.user.id,
       interaction.guild?.id || "",
-      nickname,
+      nicknameResult.value,
       code
     );
 
@@ -98,9 +94,9 @@ export class AttendanceCommands {
   ) {
     await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
-    const nickname = await this.getNickname(interaction);
+    const nicknameResult = await getNickname(interaction);
 
-    if (!nickname) {
+    if (nicknameResult.isErr()) {
       return interaction.editReply({
         content: "You must have a nickname to sign out",
       });
@@ -109,7 +105,7 @@ export class AttendanceCommands {
     const opResult = await this.attendanceService.signOut(
       interaction.user.id,
       interaction.guildId || "",
-      nickname,
+      nicknameResult.value,
       code
     );
 
@@ -243,12 +239,6 @@ export class AttendanceCommands {
     description: "Get your current attendance",
   })
   public async onAttendance(@Context() [interaction]: SlashCommandContext) {
-    const nickname = await this.getNickname(interaction);
-
-    if (!nickname) {
-      return interaction.reply("You must have a nickname to get attendance");
-    }
-
     const [hoursResult, rankResult] = await Promise.all([
       this.attendanceService.getUserHours(interaction.user.id),
       this.attendanceService.getUserRank(interaction.user.id),
@@ -260,7 +250,9 @@ export class AttendanceCommands {
         : rankResult.isErr()
           ? rankResult.error.message
           : "unknown error";
-      this.logger.error(`Error getting attendance for user ${interaction.user.id}: ${errorMessage}`);
+      this.logger.error(
+        `Error getting attendance for user ${interaction.user.id}: ${errorMessage}`
+      );
       return interaction.reply(
         "There was an error getting your attendance. Please let a mentor know."
       );
