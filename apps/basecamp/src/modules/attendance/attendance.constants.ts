@@ -33,11 +33,5 @@ export const TEAM_NAMES = {
   DEV: "Dev",
 } as const;
 
-/** Boolean string values used in sheets */
-export const BOOLEAN_STRINGS = {
-  TRUE: "true",
-  TRUE_UPPERCASE: "TRUE",
-} as const;
-
 /** Default limit for leaderboard queries */
 export const DEFAULT_LEADERBOARD_LIMIT = 5;

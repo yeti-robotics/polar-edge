@@ -3,7 +3,6 @@ import { err, ok, Result, ResultAsync } from "neverthrow";
 import { SheetService } from "src/lib/sheet/sheet.service";
 import { ZodError } from "zod";
 import {
-  BOOLEAN_STRINGS,
   COLUMN_INDICES,
   SHEET_RANGE_APPEND,
   SHEET_RANGE_READ,
@@ -22,9 +21,7 @@ export class AttendanceRepository {
       team: row[COLUMN_INDICES.TEAM],
       discordName: row[COLUMN_INDICES.DISCORD_NAME],
       date: row[COLUMN_INDICES.DATE],
-      isSigningIn:
-        row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE ||
-        row[COLUMN_INDICES.IS_SIGNING_IN] === BOOLEAN_STRINGS.TRUE_UPPERCASE,
+      isSigningIn: row[COLUMN_INDICES.IS_SIGNING_IN],
     });
 
     if (!result.success) return err(result.error);

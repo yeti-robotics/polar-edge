@@ -2,7 +2,7 @@ import { Test, type TestingModule } from "@nestjs/testing";
 import { ResultAsync } from "neverthrow";
 import { SheetService } from "src/lib/sheet/sheet.service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { BOOLEAN_STRINGS, SHEET_RANGE_APPEND, SHEET_RANGE_READ } from "./attendance.constants";
+import { SHEET_RANGE_APPEND, SHEET_RANGE_READ } from "./attendance.constants";
 import { AttendanceRepository } from "./attendance.repository";
 import type { AttendanceRecord } from "./attendance.schema";
 
@@ -51,8 +51,8 @@ describe("AttendanceRepository", () => {
       const discordId = "1234567890";
       const rows = makeSheetRows(
         HEADER,
-        [discordId, "YETI Robotics", "user#1234", "2025-01-15", BOOLEAN_STRINGS.TRUE],
-        ["other-id", "Dev", "other#5678", "2025-01-16", BOOLEAN_STRINGS.TRUE]
+        [discordId, "YETI Robotics", "user#1234", "2025-01-15", "true"],
+        ["other-id", "Dev", "other#5678", "2025-01-16", "true"]
       );
       mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
 
@@ -76,7 +76,7 @@ describe("AttendanceRepository", () => {
       const discordId = "111";
       const rows = makeSheetRows(
         HEADER,
-        [discordId, "YETI Robotics", "user", "2025-01-15", BOOLEAN_STRINGS.TRUE],
+        [discordId, "YETI Robotics", "user", "2025-01-15", "true"],
         [discordId, "YETI Robotics", "user", "2025-01-16", "false"]
       );
       mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
@@ -99,7 +99,7 @@ describe("AttendanceRepository", () => {
         "YETI Robotics",
         "other",
         "2025-01-15",
-        BOOLEAN_STRINGS.TRUE,
+        "true",
       ]);
       mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
 
@@ -115,7 +115,7 @@ describe("AttendanceRepository", () => {
         "YETI Robotics",
         "user",
         "2025-01-15",
-        BOOLEAN_STRINGS.TRUE_UPPERCASE,
+        "TRUE",
       ]);
       mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
 
@@ -130,7 +130,7 @@ describe("AttendanceRepository", () => {
       const discordId = "123";
       const rows = makeSheetRows(
         HEADER,
-        [discordId, "YETI Robotics", "user", "2025-01-15", BOOLEAN_STRINGS.TRUE],
+        [discordId, "YETI Robotics", "user", "2025-01-15", "true"],
         [discordId] // matches filter but missing required columns — triggers warn path
       );
       mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
@@ -155,7 +155,7 @@ describe("AttendanceRepository", () => {
     it("should return all records skipping header row", async () => {
       const rows = makeSheetRows(
         HEADER,
-        ["1", "YETI Robotics", "user1", "2025-01-15", BOOLEAN_STRINGS.TRUE],
+        ["1", "YETI Robotics", "user1", "2025-01-15", "true"],
         ["2", "Dev", "user2", "2025-01-16", "false"]
       );
       mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
@@ -183,7 +183,7 @@ describe("AttendanceRepository", () => {
     it("should skip malformed rows", async () => {
       const rows = makeSheetRows(
         HEADER,
-        ["1", "YETI Robotics", "user", "2025-01-15", BOOLEAN_STRINGS.TRUE],
+        ["1", "YETI Robotics", "user", "2025-01-15", "true"],
         [null, undefined, "", "", ""], // invalid
         ["2", "Dev", "other", "2025-01-16", "false"]
       );
@@ -193,6 +193,24 @@ describe("AttendanceRepository", () => {
 
       expect(result.isOk()).toBe(true);
       expect(result._unsafeUnwrap()).toHaveLength(2);
+    });
+
+    it("should skip rows with missing IS_SIGNING_IN column rather than treating them as sign-outs", async () => {
+      const rows = makeSheetRows(
+        HEADER,
+        ["1", "YETI Robotics", "user", "2025-01-15", "true"],
+        ["1", "YETI Robotics", "user", "2025-01-15"], // missing IS_SIGNING_IN — was the bug
+        ["1", "YETI Robotics", "user", "2025-01-15", "false"]
+      );
+      mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
+
+      const result = await repository.findAll();
+
+      expect(result.isOk()).toBe(true);
+      const records = result._unsafeUnwrap();
+      expect(records).toHaveLength(2);
+      expect(records[0]?.isSigningIn).toBe(true);
+      expect(records[1]?.isSigningIn).toBe(false);
     });
 
     it("should propagate error when sheet.get fails", async () => {

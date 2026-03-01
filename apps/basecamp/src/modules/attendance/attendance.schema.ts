@@ -5,7 +5,11 @@ export const AttendanceRecordSchema = z.object({
   team: z.string(),
   discordName: z.string(),
   date: z.string(),
-  isSigningIn: z.boolean(),
+  isSigningIn: z.preprocess((v) => {
+    if (v === "true" || v === "TRUE") return true;
+    if (v === "false" || v === "FALSE") return false;
+    return v;
+  }, z.boolean()),
 });
 
 export type AttendanceRecord = z.infer<typeof AttendanceRecordSchema>;
