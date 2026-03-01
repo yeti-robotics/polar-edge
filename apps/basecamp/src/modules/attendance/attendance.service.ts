@@ -47,7 +47,7 @@ export class AttendanceService {
   ) {
     this.twofaEnabled = this.configService.get("attendance2faEnabled");
     this.yetiServerId = this.configService.get("yetiServerId");
-    this.devGuildId = this.configService.get("devGuildId");
+    this.devGuildId = this.configService.get("devGuildId") ?? "";
   }
 
   private getTeam(guildId: string) {
