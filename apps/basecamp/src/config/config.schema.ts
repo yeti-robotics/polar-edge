@@ -4,7 +4,7 @@ export const envSchema = z.object({
   // Discord
   discordToken: z.string().min(1),
   yetiServerId: z.string().min(1),
-  devGuildId: z.string().min(1),
+  devGuildId: z.string().min(1).optional(),
   adminRoleId: z.string().default(""),
 
   // Google Sheets
