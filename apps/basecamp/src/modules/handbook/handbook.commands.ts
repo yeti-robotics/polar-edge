@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { MessageFlags } from "discord.js";
-import { Context, Options, SlashCommand, StringOption, type SlashCommandContext } from "necord";
+import { Context, Options, SlashCommand, type SlashCommandContext, StringOption } from "necord";
 import { HandbookService } from "./handbook.service";
 
 class HandbookQuestionDto {
