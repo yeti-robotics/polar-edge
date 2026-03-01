@@ -10,7 +10,7 @@ import {
 } from "necord";
 import { AppConfigService } from "src/config/config.service";
 import { getNickname } from "src/lib/utils/discord.utils";
-import { formatPercentage, getOrdinalSuffix } from "src/lib/utils/math.utils";
+import { formatPercentage } from "src/lib/utils/math.utils";
 import { AttendanceService } from "./attendance.service";
 
 class AttendanceSignInDto {
@@ -264,19 +264,11 @@ export class AttendanceCommands {
     description: "Get your current attendance",
   })
   public async onAttendance(@Context() [interaction]: SlashCommandContext) {
-    const [hoursResult, rankResult] = await Promise.all([
-      this.attendanceService.getUserHours(interaction.user.id),
-      this.attendanceService.getUserRank(interaction.user.id),
-    ]);
+    const hoursResult = await this.attendanceService.getUserHours(interaction.user.id);
 
-    if (hoursResult.isErr() || rankResult.isErr()) {
-      const errorMessage = hoursResult.isErr()
-        ? hoursResult.error.message
-        : rankResult.isErr()
-          ? rankResult.error.message
-          : "unknown error";
+    if (hoursResult.isErr()) {
       this.logger.error(
-        `Error getting attendance for user ${interaction.user.id}: ${errorMessage}`
+        `Error getting attendance for user ${interaction.user.id}: ${hoursResult.error.message}`
       );
       return interaction.reply(
         "There was an error getting your attendance. Please let a mentor know."
@@ -284,14 +276,11 @@ export class AttendanceCommands {
     }
 
     const hours = hoursResult.value;
-    const rank = rankResult.value;
     const totalPossibleHours = this.attendanceService.getTotalPossibleHoursToDate();
 
     const hoursString = Math.floor(hours);
     const hoursPercentage = totalPossibleHours > 0 ? hours / totalPossibleHours : 0;
     const hoursPercentageString = formatPercentage(hoursPercentage);
-
-    const rankString = rank != null ? ` and ranked ${getOrdinalSuffix(rank)} overall` : "";
 
     const memberRequiredHours = totalPossibleHours * MEMBER_REQUIRED_PERCENTAGE;
     const leadershipRequiredHours = totalPossibleHours * LEADERSHIP_REQUIRED_PERCENTAGE;
@@ -299,17 +288,17 @@ export class AttendanceCommands {
     const totalPossibleHoursDisplay = Math.floor(totalPossibleHours);
     if (hours >= leadershipRequiredHours) {
       return interaction.reply(
-        `You're currently above the minimum hours for leadership${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! :tada:`
+        `You're currently above the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! :tada:`
       );
     } else if (hours >= memberRequiredHours) {
       const remainingHours = Math.ceil(leadershipRequiredHours - hours);
       return interaction.reply(
-        `You've currently above the minimum hours for members${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
+        `You've currently above the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
       );
     } else {
       const remainingHours = Math.ceil(memberRequiredHours - hours);
       return interaction.reply(
-        `You've got ${hoursString} hours${rankString} (${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
+        `You've got ${hoursString} hours (${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
       );
     }
   }
@@ -319,7 +308,12 @@ export class AttendanceCommands {
     description: "Show the top 5 members by attendance hours",
   })
   public async onAttendanceLeaderboard(@Context() [interaction]: SlashCommandContext) {
-    const leaderboardResult = await this.attendanceService.getTopMembersByHours(5);
+    const [leaderboardResult, rankResult, hoursResult, nicknameResult] = await Promise.all([
+      this.attendanceService.getTopMembersByHours(5),
+      this.attendanceService.getUserRank(interaction.user.id),
+      this.attendanceService.getUserHours(interaction.user.id),
+      getNickname(interaction),
+    ]);
 
     if (leaderboardResult.isErr()) {
       this.logger.error(`Error getting attendance leaderboard: ${leaderboardResult.error.message}`);
@@ -359,6 +353,21 @@ export class AttendanceCommands {
 
       leaderboardString += `${prefix} **${entry.userName}** - ${entry.totalHours} hours\n`;
     });
+
+    const userRank = rankResult.isOk() ? rankResult.value : null;
+    const userHours = hoursResult.isOk() ? hoursResult.value : null;
+    const displayName = nicknameResult.isOk()
+      ? nicknameResult.value
+      : interaction.user.displayName;
+
+    if (userRank != null && userRank > 5 && userHours != null) {
+      const userHoursDisplay = parseFloat(userHours.toFixed(2));
+      if (userRank === 6) {
+        leaderboardString += `6. **${displayName}** - ${userHoursDisplay} hours\n`;
+      } else {
+        leaderboardString += `⋮\n⋮\n⋮\n${userRank}. **${displayName}** - ${userHoursDisplay} hours\n`;
+      }
+    }
 
     leaderboardString += "\n*Updated in real-time from attendance records*";
 

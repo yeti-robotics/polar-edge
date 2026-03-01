@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { okAsync } from "neverthrow";
 import { Context, SlashCommand, type SlashCommandContext } from "necord";
 import { getNickname } from "src/lib/utils/discord.utils";
 import { roundToTenth } from "src/lib/utils/math.utils";
@@ -61,9 +62,18 @@ export class OutreachCommands {
     description: "Show the top 5 members by outreach hours",
   })
   public async onOutreachLeaderboard(@Context() [interaction]: SlashCommandContext) {
-    const [leaderboardResult, totalTeamHoursResult] = await Promise.all([
+    const nicknameResult = await getNickname(interaction);
+    const nickname = nicknameResult.isOk() ? nicknameResult.value : null;
+
+    const [leaderboardResult, totalTeamHoursResult, userDataResult] = await Promise.all([
       this.outreachService.getTopMembersByHours(5),
       this.outreachService.getTotalTeamOutreachHours(),
+      nickname != null
+        ? this.outreachService.getUserRankAndHours(nickname)
+        : okAsync<{ rank: number | null; totalHours: number }, Error>({
+            rank: null,
+            totalHours: 0,
+          }),
     ]);
 
     if (leaderboardResult.isErr()) {
@@ -104,6 +114,17 @@ export class OutreachCommands {
 
       leaderboardString += `${prefix} **${entry.userName}** - ${entry.totalHours} hours\n`;
     });
+
+    if (nickname != null && userDataResult.isOk()) {
+      const { rank: userRank, totalHours: userTotalHours } = userDataResult.value;
+      if (userRank != null && userRank > 5) {
+        if (userRank === 6) {
+          leaderboardString += `6. **${nickname}** - ${userTotalHours} hours\n`;
+        } else {
+          leaderboardString += `⋮\n⋮\n⋮\n${userRank}. **${nickname}** - ${userTotalHours} hours\n`;
+        }
+      }
+    }
 
     leaderboardString += "\n*Updated in real-time from outreach records*";
 
