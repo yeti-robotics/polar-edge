@@ -94,7 +94,7 @@ describe("AttendanceService", () => {
   describe("getAttendance", () => {
     it("should return empty array when no attendance records exist", async () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
-      const result = await service.getAttendance("user1");
+      const result = (await service.getAttendance("user1"))._unsafeUnwrap();
       expect(result).toEqual([]);
     });
 
@@ -102,7 +102,7 @@ describe("AttendanceService", () => {
       const user1Records = mockAttendanceRecords.filter((r) => r.discordId === "user1");
       repository.findByDiscordId.mockReturnValue(okAsync(user1Records));
 
-      const result = await service.getAttendance("user1");
+      const result = (await service.getAttendance("user1"))._unsafeUnwrap();
 
       expect(result).toHaveLength(4);
       expect(result.every((record) => record.discordId === "user1")).toBe(true);
@@ -114,7 +114,7 @@ describe("AttendanceService", () => {
 
     it("should return empty array when user has no records", async () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
-      const result = await service.getAttendance("nonexistent-user");
+      const result = (await service.getAttendance("nonexistent-user"))._unsafeUnwrap();
       expect(result).toEqual([]);
     });
   });
@@ -128,13 +128,13 @@ describe("AttendanceService", () => {
         ])
       );
 
-      const result = await service.getUserHours("user1");
+      const result = (await service.getUserHours("user1"))._unsafeUnwrap();
       expect(result).toBeCloseTo(2.5);
     });
 
     it("should return 0 for a user with no attendance records", async () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
-      const result = await service.getUserHours("nonexistent-user");
+      const result = (await service.getUserHours("nonexistent-user"))._unsafeUnwrap();
       expect(result).toBe(0);
     });
   });
@@ -144,7 +144,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
       expect(repository.append).toHaveBeenCalledTimes(1);
@@ -159,7 +159,7 @@ describe("AttendanceService", () => {
       );
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
     });
@@ -172,7 +172,7 @@ describe("AttendanceService", () => {
       const signInTime = new Date(now.getTime() - 1 * MS_PER_HOUR).toISOString();
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
 
-      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: false, message: "You are currently signed in." });
       expect(repository.append).not.toHaveBeenCalled();
@@ -188,7 +188,7 @@ describe("AttendanceService", () => {
       const signInTime = new Date("2025-01-01T13:00:00Z").toISOString();
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
 
-      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: false, message: "You are currently signed in." });
     });
@@ -203,7 +203,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result.success).toBe(true);
       expect(result.message).toContain("credited with 1.5 hours");
@@ -228,7 +228,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(errAsync(new Error("append failed")));
 
-      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result.success).toBe(false);
     });
@@ -244,7 +244,7 @@ describe("AttendanceService", () => {
         .mockReturnValueOnce(okAsync(undefined))
         .mockReturnValueOnce(errAsync(new Error("append failed")));
 
-      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result.success).toBe(false);
     });
@@ -253,7 +253,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
       repository.append.mockReturnValue(errAsync(new Error("append failed")));
 
-      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({
         success: false,
@@ -296,7 +296,7 @@ describe("AttendanceService", () => {
     it("returns 'You are not signed in.' when no records", async () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: false, message: "You are not signed in." });
     });
@@ -309,7 +309,7 @@ describe("AttendanceService", () => {
         ])
       );
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: false, message: "You are not signed in." });
     });
@@ -323,7 +323,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
       expect(repository.append).toHaveBeenCalledTimes(1);
@@ -339,7 +339,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
     });
@@ -354,7 +354,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result.success).toBe(true);
       expect(result.message).toContain("credited with 1.5 hours");
@@ -369,7 +369,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result.success).toBe(true);
       expect(result.message).toContain("credited with 1.5 hours");
@@ -390,7 +390,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
     });
@@ -404,7 +404,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true);
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true))._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
       expect(repository.append).toHaveBeenCalledTimes(1);
@@ -421,7 +421,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true);
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true))._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
       expect(repository.append).toHaveBeenCalledTimes(1);
@@ -436,7 +436,7 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(errAsync(new Error("append failed")));
 
-      const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
       expect(result).toEqual({
         success: false,
@@ -460,14 +460,14 @@ describe("AttendanceService", () => {
         repository.findByDiscordId.mockReturnValue(okAsync([]));
         repository.append.mockReturnValue(okAsync(undefined));
 
-        const result = await service.signIn("user1", "yeti-server-id", "Test User 1", 123456);
+        const result = (await service.signIn("user1", "yeti-server-id", "Test User 1", 123456))._unsafeUnwrap();
 
         expect(result).toEqual({ success: true });
         expect(twofaService.verifyCode).toHaveBeenCalledWith(123456);
       });
 
       it("rejects when no code provided", async () => {
-        const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+        const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
         expect(result).toEqual({
           success: false,
@@ -478,7 +478,7 @@ describe("AttendanceService", () => {
       it("rejects with invalid code", async () => {
         twofaService.verifyCode.mockReturnValue(false);
 
-        const result = await service.signIn("user1", "yeti-server-id", "Test User 1", 999999);
+        const result = (await service.signIn("user1", "yeti-server-id", "Test User 1", 999999))._unsafeUnwrap();
 
         expect(result).toEqual({ success: false, message: "Invalid code." });
       });
@@ -487,7 +487,7 @@ describe("AttendanceService", () => {
         repository.findByDiscordId.mockReturnValue(okAsync([]));
         repository.append.mockReturnValue(okAsync(undefined));
 
-        const result = await service.signIn("user1", "yeti-server-id", "Test User 1", undefined, true);
+        const result = (await service.signIn("user1", "yeti-server-id", "Test User 1", undefined, true))._unsafeUnwrap();
 
         expect(result).toEqual({ success: true });
         expect(twofaService.verifyCode).not.toHaveBeenCalled();
@@ -507,14 +507,14 @@ describe("AttendanceService", () => {
       it("succeeds with valid code", async () => {
         repository.append.mockReturnValue(okAsync(undefined));
 
-        const result = await service.signOut("user1", "yeti-server-id", "Test User 1", 123456);
+        const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", 123456))._unsafeUnwrap();
 
         expect(result).toEqual({ success: true });
         expect(twofaService.verifyCode).toHaveBeenCalledWith(123456);
       });
 
       it("rejects when no code provided", async () => {
-        const result = await service.signOut("user1", "yeti-server-id", "Test User 1");
+        const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
 
         expect(result).toEqual({
           success: false,
@@ -525,7 +525,7 @@ describe("AttendanceService", () => {
       it("rejects with invalid code", async () => {
         twofaService.verifyCode.mockReturnValue(false);
 
-        const result = await service.signOut("user1", "yeti-server-id", "Test User 1", 999999);
+        const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", 999999))._unsafeUnwrap();
 
         expect(result).toEqual({ success: false, message: "Invalid code." });
       });
@@ -533,7 +533,7 @@ describe("AttendanceService", () => {
       it("bypasses 2FA when skipTwofa=true", async () => {
         repository.append.mockReturnValue(okAsync(undefined));
 
-        const result = await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true);
+        const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true))._unsafeUnwrap();
 
         expect(result).toEqual({ success: true });
         expect(twofaService.verifyCode).not.toHaveBeenCalled();
@@ -554,20 +554,20 @@ describe("AttendanceService", () => {
 
     it("should return empty array when no attendance data", async () => {
       repository.findAll.mockReturnValue(okAsync([]));
-      const result = await service.getTopMembersByHours(5);
+      const result = (await service.getTopMembersByHours(5))._unsafeUnwrap();
       expect(result).toEqual([]);
     });
 
-    it("should handle fetch errors by returning an empty array", async () => {
+    it("propagates error when repository fails", async () => {
       repository.findAll.mockReturnValue(errAsync(new Error("API Error")));
       const result = await service.getTopMembersByHours(5);
-      expect(result).toEqual([]);
+      expect(result.isErr()).toBe(true);
     });
 
     it("should return top members sorted by hours in descending order", async () => {
       repository.findAll.mockReturnValue(okAsync(mockAllRecords));
 
-      const result = await service.getTopMembersByHours(2);
+      const result = (await service.getTopMembersByHours(2))._unsafeUnwrap();
 
       expect(result).toHaveLength(2);
       expect(result[0]).toEqual({ userName: "Test User 3", totalHours: 5 });
@@ -577,7 +577,7 @@ describe("AttendanceService", () => {
     it("should return all members when limit is greater than number of users", async () => {
       repository.findAll.mockReturnValue(okAsync(mockAllRecords));
 
-      const result = await service.getTopMembersByHours(10);
+      const result = (await service.getTopMembersByHours(10))._unsafeUnwrap();
 
       expect(result).toHaveLength(3);
       expect(result[0].totalHours).toBe(5);
@@ -588,7 +588,7 @@ describe("AttendanceService", () => {
     it("should return default limit of 5 when no limit is specified", async () => {
       repository.findAll.mockReturnValue(okAsync(mockAllRecords));
 
-      const result = await service.getTopMembersByHours();
+      const result = (await service.getTopMembersByHours())._unsafeUnwrap();
 
       expect(result).toHaveLength(3);
       expect(result[0].totalHours).toBe(5);
@@ -603,7 +603,7 @@ describe("AttendanceService", () => {
       ];
       repository.findAll.mockReturnValue(okAsync(multiSession));
 
-      const result = await service.getTopMembersByHours(5);
+      const result = (await service.getTopMembersByHours(5))._unsafeUnwrap();
 
       expect(result).toHaveLength(1);
       expect(result[0].totalHours).toBe(6);
@@ -618,7 +618,7 @@ describe("AttendanceService", () => {
       ];
       repository.findAll.mockReturnValue(okAsync(tiedData));
 
-      const result = await service.getTopMembersByHours(2);
+      const result = (await service.getTopMembersByHours(2))._unsafeUnwrap();
 
       expect(result).toHaveLength(2);
       expect(result[0].totalHours).toBe(2);
@@ -639,32 +639,33 @@ describe("AttendanceService", () => {
 
     it("returns 1 for the user with the most hours", async () => {
       repository.findAll.mockReturnValue(okAsync(mockAllRecords));
-      expect(await service.getUserRank("user3")).toBe(1);
+      expect((await service.getUserRank("user3"))._unsafeUnwrap()).toBe(1);
     });
 
     it("returns the correct rank for a mid-range user", async () => {
       repository.findAll.mockReturnValue(okAsync(mockAllRecords));
-      expect(await service.getUserRank("user2")).toBe(2);
+      expect((await service.getUserRank("user2"))._unsafeUnwrap()).toBe(2);
     });
 
     it("returns the last rank for the user with fewest hours", async () => {
       repository.findAll.mockReturnValue(okAsync(mockAllRecords));
-      expect(await service.getUserRank("user1")).toBe(3);
+      expect((await service.getUserRank("user1"))._unsafeUnwrap()).toBe(3);
     });
 
     it("returns null for a user not present", async () => {
       repository.findAll.mockReturnValue(okAsync(mockAllRecords));
-      expect(await service.getUserRank("unknown")).toBeNull();
+      expect((await service.getUserRank("unknown"))._unsafeUnwrap()).toBeNull();
     });
 
     it("returns null when no records exist", async () => {
       repository.findAll.mockReturnValue(okAsync([]));
-      expect(await service.getUserRank("user1")).toBeNull();
+      expect((await service.getUserRank("user1"))._unsafeUnwrap()).toBeNull();
     });
 
-    it("returns null on fetch error", async () => {
+    it("propagates error when repository fails", async () => {
       repository.findAll.mockReturnValue(errAsync(new Error("API Error")));
-      expect(await service.getUserRank("user1")).toBeNull();
+      const result = await service.getUserRank("user1");
+      expect(result.isErr()).toBe(true);
     });
 
     describe("handles ties with dense ranking", () => {
@@ -689,27 +690,27 @@ describe("AttendanceService", () => {
       });
 
       it("returns rank 1 for the user with the most hours", async () => {
-        expect(await service.getUserRank("joe")).toBe(1);
+        expect((await service.getUserRank("joe"))._unsafeUnwrap()).toBe(1);
       });
 
       it("returns rank 2 for the second-place user", async () => {
-        expect(await service.getUserRank("jim")).toBe(2);
+        expect((await service.getUserRank("jim"))._unsafeUnwrap()).toBe(2);
       });
 
       it("returns rank 3 for the first tied user", async () => {
-        expect(await service.getUserRank("sally")).toBe(3);
+        expect((await service.getUserRank("sally"))._unsafeUnwrap()).toBe(3);
       });
 
       it("returns rank 3 for a mid tied user", async () => {
-        expect(await service.getUserRank("kyle")).toBe(3);
+        expect((await service.getUserRank("kyle"))._unsafeUnwrap()).toBe(3);
       });
 
       it("returns rank 3 for the last tied user", async () => {
-        expect(await service.getUserRank("marvin")).toBe(3);
+        expect((await service.getUserRank("marvin"))._unsafeUnwrap()).toBe(3);
       });
 
       it("returns rank 4 (not 6) for the user after the tied group", async () => {
-        expect(await service.getUserRank("baxter")).toBe(4);
+        expect((await service.getUserRank("baxter"))._unsafeUnwrap()).toBe(4);
       });
     });
   });

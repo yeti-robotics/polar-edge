@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { err, errAsync, ok, okAsync, type Result, type ResultAsync } from "neverthrow";
 import { AppConfigService } from "src/config/config.service";
 import {
   DEFAULT_LEADERBOARD_LIMIT,
@@ -52,43 +53,33 @@ export class AttendanceService {
     }
   }
 
-  private async recordAttendance(
+  private recordAttendance(
     discordId: string,
     discordName: string,
     guildId: string,
     operation: "signIn" | "signOut",
     date: Date = new Date()
-  ): Promise<boolean> {
-    const result = await this.repository.append({
-      discordId,
-      team: this.getTeam(guildId),
-      discordName,
-      date: date.toISOString(),
-      isSigningIn: operation === "signIn",
-    });
-
-    if (result.isErr()) {
-      this.logger.error(`Failed to record attendance: ${result.error.message}`);
-      return false;
-    }
-
-    return true;
+  ): ResultAsync<void, Error> {
+    return this.repository
+      .append({
+        discordId,
+        team: this.getTeam(guildId),
+        discordName,
+        date: date.toISOString(),
+        isSigningIn: operation === "signIn",
+      })
+      .mapErr((error) => {
+        this.logger.error(`Failed to record attendance: ${error.message}`);
+        return error;
+      });
   }
 
-  public async getAttendance(discordId: string): Promise<AttendanceRecord[]> {
-    const result = await this.repository.findByDiscordId(discordId);
-
-    if (result.isErr()) {
-      this.logger.error(`Failed to get attendance for ${discordId}: ${result.error.message}`);
-      return [];
-    }
-
-    return result.value;
+  public getAttendance(discordId: string): ResultAsync<AttendanceRecord[], Error> {
+    return this.repository.findByDiscordId(discordId);
   }
 
-  private async getLastAttendanceRecord(discordId: string): Promise<AttendanceRecord | undefined> {
-    const attendance = await this.getAttendance(discordId);
-    return attendance.at(-1);
+  private getLastAttendanceRecord(discordId: string): ResultAsync<AttendanceRecord | undefined, Error> {
+    return this.getAttendance(discordId).map((records) => records.at(-1));
   }
 
   private validateTwofaCode(code?: number): AttendanceOperationResult | null {
@@ -145,141 +136,130 @@ export class AttendanceService {
     return differentDay && enoughTimeElapsed;
   }
 
-  private async handleForgotToSignOut(
+  private handleForgotToSignOut(
     discordId: string,
     discordName: string,
     guildId: string,
     lastSignInDate: Date
-  ): Promise<AttendanceOperationResult> {
+  ): ResultAsync<AttendanceOperationResult, Error> {
     const creditTime = new Date(lastSignInDate.getTime() + FORGOT_SIGNOUT_CREDIT_MS);
-    const signOutResult = await this.recordAttendance(
-      discordId,
-      discordName,
-      guildId,
-      "signOut",
-      creditTime
-    );
-    const signInResult = await this.recordAttendance(discordId, discordName, guildId, "signIn");
-
-    if (signOutResult && signInResult) {
-      return {
-        success: true,
-        message:
-          "You signed in last meeting but did not sign out. You were credited with 1.5 hours of attendance for that meeting. You are now signed in.",
-      };
-    }
-    return {
-      success: false,
-      message: "Failed to sign in. Please try again or let a mentor know.",
-    };
+    return this.recordAttendance(discordId, discordName, guildId, "signOut", creditTime)
+      .andThen(() => this.recordAttendance(discordId, discordName, guildId, "signIn"))
+      .map(
+        (): AttendanceOperationResult => ({
+          success: true,
+          message:
+            "You signed in last meeting but did not sign out. You were credited with 1.5 hours of attendance for that meeting. You are now signed in.",
+        })
+      )
+      .orElse(
+        (): ResultAsync<AttendanceOperationResult, never> =>
+          okAsync({
+            success: false,
+            message: "Failed to sign in. Please try again or let a mentor know.",
+          })
+      );
   }
 
-  private async recordSignIn(
+  private recordSignIn(
     discordId: string,
     discordName: string,
     guildId: string
-  ): Promise<AttendanceOperationResult> {
-    try {
-      const success = await this.recordAttendance(discordId, discordName, guildId, "signIn");
-      if (success) {
-        return { success: true };
-      }
-      return {
-        success: false,
-        message: "Failed to sign in. Please try again or let a mentor know.",
-      };
-    } catch (error) {
-      this.logger.error(`Failed to sign in: ${error}`);
-      return {
-        success: false,
-        message: "Failed to sign in. Please try again or let a mentor know.",
-      };
-    }
+  ): ResultAsync<AttendanceOperationResult, Error> {
+    return this.recordAttendance(discordId, discordName, guildId, "signIn")
+      .map((): AttendanceOperationResult => ({ success: true }))
+      .orElse(
+        (error): ResultAsync<AttendanceOperationResult, never> => {
+          this.logger.error(`Failed to sign in: ${error}`);
+          return okAsync({
+            success: false,
+            message: "Failed to sign in. Please try again or let a mentor know.",
+          });
+        }
+      );
   }
 
-  private async recordSignOut(
+  private recordSignOut(
     discordId: string,
     discordName: string,
     guildId: string
-  ): Promise<AttendanceOperationResult> {
-    try {
-      const success = await this.recordAttendance(discordId, discordName, guildId, "signOut");
-      if (success) {
-        return { success: true };
-      }
-      return {
-        success: false,
-        message: "Failed to sign out. Please try again or let a mentor know.",
-      };
-    } catch (error) {
-      this.logger.error(`Failed to sign out: ${error}`);
-      return {
-        success: false,
-        message: "Failed to sign out. Please try again or let a mentor know.",
-      };
-    }
+  ): ResultAsync<AttendanceOperationResult, Error> {
+    return this.recordAttendance(discordId, discordName, guildId, "signOut")
+      .map((): AttendanceOperationResult => ({ success: true }))
+      .orElse(
+        (error): ResultAsync<AttendanceOperationResult, never> => {
+          this.logger.error(`Failed to sign out: ${error}`);
+          return okAsync({
+            success: false,
+            message: "Failed to sign out. Please try again or let a mentor know.",
+          });
+        }
+      );
   }
 
-  public async signIn(
+  public signIn(
     discordId: string,
     guildId: string,
     discordName: string,
     code?: number,
     skipTwofa?: boolean
-  ): Promise<AttendanceOperationResult> {
+  ): ResultAsync<AttendanceOperationResult, Error> {
     if (!skipTwofa) {
       const codeError = this.validateTwofaCode(code);
       if (codeError) {
-        return codeError;
+        return okAsync(codeError);
       }
     }
 
-    const lastOperation = await this.getLastAttendanceRecord(discordId);
+    return this.getLastAttendanceRecord(discordId).andThen((lastOperation) => {
+      if (!lastOperation?.isSigningIn) {
+        return this.recordSignIn(discordId, discordName, guildId);
+      }
 
-    if (!lastOperation?.isSigningIn) {
-      return this.recordSignIn(discordId, discordName, guildId);
-    }
+      const lastDate = new Date(lastOperation.date);
+      if (this.isStaleSession(lastDate)) {
+        return this.handleForgotToSignOut(discordId, discordName, guildId, lastDate);
+      }
 
-    const lastDate = new Date(lastOperation.date);
-    if (this.isStaleSession(lastDate)) {
-      return this.handleForgotToSignOut(discordId, discordName, guildId, lastDate);
-    }
-
-    return { success: false, message: "You are currently signed in." };
+      return okAsync<AttendanceOperationResult, Error>({
+        success: false,
+        message: "You are currently signed in.",
+      });
+    });
   }
 
-  public async signOut(
+  public signOut(
     discordId: string,
     guildId: string,
     discordName: string,
     code?: number,
     skipTwofa?: boolean
-  ): Promise<AttendanceOperationResult> {
+  ): ResultAsync<AttendanceOperationResult, Error> {
     if (!skipTwofa) {
       const codeError = this.validateTwofaCode(code);
       if (codeError) {
-        return codeError;
+        return okAsync(codeError);
       }
     }
 
-    const lastOperation = await this.getLastAttendanceRecord(discordId);
+    return this.getLastAttendanceRecord(discordId).andThen((lastOperation) => {
+      if (!lastOperation?.isSigningIn) {
+        return okAsync<AttendanceOperationResult, Error>({
+          success: false,
+          message: "You are not signed in.",
+        });
+      }
 
-    if (!lastOperation?.isSigningIn) {
-      return {
-        success: false,
-        message: "You are not signed in.",
-      };
-    }
+      const lastDate = new Date(lastOperation.date);
+      if (!skipTwofa && Date.now() - lastDate.getTime() > EXPIRED_SESSION_THRESHOLD_MS) {
+        return this.signIn(discordId, guildId, discordName, code, skipTwofa);
+      }
 
-    const lastDate = new Date(lastOperation.date);
-    if (!skipTwofa && Date.now() - lastDate.getTime() > EXPIRED_SESSION_THRESHOLD_MS) {
-      return this.signIn(discordId, guildId, discordName, code, skipTwofa);
-    }
-
-    return this.recordSignOut(discordId, discordName, guildId);
+      return this.recordSignOut(discordId, discordName, guildId);
+    });
   }
 
-  private calculateHoursFromRecords(records: AttendanceRecord[]): number {
+  private calculateHoursFromRecords(records: AttendanceRecord[]): Result<number, Error> {
     let hours = 0;
     let lastSignIn: Date | null = null;
 
@@ -290,80 +270,77 @@ export class AttendanceService {
         hours += (new Date(record.date).getTime() - lastSignIn.getTime()) / MS_PER_HOUR;
         lastSignIn = null;
       } else {
-        throw new Error(
-          `Data integrity error: sign-out record found without preceding sign-in record. Timestamp: ${record.date}`
+        return err(
+          new Error(
+            `Data integrity error: sign-out record found without preceding sign-in record. Timestamp: ${record.date}`
+          )
         );
       }
     }
 
-    return hours;
+    return ok(hours);
   }
 
-  public async getUserHours(discordId: string): Promise<number> {
-    const attendance = await this.getAttendance(discordId);
-    return this.calculateHoursFromRecords(attendance);
+  public getUserHours(discordId: string): ResultAsync<number, Error> {
+    return this.getAttendance(discordId).andThen((records) =>
+      this.calculateHoursFromRecords(records)
+    );
   }
 
   public getTotalPossibleHoursToDate(asOfDate?: Date): number {
     return getTotalPossibleHoursToDate(asOfDate);
   }
 
-  private async getAllMembersSortedByHours(): Promise<
-    Array<{ discordId: string; userName: string; totalHours: number }>
+  private getAllMembersSortedByHours(): ResultAsync<
+    Array<{ discordId: string; userName: string; totalHours: number }>,
+    Error
   > {
-    const result = await this.repository.findAll();
+    return this.repository.findAll().andThen((records) => {
+      const userRecords = new Map<string, { userName: string; records: AttendanceRecord[] }>();
 
-    if (result.isErr()) {
-      this.logger.error(`Failed to get all attendance: ${result.error.message}`);
-      return [];
-    }
-
-    const userRecords = new Map<string, { userName: string; records: AttendanceRecord[] }>();
-
-    for (const record of result.value) {
-      let userData = userRecords.get(record.discordId);
-      if (!userData) {
-        userData = { userName: record.discordName, records: [] };
-        userRecords.set(record.discordId, userData);
+      for (const record of records) {
+        let userData = userRecords.get(record.discordId);
+        if (!userData) {
+          userData = { userName: record.discordName, records: [] };
+          userRecords.set(record.discordId, userData);
+        }
+        userData.records.push(record);
       }
-      userData.records.push(record);
-    }
 
-    return Array.from(userRecords.entries())
-      .map(([id, { userName, records }]) => ({
-        discordId: id,
-        userName,
-        totalHours: this.calculateHoursFromRecords(records),
-      }))
-      .filter((u) => u.totalHours > 0)
-      .sort((a, b) => b.totalHours - a.totalHours);
+      const entries: Array<{ discordId: string; userName: string; totalHours: number }> = [];
+      for (const [id, { userName, records: userRecs }] of userRecords.entries()) {
+        const hoursResult = this.calculateHoursFromRecords(userRecs);
+        if (hoursResult.isErr()) return errAsync(hoursResult.error);
+        entries.push({ discordId: id, userName, totalHours: hoursResult.value });
+      }
+
+      return okAsync(
+        entries
+          .filter((u) => u.totalHours > 0)
+          .sort((a, b) => b.totalHours - a.totalHours)
+      );
+    });
   }
 
-  public async getTopMembersByHours(limit: number = DEFAULT_LEADERBOARD_LIMIT) {
-    try {
-      const sorted = await this.getAllMembersSortedByHours();
-      return sorted.slice(0, limit).map(({ userName, totalHours }) => ({
+  public getTopMembersByHours(
+    limit: number = DEFAULT_LEADERBOARD_LIMIT
+  ): ResultAsync<Array<{ userName: string; totalHours: number }>, Error> {
+    return this.getAllMembersSortedByHours().map((sorted) =>
+      sorted.slice(0, limit).map(({ userName, totalHours }) => ({
         userName,
         totalHours: parseFloat(totalHours.toFixed(2)),
-      }));
-    } catch (error) {
-      this.logger.error(`Error getting attendance leaderboard:`, error);
-      return [];
-    }
+      }))
+    );
   }
 
-  public async getUserRank(discordId: string): Promise<number | null> {
-    try {
-      const sorted = await this.getAllMembersSortedByHours();
+  public getUserRank(discordId: string): ResultAsync<number | null, Error> {
+    return this.getAllMembersSortedByHours().map((sorted) => {
       const userEntry = sorted.find((u) => u.discordId === discordId);
       if (!userEntry) return null;
       const distinctHigher = new Set(
         sorted.filter((u) => u.totalHours > userEntry.totalHours).map((u) => u.totalHours)
       );
       return distinctHigher.size + 1;
-    } catch (error) {
-      this.logger.error(`Error getting rank for user ${discordId}:`, error);
-      return null;
-    }
+    });
   }
 }
