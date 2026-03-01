@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { okAsync } from "neverthrow";
 import { Context, SlashCommand, type SlashCommandContext } from "necord";
+import { okAsync } from "neverthrow";
 import { getNickname } from "src/lib/utils/discord.utils";
 import { roundToTenth } from "src/lib/utils/math.utils";
 import { OutreachService } from "./outreach.service";

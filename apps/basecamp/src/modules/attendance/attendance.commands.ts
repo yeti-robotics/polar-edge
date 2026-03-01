@@ -356,9 +356,7 @@ export class AttendanceCommands {
 
     const userRank = rankResult.isOk() ? rankResult.value : null;
     const userHours = hoursResult.isOk() ? hoursResult.value : null;
-    const displayName = nicknameResult.isOk()
-      ? nicknameResult.value
-      : interaction.user.displayName;
+    const displayName = nicknameResult.isOk() ? nicknameResult.value : interaction.user.displayName;
 
     if (userRank != null && userRank > 5 && userHours != null) {
       const userHoursDisplay = parseFloat(userHours.toFixed(2));

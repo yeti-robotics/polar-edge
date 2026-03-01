@@ -419,7 +419,7 @@ describe("OutreachCommands", () => {
       await commands.onOutreachLeaderboard([interaction] as never);
 
       expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("⋮"));
-      const call = (interaction.reply as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+      const call = (interaction.reply as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as string;
       expect(call.indexOf("Test User")).toBe(call.lastIndexOf("Test User"));
     });
 

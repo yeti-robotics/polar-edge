@@ -782,7 +782,7 @@ describe("AttendanceCommands", () => {
       // The user appears in the leaderboard already; no extra line with ellipsis
       expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("⋮"));
       // Should not appear twice
-      const call = (interaction.reply as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+      const call = (interaction.reply as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as string;
       expect(call.indexOf("Test User")).toBe(call.lastIndexOf("Test User"));
     });
 
