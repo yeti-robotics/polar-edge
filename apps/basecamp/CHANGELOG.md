@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.2...basecamp-v1.1.3) (2026-03-01)
+
+
+### Bug Fixes
+
+* **basecamp:** enforce minimum length for discordId in attendance schema ([5e206fd](https://github.com/yeti-robotics/polar-edge/commit/5e206fd6e650bd3bec7bf3caa6b2ef708ab06189))
+
 ## [1.1.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.1...basecamp-v1.1.2) (2026-03-01)
 
 
