@@ -110,13 +110,7 @@ describe("AttendanceRepository", () => {
     });
 
     it("should treat TRUE (uppercase) as isSigningIn true", async () => {
-      const rows = makeSheetRows(HEADER, [
-        "123",
-        "YETI Robotics",
-        "user",
-        "2025-01-15",
-        "TRUE",
-      ]);
+      const rows = makeSheetRows(HEADER, ["123", "YETI Robotics", "user", "2025-01-15", "TRUE"]);
       mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
 
       const result = await repository.findByDiscordId("123");

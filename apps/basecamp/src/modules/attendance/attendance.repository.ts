@@ -2,11 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { err, ok, Result, ResultAsync } from "neverthrow";
 import { SheetService } from "src/lib/sheet/sheet.service";
 import { ZodError } from "zod";
-import {
-  COLUMN_INDICES,
-  SHEET_RANGE_APPEND,
-  SHEET_RANGE_READ,
-} from "./attendance.constants";
+import { COLUMN_INDICES, SHEET_RANGE_APPEND, SHEET_RANGE_READ } from "./attendance.constants";
 import { type AttendanceRecord, AttendanceRecordSchema } from "./attendance.schema";
 
 @Injectable()
