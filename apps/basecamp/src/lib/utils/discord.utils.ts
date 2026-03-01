@@ -18,6 +18,6 @@ export function getNickname(interaction: ChatInputCommandInteraction) {
     fetchPromise,
     (e) => new Error(`Failed to get nickname: ${e instanceof Error ? e.message : String(e)}`)
   ).andThen((member) =>
-    member.nickname ? ok(member.nickname) : err(new Error("Nickname not found"))
+    member?.nickname ? ok(member.nickname) : err(new Error("Nickname not found"))
   );
 }

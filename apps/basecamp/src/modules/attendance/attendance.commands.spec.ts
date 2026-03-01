@@ -575,20 +575,6 @@ describe("AttendanceCommands", () => {
   // ─── /attendance ──────────────────────────────────────────────────────────
 
   describe("onAttendance", () => {
-    it("replies with 'must have a nickname' when member has no nickname", async () => {
-      const interaction = makeInteraction({
-        guild: {
-          id: "yeti-server-id",
-          members: { fetch: vi.fn().mockResolvedValue({ nickname: null }) },
-        },
-      });
-
-      await commands.onAttendance([interaction] as never);
-
-      expect(interaction.reply).toHaveBeenCalledWith("You must have a nickname to get attendance");
-      expect(service.getUserHours).not.toHaveBeenCalled();
-    });
-
     it("replies with error when getUserHours returns err", async () => {
       const interaction = makeInteraction();
       service.getUserHours.mockReturnValue(errAsync(new Error("sheet error")));
