@@ -29,7 +29,11 @@ vi.mock("@googleapis/sheets", () => ({
 
 describe("SheetService", () => {
   let service: SheetService;
-  let mockCache: { get: ReturnType<typeof vi.fn>; set: ReturnType<typeof vi.fn>; del: ReturnType<typeof vi.fn> };
+  let mockCache: {
+    get: ReturnType<typeof vi.fn>;
+    set: ReturnType<typeof vi.fn>;
+    del: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -170,9 +174,7 @@ describe("SheetService", () => {
       const result = await service.append("Sheet1!A1", [["row1"]]);
 
       expect(result.isOk()).toBe(true);
-      expect(mockCache.del).toHaveBeenCalledWith(
-        `sheet:${MOCK_SPREADSHEET_ID}:Sheet1!A1`
-      );
+      expect(mockCache.del).toHaveBeenCalledWith(`sheet:${MOCK_SPREADSHEET_ID}:Sheet1!A1`);
     });
 
     it("should propagate error when cache del fails", async () => {
