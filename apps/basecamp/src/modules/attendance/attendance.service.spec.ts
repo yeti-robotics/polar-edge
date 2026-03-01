@@ -261,6 +261,18 @@ describe("AttendanceService", () => {
       });
     });
 
+    it("propagates error when Intl.DateTimeFormat returns malformed parts", async () => {
+      const signInTime = new Date("2025-01-01T15:00:00Z").toISOString();
+      repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
+
+      const spy = vi.spyOn(Intl.DateTimeFormat.prototype, "formatToParts").mockReturnValue([]);
+
+      const result = await service.signIn("user1", "yeti-server-id", "Test User 1");
+
+      spy.mockRestore();
+      expect(result.isErr()).toBe(true);
+    });
+
     it("maps YETI guild to 'YETI Robotics'", async () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
       repository.append.mockReturnValue(okAsync(undefined));

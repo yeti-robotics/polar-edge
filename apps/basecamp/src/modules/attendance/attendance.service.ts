@@ -1,5 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { err, errAsync, ok, okAsync, type Result, type ResultAsync } from "neverthrow";
+import {
+  err,
+  errAsync,
+  fromThrowable,
+  ok,
+  okAsync,
+  type Result,
+  type ResultAsync,
+} from "neverthrow";
 import { AppConfigService } from "src/config/config.service";
 import {
   DEFAULT_LEADERBOARD_LIMIT,
@@ -78,7 +86,9 @@ export class AttendanceService {
     return this.repository.findByDiscordId(discordId);
   }
 
-  private getLastAttendanceRecord(discordId: string): ResultAsync<AttendanceRecord | undefined, Error> {
+  private getLastAttendanceRecord(
+    discordId: string
+  ): ResultAsync<AttendanceRecord | undefined, Error> {
     return this.getAttendance(discordId).map((records) => records.at(-1));
   }
 
@@ -104,36 +114,40 @@ export class AttendanceService {
     return null;
   }
 
-  private isStaleSession(signInTime: Date): boolean {
-    const toEasternYMD = (date: Date) => {
-      const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/New_York",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }).formatToParts(date);
-      const getPart = (type: "year" | "month" | "day") => {
-        const part = parts.find((p) => p.type === type);
-        if (part == null) throw new Error(`Missing ${type} in date parts`);
-        return Number(part.value);
-      };
-      return {
-        year: getPart("year"),
-        month: getPart("month"),
-        day: getPart("day"),
-      };
-    };
+  private isStaleSession(signInTime: Date): Result<boolean, Error> {
+    const toEasternYMD = fromThrowable(
+      (date: Date) => {
+        const parts = new Intl.DateTimeFormat("en-US", {
+          timeZone: "America/New_York",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).formatToParts(date);
+        const getPart = (type: "year" | "month" | "day") => {
+          const part = parts.find((p) => p.type === type);
+          if (part == null) throw new Error(`Missing ${type} in date parts`);
+          return Number(part.value);
+        };
+        return { year: getPart("year"), month: getPart("month"), day: getPart("day") };
+      },
+      (e) => (e instanceof Error ? e : new Error(String(e)))
+    );
 
     const now = new Date();
-    const signInEastern = toEasternYMD(signInTime);
-    const nowEastern = toEasternYMD(now);
+    const signInResult = toEasternYMD(signInTime);
+    if (signInResult.isErr()) return err(signInResult.error);
+    const nowResult = toEasternYMD(now);
+    if (nowResult.isErr()) return err(nowResult.error);
+
+    const signInEastern = signInResult.value;
+    const nowEastern = nowResult.value;
 
     const differentDay =
       nowEastern.year !== signInEastern.year ||
       nowEastern.month !== signInEastern.month ||
       nowEastern.day !== signInEastern.day;
     const enoughTimeElapsed = now.getTime() - signInTime.getTime() > STALE_SIGNIN_MIN_HOURS_MS;
-    return differentDay && enoughTimeElapsed;
+    return ok(differentDay && enoughTimeElapsed);
   }
 
   private handleForgotToSignOut(
@@ -168,15 +182,13 @@ export class AttendanceService {
   ): ResultAsync<AttendanceOperationResult, Error> {
     return this.recordAttendance(discordId, discordName, guildId, "signIn")
       .map((): AttendanceOperationResult => ({ success: true }))
-      .orElse(
-        (error): ResultAsync<AttendanceOperationResult, never> => {
-          this.logger.error(`Failed to sign in: ${error}`);
-          return okAsync({
-            success: false,
-            message: "Failed to sign in. Please try again or let a mentor know.",
-          });
-        }
-      );
+      .orElse((error): ResultAsync<AttendanceOperationResult, never> => {
+        this.logger.error(`Failed to sign in: ${error}`);
+        return okAsync({
+          success: false,
+          message: "Failed to sign in. Please try again or let a mentor know.",
+        });
+      });
   }
 
   private recordSignOut(
@@ -186,15 +198,13 @@ export class AttendanceService {
   ): ResultAsync<AttendanceOperationResult, Error> {
     return this.recordAttendance(discordId, discordName, guildId, "signOut")
       .map((): AttendanceOperationResult => ({ success: true }))
-      .orElse(
-        (error): ResultAsync<AttendanceOperationResult, never> => {
-          this.logger.error(`Failed to sign out: ${error}`);
-          return okAsync({
-            success: false,
-            message: "Failed to sign out. Please try again or let a mentor know.",
-          });
-        }
-      );
+      .orElse((error): ResultAsync<AttendanceOperationResult, never> => {
+        this.logger.error(`Failed to sign out: ${error}`);
+        return okAsync({
+          success: false,
+          message: "Failed to sign out. Please try again or let a mentor know.",
+        });
+      });
   }
 
   public signIn(
@@ -217,7 +227,9 @@ export class AttendanceService {
       }
 
       const lastDate = new Date(lastOperation.date);
-      if (this.isStaleSession(lastDate)) {
+      const staleResult = this.isStaleSession(lastDate);
+      if (staleResult.isErr()) return errAsync(staleResult.error);
+      if (staleResult.value) {
         return this.handleForgotToSignOut(discordId, discordName, guildId, lastDate);
       }
 
@@ -315,9 +327,7 @@ export class AttendanceService {
       }
 
       return okAsync(
-        entries
-          .filter((u) => u.totalHours > 0)
-          .sort((a, b) => b.totalHours - a.totalHours)
+        entries.filter((u) => u.totalHours > 0).sort((a, b) => b.totalHours - a.totalHours)
       );
     });
   }

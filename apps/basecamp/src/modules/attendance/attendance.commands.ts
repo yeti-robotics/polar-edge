@@ -70,6 +70,7 @@ export class AttendanceCommands {
     );
 
     if (opResult.isErr()) {
+      this.logger.error(`signIn failed for ${interaction.user.id}: ${opResult.error.message}`);
       return interaction.editReply({ content: "An unexpected error occurred." });
     }
 
@@ -113,6 +114,7 @@ export class AttendanceCommands {
     );
 
     if (opResult.isErr()) {
+      this.logger.error(`signOut failed for ${interaction.user.id}: ${opResult.error.message}`);
       return interaction.editReply({ content: "An unexpected error occurred." });
     }
 
@@ -165,6 +167,7 @@ export class AttendanceCommands {
     );
 
     if (opResult.isErr()) {
+      this.logger.error(`admin-signin failed for ${user.id}: ${opResult.error.message}`);
       return interaction.editReply({ content: "An unexpected error occurred." });
     }
 
@@ -217,6 +220,7 @@ export class AttendanceCommands {
     );
 
     if (opResult.isErr()) {
+      this.logger.error(`admin-signout failed for ${user.id}: ${opResult.error.message}`);
       return interaction.editReply({ content: "An unexpected error occurred." });
     }
 
@@ -251,7 +255,12 @@ export class AttendanceCommands {
     ]);
 
     if (hoursResult.isErr() || rankResult.isErr()) {
-      this.logger.error(`Error getting attendance for user ${interaction.user.id}`);
+      const errorMessage = hoursResult.isErr()
+        ? hoursResult.error.message
+        : rankResult.isErr()
+          ? rankResult.error.message
+          : "unknown error";
+      this.logger.error(`Error getting attendance for user ${interaction.user.id}: ${errorMessage}`);
       return interaction.reply(
         "There was an error getting your attendance. Please let a mentor know."
       );
@@ -295,7 +304,12 @@ export class AttendanceCommands {
   public async onAttendanceLeaderboard(@Context() [interaction]: SlashCommandContext) {
     const leaderboardResult = await this.attendanceService.getTopMembersByHours(5);
 
-    if (leaderboardResult.isErr() || leaderboardResult.value.length === 0) {
+    if (leaderboardResult.isErr()) {
+      this.logger.error(`Error getting attendance leaderboard: ${leaderboardResult.error.message}`);
+      return interaction.reply("No attendance data found");
+    }
+
+    if (leaderboardResult.value.length === 0) {
       return interaction.reply("No attendance data found");
     }
 
