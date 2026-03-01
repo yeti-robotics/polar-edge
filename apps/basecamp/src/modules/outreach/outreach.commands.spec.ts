@@ -113,7 +113,13 @@ describe("OutreachCommands", () => {
       const interaction = makeInteraction();
       service.getUserOutreach.mockReturnValue(
         okAsync([
-          { date: "2024-01-01", userName: "Test User", event: "Event 1", eventType: "Workshop", hours: 25 },
+          {
+            date: "2024-01-01",
+            userName: "Test User",
+            event: "Event 1",
+            eventType: "Workshop",
+            hours: 25,
+          },
         ])
       );
 
@@ -134,7 +140,13 @@ describe("OutreachCommands", () => {
       const interaction = makeInteraction();
       service.getUserOutreach.mockReturnValue(
         okAsync([
-          { date: "2024-01-01", userName: "Test User", event: "Event 1", eventType: "Workshop", hours: 75 },
+          {
+            date: "2024-01-01",
+            userName: "Test User",
+            event: "Event 1",
+            eventType: "Workshop",
+            hours: 75,
+          },
         ])
       );
 
@@ -154,15 +166,19 @@ describe("OutreachCommands", () => {
       const interaction = makeInteraction();
       service.getUserOutreach.mockReturnValue(
         okAsync([
-          { date: "2024-01-01", userName: "Test User", event: "Event 1", eventType: "Workshop", hours: 120 },
+          {
+            date: "2024-01-01",
+            userName: "Test User",
+            event: "Event 1",
+            eventType: "Workshop",
+            hours: 120,
+          },
         ])
       );
 
       await commands.onOutreach([interaction] as never);
 
-      expect(interaction.reply).toHaveBeenCalledWith(
-        expect.stringContaining("Total hours:** 120")
-      );
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("Total hours:** 120"));
       expect(interaction.reply).toHaveBeenCalledWith(
         expect.stringContaining("🎉 Veteran minimum achieved!")
       );
@@ -184,8 +200,20 @@ describe("OutreachCommands", () => {
       const interaction = makeInteraction();
       service.getUserOutreach.mockReturnValue(
         okAsync([
-          { date: "2024-01-01", userName: "Test User", event: "Event 1", eventType: "Workshop", hours: 60 },
-          { date: "2024-01-02", userName: "Test User", event: "Event 2", eventType: "Outreach", hours: 60 },
+          {
+            date: "2024-01-01",
+            userName: "Test User",
+            event: "Event 1",
+            eventType: "Workshop",
+            hours: 60,
+          },
+          {
+            date: "2024-01-02",
+            userName: "Test User",
+            event: "Event 2",
+            eventType: "Outreach",
+            hours: 60,
+          },
         ])
       );
 

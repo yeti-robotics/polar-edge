@@ -15,7 +15,6 @@ function makeRes() {
 
 describe("TwofaController", () => {
   let controller: TwofaController;
-  let configService: { get: MockedFunction<AppConfigService["get"]> };
   let jwtService: {
     sign: MockedFunction<JwtService["sign"]>;
     verify: MockedFunction<JwtService["verify"]>;
@@ -45,7 +44,6 @@ describe("TwofaController", () => {
     }).compile();
 
     controller = module.get<TwofaController>(TwofaController);
-    configService = module.get(AppConfigService);
     jwtService = module.get(JwtService);
   });
 

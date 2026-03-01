@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getOrdinalSuffix, roundToTenth } from "./math.utils";
+import { formatPercentage, getOrdinalSuffix, roundToTenth } from "./math.utils";
 
 describe("roundToTenth", () => {
   it("rounds to one decimal place", () => {
@@ -70,5 +70,27 @@ describe("getOrdinalSuffix", () => {
 
   it("returns 112th for 112 (teen exception at hundreds)", () => {
     expect(getOrdinalSuffix(112)).toBe("112th");
+  });
+});
+
+describe("formatPercentage", () => {
+  it("formats a number as a percentage", () => {
+    expect(formatPercentage(0.5)).toBe("50");
+  });
+
+  it("returns 0 for 0", () => {
+    expect(formatPercentage(0)).toBe("0");
+  });
+
+  it("returns 100 for 1", () => {
+    expect(formatPercentage(1)).toBe("100");
+  });
+
+  it("returns 100 for 1.0", () => {
+    expect(formatPercentage(1.0)).toBe("100");
+  });
+
+  it("returns 100 for 1.00", () => {
+    expect(formatPercentage(1.0)).toBe("100");
   });
 });

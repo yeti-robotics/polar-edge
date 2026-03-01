@@ -14,3 +14,10 @@ export function getOrdinalSuffix(n: number): string {
   const v = n % 100;
   return n + (s[(v - 20) % 10] ?? s[v] ?? s[0] ?? "th");
 }
+
+/**
+ * Formats a number as a percentage.
+ */
+export function formatPercentage(value: number): string {
+  return Math.round(value * 100).toString();
+}

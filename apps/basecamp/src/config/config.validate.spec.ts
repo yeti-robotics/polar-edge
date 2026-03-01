@@ -101,7 +101,7 @@ describe("envSchema", () => {
 
     it("fails when googleCredentials is not valid base64", () => {
       expect(
-        envSchema.safeParse({ ...validConfig, googleCredentials: "not-base64!!!" }).success,
+        envSchema.safeParse({ ...validConfig, googleCredentials: "not-base64!!!" }).success
       ).toBe(false);
     });
 
@@ -109,7 +109,7 @@ describe("envSchema", () => {
       // JSON.parse inside the .transform() throws and escapes safeParse in Zod v4
       const notJson = Buffer.from("not valid json").toString("base64");
       expect(() => envSchema.safeParse({ ...validConfig, googleCredentials: notJson })).toThrow(
-        SyntaxError,
+        SyntaxError
       );
     });
 

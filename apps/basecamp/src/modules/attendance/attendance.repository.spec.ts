@@ -131,7 +131,7 @@ describe("AttendanceRepository", () => {
       const rows = makeSheetRows(
         HEADER,
         [discordId, "YETI Robotics", "user", "2025-01-15", BOOLEAN_STRINGS.TRUE],
-        [discordId], // matches filter but missing required columns — triggers warn path
+        [discordId] // matches filter but missing required columns — triggers warn path
       );
       mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
 

@@ -1,32 +1,57 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { AppConfigService } from "src/config/config.service";
-import { type ChatInputCommandInteraction, GuildMember, MessageFlags } from "discord.js";
-import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
-import { getNickname } from "src/lib/utils/discord.utils";
-import { getOrdinalSuffix } from "src/lib/utils/math.utils";
+import { type GuildMember, MessageFlags, type User } from "discord.js";
 import {
-  AdminSignInDto,
-  AdminSignOutDto,
-  AttendanceSignInDto,
-  AttendanceSignOutDto,
-} from "./attendance.dto";
+  Context,
+  IntegerOption,
+  Options,
+  SlashCommand,
+  type SlashCommandContext,
+  UserOption,
+} from "necord";
+import { AppConfigService } from "src/config/config.service";
+import { getNickname } from "src/lib/utils/discord.utils";
+import { formatPercentage, getOrdinalSuffix } from "src/lib/utils/math.utils";
 import { AttendanceService } from "./attendance.service";
+
+class AttendanceSignInDto {
+  @IntegerOption({
+    name: "code",
+    description: "The code to sign in with",
+    required: true,
+  })
+  code: number;
+}
+
+class AttendanceSignOutDto {
+  @IntegerOption({
+    name: "code",
+    description: "The code to sign out with",
+    required: true,
+  })
+  code: number;
+}
+
+class AdminSignInDto {
+  @UserOption({
+    name: "user",
+    description: "The user to sign in",
+    required: true,
+  })
+  user: User;
+}
+
+class AdminSignOutDto {
+  @UserOption({
+    name: "user",
+    description: "The user to sign out",
+    required: true,
+  })
+  user: User;
+}
 
 // Percentage requirements based on hours to date
 const MEMBER_REQUIRED_PERCENTAGE = 0.75; // 75% of hours to date
 const LEADERSHIP_REQUIRED_PERCENTAGE = 0.85; // 85% of hours to date
-
-function floorToInteger(n: number): number {
-  return Math.floor(n);
-}
-
-function ceilToInteger(n: number): number {
-  return Math.ceil(n);
-}
-
-function formatPercentage(n: number): string {
-  return Math.round(n).toString();
-}
 
 @Injectable()
 export class AttendanceCommands {
@@ -262,8 +287,8 @@ export class AttendanceCommands {
     const rank = rankResult.value;
     const totalPossibleHours = this.attendanceService.getTotalPossibleHoursToDate();
 
-    const hoursString = floorToInteger(hours);
-    const hoursPercentage = totalPossibleHours > 0 ? (hours / totalPossibleHours) * 100 : 0;
+    const hoursString = Math.floor(hours);
+    const hoursPercentage = totalPossibleHours > 0 ? hours / totalPossibleHours : 0;
     const hoursPercentageString = formatPercentage(hoursPercentage);
 
     const rankString = rank != null ? ` and ranked ${getOrdinalSuffix(rank)} overall` : "";
@@ -271,18 +296,18 @@ export class AttendanceCommands {
     const memberRequiredHours = totalPossibleHours * MEMBER_REQUIRED_PERCENTAGE;
     const leadershipRequiredHours = totalPossibleHours * LEADERSHIP_REQUIRED_PERCENTAGE;
 
-    const totalPossibleHoursDisplay = floorToInteger(totalPossibleHours);
+    const totalPossibleHoursDisplay = Math.floor(totalPossibleHours);
     if (hours >= leadershipRequiredHours) {
       return interaction.reply(
         `You're currently above the minimum hours for leadership${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! :tada:`
       );
     } else if (hours >= memberRequiredHours) {
-      const remainingHours = ceilToInteger(leadershipRequiredHours - hours);
+      const remainingHours = Math.ceil(leadershipRequiredHours - hours);
       return interaction.reply(
         `You've currently above the minimum hours for members${rankString} (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
       );
     } else {
-      const remainingHours = ceilToInteger(memberRequiredHours - hours);
+      const remainingHours = Math.ceil(memberRequiredHours - hours);
       return interaction.reply(
         `You've got ${hoursString} hours${rankString} (${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
       );

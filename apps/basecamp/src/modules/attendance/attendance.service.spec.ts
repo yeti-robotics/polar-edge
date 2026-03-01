@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from "@nestjs/testing";
 import { errAsync, okAsync } from "neverthrow";
-import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { AppConfigService } from "src/config/config.service";
+import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { EXPIRED_SESSION_THRESHOLD_MS, FORGOT_SIGNOUT_CREDIT_MS } from "./attendance.constants";
 import { AttendanceRepository } from "./attendance.repository";
 import { type AttendanceRecord } from "./attendance.schema";
@@ -68,12 +68,48 @@ describe("AttendanceService", () => {
   };
 
   const mockAttendanceRecords: AttendanceRecord[] = [
-    { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-    { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-01T12:00:00Z", isSigningIn: false },
-    { discordId: "user2", team: "Dev", discordName: "Test User 2", date: "2025-01-02T10:00:00Z", isSigningIn: true },
-    { discordId: "user2", team: "Dev", discordName: "Test User 2", date: "2025-01-02T12:00:00Z", isSigningIn: false },
-    { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-03T10:00:00Z", isSigningIn: true },
-    { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-03T12:00:00Z", isSigningIn: false },
+    {
+      discordId: "user1",
+      team: "YETI Robotics",
+      discordName: "Test User 1",
+      date: "2025-01-01T10:00:00Z",
+      isSigningIn: true,
+    },
+    {
+      discordId: "user1",
+      team: "YETI Robotics",
+      discordName: "Test User 1",
+      date: "2025-01-01T12:00:00Z",
+      isSigningIn: false,
+    },
+    {
+      discordId: "user2",
+      team: "Dev",
+      discordName: "Test User 2",
+      date: "2025-01-02T10:00:00Z",
+      isSigningIn: true,
+    },
+    {
+      discordId: "user2",
+      team: "Dev",
+      discordName: "Test User 2",
+      date: "2025-01-02T12:00:00Z",
+      isSigningIn: false,
+    },
+    {
+      discordId: "user1",
+      team: "YETI Robotics",
+      discordName: "Test User 1",
+      date: "2025-01-03T10:00:00Z",
+      isSigningIn: true,
+    },
+    {
+      discordId: "user1",
+      team: "YETI Robotics",
+      discordName: "Test User 1",
+      date: "2025-01-03T12:00:00Z",
+      isSigningIn: false,
+    },
   ];
 
   beforeEach(async () => {
@@ -106,10 +142,10 @@ describe("AttendanceService", () => {
 
       expect(result).toHaveLength(4);
       expect(result.every((record) => record.discordId === "user1")).toBe(true);
-      expect(result[0].isSigningIn).toBe(true);
-      expect(result[1].isSigningIn).toBe(false);
-      expect(result[2].isSigningIn).toBe(true);
-      expect(result[3].isSigningIn).toBe(false);
+      expect(result[0]?.isSigningIn).toBe(true);
+      expect(result[1]?.isSigningIn).toBe(false);
+      expect(result[2]?.isSigningIn).toBe(true);
+      expect(result[3]?.isSigningIn).toBe(false);
     });
 
     it("should return empty array when user has no records", async () => {
@@ -123,8 +159,20 @@ describe("AttendanceService", () => {
     it("should calculate hours correctly for a user with attendance records", async () => {
       repository.findByDiscordId.mockReturnValue(
         okAsync([
-          { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-          { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-01T12:30:00Z", isSigningIn: false },
+          {
+            discordId: "user1",
+            team: "YETI Robotics",
+            discordName: "Test User 1",
+            date: "2025-01-01T10:00:00Z",
+            isSigningIn: true,
+          },
+          {
+            discordId: "user1",
+            team: "YETI Robotics",
+            discordName: "Test User 1",
+            date: "2025-01-01T12:30:00Z",
+            isSigningIn: false,
+          },
         ])
       );
 
@@ -144,7 +192,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signIn("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
       expect(repository.append).toHaveBeenCalledTimes(1);
@@ -159,7 +209,9 @@ describe("AttendanceService", () => {
       );
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signIn("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
     });
@@ -172,7 +224,9 @@ describe("AttendanceService", () => {
       const signInTime = new Date(now.getTime() - 1 * MS_PER_HOUR).toISOString();
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
 
-      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signIn("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: false, message: "You are currently signed in." });
       expect(repository.append).not.toHaveBeenCalled();
@@ -188,7 +242,9 @@ describe("AttendanceService", () => {
       const signInTime = new Date("2025-01-01T13:00:00Z").toISOString();
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
 
-      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signIn("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: false, message: "You are currently signed in." });
     });
@@ -203,19 +259,21 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signIn("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result.success).toBe(true);
       expect(result.message).toContain("credited with 1.5 hours");
       expect(repository.append).toHaveBeenCalledTimes(2);
 
-      const firstRecord = repository.append.mock.calls[0][0] as AttendanceRecord;
+      const firstRecord = repository.append.mock.calls.at(0)?.[0] as AttendanceRecord;
       expect(firstRecord.isSigningIn).toBe(false);
       const creditedDate = new Date(firstRecord.date);
       const originalSignIn = new Date(signInTime);
       expect(creditedDate.getTime()).toBe(originalSignIn.getTime() + FORGOT_SIGNOUT_CREDIT_MS);
 
-      const secondRecord = repository.append.mock.calls[1][0] as AttendanceRecord;
+      const secondRecord = repository.append.mock.calls.at(1)?.[0] as AttendanceRecord;
       expect(secondRecord.isSigningIn).toBe(true);
     });
 
@@ -228,7 +286,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(errAsync(new Error("append failed")));
 
-      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signIn("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result.success).toBe(false);
     });
@@ -244,7 +304,9 @@ describe("AttendanceService", () => {
         .mockReturnValueOnce(okAsync(undefined))
         .mockReturnValueOnce(errAsync(new Error("append failed")));
 
-      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signIn("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result.success).toBe(false);
     });
@@ -253,7 +315,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
       repository.append.mockReturnValue(errAsync(new Error("append failed")));
 
-      const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signIn("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({
         success: false,
@@ -279,7 +343,7 @@ describe("AttendanceService", () => {
 
       await service.signIn("user1", "yeti-server-id", "Test User 1");
 
-      const record = repository.append.mock.calls[0][0] as AttendanceRecord;
+      const record = repository.append.mock.calls.at(0)?.[0] as AttendanceRecord;
       expect(record.team).toBe("YETI Robotics");
     });
 
@@ -289,7 +353,7 @@ describe("AttendanceService", () => {
 
       await service.signIn("user1", "dev-guild-id", "Test User 1");
 
-      const record = repository.append.mock.calls[0][0] as AttendanceRecord;
+      const record = repository.append.mock.calls.at(0)?.[0] as AttendanceRecord;
       expect(record.team).toBe("Dev");
     });
 
@@ -299,7 +363,7 @@ describe("AttendanceService", () => {
 
       await service.signIn("user1", "unknown-guild-id", "Test User 1");
 
-      const record = repository.append.mock.calls[0][0] as AttendanceRecord;
+      const record = repository.append.mock.calls.at(0)?.[0] as AttendanceRecord;
       expect(record.team).toBe("");
     });
   });
@@ -308,7 +372,9 @@ describe("AttendanceService", () => {
     it("returns 'You are not signed in.' when no records", async () => {
       repository.findByDiscordId.mockReturnValue(okAsync([]));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: false, message: "You are not signed in." });
     });
@@ -321,7 +387,9 @@ describe("AttendanceService", () => {
         ])
       );
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: false, message: "You are not signed in." });
     });
@@ -335,7 +403,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
       expect(repository.append).toHaveBeenCalledTimes(1);
@@ -351,7 +421,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
     });
@@ -366,7 +438,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result.success).toBe(true);
       expect(result.message).toContain("credited with 1.5 hours");
@@ -381,12 +455,14 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result.success).toBe(true);
       expect(result.message).toContain("credited with 1.5 hours");
 
-      const firstRecord = repository.append.mock.calls[0][0] as AttendanceRecord;
+      const firstRecord = repository.append.mock.calls.at(0)?.[0] as AttendanceRecord;
       expect(firstRecord.isSigningIn).toBe(false);
       const creditedDate = new Date(firstRecord.date);
       const originalSignIn = new Date(signInTime);
@@ -402,7 +478,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
     });
@@ -416,11 +494,13 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true)
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
       expect(repository.append).toHaveBeenCalledTimes(1);
-      const record = repository.append.mock.calls[0][0] as AttendanceRecord;
+      const record = repository.append.mock.calls.at(0)?.[0] as AttendanceRecord;
       expect(record.isSigningIn).toBe(false);
     });
 
@@ -433,7 +513,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(okAsync(undefined));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true)
+      )._unsafeUnwrap();
 
       expect(result).toEqual({ success: true });
       expect(repository.append).toHaveBeenCalledTimes(1);
@@ -448,7 +530,9 @@ describe("AttendanceService", () => {
       repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
       repository.append.mockReturnValue(errAsync(new Error("append failed")));
 
-      const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+      const result = (
+        await service.signOut("user1", "yeti-server-id", "Test User 1")
+      )._unsafeUnwrap();
 
       expect(result).toEqual({
         success: false,
@@ -472,14 +556,18 @@ describe("AttendanceService", () => {
         repository.findByDiscordId.mockReturnValue(okAsync([]));
         repository.append.mockReturnValue(okAsync(undefined));
 
-        const result = (await service.signIn("user1", "yeti-server-id", "Test User 1", 123456))._unsafeUnwrap();
+        const result = (
+          await service.signIn("user1", "yeti-server-id", "Test User 1", 123456)
+        )._unsafeUnwrap();
 
         expect(result).toEqual({ success: true });
         expect(twofaService.verifyCode).toHaveBeenCalledWith(123456);
       });
 
       it("rejects when no code provided", async () => {
-        const result = (await service.signIn("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+        const result = (
+          await service.signIn("user1", "yeti-server-id", "Test User 1")
+        )._unsafeUnwrap();
 
         expect(result).toEqual({
           success: false,
@@ -490,7 +578,9 @@ describe("AttendanceService", () => {
       it("rejects with invalid code", async () => {
         twofaService.verifyCode.mockReturnValue(false);
 
-        const result = (await service.signIn("user1", "yeti-server-id", "Test User 1", 999999))._unsafeUnwrap();
+        const result = (
+          await service.signIn("user1", "yeti-server-id", "Test User 1", 999999)
+        )._unsafeUnwrap();
 
         expect(result).toEqual({ success: false, message: "Invalid code." });
       });
@@ -499,7 +589,9 @@ describe("AttendanceService", () => {
         repository.findByDiscordId.mockReturnValue(okAsync([]));
         repository.append.mockReturnValue(okAsync(undefined));
 
-        const result = (await service.signIn("user1", "yeti-server-id", "Test User 1", undefined, true))._unsafeUnwrap();
+        const result = (
+          await service.signIn("user1", "yeti-server-id", "Test User 1", undefined, true)
+        )._unsafeUnwrap();
 
         expect(result).toEqual({ success: true });
         expect(twofaService.verifyCode).not.toHaveBeenCalled();
@@ -513,20 +605,26 @@ describe("AttendanceService", () => {
         vi.setSystemTime(now);
 
         const signInTime = new Date(now.getTime() - 2 * MS_PER_HOUR).toISOString();
-        repository.findByDiscordId.mockReturnValue(okAsync([makeRecord("user1", signInTime, true)]));
+        repository.findByDiscordId.mockReturnValue(
+          okAsync([makeRecord("user1", signInTime, true)])
+        );
       });
 
       it("succeeds with valid code", async () => {
         repository.append.mockReturnValue(okAsync(undefined));
 
-        const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", 123456))._unsafeUnwrap();
+        const result = (
+          await service.signOut("user1", "yeti-server-id", "Test User 1", 123456)
+        )._unsafeUnwrap();
 
         expect(result).toEqual({ success: true });
         expect(twofaService.verifyCode).toHaveBeenCalledWith(123456);
       });
 
       it("rejects when no code provided", async () => {
-        const result = (await service.signOut("user1", "yeti-server-id", "Test User 1"))._unsafeUnwrap();
+        const result = (
+          await service.signOut("user1", "yeti-server-id", "Test User 1")
+        )._unsafeUnwrap();
 
         expect(result).toEqual({
           success: false,
@@ -537,7 +635,9 @@ describe("AttendanceService", () => {
       it("rejects with invalid code", async () => {
         twofaService.verifyCode.mockReturnValue(false);
 
-        const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", 999999))._unsafeUnwrap();
+        const result = (
+          await service.signOut("user1", "yeti-server-id", "Test User 1", 999999)
+        )._unsafeUnwrap();
 
         expect(result).toEqual({ success: false, message: "Invalid code." });
       });
@@ -545,7 +645,9 @@ describe("AttendanceService", () => {
       it("bypasses 2FA when skipTwofa=true", async () => {
         repository.append.mockReturnValue(okAsync(undefined));
 
-        const result = (await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true))._unsafeUnwrap();
+        const result = (
+          await service.signOut("user1", "yeti-server-id", "Test User 1", undefined, true)
+        )._unsafeUnwrap();
 
         expect(result).toEqual({ success: true });
         expect(twofaService.verifyCode).not.toHaveBeenCalled();
@@ -555,12 +657,48 @@ describe("AttendanceService", () => {
 
   describe("getTopMembersByHours", () => {
     const mockAllRecords: AttendanceRecord[] = [
-      { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-      { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-01T12:00:00Z", isSigningIn: false },
-      { discordId: "user2", team: "YETI Robotics", discordName: "Test User 2", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-      { discordId: "user2", team: "YETI Robotics", discordName: "Test User 2", date: "2025-01-01T13:00:00Z", isSigningIn: false },
-      { discordId: "user3", team: "YETI Robotics", discordName: "Test User 3", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-      { discordId: "user3", team: "YETI Robotics", discordName: "Test User 3", date: "2025-01-01T15:00:00Z", isSigningIn: false },
+      {
+        discordId: "user1",
+        team: "YETI Robotics",
+        discordName: "Test User 1",
+        date: "2025-01-01T10:00:00Z",
+        isSigningIn: true,
+      },
+      {
+        discordId: "user1",
+        team: "YETI Robotics",
+        discordName: "Test User 1",
+        date: "2025-01-01T12:00:00Z",
+        isSigningIn: false,
+      },
+      {
+        discordId: "user2",
+        team: "YETI Robotics",
+        discordName: "Test User 2",
+        date: "2025-01-01T10:00:00Z",
+        isSigningIn: true,
+      },
+      {
+        discordId: "user2",
+        team: "YETI Robotics",
+        discordName: "Test User 2",
+        date: "2025-01-01T13:00:00Z",
+        isSigningIn: false,
+      },
+      {
+        discordId: "user3",
+        team: "YETI Robotics",
+        discordName: "Test User 3",
+        date: "2025-01-01T10:00:00Z",
+        isSigningIn: true,
+      },
+      {
+        discordId: "user3",
+        team: "YETI Robotics",
+        discordName: "Test User 3",
+        date: "2025-01-01T15:00:00Z",
+        isSigningIn: false,
+      },
     ];
     // user1: 2h, user2: 3h, user3: 5h
 
@@ -592,9 +730,9 @@ describe("AttendanceService", () => {
       const result = (await service.getTopMembersByHours(10))._unsafeUnwrap();
 
       expect(result).toHaveLength(3);
-      expect(result[0].totalHours).toBe(5);
-      expect(result[1].totalHours).toBe(3);
-      expect(result[2].totalHours).toBe(2);
+      expect(result.at(0)?.totalHours).toBe(5);
+      expect(result.at(1)?.totalHours).toBe(3);
+      expect(result.at(2)?.totalHours).toBe(2);
     });
 
     it("should return default limit of 5 when no limit is specified", async () => {
@@ -603,49 +741,133 @@ describe("AttendanceService", () => {
       const result = (await service.getTopMembersByHours())._unsafeUnwrap();
 
       expect(result).toHaveLength(3);
-      expect(result[0].totalHours).toBe(5);
+      expect(result.at(0)?.totalHours).toBe(5);
     });
 
     it("should correctly sum hours for users with multiple sessions", async () => {
       const multiSession: AttendanceRecord[] = [
-        { discordId: "user1", team: "YETI", discordName: "Test User", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "user1", team: "YETI", discordName: "Test User", date: "2025-01-01T12:00:00Z", isSigningIn: false },
-        { discordId: "user1", team: "YETI", discordName: "Test User", date: "2025-01-02T10:00:00Z", isSigningIn: true },
-        { discordId: "user1", team: "YETI", discordName: "Test User", date: "2025-01-02T14:00:00Z", isSigningIn: false },
+        {
+          discordId: "user1",
+          team: "YETI",
+          discordName: "Test User",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "user1",
+          team: "YETI",
+          discordName: "Test User",
+          date: "2025-01-01T12:00:00Z",
+          isSigningIn: false,
+        },
+        {
+          discordId: "user1",
+          team: "YETI",
+          discordName: "Test User",
+          date: "2025-01-02T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "user1",
+          team: "YETI",
+          discordName: "Test User",
+          date: "2025-01-02T14:00:00Z",
+          isSigningIn: false,
+        },
       ];
       repository.findAll.mockReturnValue(okAsync(multiSession));
 
       const result = (await service.getTopMembersByHours(5))._unsafeUnwrap();
 
       expect(result).toHaveLength(1);
-      expect(result[0].totalHours).toBe(6);
+      expect(result.at(0)?.totalHours).toBe(6);
     });
 
     it("should handle users with same total hours correctly", async () => {
       const tiedData: AttendanceRecord[] = [
-        { discordId: "user1", team: "YETI", discordName: "User A", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "user1", team: "YETI", discordName: "User A", date: "2025-01-01T12:00:00Z", isSigningIn: false },
-        { discordId: "user2", team: "YETI", discordName: "User B", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "user2", team: "YETI", discordName: "User B", date: "2025-01-01T12:00:00Z", isSigningIn: false },
+        {
+          discordId: "user1",
+          team: "YETI",
+          discordName: "User A",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "user1",
+          team: "YETI",
+          discordName: "User A",
+          date: "2025-01-01T12:00:00Z",
+          isSigningIn: false,
+        },
+        {
+          discordId: "user2",
+          team: "YETI",
+          discordName: "User B",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "user2",
+          team: "YETI",
+          discordName: "User B",
+          date: "2025-01-01T12:00:00Z",
+          isSigningIn: false,
+        },
       ];
       repository.findAll.mockReturnValue(okAsync(tiedData));
 
       const result = (await service.getTopMembersByHours(2))._unsafeUnwrap();
 
       expect(result).toHaveLength(2);
-      expect(result[0].totalHours).toBe(2);
-      expect(result[1].totalHours).toBe(2);
+      expect(result.at(0)?.totalHours).toBe(2);
+      expect(result.at(1)?.totalHours).toBe(2);
     });
   });
 
   describe("getUserRank", () => {
     const mockAllRecords: AttendanceRecord[] = [
-      { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-      { discordId: "user1", team: "YETI Robotics", discordName: "Test User 1", date: "2025-01-01T12:00:00Z", isSigningIn: false },
-      { discordId: "user2", team: "YETI Robotics", discordName: "Test User 2", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-      { discordId: "user2", team: "YETI Robotics", discordName: "Test User 2", date: "2025-01-01T13:00:00Z", isSigningIn: false },
-      { discordId: "user3", team: "YETI Robotics", discordName: "Test User 3", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-      { discordId: "user3", team: "YETI Robotics", discordName: "Test User 3", date: "2025-01-01T15:00:00Z", isSigningIn: false },
+      {
+        discordId: "user1",
+        team: "YETI Robotics",
+        discordName: "Test User 1",
+        date: "2025-01-01T10:00:00Z",
+        isSigningIn: true,
+      },
+      {
+        discordId: "user1",
+        team: "YETI Robotics",
+        discordName: "Test User 1",
+        date: "2025-01-01T12:00:00Z",
+        isSigningIn: false,
+      },
+      {
+        discordId: "user2",
+        team: "YETI Robotics",
+        discordName: "Test User 2",
+        date: "2025-01-01T10:00:00Z",
+        isSigningIn: true,
+      },
+      {
+        discordId: "user2",
+        team: "YETI Robotics",
+        discordName: "Test User 2",
+        date: "2025-01-01T13:00:00Z",
+        isSigningIn: false,
+      },
+      {
+        discordId: "user3",
+        team: "YETI Robotics",
+        discordName: "Test User 3",
+        date: "2025-01-01T10:00:00Z",
+        isSigningIn: true,
+      },
+      {
+        discordId: "user3",
+        team: "YETI Robotics",
+        discordName: "Test User 3",
+        date: "2025-01-01T15:00:00Z",
+        isSigningIn: false,
+      },
     ];
     // user1: 2h, user2: 3h, user3: 5h
 
@@ -682,18 +904,90 @@ describe("AttendanceService", () => {
 
     describe("handles ties with dense ranking", () => {
       const tiedMockRecords: AttendanceRecord[] = [
-        { discordId: "joe", team: "YETI Robotics", discordName: "Joe", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "joe", team: "YETI Robotics", discordName: "Joe", date: "2025-01-01T15:00:00Z", isSigningIn: false },
-        { discordId: "jim", team: "YETI Robotics", discordName: "Jim", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "jim", team: "YETI Robotics", discordName: "Jim", date: "2025-01-01T14:00:00Z", isSigningIn: false },
-        { discordId: "sally", team: "YETI Robotics", discordName: "Sally", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "sally", team: "YETI Robotics", discordName: "Sally", date: "2025-01-01T13:00:00Z", isSigningIn: false },
-        { discordId: "kyle", team: "YETI Robotics", discordName: "Kyle", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "kyle", team: "YETI Robotics", discordName: "Kyle", date: "2025-01-01T13:00:00Z", isSigningIn: false },
-        { discordId: "marvin", team: "YETI Robotics", discordName: "Marvin", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "marvin", team: "YETI Robotics", discordName: "Marvin", date: "2025-01-01T13:00:00Z", isSigningIn: false },
-        { discordId: "baxter", team: "YETI Robotics", discordName: "Baxter", date: "2025-01-01T10:00:00Z", isSigningIn: true },
-        { discordId: "baxter", team: "YETI Robotics", discordName: "Baxter", date: "2025-01-01T12:00:00Z", isSigningIn: false },
+        {
+          discordId: "joe",
+          team: "YETI Robotics",
+          discordName: "Joe",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "joe",
+          team: "YETI Robotics",
+          discordName: "Joe",
+          date: "2025-01-01T15:00:00Z",
+          isSigningIn: false,
+        },
+        {
+          discordId: "jim",
+          team: "YETI Robotics",
+          discordName: "Jim",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "jim",
+          team: "YETI Robotics",
+          discordName: "Jim",
+          date: "2025-01-01T14:00:00Z",
+          isSigningIn: false,
+        },
+        {
+          discordId: "sally",
+          team: "YETI Robotics",
+          discordName: "Sally",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "sally",
+          team: "YETI Robotics",
+          discordName: "Sally",
+          date: "2025-01-01T13:00:00Z",
+          isSigningIn: false,
+        },
+        {
+          discordId: "kyle",
+          team: "YETI Robotics",
+          discordName: "Kyle",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "kyle",
+          team: "YETI Robotics",
+          discordName: "Kyle",
+          date: "2025-01-01T13:00:00Z",
+          isSigningIn: false,
+        },
+        {
+          discordId: "marvin",
+          team: "YETI Robotics",
+          discordName: "Marvin",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "marvin",
+          team: "YETI Robotics",
+          discordName: "Marvin",
+          date: "2025-01-01T13:00:00Z",
+          isSigningIn: false,
+        },
+        {
+          discordId: "baxter",
+          team: "YETI Robotics",
+          discordName: "Baxter",
+          date: "2025-01-01T10:00:00Z",
+          isSigningIn: true,
+        },
+        {
+          discordId: "baxter",
+          team: "YETI Robotics",
+          discordName: "Baxter",
+          date: "2025-01-01T12:00:00Z",
+          isSigningIn: false,
+        },
       ];
       // joe: 5h, jim: 4h, sally/kyle/marvin: 3h each, baxter: 2h
 

@@ -1,6 +1,6 @@
-import { AppConfigService } from "src/config/config.service";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { errAsync, okAsync } from "neverthrow";
+import { AppConfigService } from "src/config/config.service";
 import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { AttendanceCommands } from "./attendance.commands";
 import { AttendanceService } from "./attendance.service";
