@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.0...basecamp-v1.1.1) (2026-03-01)
+
+
+### Bug Fixes
+
+* **basecamp:** make devGuildId optional in config schema ([92d3b12](https://github.com/yeti-robotics/polar-edge/commit/92d3b12d43db452e478f6f9c913a347b16a285c9))
+* **basecamp:** set default value for devGuildId in attendance service ([d119002](https://github.com/yeti-robotics/polar-edge/commit/d119002bf5ce4e731216edc49c3c51f0ca520eb8))
+
 ## [1.1.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.7...basecamp-v1.1.0) (2026-03-01)
 
 
