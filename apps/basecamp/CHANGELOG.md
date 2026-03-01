@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.7...basecamp-v1.1.0) (2026-03-01)
+
+
+### Features
+
+* **basecamp:** show overall rank in /attendance command ([#460](https://github.com/yeti-robotics/polar-edge/issues/460)) ([13d669a](https://github.com/yeti-robotics/polar-edge/commit/13d669acc379601c934b797a3d237e2167b12f82))
+* **scouting:** build an event overview page with sortable teams table ([#455](https://github.com/yeti-robotics/polar-edge/issues/455)) ([f3050d6](https://github.com/yeti-robotics/polar-edge/commit/f3050d6dbe7d8969929461a4166e7be25155c389))
+
+
+### Bug Fixes
+
+* **basecamp:** extract all inline rounding into math utility functions ([#464](https://github.com/yeti-robotics/polar-edge/issues/464)) ([913fac5](https://github.com/yeti-robotics/polar-edge/commit/913fac5b8810c392f39ea7579f55a91c631a4046))
+
 ## [1.0.7](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.0.6...basecamp-v1.0.7) (2026-02-27)
 
 
