@@ -293,7 +293,7 @@ export class AttendanceCommands {
     } else if (hours >= memberRequiredHours) {
       const remainingHours = Math.ceil(leadershipRequiredHours - hours);
       return interaction.reply(
-        `You've currently above the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
+        `You're currently above the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
       );
     } else {
       const remainingHours = Math.ceil(memberRequiredHours - hours);
