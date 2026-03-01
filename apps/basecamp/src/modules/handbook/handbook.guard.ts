@@ -7,7 +7,7 @@ import type { SlashCommandContext } from "necord";
 export class NecordThrottlerGuard extends ThrottlerGuard {
   protected getRequestResponse(context: ExecutionContext) {
     const [interaction] = context.getArgByIndex<SlashCommandContext>(0);
-    return { req: interaction, res: interaction };
+    return { req: interaction, res: { header: () => {} } };
   }
 
   protected async getTracker(req: { user: { id: string } }): Promise<string> {

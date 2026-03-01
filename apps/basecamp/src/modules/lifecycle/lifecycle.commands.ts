@@ -3,7 +3,7 @@ import { MessageFlags } from "discord.js";
 import { Context, SlashCommand, type SlashCommandContext } from "necord";
 
 @Injectable()
-export class BotCommands {
+export class LifecycleCommands {
   @SlashCommand({
     name: "ping",
     description: "Ping the bot",

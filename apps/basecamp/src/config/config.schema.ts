@@ -26,7 +26,7 @@ export const envSchema = z.object({
   // Auth
   jwtSecret: z.string().min(1),
   attendance2faSecret: z.string().min(1),
-  attendance2faEnabled: z.boolean().default(false),
+  attendance2faEnabled: z.coerce.boolean().default(false),
 });
 
 export type Env = z.infer<typeof envSchema>;
