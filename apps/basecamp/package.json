@@ -25,6 +25,7 @@
     "@nestjs/core": "^11.1.14",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/platform-express": "^11.1.14",
+    "@nestjs/throttler": "^6.5.0",
     "@repo/ai": "workspace:*",
     "@repo/twofa": "workspace:*",
     "ai": "catalog:",
@@ -35,6 +36,7 @@
     "express": "^5.2.1",
     "google-auth-library": "^10.6.1",
     "necord": "^6.12.4",
+    "neverthrow": "^8.2.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "zod": "catalog:"
