@@ -51,4 +51,24 @@ describe("getNickname", () => {
     expect(result.isErr()).toBe(true);
     expect(result._unsafeUnwrapErr().message).toContain("Nickname not found");
   });
+
+  it("should return an error when there is no guild", async () => {
+    const interaction = makeInteraction({ guild: null });
+
+    const result = await getNickname(interaction);
+    expect(result.isErr()).toBe(true);
+    expect(result._unsafeUnwrapErr().message).toContain("Guild not found");
+  });
+
+  it("should return an error wrapping a non-Error rejection value", async () => {
+    const interaction = makeInteraction({
+      guild: {
+        members: { fetch: vi.fn().mockRejectedValue("string rejection") },
+      },
+    });
+
+    const result = await getNickname(interaction);
+    expect(result.isErr()).toBe(true);
+    expect(result._unsafeUnwrapErr().message).toContain("string rejection");
+  });
 });
