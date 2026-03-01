@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.1...basecamp-v1.1.2) (2026-03-01)
+
+
+### Bug Fixes
+
+* **basecamp:** logic fixes for attendance ([580d354](https://github.com/yeti-robotics/polar-edge/commit/580d354d3c0da71bc1b7f7faae8bede269743087))
+
 ## [1.1.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.0...basecamp-v1.1.1) (2026-03-01)
 
 
