@@ -1,8 +1,8 @@
 import { Test, type TestingModule } from "@nestjs/testing";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
-import { NecordThrottlerGuard } from "./handbook.guard";
 import { HandbookCommands } from "./handbook.commands";
+import { NecordThrottlerGuard } from "./handbook.guard";
 import { HandbookService } from "./handbook.service";
 
 // ─── Discord interaction helpers ─────────────────────────────────────────────
@@ -154,9 +154,11 @@ describe("HandbookCommands", () => {
       const interaction = makeInteraction();
       // biome-ignore lint/complexity/useLiteralKeys: accessing private field in test
       const logSpy = vi.spyOn(commands["logger"], "log");
-      service.askHandbookQuestion.mockResolvedValue(
-        { text: "An answer.", usage: undefined, finishReason: "stop" } as unknown as HandbookResponse
-      );
+      service.askHandbookQuestion.mockResolvedValue({
+        text: "An answer.",
+        usage: undefined,
+        finishReason: "stop",
+      } as unknown as HandbookResponse);
 
       await commands.onHandbook([interaction] as never, { question: "How?" });
 

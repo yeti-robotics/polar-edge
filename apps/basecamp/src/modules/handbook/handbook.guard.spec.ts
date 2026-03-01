@@ -1,6 +1,6 @@
 import { ExecutionContext } from "@nestjs/common";
-import { ThrottlerModule, type ThrottlerLimitDetail } from "@nestjs/throttler";
 import { Test, type TestingModule } from "@nestjs/testing";
+import { type ThrottlerLimitDetail, ThrottlerModule } from "@nestjs/throttler";
 import { MessageFlags } from "discord.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NecordThrottlerGuard } from "./handbook.guard";
@@ -26,10 +26,7 @@ function makeContext(interaction: ReturnType<typeof makeInteraction>): Execution
 type GuardInternal = {
   getRequestResponse: (ctx: ExecutionContext) => { req: unknown; res: unknown };
   getTracker: (req: { user: { id: string } }) => Promise<string>;
-  throwThrottlingException: (
-    ctx: ExecutionContext,
-    detail: ThrottlerLimitDetail
-  ) => Promise<void>;
+  throwThrottlingException: (ctx: ExecutionContext, detail: ThrottlerLimitDetail) => Promise<void>;
 };
 
 // ─── Tests ────────────────────────────────────────────────────────────────────

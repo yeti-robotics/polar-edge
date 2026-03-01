@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { ThrottlerModule } from "@nestjs/throttler";
-import { NecordThrottlerGuard } from "./handbook.guard";
 import { AiModule } from "../../lib/ai/ai.module";
 import { HandbookCommands } from "./handbook.commands";
+import { NecordThrottlerGuard } from "./handbook.guard";
 import { HandbookService } from "./handbook.service";
 
 @Module({
