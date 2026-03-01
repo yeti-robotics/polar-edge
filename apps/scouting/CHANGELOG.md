@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.13.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.12.0...scouting-v2026.13.0) (2026-03-01)
+
+
+### Features
+
+* **scouting:** build an event overview page with sortable teams table ([#455](https://github.com/yeti-robotics/polar-edge/issues/455)) ([f3050d6](https://github.com/yeti-robotics/polar-edge/commit/f3050d6dbe7d8969929461a4166e7be25155c389))
+
 ## [2026.12.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.11.1...scouting-v2026.12.0) (2026-02-27)
 
 
