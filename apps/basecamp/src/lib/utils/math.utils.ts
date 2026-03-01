@@ -10,9 +10,9 @@ export function roundToTenth(value: number): number {
  * Returns the number with its ordinal suffix (e.g. 1 → "1st", 11 → "11th", 22 → "22nd").
  */
 export function getOrdinalSuffix(n: number): string {
-  const s = ["th", "st", "nd", "rd"];
+  const s = ["th", "st", "nd", "rd"] as const;
   const v = n % 100;
-  return n + (s[(v - 20) % 10] ?? s[v] ?? s[0] ?? "th");
+  return n + (s[(v - 20) % 10] ?? s[v] ?? s[0]);
 }
 
 /**
