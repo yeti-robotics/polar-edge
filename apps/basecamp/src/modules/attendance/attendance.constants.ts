@@ -35,3 +35,6 @@ export const TEAM_NAMES = {
 
 /** Default limit for leaderboard queries */
 export const DEFAULT_LEADERBOARD_LIMIT = 5;
+
+/** Cache TTL for attendance sheet reads (15 minutes) */
+export const ATTENDANCE_CACHE_TTL_MS = 900_000;

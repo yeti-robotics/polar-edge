@@ -1,5 +1,6 @@
 import { Logger } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
+import type { Cache } from "cache-manager";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SheetCredentials, SheetService } from "./sheet.service";
 
@@ -8,6 +9,7 @@ const MOCK_CREDENTIALS: SheetCredentials = {
   private_key: "test-private-key",
 };
 const MOCK_SPREADSHEET_ID = "test-spreadsheet-id";
+const MOCK_CACHE_TTL_MS = 60_000;
 
 const { mockGet, mockAppend } = vi.hoisted(() => ({
   mockGet: vi.fn(),
@@ -27,17 +29,30 @@ vi.mock("@googleapis/sheets", () => ({
 
 describe("SheetService", () => {
   let service: SheetService;
+  let mockCache: { get: ReturnType<typeof vi.fn>; set: ReturnType<typeof vi.fn>; del: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     vi.clearAllMocks();
     mockGet.mockResolvedValue({ data: { values: [["test-value"]] } });
     mockAppend.mockResolvedValue({});
 
+    mockCache = {
+      get: vi.fn().mockResolvedValue(null),
+      set: vi.fn().mockResolvedValue(undefined),
+      del: vi.fn().mockResolvedValue(undefined),
+    };
+
     const module = await Test.createTestingModule({
       providers: [
         {
           provide: SheetService,
-          useFactory: () => new SheetService(MOCK_CREDENTIALS, MOCK_SPREADSHEET_ID),
+          useFactory: () =>
+            new SheetService(
+              MOCK_CREDENTIALS,
+              MOCK_SPREADSHEET_ID,
+              mockCache as unknown as Cache,
+              MOCK_CACHE_TTL_MS
+            ),
         },
         Logger,
       ],
@@ -78,6 +93,42 @@ describe("SheetService", () => {
       const result = await service.get("A1:B2");
       expect(result.isErr()).toBe(true);
     });
+
+    it("should return cached value without calling the sheet API on cache hit", async () => {
+      const cachedData = [["cached-value"]];
+      mockCache.get.mockResolvedValue(cachedData);
+
+      const result = await service.get("A1:B2");
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual(cachedData);
+      expect(mockGet).not.toHaveBeenCalled();
+      expect(mockCache.set).not.toHaveBeenCalled();
+    });
+
+    it("should call the sheet API and populate cache on cache miss", async () => {
+      mockCache.get.mockResolvedValue(null);
+
+      const result = await service.get("A1:B2");
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toEqual([["test-value"]]);
+      expect(mockGet).toHaveBeenCalledTimes(1);
+      expect(mockCache.set).toHaveBeenCalledWith(
+        `sheet:${MOCK_SPREADSHEET_ID}:A1:B2`,
+        [["test-value"]],
+        MOCK_CACHE_TTL_MS
+      );
+    });
+
+    it("should propagate error when cache set fails", async () => {
+      mockCache.get.mockResolvedValue(null);
+      mockCache.set.mockRejectedValueOnce(new Error("Cache write error"));
+
+      const result = await service.get("A1:B2");
+
+      expect(result.isErr()).toBe(true);
+    });
   });
 
   describe("append", () => {
@@ -112,6 +163,23 @@ describe("SheetService", () => {
       const cause = "Sheet API error";
       mockAppend.mockRejectedValueOnce(new Error(cause));
       const result = await service.append("Sheet1!A1", [["row1"], ["row2"]]);
+      expect(result.isErr()).toBe(true);
+    });
+
+    it("should invalidate cache for the written range on success", async () => {
+      const result = await service.append("Sheet1!A1", [["row1"]]);
+
+      expect(result.isOk()).toBe(true);
+      expect(mockCache.del).toHaveBeenCalledWith(
+        `sheet:${MOCK_SPREADSHEET_ID}:Sheet1!A1`
+      );
+    });
+
+    it("should propagate error when cache del fails", async () => {
+      mockCache.del.mockRejectedValueOnce(new Error("Cache delete error"));
+
+      const result = await service.append("Sheet1!A1", [["row1"]]);
+
       expect(result.isErr()).toBe(true);
     });
   });
