@@ -74,7 +74,6 @@ describe("envSchema", () => {
     const requiredFields = [
       "discordToken",
       "yetiServerId",
-      "devGuildId",
       "attendanceSpreadsheetId",
       "outreachSpreadsheetId",
       "doModelAccessKey",
