@@ -12,9 +12,9 @@ import { TwofaService } from "./twofa/twofa.service";
   imports: [
     JwtModule.registerAsync({
       global: true,
-      useFactory: (configService: AppConfigService) => {
+      useFactory: (config: AppConfigService) => {
         return {
-          secret: configService.get("jwtSecret"),
+          secret: config.get("jwtSecret"),
           signOptions: {
             algorithm: "HS256",
           },

@@ -1,5 +1,5 @@
-import { ConfigService } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
+import { AppConfigService } from "src/config/config.service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TwofaService } from "./twofa.service";
 
@@ -21,7 +21,7 @@ async function buildService(secret: string | undefined) {
     providers: [
       TwofaService,
       {
-        provide: ConfigService,
+        provide: AppConfigService,
         useValue: {
           get: vi.fn().mockReturnValue(secret),
         },
@@ -32,22 +32,6 @@ async function buildService(secret: string | undefined) {
 }
 
 describe("TwofaService", () => {
-  describe("constructor", () => {
-    it("throws when ATTENDANCE_2FA_SECRET is not configured", async () => {
-      await expect(buildService(undefined)).rejects.toThrow(
-        "ATTENDANCE_2FA_SECRET is required for TOTP"
-      );
-    });
-
-    it("throws when ATTENDANCE_2FA_SECRET is an empty string", async () => {
-      await expect(buildService("")).rejects.toThrow("ATTENDANCE_2FA_SECRET is required for TOTP");
-    });
-
-    it("constructs successfully when secret is set", async () => {
-      await expect(buildService("my-secret")).resolves.toBeDefined();
-    });
-  });
-
   describe("verifyCode", () => {
     let service: TwofaService;
 

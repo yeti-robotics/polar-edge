@@ -1,17 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { verifyCode } from "@repo/twofa/server";
+import { AppConfigService } from "src/config/config.service";
 
 @Injectable()
 export class TwofaService {
   private readonly secret: string;
 
-  constructor(private readonly configService: ConfigService) {
-    const secret = this.configService.get<string>("ATTENDANCE_2FA_SECRET");
-    if (!secret) {
-      throw new Error("ATTENDANCE_2FA_SECRET is required for TOTP");
-    }
-    this.secret = secret;
+  constructor(private readonly config: AppConfigService) {
+    this.secret = this.config.get("attendance2faSecret");
   }
 
   /** Verifies a TOTP code against the shared secret. */

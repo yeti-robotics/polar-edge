@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { AppConfigService } from "src/config/config.service";
 import { type ChatInputCommandInteraction, GuildMember, MessageFlags } from "discord.js";
 import { Context, Options, SlashCommand, type SlashCommandContext } from "necord";
 import { getNickname } from "src/lib/utils/discord.utils";
@@ -35,9 +35,9 @@ export class AttendanceCommands {
 
   constructor(
     private readonly attendanceService: AttendanceService,
-    private readonly configService: ConfigService
+    private readonly configService: AppConfigService
   ) {
-    this.adminRoleId = this.configService.get<string>("ADMIN_ROLE_ID") || "";
+    this.adminRoleId = this.configService.get("adminRoleId");
   }
 
   @SlashCommand({

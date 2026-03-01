@@ -1,4 +1,4 @@
-import { ConfigService } from "@nestjs/config";
+import { AppConfigService } from "src/config/config.service";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { errAsync, okAsync } from "neverthrow";
 import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
@@ -65,7 +65,7 @@ function makeModule() {
         } satisfies MockAttendanceService,
       },
       {
-        provide: ConfigService,
+        provide: AppConfigService,
         useValue: {
           get: vi.fn().mockReturnValue("admin-role-id"),
         },

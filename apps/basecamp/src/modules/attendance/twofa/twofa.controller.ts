@@ -1,22 +1,19 @@
 import { Body, Controller, HttpStatus, Post, Res, UnauthorizedException } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import type { Response } from "express";
+import { AppConfigService } from "src/config/config.service";
 import type { TwofaSignInDto, TwofaValidateDto } from "./twofa.dto";
 
 @Controller("2fa")
 export class TwofaController {
   constructor(
-    private readonly configService: ConfigService,
+    private readonly config: AppConfigService,
     private readonly jwtService: JwtService
   ) {}
 
   @Post("authenticate")
   signIn(@Body() { password }: TwofaSignInDto, @Res() res: Response) {
-    const expectedPassword = this.configService.get<string | undefined>(
-      "ATTENDANCE_2FA_SECRET",
-      undefined
-    );
+    const expectedPassword = this.config.get("attendance2faSecret");
 
     if (!password || password !== expectedPassword) {
       console.error("Invalid password");
@@ -27,7 +24,7 @@ export class TwofaController {
       sub: "attendance-2fa",
     });
 
-    const totpSecret = this.configService.get<string>("ATTENDANCE_2FA_SECRET");
+    const totpSecret = this.config.get("attendance2faSecret");
 
     return res.status(HttpStatus.ACCEPTED).json({ message: "Accepted", token, secret: totpSecret });
   }

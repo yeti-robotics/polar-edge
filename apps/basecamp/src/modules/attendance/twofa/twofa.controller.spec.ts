@@ -1,7 +1,7 @@
 import { HttpStatus, UnauthorizedException } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Test, type TestingModule } from "@nestjs/testing";
+import { AppConfigService } from "src/config/config.service";
 import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 import { TwofaController } from "./twofa.controller";
 
@@ -15,7 +15,7 @@ function makeRes() {
 
 describe("TwofaController", () => {
   let controller: TwofaController;
-  let configService: { get: MockedFunction<ConfigService["get"]> };
+  let configService: { get: MockedFunction<AppConfigService["get"]> };
   let jwtService: {
     sign: MockedFunction<JwtService["sign"]>;
     verify: MockedFunction<JwtService["verify"]>;
@@ -29,7 +29,7 @@ describe("TwofaController", () => {
       controllers: [TwofaController],
       providers: [
         {
-          provide: ConfigService,
+          provide: AppConfigService,
           useValue: {
             get: vi.fn().mockReturnValue(CORRECT_PASSWORD),
           },
@@ -45,7 +45,7 @@ describe("TwofaController", () => {
     }).compile();
 
     controller = module.get<TwofaController>(TwofaController);
-    configService = module.get(ConfigService);
+    configService = module.get(AppConfigService);
     jwtService = module.get(JwtService);
   });
 
@@ -64,14 +64,6 @@ describe("TwofaController", () => {
     it("throws UnauthorizedException when password is empty string", () => {
       const { res } = makeRes();
       expect(() => controller.signIn({ password: "" }, res)).toThrow(UnauthorizedException);
-    });
-
-    it("throws UnauthorizedException when ATTENDANCE_2FA_SECRET is not configured", () => {
-      configService.get.mockReturnValue(undefined);
-      const { res } = makeRes();
-      // !password ("any") is false; but password !== undefined → throws
-      // Actually: undefined !== "any" → throws
-      expect(() => controller.signIn({ password: "any" }, res)).toThrow(UnauthorizedException);
     });
 
     it("returns 202 with token and secret on correct password", () => {
