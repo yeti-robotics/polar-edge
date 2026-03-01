@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const AttendanceRecordSchema = z.object({
-  discordId: z.string(),
+  discordId: z.string().min(1),
   team: z.string(),
   discordName: z.string(),
   date: z.string(),
