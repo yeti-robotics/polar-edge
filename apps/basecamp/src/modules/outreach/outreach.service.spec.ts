@@ -1,23 +1,23 @@
 import { Test, type TestingModule } from "@nestjs/testing";
 import { errAsync, okAsync } from "neverthrow";
-import { SheetService } from "src/lib/sheet/sheet.service";
 import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
+import { type OutreachRecord, OutreachRepository } from "./outreach.repository";
 import { OutreachService } from "./outreach.service";
 
 describe("OutreachService", () => {
   let service: OutreachService;
-  let sheetService: {
-    get: MockedFunction<SheetService["get"]>;
+  let repository: {
+    findAll: MockedFunction<OutreachRepository["findAll"]>;
+    findByUserName: MockedFunction<OutreachRepository["findByUserName"]>;
   };
 
-  const mockSheetData = [
-    ["Date", "Name", "Event", "Type", "Hours"],
-    ["2024-01-01", "John Doe", "Event 1", "Workshop", "10"],
-    ["2024-01-02", "Jane Smith", "Event 2", "Competition", "15"],
-    ["2024-01-03", "John Doe", "Event 3", "Workshop", "5"],
-    ["2024-01-04", "Bob Johnson", "Event 4", "Outreach", "20"],
-    ["2024-01-05", "Jane Smith", "Event 5", "Workshop", "8"],
-    ["2024-01-06", "Alice Brown", "Event 6", "Competition", "12"],
+  const mockRecords: OutreachRecord[] = [
+    { date: "2024-01-01", userName: "John Doe", event: "Event 1", eventType: "Workshop", hours: 10 },
+    { date: "2024-01-02", userName: "Jane Smith", event: "Event 2", eventType: "Competition", hours: 15 },
+    { date: "2024-01-03", userName: "John Doe", event: "Event 3", eventType: "Workshop", hours: 5 },
+    { date: "2024-01-04", userName: "Bob Johnson", event: "Event 4", eventType: "Outreach", hours: 20 },
+    { date: "2024-01-05", userName: "Jane Smith", event: "Event 5", eventType: "Workshop", hours: 8 },
+    { date: "2024-01-06", userName: "Alice Brown", event: "Event 6", eventType: "Competition", hours: 12 },
   ];
 
   beforeEach(async () => {
@@ -25,16 +25,17 @@ describe("OutreachService", () => {
       providers: [
         OutreachService,
         {
-          provide: SheetService,
+          provide: OutreachRepository,
           useValue: {
-            get: vi.fn(),
+            findAll: vi.fn(),
+            findByUserName: vi.fn(),
           },
         },
       ],
     }).compile();
 
     service = module.get<OutreachService>(OutreachService);
-    sheetService = module.get(SheetService);
+    repository = module.get(OutreachRepository);
   });
 
   it("should be defined", () => {
@@ -43,7 +44,8 @@ describe("OutreachService", () => {
 
   describe("getUserOutreach", () => {
     it("should return user outreach data when valid data exists", async () => {
-      sheetService.get.mockReturnValue(okAsync(mockSheetData));
+      const johnRecords = mockRecords.filter((r) => r.userName === "John Doe");
+      repository.findByUserName.mockReturnValue(okAsync(johnRecords));
 
       const result = await service.getUserOutreach("John Doe");
 
@@ -66,7 +68,7 @@ describe("OutreachService", () => {
     });
 
     it("should return null when fetch fails", async () => {
-      sheetService.get.mockReturnValue(errAsync(new Error("Sheet API error")));
+      repository.findByUserName.mockReturnValue(errAsync(new Error("Sheet API error")));
 
       const result = await service.getUserOutreach("John Doe");
 
@@ -74,7 +76,7 @@ describe("OutreachService", () => {
     });
 
     it("should return empty array when user has no outreach", async () => {
-      sheetService.get.mockReturnValue(okAsync(mockSheetData));
+      repository.findByUserName.mockReturnValue(okAsync([]));
 
       const result = await service.getUserOutreach("NonExistentUser");
 
@@ -84,19 +86,19 @@ describe("OutreachService", () => {
 
   describe("getTopMembersByHours", () => {
     it("should return empty array when no outreach data", async () => {
-      sheetService.get.mockReturnValue(okAsync([["Date", "Name", "Event", "Type", "Hours"]]));
+      repository.findAll.mockReturnValue(okAsync([]));
       const result = await service.getTopMembersByHours(5);
       expect(result).toEqual([]);
     });
 
     it("should handle fetch errors and return empty array", async () => {
-      sheetService.get.mockReturnValue(errAsync(new Error("API Error")));
+      repository.findAll.mockReturnValue(errAsync(new Error("API Error")));
       const result = await service.getTopMembersByHours(5);
       expect(result).toEqual([]);
     });
 
     it("should return top 5 members sorted by total hours in descending order", async () => {
-      sheetService.get.mockReturnValue(okAsync(mockSheetData));
+      repository.findAll.mockReturnValue(okAsync(mockRecords));
       const result = await service.getTopMembersByHours(5);
 
       expect(result).toEqual([
@@ -108,7 +110,7 @@ describe("OutreachService", () => {
     });
 
     it("should return top 3 members when limit is 3", async () => {
-      sheetService.get.mockReturnValue(okAsync(mockSheetData));
+      repository.findAll.mockReturnValue(okAsync(mockRecords));
 
       const result = await service.getTopMembersByHours(3);
 
@@ -121,19 +123,18 @@ describe("OutreachService", () => {
     });
 
     it("should return empty array when sheet data is empty", async () => {
-      sheetService.get.mockReturnValue(okAsync([]));
+      repository.findAll.mockReturnValue(okAsync([]));
       const result = await service.getTopMembersByHours(5);
       expect(result).toEqual([]);
     });
 
     it("should handle single user with multiple entries correctly", async () => {
-      const singleUserData = [
-        ["Date", "Name", "Event", "Type", "Hours"],
-        ["2024-01-01", "John Doe", "Event 1", "Workshop", "10"],
-        ["2024-01-02", "John Doe", "Event 2", "Competition", "15"],
-        ["2024-01-03", "John Doe", "Event 3", "Workshop", "5"],
+      const singleUserData: OutreachRecord[] = [
+        { date: "2024-01-01", userName: "John Doe", event: "Event 1", eventType: "Workshop", hours: 10 },
+        { date: "2024-01-02", userName: "John Doe", event: "Event 2", eventType: "Competition", hours: 15 },
+        { date: "2024-01-03", userName: "John Doe", event: "Event 3", eventType: "Workshop", hours: 5 },
       ];
-      sheetService.get.mockReturnValue(okAsync(singleUserData));
+      repository.findAll.mockReturnValue(okAsync(singleUserData));
 
       const result = await service.getTopMembersByHours(5);
 
@@ -141,13 +142,12 @@ describe("OutreachService", () => {
     });
 
     it("should handle users with same total hours correctly", async () => {
-      const tiedData = [
-        ["Date", "Name", "Event", "Type", "Hours"],
-        ["2024-01-01", "User A", "Event 1", "Workshop", "10"],
-        ["2024-01-02", "User B", "Event 2", "Competition", "10"],
-        ["2024-01-03", "User C", "Event 3", "Workshop", "10"],
+      const tiedData: OutreachRecord[] = [
+        { date: "2024-01-01", userName: "User A", event: "Event 1", eventType: "Workshop", hours: 10 },
+        { date: "2024-01-02", userName: "User B", event: "Event 2", eventType: "Competition", hours: 10 },
+        { date: "2024-01-03", userName: "User C", event: "Event 3", eventType: "Workshop", hours: 10 },
       ];
-      sheetService.get.mockReturnValue(okAsync(tiedData));
+      repository.findAll.mockReturnValue(okAsync(tiedData));
 
       const result = await service.getTopMembersByHours(3);
 
@@ -156,7 +156,7 @@ describe("OutreachService", () => {
     });
 
     it("should return default limit of 5 when no limit is specified", async () => {
-      sheetService.get.mockReturnValue(okAsync(mockSheetData));
+      repository.findAll.mockReturnValue(okAsync(mockRecords));
 
       const result = await service.getTopMembersByHours();
 
@@ -170,15 +170,14 @@ describe("OutreachService", () => {
     });
 
     it("should correctly sum hours for users with multiple entries", async () => {
-      const multipleEntriesData = [
-        ["Date", "Name", "Event", "Type", "Hours"],
-        ["2024-01-01", "John Doe", "Event 1", "Workshop", "5"],
-        ["2024-01-02", "John Doe", "Event 2", "Competition", "10"],
-        ["2024-01-03", "John Doe", "Event 3", "Workshop", "15"],
-        ["2024-01-04", "Jane Smith", "Event 4", "Outreach", "8"],
-        ["2024-01-05", "Jane Smith", "Event 5", "Workshop", "12"],
+      const multipleEntriesData: OutreachRecord[] = [
+        { date: "2024-01-01", userName: "John Doe", event: "Event 1", eventType: "Workshop", hours: 5 },
+        { date: "2024-01-02", userName: "John Doe", event: "Event 2", eventType: "Competition", hours: 10 },
+        { date: "2024-01-03", userName: "John Doe", event: "Event 3", eventType: "Workshop", hours: 15 },
+        { date: "2024-01-04", userName: "Jane Smith", event: "Event 4", eventType: "Outreach", hours: 8 },
+        { date: "2024-01-05", userName: "Jane Smith", event: "Event 5", eventType: "Workshop", hours: 12 },
       ];
-      sheetService.get.mockReturnValue(okAsync(multipleEntriesData));
+      repository.findAll.mockReturnValue(okAsync(multipleEntriesData));
 
       const result = await service.getTopMembersByHours(5);
 
@@ -191,7 +190,7 @@ describe("OutreachService", () => {
 
   describe("getTotalTeamOutreachHours", () => {
     it("should return total hours across all team members", async () => {
-      sheetService.get.mockReturnValue(okAsync(mockSheetData));
+      repository.findAll.mockReturnValue(okAsync(mockRecords));
 
       const result = await service.getTotalTeamOutreachHours();
 
@@ -201,7 +200,7 @@ describe("OutreachService", () => {
     });
 
     it("should return 0 when fetch fails", async () => {
-      sheetService.get.mockReturnValue(errAsync(new Error("Sheet API error")));
+      repository.findAll.mockReturnValue(errAsync(new Error("Sheet API error")));
 
       const result = await service.getTotalTeamOutreachHours();
 
@@ -209,7 +208,7 @@ describe("OutreachService", () => {
     });
 
     it("should return 0 when sheet data is empty", async () => {
-      sheetService.get.mockReturnValue(okAsync([]));
+      repository.findAll.mockReturnValue(okAsync([]));
 
       const result = await service.getTotalTeamOutreachHours();
 
@@ -217,7 +216,7 @@ describe("OutreachService", () => {
     });
 
     it("should return 0 when sheet has only headers", async () => {
-      sheetService.get.mockReturnValue(okAsync([["Date", "Name", "Event", "Type", "Hours"]]));
+      repository.findAll.mockReturnValue(okAsync([]));
 
       const result = await service.getTotalTeamOutreachHours();
 
