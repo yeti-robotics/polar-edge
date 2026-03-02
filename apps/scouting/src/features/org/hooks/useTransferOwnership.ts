@@ -9,20 +9,22 @@ export function useTransferOwnership(organizationId?: string) {
   const [isTransferring, setIsTransferring] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  type AuthResponse = { error?: { message?: string } } | null | undefined;
+
   async function transfer(userId?: string) {
     if (!organizationId || !userId) return;
 
     setIsTransferring(true);
     setError(null);
 
-    const { error } = await (authClient.organization.updateMemberRole as any)({
+    const res = (await authClient.organization.updateMemberRole({
       organizationId,
-      userId,
+      memberId: userId,
       role: "owner",
-    });
+    })) as AuthResponse;
 
-    if (error) {
-      setError(error.message ?? "Transfer failed. Please try again.");
+    if (res?.error) {
+      setError(res.error.message ?? "Transfer failed. Please try again.");
       setIsTransferring(false);
       return;
     }
