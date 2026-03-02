@@ -36,6 +36,7 @@
     "nanoid": "^5.1.6",
     "next": "catalog:",
     "next-themes": "^0.4.6",
+    "papaparse": "^5.5.3",
     "pg": "^8.19.0",
     "react": "catalog:",
     "react-dom": "catalog:",

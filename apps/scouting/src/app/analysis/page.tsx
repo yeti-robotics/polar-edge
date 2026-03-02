@@ -17,6 +17,8 @@ import {
   getStandFormCount,
   getTeamCount,
 } from "@/features/analysis/queries";
+import { getTeams } from "@/features/scouting/auto-path/actions";
+import ExportButton from "./ExportButton";
 
 const navCards = [
   {
@@ -62,7 +64,8 @@ async function PitFormCountStat() {
   return <StatItem label="Pit Forms" value={count} />;
 }
 
-export default function AnalysisPage() {
+export default async function AnalysisPage() {
+  const teams = await getTeams();
   return (
     <div className="space-y-8">
       <div>
@@ -70,6 +73,7 @@ export default function AnalysisPage() {
         <TypographyMuted>
           Match and team data collected across all events.
         </TypographyMuted>
+        <ExportButton teams={teams} eventName="states" />
       </div>
 
       <div className="rounded-xl border bg-muted/20 grid grid-cols-1 max-md:divide-y md:grid-cols-3">
