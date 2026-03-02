@@ -5,6 +5,22 @@
   --header-height: 5rem;
 }
 
+@keyframes crown-wiggle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.2) rotate(-12deg);
+  }
+  50% {
+    transform: scale(1.25) rotate(12deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-6deg);
+  }
+}
+
 @utility no-scrollbar {
   &::-webkit-scrollbar {
     display: none;

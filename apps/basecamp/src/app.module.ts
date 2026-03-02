@@ -1,17 +1,35 @@
+import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { AiModule } from "./ai/ai.module";
-import { BotModule } from "./bot/bot.module";
-import { HandbookModule } from "./handbook/handbook.module";
-import { SheetModule } from "./sheet/sheet.module";
+import { IntentsBitField } from "discord.js";
+import { NecordModule } from "necord";
+import { AppConfigModule } from "./config/config.module";
+import { AppConfigService } from "./config/config.service";
+import { AiModule } from "./lib/ai/ai.module";
+import { AttendanceModule } from "./modules/attendance/attendance.module";
+import { HandbookModule } from "./modules/handbook/handbook.module";
+import { LifecycleModule } from "./modules/lifecycle/lifecycle.module";
+import { OutreachModule } from "./modules/outreach/outreach.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    BotModule,
-    SheetModule,
+    CacheModule.register({ isGlobal: true }),
+    AppConfigModule,
     AiModule,
+    AttendanceModule,
     HandbookModule,
+    LifecycleModule,
+    OutreachModule,
+    NecordModule.forRootAsync({
+      useFactory: (configService: AppConfigService) => {
+        const devGuildId = configService.get("devGuildId");
+        return {
+          token: configService.get("discordToken"),
+          development: devGuildId ? [devGuildId] : false,
+          intents: [IntentsBitField.Flags.Guilds],
+        };
+      },
+      inject: [AppConfigService],
+    }),
   ],
   controllers: [],
   providers: [],

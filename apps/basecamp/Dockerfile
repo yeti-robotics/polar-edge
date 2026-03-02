@@ -28,6 +28,9 @@ COPY turbo.json turbo.json
 
 RUN pnpm turbo build --filter=basecamp
 
+# Produce a self-contained deployment directory with only prod deps
+RUN pnpm --filter=basecamp deploy --prod --legacy /app/deploy
+
 FROM base AS runner
 WORKDIR /app
 
@@ -35,7 +38,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 USER nodejs
 
-# Everything is bundled into a single file — no node_modules needed
-COPY --from=installer --chown=nodejs:nodejs /app/apps/basecamp/dist/main.js ./main.js
+COPY --from=installer --chown=nodejs:nodejs /app/apps/basecamp/dist ./apps/basecamp/dist
+COPY --from=installer --chown=nodejs:nodejs /app/deploy/node_modules ./apps/basecamp/node_modules
 
-CMD ["node", "main.js"]
+CMD ["node", "apps/basecamp/dist/main.js"]

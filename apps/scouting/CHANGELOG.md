@@ -1,5 +1,152 @@
 # Changelog
 
+## [2026.13.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.12.0...scouting-v2026.13.0) (2026-03-01)
+
+
+### Features
+
+* **scouting:** build an event overview page with sortable teams table ([#455](https://github.com/yeti-robotics/polar-edge/issues/455)) ([f3050d6](https://github.com/yeti-robotics/polar-edge/commit/f3050d6dbe7d8969929461a4166e7be25155c389))
+
+## [2026.12.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.11.1...scouting-v2026.12.0) (2026-02-27)
+
+
+### Features
+
+* **scouting:** build out team comp ([76018ee](https://github.com/yeti-robotics/polar-edge/commit/76018ee17deebdbe358e00d9aaa4c09b08a7beeb))
+
+## [2026.11.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.11.0...scouting-v2026.11.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* **scouting:** ensure proper value handling and display for team selection ([d75244e](https://github.com/yeti-robotics/polar-edge/commit/d75244ebcc444272f1715871a0913550aeac3f5d))
+
+## [2026.11.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.10.0...scouting-v2026.11.0) (2026-02-27)
+
+
+### Features
+
+* **scouting:** enhance caching for active events and event teams ([f5ac594](https://github.com/yeti-robotics/polar-edge/commit/f5ac594afd3de7543bac8865b3c91e82fc872b43))
+* **scouting:** improved cache handling for active event and event teams ([2a90983](https://github.com/yeti-robotics/polar-edge/commit/2a9098367b129d7efbe2923305ccacf70766abe5))
+
+## [2026.10.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.4...scouting-v2026.10.0) (2026-02-22)
+
+
+### Features
+
+* **scouting:** implement caching for team metrics and update event ID handling ([5a6bf96](https://github.com/yeti-robotics/polar-edge/commit/5a6bf9616bf177d7f55a7001ae6eb578df8854be))
+
+
+### Bug Fixes
+
+* **scouting:** simplify TeamPage layout by removing unnecessary container ([#452](https://github.com/yeti-robotics/polar-edge/issues/452)) ([79e4c71](https://github.com/yeti-robotics/polar-edge/commit/79e4c713091756894c3154bd89a5c1653998a3a3))
+
+## [2026.9.4](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.3...scouting-v2026.9.4) (2026-02-22)
+
+
+### Bug Fixes
+
+* **scouting:** improve admin page load perf / fix suspense patterns ([#445](https://github.com/yeti-robotics/polar-edge/issues/445)) ([fad4ce3](https://github.com/yeti-robotics/polar-edge/commit/fad4ce3bd8a2c18a9bf96194487237035b3c95bb))
+
+## [2026.9.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.2...scouting-v2026.9.3) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** fix climbing and shooting layouts with dialog management and elapsed time tracking ([aea5c04](https://github.com/yeti-robotics/polar-edge/commit/aea5c045bcd9c0f75a1c79b82ff0632e1d46c55d))
+
+## [2026.9.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.1...scouting-v2026.9.2) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** enhance LoadingSkeleton component with showScopeToggle prop for improved loading state display ([e1da27d](https://github.com/yeti-robotics/polar-edge/commit/e1da27da6b70a9e84dfc63cd5bc760172086a13c))
+* **scouting:** establish connection for async stat components on analysis page ([d9bad20](https://github.com/yeti-robotics/polar-edge/commit/d9bad20293fe1f93de84d1fcd6214c8cffde93bd))
+* **scouting:** loading perf on analysis page, add cache ([49493d8](https://github.com/yeti-robotics/polar-edge/commit/49493d8c1a4871ce4388e80736556ce0fc2d0ddf))
+* **scouting:** update podium and rank table animations for improved visual flow ([62a8d86](https://github.com/yeti-robotics/polar-edge/commit/62a8d86e3c452edd13cd1a2525269ef78974f612))
+
+## [2026.9.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.9.0...scouting-v2026.9.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** update podium animation timings and styles ([#440](https://github.com/yeti-robotics/polar-edge/issues/440)) ([8c1c107](https://github.com/yeti-robotics/polar-edge/commit/8c1c1071e5792e27413e0947e12c36e5c0f04d6f))
+
+## [2026.9.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.8.0...scouting-v2026.9.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** animate the podium ([#438](https://github.com/yeti-robotics/polar-edge/issues/438)) ([58746ae](https://github.com/yeti-robotics/polar-edge/commit/58746ae1b8a97bdd361131aff44f23bc892726eb))
+
+## [2026.8.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.7.1...scouting-v2026.8.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** standardize sidebars, team search cleanup ([#436](https://github.com/yeti-robotics/polar-edge/issues/436)) ([16af308](https://github.com/yeti-robotics/polar-edge/commit/16af308ec4a487f664be716187e4ab810d1aaa64))
+
+## [2026.7.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.7.0...scouting-v2026.7.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** broken picklist links using wrong /analysis/picklist path ([#434](https://github.com/yeti-robotics/polar-edge/issues/434)) ([453b7ae](https://github.com/yeti-robotics/polar-edge/commit/453b7aef271d00e9506d73913416969fb0b3681b))
+
+## [2026.7.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.6.0...scouting-v2026.7.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** add leaderboard feature with caching and animations ([dbbdde4](https://github.com/yeti-robotics/polar-edge/commit/dbbdde44d7602af03e4d62cfc168e44d5a6cbfdc))
+
+
+### Bug Fixes
+
+* **scouting:** streamline pit form submission by moving revalidation logic ([f78ec49](https://github.com/yeti-robotics/polar-edge/commit/f78ec49661989cb60e24caab27ebc852486b8790))
+
+## [2026.6.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.5.1...scouting-v2026.6.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** admin/analysis layout responsiveness, overview pages ([#431](https://github.com/yeti-robotics/polar-edge/issues/431)) ([b61cefb](https://github.com/yeti-robotics/polar-edge/commit/b61cefb21e51fd59da8dcdb1282b46c2d9a0bad9))
+* **scouting:** integrate new typography components across various pages ([#429](https://github.com/yeti-robotics/polar-edge/issues/429)) ([b53f9e5](https://github.com/yeti-robotics/polar-edge/commit/b53f9e5fd6c65549a42724e28f2b97580bbe8c99))
+
+## [2026.5.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.5.0...scouting-v2026.5.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* **scouting:** improve stand form submission flow with dialog and validation ([#427](https://github.com/yeti-robotics/polar-edge/issues/427)) ([428c565](https://github.com/yeti-robotics/polar-edge/commit/428c5652fd7cef3fa6e47618b28bd898be555237))
+
+## [2026.5.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.4.0...scouting-v2026.5.0) (2026-02-21)
+
+
+### Features
+
+* **scouting:** implement team name enrichment functionality ([680bf14](https://github.com/yeti-robotics/polar-edge/commit/680bf143a3e3809dde10443b8ddd2826de623d0b))
+
+
+### Bug Fixes
+
+* **scouting:** format success message in EnrichTeamNamesForm for better readability ([2a545bf](https://github.com/yeti-robotics/polar-edge/commit/2a545bfff56a80ed783ae06eeac5d1e5258163ef))
+
+## [2026.4.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.3.0...scouting-v2026.4.0) (2026-02-20)
+
+
+### Features
+
+* **scouting:** add ui for offline indicators ([#420](https://github.com/yeti-robotics/polar-edge/issues/420)) ([336e3fb](https://github.com/yeti-robotics/polar-edge/commit/336e3fb6035fa48edd9050a9c868daca35fa93be))
+
+## [2026.3.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.4...scouting-v2026.3.0) (2026-02-20)
+
+
+### Features
+
+* **scouting:** routing for analysis pages ([#412](https://github.com/yeti-robotics/polar-edge/issues/412)) ([3476559](https://github.com/yeti-robotics/polar-edge/commit/347655910187ffe2ba292ace115de29bbd047f10))
+* **scouting:** team detail page ([#414](https://github.com/yeti-robotics/polar-edge/issues/414)) ([c4762f3](https://github.com/yeti-robotics/polar-edge/commit/c4762f3ae6a11add324a13e7ad3d4509159cabc0))
+
 ## [2026.2.4](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.2.3...scouting-v2026.2.4) (2026-02-19)
 
 

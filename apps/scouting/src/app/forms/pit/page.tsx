@@ -1,6 +1,10 @@
 import { Skeleton } from "@repo/ui/components/skeleton";
-import { asc, eq } from "drizzle-orm";
 import { Suspense } from "react";
+import { NoActiveEvent } from "@/components/NoActiveEvent";
+import { PitForm } from "@/features/scouting/pit/components/PitForm";
+import { getEventTeams } from "@/features/scouting/pit/queries";
+import { requireActiveMember } from "@/lib/server/auth/require-member";
+import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 
 function PitFormSkeleton() {
   return (
@@ -22,13 +26,6 @@ function PitFormSkeleton() {
   );
 }
 
-import { NoActiveEvent } from "@/components/NoActiveEvent";
-import { db } from "@/lib/database";
-import { team, teamMatch } from "@/lib/database/schema";
-import { requireActiveMember } from "@/lib/server/auth/require-member";
-import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { PitForm } from "./PitForm";
-
 async function PitFormContent() {
   const member = await requireActiveMember();
   const activeEvent = await getActiveEventForOrganization(member.organizationId);
@@ -37,15 +34,7 @@ async function PitFormContent() {
     return <NoActiveEvent />;
   }
 
-  const eventTeams = await db
-    .selectDistinct({
-      teamNumber: team.teamNumber,
-      teamName: team.teamName,
-    })
-    .from(teamMatch)
-    .innerJoin(team, eq(team.teamNumber, teamMatch.teamNumber))
-    .where(eq(teamMatch.eventId, activeEvent.eventId))
-    .orderBy(asc(team.teamNumber));
+  const eventTeams = await getEventTeams(activeEvent.eventId);
 
   return <PitForm teams={eventTeams} />;
 }

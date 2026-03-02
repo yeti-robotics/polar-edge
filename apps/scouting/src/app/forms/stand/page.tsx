@@ -21,13 +21,17 @@ function StandFormSkeleton() {
   );
 }
 
+import { TypographyH1 } from "@repo/ui/components/typography";
 import { NoActiveEvent } from "@/components/NoActiveEvent";
+import {
+  StandFormNavigation,
+  StandFormProgress,
+} from "@/features/scouting/stand/components/StandFormNavigation";
+import { StandFormProvider } from "@/features/scouting/stand/components/StandFormProvider";
+import { StandFormTabs } from "@/features/scouting/stand/components/StandFormTabs";
+import { UnsavedChangesWarning } from "@/features/scouting/stand/components/UnsavedChangesWarning";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { UnsavedChangesWarning } from "./components/UnsavedChangesWarning";
-import { StandFormNavigation, StandFormProgress } from "./StandFormNavigation";
-import { StandFormProvider } from "./StandFormProvider";
-import { StandFormTabs } from "./StandFormTabs";
 
 async function StandFormContent() {
   const member = await requireActiveMember();
@@ -59,7 +63,7 @@ async function StandFormContent() {
 export default function StandFormPage() {
   return (
     <div className="py-6 max-w-3xl w-full mx-auto px-4">
-      <h1 className="mb-6 text-3xl tracking-tight">Stand Form</h1>
+      <TypographyH1 className="mb-6">Stand Form</TypographyH1>
 
       <main className="w-full">
         <Suspense fallback={<StandFormSkeleton />}>

@@ -7,13 +7,15 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { CreatePicklistDialog } from "@/features/picklist/components/CreatePicklistDialog";
+import { getPicklistsForEvent } from "@/features/picklist/queries";
+import { routes } from "@/lib/routes";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { CreatePicklistDialog } from "./CreatePicklistDialog";
-import { getPicklistsForEvent } from "./queries";
 
 function LoadingPicklists() {
   return (
@@ -69,7 +71,7 @@ async function PicklistContent() {
   return (
     <div className="flex flex-col gap-4">
       {picklists.map((picklist) => (
-        <Link key={picklist.id} href={`/analysis/picklist/${picklist.id}`}>
+        <Link key={picklist.id} href={routes.picklist.detail(picklist.id)}>
           <Card className="hover:border-primary transition-colors cursor-pointer">
             <CardHeader>
               <CardTitle>{picklist.name}</CardTitle>
@@ -90,10 +92,10 @@ export default function PicklistPage() {
     <main className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl tracking-tight">Picklists</h1>
-          <p className="mt-2 text-muted-foreground">
+          <TypographyH1>Picklists</TypographyH1>
+          <TypographyMuted className="mt-2">
             Create and manage team picklists for alliance selection
-          </p>
+          </TypographyMuted>
         </div>
         <CreatePicklistDialog>
           <Button>

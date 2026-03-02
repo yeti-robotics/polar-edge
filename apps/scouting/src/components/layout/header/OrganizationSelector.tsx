@@ -13,6 +13,7 @@ import { ChevronsUpDownIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { routes } from "@/lib/routes";
 
 interface OrganizationSelectorProps {
   isSuperAdmin?: boolean;
@@ -31,7 +32,7 @@ export function OrganizationSelector({ isSuperAdmin = false }: OrganizationSelec
       <div className="flex items-center">
         {isSuperAdmin ? (
           <Link
-            href="/organization/create"
+            href={routes.organization.create}
             className="flex items-center text-sm text-foreground hover:text-foreground/80 transition-colors gap-1"
           >
             <PlusIcon className="size-3.5" aria-hidden="true" />
@@ -69,8 +70,8 @@ export function OrganizationSelector({ isSuperAdmin = false }: OrganizationSelec
             {organizations?.map((organization) => (
               <DropdownMenuItem
                 key={organization.id}
-                onClick={() => {
-                  authClient.organization.setActive({ organizationId: organization.id });
+                onClick={async () => {
+                  await authClient.organization.setActive({ organizationId: organization.id });
                   router.refresh();
                 }}
               >
@@ -85,7 +86,7 @@ export function OrganizationSelector({ isSuperAdmin = false }: OrganizationSelec
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/organization/create" className="flex items-center gap-2">
+                  <Link href={routes.organization.create} className="flex items-center gap-2">
                     <PlusIcon className="size-4" aria-hidden="true" />
                     <span className="text-sm">Create Organization</span>
                   </Link>

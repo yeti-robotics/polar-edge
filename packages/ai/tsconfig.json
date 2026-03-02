@@ -3,13 +3,11 @@
   "compilerOptions": {
     "baseUrl": "src",
     "esModuleInterop": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "outDir": "dist",
-    "types": [],
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "declaration": true,
+    "types": []
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
