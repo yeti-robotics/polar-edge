@@ -32,7 +32,7 @@ export class AttendanceRepository {
         .flatMap((row) => {
           const result = this.parseRow(row);
           if (result.isErr()) {
-            this.logger.warn(`Skipping malformed row: ${result.error.message}`);
+            this.logger.debug(`Skipping malformed row: ${result.error.message}`);
             return [];
           }
           return [result.value];
@@ -45,7 +45,7 @@ export class AttendanceRepository {
       rows.slice(1).flatMap((row) => {
         const result = this.parseRow(row);
         if (result.isErr()) {
-          this.logger.warn(`Skipping malformed row: ${result.error.message}`);
+          this.logger.debug(`Skipping malformed row: ${result.error.message}`);
           return [];
         }
         return [result.value];
