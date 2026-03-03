@@ -8,6 +8,7 @@ import { AppConfigService } from "./config/config.service";
 import { AiModule } from "./lib/ai/ai.module";
 import { AttendanceModule } from "./modules/attendance/attendance.module";
 import { HandbookModule } from "./modules/handbook/handbook.module";
+import { HealthModule } from "./modules/health/health.module";
 import { LifecycleModule } from "./modules/lifecycle/lifecycle.module";
 import { OutreachModule } from "./modules/outreach/outreach.module";
 
@@ -44,6 +45,7 @@ import { OutreachModule } from "./modules/outreach/outreach.module";
       },
       inject: [AppConfigService],
     }),
+    HealthModule,
   ],
   controllers: [],
   providers: [],
