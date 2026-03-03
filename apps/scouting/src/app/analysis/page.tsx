@@ -12,11 +12,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
-import {
-  getPitFormCount,
-  getStandFormCount,
-  getTeamCount,
-} from "@/features/analysis/queries";
+import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
 import { getTeams } from "@/features/scouting/auto-path/actions";
 import ExportButton from "./ExportButton";
 
@@ -25,15 +21,13 @@ const navCards = [
     href: "/analysis/teams",
     icon: UsersIcon,
     title: "Teams",
-    description:
-      "Browse all scouted teams and view detailed per-team breakdowns.",
+    description: "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
     href: "/analysis/comparison",
     icon: GitGraphIcon,
     title: "Comparison",
-    description:
-      "Compare multiple teams side-by-side across key performance metrics.",
+    description: "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
     href: "/analysis/events",
@@ -70,9 +64,7 @@ export default async function AnalysisPage() {
     <div className="space-y-8">
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted>
-          Match and team data collected across all events.
-        </TypographyMuted>
+        <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
         <ExportButton teams={teams} eventName="states" />
       </div>
 

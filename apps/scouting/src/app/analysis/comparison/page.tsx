@@ -6,11 +6,7 @@ import {
   BreadcrumbSeparator,
 } from "@repo/ui/components/breadcrumb";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import {
-  TypographyH1,
-  TypographyLabel,
-  TypographyMuted,
-} from "@repo/ui/components/typography";
+import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
 import { and, desc, eq, inArray, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { Suspense } from "react";
@@ -26,27 +22,17 @@ import {
 } from "@/features/analysis/components/MultiTeamRadarChart";
 import { RadarChart } from "@/features/analysis/components/TeamRadarChart";
 import type { RadarPoint } from "@/features/analysis/team-queries";
-import {
-  getTeamKeyMetrics,
-  getTeamRadarData,
-} from "@/features/analysis/team-queries";
+import { getTeamKeyMetrics, getTeamRadarData } from "@/features/analysis/team-queries";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
-import {
-  event,
-  member,
-  standForm,
-  team,
-  teamMatch,
-} from "@/lib/database/schema";
+import { event, member, standForm, team, teamMatch } from "@/lib/database/schema";
 import { routes } from "@/lib/routes";
 
 function mergeRadarData(
   teamNums: number[],
-  allRadarData: RadarPoint[][],
+  allRadarData: RadarPoint[][]
 ): MultiTeamRadarDataPoint[] {
-  if (allRadarData.length === 0 || (allRadarData[0]?.length ?? 0) === 0)
-    return [];
+  if (allRadarData.length === 0 || (allRadarData[0]?.length ?? 0) === 0) return [];
   return (allRadarData[0] ?? []).map((point, idx) => {
     const merged: MultiTeamRadarDataPoint = { subject: point.subject };
     for (let i = 0; i < teamNums.length; i++) {
@@ -70,8 +56,8 @@ async function ComparisonRadarSection({
       getTeamRadarData(n, {
         organizationId: effectiveOrgId,
         eventId: effectiveEventId,
-      }),
-    ),
+      })
+    )
   );
   const merged = mergeRadarData(teamNums, allRadarData);
 
@@ -127,8 +113,8 @@ async function ComparisonMetricsSection({
       getTeamKeyMetrics(n, {
         organizationId: effectiveOrgId,
         eventId: effectiveEventId,
-      }),
-    ),
+      })
+    )
   );
   const teamNames = teamNums.map((n) => teamNameMap.get(n) ?? null);
   return (
@@ -149,11 +135,7 @@ export default async function ComparisonPage({
     eventId?: string;
   }>;
 }) {
-  const {
-    teams: teamsParam,
-    orgScope,
-    eventId: eventIdParam,
-  } = await searchParams;
+  const { teams: teamsParam, orgScope, eventId: eventIdParam } = await searchParams;
 
   // Parse team numbers from URL (up to 5, valid positive integers only)
   const teamNums = (teamsParam ?? "")
@@ -199,12 +181,7 @@ export default async function ComparisonPage({
           .innerJoin(member, eq(member.id, standForm.scoutMemberId))
           .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
           .innerJoin(event, eq(event.id, teamMatch.eventId))
-          .where(
-            and(
-              eq(member.organizationId, organizationId),
-              isNull(standForm.deletedAt),
-            ),
-          )
+          .where(and(eq(member.organizationId, organizationId), isNull(standForm.deletedAt)))
           .orderBy(desc(event.startDate))
       : Promise.resolve(
           [] as {
@@ -212,7 +189,7 @@ export default async function ComparisonPage({
             name: string;
             eventCode: string;
             startDate: Date | null;
-          }[],
+          }[]
         ),
 
     teamNums.length > 0
@@ -232,15 +209,11 @@ export default async function ComparisonPage({
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href={routes.analysis.root}>
-                Analysis
-              </BreadcrumbLink>
+              <BreadcrumbLink href={routes.analysis.root}>Analysis</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={routes.analysis.comparison}>
-                Compare
-              </BreadcrumbLink>
+              <BreadcrumbLink href={routes.analysis.comparison}>Compare</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -249,9 +222,7 @@ export default async function ComparisonPage({
           <div>
             <TypographyLabel className="mb-1">Team Analysis</TypographyLabel>
             <TypographyH1>Comparison</TypographyH1>
-            <TypographyMuted className="mt-1">
-              Compare up to 5 teams side by side
-            </TypographyMuted>
+            <TypographyMuted className="mt-1">Compare up to 5 teams side by side</TypographyMuted>
           </div>
 
           <ComparisonScopeControls
@@ -266,9 +237,7 @@ export default async function ComparisonPage({
 
       {teamNums.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center">
-          <p className="text-muted-foreground">
-            Add teams above to start comparing
-          </p>
+          <p className="text-muted-foreground">Add teams above to start comparing</p>
         </div>
       ) : (
         <div className="space-y-6">

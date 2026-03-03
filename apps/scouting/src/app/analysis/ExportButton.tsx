@@ -21,7 +21,7 @@ type Props = {
 };
 
 export default function ExportButton({ teams, eventName }: Props) {
-  function handleExport() {
+  const handleExport = () => {
     const rows = teams.map((team) => ({
       "Team number": team.teamNumber ?? "N/A",
       "Team name": team.teamName ?? "N/A",
@@ -49,7 +49,7 @@ export default function ExportButton({ teams, eventName }: Props) {
     a.click();
 
     URL.revokeObjectURL(url);
-  }
+  };
 
   return (
     <div className="relative">
