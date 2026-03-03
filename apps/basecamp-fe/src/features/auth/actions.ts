@@ -22,5 +22,6 @@ export async function signOut() {
   const cookieStore = await cookies();
   cookieStore.delete("toofaToken");
   cookieStore.delete("toofaSecret");
+  cookieStore.delete("toofaPassword");
   redirect("/");
 }
