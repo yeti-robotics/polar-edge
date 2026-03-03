@@ -1,22 +1,32 @@
-import { Body, Controller, HttpStatus, Post, Res, UnauthorizedException } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  Post,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import type { Response } from "express";
 import { AppConfigService } from "src/config/config.service";
 import type { TwofaSignInDto, TwofaValidateDto } from "./twofa.dto";
 
 @Controller("2fa")
 export class TwofaController {
+  private readonly logger = new Logger(TwofaController.name);
+
   constructor(
     private readonly config: AppConfigService,
     private readonly jwtService: JwtService
   ) {}
 
   @Post("authenticate")
-  signIn(@Body() { password }: TwofaSignInDto, @Res() res: Response) {
+  @HttpCode(HttpStatus.ACCEPTED)
+  signIn(@Body() { password }: TwofaSignInDto) {
     const expectedPassword = this.config.get("attendance2faSecret");
 
     if (!password || password !== expectedPassword) {
-      console.error("Invalid password");
+      this.logger.error("Invalid password");
       throw new UnauthorizedException("Invalid password");
     }
 
@@ -26,18 +36,19 @@ export class TwofaController {
 
     const totpSecret = this.config.get("attendance2faSecret");
 
-    return res.status(HttpStatus.ACCEPTED).json({ message: "Accepted", token, secret: totpSecret });
+    return { message: "Accepted", token, secret: totpSecret };
   }
 
   @Post("validate")
-  validateToken(@Body() { token }: TwofaValidateDto, @Res() res: Response) {
+  @HttpCode(HttpStatus.OK)
+  validateToken(@Body() { token }: TwofaValidateDto) {
     try {
       this.jwtService.verify(token);
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
       throw new UnauthorizedException("Invalid token");
     }
 
-    return res.status(HttpStatus.OK).json({ message: "Valid" });
+    return { message: "Valid" };
   }
 }
