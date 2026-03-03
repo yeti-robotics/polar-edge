@@ -1,18 +1,14 @@
-import {
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@repo/ui/components/table";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
-import { GitGraphIcon, Table, TableIcon, UsersIcon } from "lucide-react";
+import { GitGraphIcon, TableIcon, UsersIcon } from "lucide-react";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
-import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+import {
+  getPitFormCount,
+  getStandFormCount,
+  getTeamCount,
+} from "@/features/analysis/queries";
 import { getTeams } from "@/features/scouting/auto-path/actions";
 import ExportButton from "./ExportButton";
 
@@ -21,13 +17,15 @@ const navCards = [
     href: "/analysis/teams",
     icon: UsersIcon,
     title: "Teams",
-    description: "Browse all scouted teams and view detailed per-team breakdowns.",
+    description:
+      "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
     href: "/analysis/comparison",
     icon: GitGraphIcon,
     title: "Comparison",
-    description: "Compare multiple teams side-by-side across key performance metrics.",
+    description:
+      "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
     href: "/analysis/events",
@@ -64,7 +62,9 @@ export default async function AnalysisPage() {
     <div className="space-y-8">
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
+        <TypographyMuted>
+          Match and team data collected across all events.
+        </TypographyMuted>
         <ExportButton teams={teams} eventName="states" />
       </div>
 
@@ -88,40 +88,5 @@ export default async function AnalysisPage() {
 
       <NavCardGrid items={navCards} />
     </div>
-  );
-}
-function OverviewPage() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-mono tracking-tight">Analysis Overview</h1>
-      {/* <Skeleton /> ///  use later when data is showing */}
-      <p className="text-muted-foreground ">
-        <Table></Table>
-      </p>
-    </div>
-  );
-}
-
-function TableData() {
-  return (
-    <Table>
-      <TableCaption> YeTi </TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-25"> MOCK </TableHead>
-          <TableHead>MOCK </TableHead>
-          <TableHead>MOCK </TableHead>
-          <TableHead className="text-right">MOCK </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow>
-          <TableCell className="font-medium">MOCK </TableCell>
-          <TableCell>MOCK </TableCell>
-          <TableCell>MOCK </TableCell>
-          <TableCell className="text-right">MOCK </TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
   );
 }
