@@ -165,13 +165,15 @@ describe("HandbookCommands", () => {
       expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining("Prompt:"));
     });
 
-    it("throws error when service throws", async () => {
+    it("replies with error message when service throws", async () => {
       const interaction = makeInteraction();
       service.askHandbookQuestion.mockRejectedValue(new Error("AI service unavailable"));
 
-      await expect(
-        commands.onHandbook([interaction] as never, { question: "Will this fail?" })
-      ).rejects.toThrow("AI service unavailable");
+      await commands.onHandbook([interaction] as never, { question: "Will this fail?" });
+
+      expect(interaction.reply).toHaveBeenCalledWith(
+        "An unexpected error occurred while querying the handbook."
+      );
     });
   });
 });

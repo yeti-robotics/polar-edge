@@ -1,5 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { type GuildMember, MessageFlags, type User } from "discord.js";
+import {
+  type ChatInputCommandInteraction,
+  type GuildMember,
+  MessageFlags,
+  type User,
+} from "discord.js";
 import {
   Context,
   IntegerOption,
@@ -8,8 +13,10 @@ import {
   type SlashCommandContext,
   UserOption,
 } from "necord";
+import type { Result } from "neverthrow";
 import { AppConfigService } from "src/config/config.service";
 import { getNickname } from "src/lib/utils/discord.utils";
+import { formatLeaderboard } from "src/lib/utils/leaderboard.utils";
 import { formatPercentage, getOrdinalSuffix } from "src/lib/utils/math.utils";
 import { AttendanceService } from "./attendance.service";
 
@@ -65,6 +72,38 @@ export class AttendanceCommands {
     this.adminRoleId = this.configService.get("adminRoleId");
   }
 
+  private async handleAttendanceResult(
+    interaction: ChatInputCommandInteraction,
+    opResult: Result<{ success: boolean; message?: string }, Error>,
+    context: {
+      operationName: string;
+      userId: string;
+      successAnnouncement?: string;
+      defaultSuccessMessage: string;
+      defaultFailureMessage: string;
+    }
+  ) {
+    if (opResult.isErr()) {
+      this.logger.error(
+        `${context.operationName} failed for ${context.userId}: ${opResult.error.message}`
+      );
+      return interaction.editReply({ content: "An unexpected error occurred." });
+    }
+
+    if (opResult.value.success) {
+      if (context.successAnnouncement && interaction.channel?.isSendable()) {
+        await interaction.channel.send(context.successAnnouncement);
+      }
+      return interaction.editReply({
+        content: opResult.value.message ?? context.defaultSuccessMessage,
+      });
+    }
+
+    return interaction.editReply({
+      content: opResult.value.message ?? context.defaultFailureMessage,
+    });
+  }
+
   @SlashCommand({
     name: "signin",
     description: "Sign in to a YETI meeting at the zone",
@@ -90,23 +129,13 @@ export class AttendanceCommands {
       code
     );
 
-    if (opResult.isErr()) {
-      this.logger.error(`signIn failed for ${interaction.user.id}: ${opResult.error.message}`);
-      return interaction.editReply({ content: "An unexpected error occurred." });
-    }
-
-    if (opResult.value.success) {
-      if (interaction.channel?.isSendable()) {
-        await interaction.channel.send(`<@${interaction.user.id}> has signed in.`);
-      }
-      return interaction.editReply({
-        content: opResult.value.message ?? "Signed in successfully",
-      });
-    } else {
-      return interaction.editReply({
-        content: opResult.value.message ?? "Failed to sign in.",
-      });
-    }
+    return this.handleAttendanceResult(interaction, opResult, {
+      operationName: "signIn",
+      userId: interaction.user.id,
+      successAnnouncement: `<@${interaction.user.id}> has signed in.`,
+      defaultSuccessMessage: "Signed in successfully",
+      defaultFailureMessage: "Failed to sign in.",
+    });
   }
 
   @SlashCommand({
@@ -134,23 +163,13 @@ export class AttendanceCommands {
       code
     );
 
-    if (opResult.isErr()) {
-      this.logger.error(`signOut failed for ${interaction.user.id}: ${opResult.error.message}`);
-      return interaction.editReply({ content: "An unexpected error occurred." });
-    }
-
-    if (opResult.value.success) {
-      if (interaction.channel?.isSendable()) {
-        await interaction.channel.send(`<@${interaction.user.id}> has signed out.`);
-      }
-      return interaction.editReply({
-        content: opResult.value.message ?? "Signed out successfully",
-      });
-    } else {
-      return interaction.editReply({
-        content: opResult.value.message ?? "Failed to sign out.",
-      });
-    }
+    return this.handleAttendanceResult(interaction, opResult, {
+      operationName: "signOut",
+      userId: interaction.user.id,
+      successAnnouncement: `<@${interaction.user.id}> has signed out.`,
+      defaultSuccessMessage: "Signed out successfully",
+      defaultFailureMessage: "Failed to sign out.",
+    });
   }
 
   @SlashCommand({
@@ -187,23 +206,13 @@ export class AttendanceCommands {
       true
     );
 
-    if (opResult.isErr()) {
-      this.logger.error(`admin-signin failed for ${user.id}: ${opResult.error.message}`);
-      return interaction.editReply({ content: "An unexpected error occurred." });
-    }
-
-    if (opResult.value.success) {
-      if (interaction.channel?.isSendable()) {
-        await interaction.channel.send(`<@${user.id}> has been signed in by an admin.`);
-      }
-      return interaction.editReply({
-        content: `Successfully signed in ${nickname}.`,
-      });
-    } else {
-      return interaction.editReply({
-        content: opResult.value.message ?? `Failed to sign in ${nickname}.`,
-      });
-    }
+    return this.handleAttendanceResult(interaction, opResult, {
+      operationName: "admin-signin",
+      userId: user.id,
+      successAnnouncement: `<@${user.id}> has been signed in by an admin.`,
+      defaultSuccessMessage: `Successfully signed in ${nickname}.`,
+      defaultFailureMessage: `Failed to sign in ${nickname}.`,
+    });
   }
 
   @SlashCommand({
@@ -240,23 +249,13 @@ export class AttendanceCommands {
       true
     );
 
-    if (opResult.isErr()) {
-      this.logger.error(`admin-signout failed for ${user.id}: ${opResult.error.message}`);
-      return interaction.editReply({ content: "An unexpected error occurred." });
-    }
-
-    if (opResult.value.success) {
-      if (interaction.channel?.isSendable()) {
-        await interaction.channel.send(`<@${user.id}> has been signed out by an admin.`);
-      }
-      return interaction.editReply({
-        content: `Successfully signed out ${nickname}.`,
-      });
-    } else {
-      return interaction.editReply({
-        content: opResult.value.message ?? `Failed to sign out ${nickname}.`,
-      });
-    }
+    return this.handleAttendanceResult(interaction, opResult, {
+      operationName: "admin-signout",
+      userId: user.id,
+      successAnnouncement: `<@${user.id}> has been signed out by an admin.`,
+      defaultSuccessMessage: `Successfully signed out ${nickname}.`,
+      defaultFailureMessage: `Failed to sign out ${nickname}.`,
+    });
   }
 
   @SlashCommand({
@@ -330,38 +329,12 @@ export class AttendanceCommands {
       return interaction.reply("No attendance data found");
     }
 
-    const leaderboard = leaderboardResult.value;
-
-    let leaderboardString = ":clock: **Attendance Leaderboard** :clock:\n\n";
-
-    leaderboard.forEach((entry, index) => {
-      const rank = index + 1;
-      let prefix = "";
-
-      // Medal emojis for top 3, numbers for 4th and 5th
-      switch (rank) {
-        case 1:
-          prefix = ":first_place_medal:";
-          break;
-        case 2:
-          prefix = ":second_place_medal:";
-          break;
-        case 3:
-          prefix = ":third_place_medal:";
-          break;
-        case 4:
-          prefix = "4.";
-          break;
-        case 5:
-          prefix = "5.";
-          break;
-      }
-
-      leaderboardString += `${prefix} **${entry.userName}** - ${entry.totalHours} hours\n`;
-    });
-
-    leaderboardString += "\n*Updated in real-time from attendance records*";
-
-    return interaction.reply(leaderboardString);
+    return interaction.reply(
+      formatLeaderboard(
+        ":clock: **Attendance Leaderboard** :clock:",
+        leaderboardResult.value,
+        "*Updated in real-time from attendance records*"
+      )
+    );
   }
 }
