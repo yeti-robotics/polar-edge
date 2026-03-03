@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ResultAsync } from "neverthrow";
+import { err, ok, type Result, ResultAsync } from "neverthrow";
 import { SheetService } from "src/lib/sheet/sheet.service";
+import { type ZodError } from "zod";
 import { OUTREACH_SHEET_RANGE } from "./outreach.constants";
 import { type OutreachRecord, OutreachRecordSchema } from "./outreach.schema";
 
@@ -10,7 +11,7 @@ export class OutreachRepository {
 
   constructor(private readonly sheet: SheetService) {}
 
-  private parseRow(row: unknown[]): OutreachRecord | null {
+  private parseRow(row: unknown[]): Result<OutreachRecord, ZodError> {
     const result = OutreachRecordSchema.safeParse({
       date: row[0],
       userName: row[1],
@@ -19,12 +20,8 @@ export class OutreachRepository {
       hours: row[4],
     });
 
-    if (!result.success) {
-      this.logger.warn(`Skipping malformed row: ${result.error.message}`);
-      return null;
-    }
-
-    return result.data;
+    if (!result.success) return err(result.error);
+    return ok(result.data);
   }
 
   /**
@@ -40,8 +37,12 @@ export class OutreachRepository {
   public findAll(): ResultAsync<OutreachRecord[], Error> {
     return this.sheet.get(OUTREACH_SHEET_RANGE).map((rows) =>
       rows.slice(1).flatMap((row) => {
-        const record = this.parseRow(row);
-        return record ? [record] : [];
+        const result = this.parseRow(row);
+        if (result.isErr()) {
+          this.logger.warn(`Skipping malformed row: ${result.error.message}`);
+          return [];
+        }
+        return [result.value];
       })
     );
   }

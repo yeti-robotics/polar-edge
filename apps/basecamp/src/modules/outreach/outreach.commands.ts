@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Context, SlashCommand, type SlashCommandContext } from "necord";
 import { getNickname } from "src/lib/utils/discord.utils";
+import { formatLeaderboard } from "src/lib/utils/leaderboard.utils";
 import { roundToTenth } from "src/lib/utils/math.utils";
 import { OutreachService } from "./outreach.service";
 
@@ -75,38 +76,14 @@ export class OutreachCommands {
       return interaction.reply("No outreach data found");
     }
 
-    const leaderboard = leaderboardResult.value;
     const totalTeamHours = totalTeamHoursResult.isOk() ? totalTeamHoursResult.value : 0;
 
-    let leaderboardString = `:trophy: **Outreach Leaderboard** :trophy:\n:chart_with_upwards_trend: **Team Total: ${totalTeamHours} hours** :chart_with_upwards_trend:\n\n`;
-
-    leaderboard.forEach((entry, index) => {
-      const rank = index + 1;
-      let prefix = "";
-
-      switch (rank) {
-        case 1:
-          prefix = ":first_place_medal:";
-          break;
-        case 2:
-          prefix = ":second_place_medal:";
-          break;
-        case 3:
-          prefix = ":third_place_medal:";
-          break;
-        case 4:
-          prefix = "4.";
-          break;
-        case 5:
-          prefix = "5.";
-          break;
-      }
-
-      leaderboardString += `${prefix} **${entry.userName}** - ${entry.totalHours} hours\n`;
-    });
-
-    leaderboardString += "\n*Updated in real-time from outreach records*";
-
-    return interaction.reply(leaderboardString);
+    return interaction.reply(
+      formatLeaderboard(
+        `:trophy: **Outreach Leaderboard** :trophy:\n:chart_with_upwards_trend: **Team Total: ${totalTeamHours} hours** :chart_with_upwards_trend:`,
+        leaderboardResult.value,
+        "*Updated in real-time from outreach records*"
+      )
+    );
   }
 }

@@ -50,7 +50,7 @@ export class HandbookCommands {
       });
     } catch (error) {
       this.logger.error(`Handbook request failed for user ${userId}:`, error);
-      throw error;
+      return interaction.reply("An unexpected error occurred while querying the handbook.");
     }
   }
 }
