@@ -23,7 +23,7 @@ export class TwofaController {
   @Post("authenticate")
   @HttpCode(HttpStatus.ACCEPTED)
   signIn(@Body() { password }: TwofaSignInDto) {
-    const expectedPassword = this.config.get("attendance2faSecret");
+    const expectedPassword = this.config.get("attendance2faPassword");
 
     if (!password || password !== expectedPassword) {
       this.logger.error("Invalid password");
@@ -34,7 +34,7 @@ export class TwofaController {
       sub: "attendance-2fa",
     });
 
-    const totpSecret = this.config.get("attendance2faSecret");
+    const totpSecret = this.config.get("totpSecret");
 
     return { message: "Accepted", token, secret: totpSecret };
   }
