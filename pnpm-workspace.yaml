@@ -32,5 +32,4 @@ overrides:
   lodash: ">=4.17.23"
   multer: "2.1.0"
   serialize-javascript: "7.0.3"
-  fast-xml-parser: "5.3.8"
 
