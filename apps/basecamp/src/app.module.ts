@@ -1,5 +1,6 @@
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
 import { IntentsBitField } from "discord.js";
 import { NecordModule } from "necord";
 import { AppConfigModule } from "./config/config.module";
@@ -26,6 +27,19 @@ import { OutreachModule } from "./modules/outreach/outreach.module";
           token: configService.get("discordToken"),
           development: devGuildId ? [devGuildId] : false,
           intents: [IntentsBitField.Flags.Guilds],
+        };
+      },
+      inject: [AppConfigService],
+    }),
+    JwtModule.registerAsync({
+      global: true,
+      useFactory: (config: AppConfigService) => {
+        return {
+          secret: config.get("jwtSecret"),
+          signOptions: {
+            algorithm: "HS256",
+            expiresIn: "24h",
+          },
         };
       },
       inject: [AppConfigService],
