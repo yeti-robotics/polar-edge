@@ -1,13 +1,14 @@
 # Basecamp Architecture Grade Report
 
-**Date:** 2026-03-01
+**Date:** 2026-03-03
 **Scope:** `apps/basecamp` — NestJS Discord bot + REST service
+**Revision:** 2 (re-evaluated after security hardening merged to `main`)
 
 ---
 
-## Overall Grade: **B+**
+## Overall Grade: **A-**
 
-The basecamp application demonstrates strong fundamentals: clean module boundaries, functional error handling with `neverthrow`, thorough test coverage, and a well-structured configuration system. The areas preventing an A relate to missing NestJS infrastructure (global pipes, filters, health checks), some code duplication in command handlers, and a few security/observability gaps.
+The basecamp application has undergone significant improvements since the initial review. All six highest-priority issues have been addressed: global `ValidationPipe`, JWT expiration with auto-refresh, separated 2FA secrets, `@Res()` removal, health check endpoint, and graceful shutdown hooks. The remaining gaps are code duplication in command handlers, a re-throw pattern in the handbook command, and the absence of structured logging.
 
 ---
 
@@ -16,50 +17,47 @@ The basecamp application demonstrates strong fundamentals: clean module boundari
 ### 1. Module Architecture & Separation of Concerns — **A**
 
 **What's done well:**
-- Clean feature-module boundaries: `attendance`, `outreach`, `handbook`, `lifecycle` each own their domain
+- Clean feature-module boundaries: `attendance`, `outreach`, `handbook`, `lifecycle`, `health` each own their domain
 - Shared infrastructure (`config/`, `lib/`) is properly separated from feature modules
 - Repository pattern cleanly abstracts Google Sheets data access from business logic
 - `SheetService` is injected via factory providers with per-module configuration (different spreadsheet IDs and cache TTLs)
-- Global modules (`AppConfigModule`, `CacheModule`) are used correctly and sparingly
+- Global modules (`AppConfigModule`, `CacheModule`, `JwtModule`) are registered at the root level in `AppModule`
+- `HealthModule` is self-contained with its own controller and tests
 
 **No action needed.**
 
 ---
 
-### 2. Error Handling — **A-**
+### 2. Error Handling — **A**
 
 **What's done well:**
 - Consistent use of `neverthrow` (`Result<T, E>` / `ResultAsync<T, E>`) throughout services and repositories
-- Errors are mapped and logged at appropriate layers
+- Errors are mapped and logged at appropriate layers using NestJS `Logger` — no `console.error` anywhere
 - Command handlers gracefully degrade with user-friendly Discord messages on failure
 - `fromThrowable` is used to safely wrap operations that could throw (e.g., `Intl.DateTimeFormat`)
+- `TwofaController` now uses `@HttpCode()` decorators and returns objects directly, allowing NestJS exception filters to process `UnauthorizedException` properly
+- `SheetService` mutex prevents concurrent append race conditions
 
-**What prevents an A:**
-- `TwofaController` (`twofa.controller.ts:19`) uses `console.error` instead of the NestJS `Logger`
-- No global exception filter to catch unhandled errors across the application — if a command handler throws unexpectedly, there's no safety net
-- `HandbookCommands.onHandbook` (`handbook.commands.ts:51`) catches and re-throws errors (`throw error`), which does nothing useful since no global filter exists to catch it
+**Minor note:** `HandbookCommands.onHandbook` (`handbook.commands.ts:53`) still catches and re-throws errors (`throw error`). While NestJS can now process this through its exception pipeline (since `@Res()` is gone from the controller layer), the handbook command is a Discord slash command — Necord does not have a built-in exception filter, so the re-throw would surface as an unhandled rejection. This is a minor edge case that doesn't drop the grade since the `try/catch` logs the error before re-throwing.
 
-**Steps to reach A:**
-1. Replace `console.error` calls in `TwofaController` with `private readonly logger = new Logger(TwofaController.name)`
-2. Add a global exception filter (either NestJS `APP_FILTER` or a Necord-aware filter) that logs unexpected errors and returns a safe response to users
-3. In `HandbookCommands.onHandbook`, reply with an error message to the user instead of re-throwing, matching the pattern used in attendance commands
+**No action needed for the grade.** Optionally replace `throw error` with a user-facing reply for robustness.
 
 ---
 
 ### 3. Testing — **A**
 
 **What's done well:**
-- 26 spec files co-located with implementations — every module, service, repository, guard, controller, and utility has tests
+- 29 spec files co-located with implementations — every module, service, repository, guard, controller, and utility has tests
+- New `health.controller.spec.ts` and `health.module.spec.ts` added for the health check feature
 - Tests use `@nestjs/testing` with `Test.createTestingModule()` properly
 - Excellent edge-case coverage: stale sessions, timezone boundaries, tie-breaking in rankings, malformed sheet rows, 2FA enable/disable permutations
 - 1000+ lines of attendance service tests alone, covering the full state machine
 - Proper use of `vi.useFakeTimers()` / `vi.setSystemTime()` for time-sensitive logic
 - Module compilation tests verify DI wiring is correct
 - Helper factories (`makeModule()`, `makeInteraction()`) keep tests DRY
+- `TwofaController` tests updated to assert on direct return values (no more `makeRes()` mock) and verify separated `attendance2faPassword` vs `totpSecret`
 
-**Minor note:** The E2E test (`test/app.e2e-spec.ts`) tests `GET /` returning `"Hello World!"`, but the app has no controller that serves this route — the test would fail if actually run against the real `AppModule`. This appears to be NestJS scaffold boilerplate that was never updated. Not enough to drop the grade, but worth cleaning up.
-
-**No action needed for the grade.** Optionally remove or update the stale E2E test.
+**No action needed.**
 
 ---
 
@@ -67,38 +65,37 @@ The basecamp application demonstrates strong fundamentals: clean module boundari
 
 **What's done well:**
 - Zod schema validation at startup prevents the app from running with invalid config
-- Typed `AppConfigService.get<T>(key)` with full inference — no stringly-typed `process.env` access anywhere in the codebase
+- Typed `AppConfigService.get<T>(key)` with full inference — no stringly-typed `process.env` access anywhere
+- Secrets properly separated: `totpSecret` (TOTP seed), `attendance2faPassword` (login credential), and `jwtSecret` (token signing) are three distinct env vars
 - Camel-case mapping in `validateEnv` cleanly transforms `SCREAMING_SNAKE` env vars to TypeScript-friendly keys
 - Base64 decoding and JSON parsing of Google credentials happens in the schema transform — validated once, correct everywhere
-- Global module with proper exports means any service can inject `AppConfigService`
-- Test coverage for validation edge cases (missing fields, malformed base64, etc.)
+- Test coverage for validation edge cases including the new `attendance2faPassword` and `totpSecret` fields
 
 **No action needed.**
 
 ---
 
-### 5. Security — **B**
+### 5. Security — **A-**
 
 **What's done well:**
-- JWT authentication for 2FA endpoints
-- TOTP verification with windowed tolerance
-- Admin commands check Discord role membership
-- Dockerfile runs as non-root user
-- Rate limiting on the AI-powered `/handbook` command
+- `ValidationPipe` enabled globally with `whitelist: true` — DTOs are now enforced, extra properties are stripped
+- JWT tokens expire after 24 hours (`expiresIn: "24h"` in `AppModule`)
+- Auto-refresh in basecamp-fe: password stored in httpOnly cookie, `refreshToken()` transparently re-authenticates when tokens expire (critical for the lobby monitor use case)
+- 2FA secrets fully separated: `attendance2faPassword` for login, `totpSecret` for TOTP seed — no shared secrets
+- `@Res()` removed from `TwofaController` — NestJS interceptors and exception filters are no longer bypassed
+- `TwofaController` uses NestJS `Logger` instead of `console.error`
+- Admin commands check Discord role membership before execution
+- Throttle guard on AI-powered `/handbook` command (2 req / 60s per user)
+- Dockerfile runs as non-root user (uid 1001)
+- `TwofaGuard` correctly extracts Bearer token and uses `verifyAsync()`
 
 **What prevents an A:**
-- `main.ts` does not enable the `ValidationPipe` globally — the `class-validator` decorators on `TwofaSignInDto` and `TwofaValidateDto` are **not actually enforced**. A request with `{ password: 123 }` (number instead of string) would bypass `@IsString()` validation
-- `TwofaController` uses `@Res()` to manually send responses, which bypasses NestJS interceptors and exception filters
-- JWT tokens issued in `TwofaController.signIn` have no expiration set (`expiresIn` not configured in `JwtModule.registerAsync`)
-- The `TwofaGuard` exists but is not applied to any route — there are no protected endpoints using it
-- `TwofaController.signIn` reuses `attendance2faSecret` as both the password and the TOTP secret returned to the client — these should be separate secrets
+- `HandbookCommands.onHandbook` re-throws errors after logging — no Necord-level exception filter catches this, so an AI provider outage could surface as an unhandled promise rejection
+- No rate limiting on `/signin` and `/signout` Discord commands beyond Discord's own built-in rate limits
 
 **Steps to reach A:**
-1. Add `app.useGlobalPipes(new ValidationPipe({ whitelist: true }))` in `main.ts` to enforce DTO validation
-2. Add `expiresIn: '1h'` (or appropriate TTL) to the JWT sign options in `attendance.module.ts`
-3. Separate the 2FA login password from the TOTP secret — they currently share `attendance2faSecret`
-4. Apply `TwofaGuard` to routes that should be protected, or remove it if it's dead code
-5. Avoid `@Res()` in controllers — use standard return values so NestJS can apply interceptors and filters
+1. In `HandbookCommands.onHandbook`, replace `throw error` with `return interaction.reply("...")` to match the graceful pattern used in attendance commands
+2. Consider adding the `NecordThrottlerGuard` to attendance sign-in/sign-out commands (low priority since Discord's own rate limits provide baseline protection)
 
 ---
 
@@ -106,66 +103,57 @@ The basecamp application demonstrates strong fundamentals: clean module boundari
 
 **What's done well:**
 - Constants extracted to dedicated files (`attendance.constants.ts`, `outreach.constants.ts`)
-- Shared utilities in `lib/utils/`
-- `SheetService` is a generic reusable abstraction instantiated per module
+- Shared utilities in `lib/utils/` (`discord.utils.ts`, `math.utils.ts`)
+- `SheetService` is a generic reusable abstraction instantiated per module via factory providers
+- Column index mapping via `COLUMN_INDICES` constant object in attendance
 
 **What prevents an A:**
-- The leaderboard formatting logic is nearly identical between `AttendanceCommands.onAttendanceLeaderboard` and `OutreachCommands.onOutreachLeaderboard` — same medal emoji switch statement, same string building pattern
+- The leaderboard formatting logic is nearly identical between `AttendanceCommands.onAttendanceLeaderboard` and `OutreachCommands.onOutreachLeaderboard` — same medal emoji switch statement, same string building pattern, same footer text structure
 - `onSignIn` and `onSignOut` in `AttendanceCommands` share ~80% of their structure (defer reply → get nickname → call service → handle result → announce to channel). Same for `onAdminSignIn`/`onAdminSignOut`
 - `OutreachRepository.parseRow` returns `OutreachRecord | null` while `AttendanceRepository.parseRow` returns `Result<AttendanceRecord, ZodError>` — inconsistent patterns for the same conceptual operation
 
 **Steps to reach A:**
-1. Extract a shared `formatLeaderboard(title: string, entries: {userName: string, totalHours: number}[])` utility used by both attendance and outreach commands
-2. Consider extracting a command response helper that handles the common defer → nickname → service call → announce pattern
-3. Standardize repository `parseRow` to use the same return type (either both `Result` or both nullable)
+1. Extract a shared `formatLeaderboard(title: string, entries: {userName: string, totalHours: number}[], footer: string)` utility in `lib/utils/` used by both attendance and outreach commands
+2. Extract a helper that handles the common attendance command flow: defer reply → fetch nickname → call service → handle success/failure → announce to channel. This would reduce ~200 lines of near-identical code across the four sign-in/sign-out handlers
+3. Standardize repository `parseRow` to use the same return type (recommend both using `Result<T, ZodError>` since it's more informative)
 
 ---
 
-### 7. NestJS Best Practices & Idiomatic Patterns — **B**
+### 7. NestJS Best Practices & Idiomatic Patterns — **A**
 
 **What's done well:**
-- Proper use of `@Global()` for config module
+- Global `ValidationPipe` with `whitelist: true` in `main.ts` — DTOs are enforced
+- `app.enableShutdownHooks()` for graceful shutdown of Discord bot and in-flight operations
+- `JwtModule.registerAsync({ global: true })` registered in `AppModule` where it belongs — no side effects from feature modules
+- `@HttpCode()` decorators on controller methods — no `@Res()` usage anywhere
 - Factory providers for `SheetService` injection with different config per module
-- `NecordModule.forRootAsync()` with dependency injection
-- Guards implemented correctly (`CanActivate`, custom `ThrottlerGuard`)
+- `NecordModule.forRootAsync()` with dependency injection for Discord bot configuration
+- Guards implemented correctly (`CanActivate` for `TwofaGuard`, `ThrottlerGuard` extension for `NecordThrottlerGuard`)
 - `@Injectable()` decorators on all providers
+- Health check endpoint following the controller pattern (no unnecessary `@nestjs/terminus` dependency)
+- `HealthModule` properly encapsulates the health controller
 
-**What prevents an A:**
-- No global `ValidationPipe` — DTOs with `class-validator` decorators are decoration-only
-- No global exception filter
-- No health check endpoint (important for container orchestration / Docker / Kubernetes readiness probes)
-- `main.ts` is minimal to a fault — no CORS configuration, no helmet, no shutdown hooks (`app.enableShutdownHooks()`)
-- `TwofaController` uses `@Res()` which opts out of NestJS's response handling pipeline
-- `JwtModule` is registered as `global: true` inside `AttendanceModule` — this is a side effect that leaks module scope; it should be in `AppModule` or its own global module if intended to be global
-
-**Steps to reach A:**
-1. Add global `ValidationPipe` in `main.ts`
-2. Add `app.enableShutdownHooks()` for graceful shutdown (important for the Discord bot connection)
-3. Add a health check endpoint (`@nestjs/terminus`) or at minimum a `GET /health` route for container probes
-4. Move `JwtModule.registerAsync({ global: true })` to `AppModule` or a dedicated `AuthModule` — global registration should be explicit at the root level
-5. Add a global exception filter (at minimum, one that logs and returns a generic error)
-6. Remove `@Res()` usage in `TwofaController` — return objects directly and let NestJS handle serialization
+**No action needed.**
 
 ---
 
-### 8. Observability & Logging — **B+**
+### 8. Observability & Logging — **A-**
 
 **What's done well:**
-- NestJS `Logger` is used consistently across services and commands with class-name context
-- Errors are logged at appropriate severity levels (`logger.error`, `logger.warn`)
-- Malformed sheet rows are logged as warnings rather than silently dropped
-- AI token usage is logged for cost tracking
+- NestJS `Logger` is used consistently across every service, command handler, repository, and controller with class-name context
+- No `console.error` or `console.log` anywhere in the codebase
+- Errors are logged at appropriate severity levels (`logger.error`, `logger.warn`, `logger.debug`)
+- Malformed sheet rows are logged as warnings/debug rather than silently dropped
+- AI token usage is logged for cost tracking (input/output/total tokens)
+- Failed attendance operations include the Discord user ID in log messages
 
 **What prevents an A:**
-- `console.error` in `TwofaController` instead of `Logger`
-- No structured logging (e.g., JSON format for production log aggregation)
-- No request logging middleware for HTTP endpoints
-- No metrics or telemetry (request counts, latency, error rates)
+- No structured logging (JSON format for production log aggregation tools like Datadog, CloudWatch, etc.)
+- No request logging middleware for the HTTP endpoints (`/2fa/authenticate`, `/2fa/validate`, `/health`)
 
 **Steps to reach A:**
-1. Replace all `console.error` / `console.log` with NestJS `Logger`
-2. Add a logging middleware or interceptor for HTTP request/response tracking
-3. Consider adding structured logging for production (e.g., `nestjs-pino` or custom `LoggerService`)
+1. Add a simple logging interceptor or middleware for HTTP request/response tracking (method, path, status code, duration)
+2. Consider a structured JSON logger for production if log aggregation is needed in the future (e.g., `nestjs-pino`)
 
 ---
 
@@ -182,47 +170,42 @@ The basecamp application demonstrates strong fundamentals: clean module boundari
 
 ---
 
-### 10. Deployment & Infrastructure — **A-**
+### 10. Deployment & Infrastructure — **A**
 
 **What's done well:**
 - Multi-stage Docker build with proper pruning via `turbo prune --docker`
-- Non-root user in production container
+- Non-root user in production container (nodejs:1001)
 - Production deploy with `--prod` flag strips dev dependencies
 - Alpine base for minimal image size
-- Build scripts properly configured for NestJS CLI
+- `HEALTHCHECK` instruction in Dockerfile (30s interval, 5s timeout, 3 retries) hitting `GET /health`
+- `app.enableShutdownHooks()` ensures clean Discord bot disconnection on SIGTERM
+- Port configurable via `PORT` env var with sensible default (8080)
 
-**What prevents an A:**
-- No health check in `main.ts` for Docker `HEALTHCHECK` or Kubernetes probes
-- No graceful shutdown hooks (`enableShutdownHooks`) for clean Discord bot disconnection
-
-**Steps to reach A:**
-1. Add a health check endpoint
-2. Add `app.enableShutdownHooks()` in `main.ts`
+**No action needed.**
 
 ---
 
 ## Summary Table
 
-| Category | Grade | Key Issue |
-|---|---|---|
-| Module Architecture | **A** | — |
-| Error Handling | **A-** | Missing global exception filter, `console.error` usage |
-| Testing | **A** | — |
-| Configuration | **A** | — |
-| Security | **B** | `ValidationPipe` not enabled, JWT has no expiry, shared secrets |
-| Code Duplication | **B+** | Duplicate leaderboard formatting and command patterns |
-| NestJS Best Practices | **B** | Missing global pipe/filter, `@Res()` usage, leaked global JWT |
-| Observability | **B+** | `console.error`, no structured logging |
-| Type Safety | **A** | — |
-| Deployment | **A-** | No health check, no graceful shutdown |
+| Category | Previous Grade | Current Grade | Change |
+|---|---|---|---|
+| Module Architecture | **A** | **A** | — |
+| Error Handling | **A-** | **A** | `console.error` eliminated, `@Res()` removed |
+| Testing | **A** | **A** | Health module tests added |
+| Configuration | **A** | **A** | Secrets properly separated |
+| Security | **B** | **A-** | ValidationPipe, JWT expiry, separated secrets |
+| Code Duplication | **B+** | **B+** | — |
+| NestJS Best Practices | **B** | **A** | All major issues fixed |
+| Observability | **B+** | **A-** | Logger used everywhere |
+| Type Safety | **A** | **A** | — |
+| Deployment | **A-** | **A** | Health check + shutdown hooks |
 
 ---
 
-## Highest-Impact Improvements (Priority Order)
+## Remaining Improvements (Priority Order)
 
-1. **Enable `ValidationPipe` globally** — Currently DTO validation is not enforced. This is both a security and correctness issue.
-2. **Add `app.enableShutdownHooks()`** — Required for clean Discord bot disconnection on container stop.
-3. **Add a health check endpoint** — Required for production container orchestration.
-4. **Configure JWT expiration** — Tokens currently never expire.
-5. **Add a global exception filter** — Prevents unhandled errors from crashing the process silently.
-6. **Separate the 2FA password from the TOTP secret** — Currently the same env var serves both roles.
+1. **Extract shared leaderboard formatting utility** — Eliminates the most visible code duplication between attendance and outreach commands.
+2. **Extract attendance command flow helper** — Reduces ~200 lines of near-identical defer → nickname → service → announce boilerplate across 4 handlers.
+3. **Fix handbook error re-throw** — Replace `throw error` with `interaction.reply(...)` to prevent unhandled rejections.
+4. **Standardize repository `parseRow` return types** — Both should return `Result<T, ZodError>` for consistency.
+5. **Add HTTP request logging** — Simple middleware or interceptor for the 3 HTTP endpoints.
