@@ -11,7 +11,8 @@ export function validateEnv(config: Record<string, unknown>): Env {
     outreachSpreadsheetId: config.OUTREACH_SPREADSHEET_ID,
     doModelAccessKey: config.DO_MODEL_ACCESS_KEY,
     jwtSecret: config.JWT_SECRET,
-    attendance2faSecret: config.ATTENDANCE_2FA_SECRET,
+    totpSecret: config.TOTP_SECRET,
+    attendance2faPassword: config.ATTENDANCE_2FA_PASSWORD,
     attendance2faEnabled: config.ATTENDANCE_2FA_ENABLED,
   });
 
