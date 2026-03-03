@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { err, ok, Result, ResultAsync } from "neverthrow";
 import { SheetService } from "src/lib/sheet/sheet.service";
 import { ZodError } from "zod";
-import { COLUMN_INDICES, SHEET_RANGE_APPEND, SHEET_RANGE_READ } from "./attendance.constants";
+import { COLUMN_INDICES, SHEET_RANGE } from "./attendance.constants";
 import { type AttendanceRecord, AttendanceRecordSchema } from "./attendance.schema";
 
 @Injectable()
@@ -25,7 +25,7 @@ export class AttendanceRepository {
   }
 
   public findByDiscordId(discordId: string): ResultAsync<AttendanceRecord[], Error> {
-    return this.sheet.get(SHEET_RANGE_READ).map((rows) =>
+    return this.sheet.get(SHEET_RANGE).map((rows) =>
       rows
         .slice(1)
         .filter((row) => row[COLUMN_INDICES.DISCORD_ID] === discordId)
@@ -41,7 +41,7 @@ export class AttendanceRepository {
   }
 
   public findAll(): ResultAsync<AttendanceRecord[], Error> {
-    return this.sheet.get(SHEET_RANGE_READ).map((rows) =>
+    return this.sheet.get(SHEET_RANGE).map((rows) =>
       rows.slice(1).flatMap((row) => {
         const result = this.parseRow(row);
         if (result.isErr()) {
@@ -54,7 +54,7 @@ export class AttendanceRepository {
   }
 
   public append(record: AttendanceRecord): ResultAsync<void, Error> {
-    return this.sheet.append(SHEET_RANGE_APPEND, [
+    return this.sheet.append(SHEET_RANGE, [
       [
         record.discordId,
         record.team,
