@@ -37,6 +37,9 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 USER nodejs
 
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD wget -qO- http://localhost:8080/health || exit 1
+
 COPY --from=installer --chown=nodejs:nodejs /app/apps/basecamp/dist ./apps/basecamp/dist
 COPY --from=installer --chown=nodejs:nodejs /app/deploy/node_modules ./apps/basecamp/node_modules
 
