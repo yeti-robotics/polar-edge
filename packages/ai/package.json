@@ -22,6 +22,6 @@
     "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "^2.0.30"
+    "@ai-sdk/openai-compatible": "^2.0.33"
   }
 }
