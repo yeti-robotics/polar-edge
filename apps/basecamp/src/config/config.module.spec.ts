@@ -25,7 +25,8 @@ const mockEnv: Env = {
   outreachSpreadsheetId: "outreach-id",
   doModelAccessKey: "do-key",
   jwtSecret: "jwt-secret",
-  attendance2faSecret: "2fa-secret",
+  totpSecret: "totp-secret",
+  attendance2faPassword: "2fa-password",
   attendance2faEnabled: false,
 };
 

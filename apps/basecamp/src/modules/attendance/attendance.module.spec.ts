@@ -1,5 +1,6 @@
 import { CacheModule } from "@nestjs/cache-manager";
 import { Global, Module as NestModule } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { AppConfigService } from "src/config/config.service";
 import { type SheetCredentials } from "src/lib/sheet/sheet.service";
@@ -43,7 +44,12 @@ describe("AttendanceModule", () => {
     mockConfig.get.mockClear();
 
     module = await Test.createTestingModule({
-      imports: [CacheModule.register({ isGlobal: true }), MockConfigModule, AttendanceModule],
+      imports: [
+        CacheModule.register({ isGlobal: true }),
+        MockConfigModule,
+        JwtModule.register({ global: true }),
+        AttendanceModule,
+      ],
     }).compile();
   });
 

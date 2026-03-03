@@ -2,7 +2,7 @@ import { Test, type TestingModule } from "@nestjs/testing";
 import { ResultAsync } from "neverthrow";
 import { SheetService } from "src/lib/sheet/sheet.service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { SHEET_RANGE_APPEND, SHEET_RANGE_READ } from "./attendance.constants";
+import { SHEET_RANGE } from "./attendance.constants";
 import { AttendanceRepository } from "./attendance.repository";
 import type { AttendanceRecord } from "./attendance.schema";
 
@@ -69,7 +69,7 @@ describe("AttendanceRepository", () => {
         date: "2025-01-15",
         isSigningIn: true,
       });
-      expect(mockGet).toHaveBeenCalledWith(SHEET_RANGE_READ);
+      expect(mockGet).toHaveBeenCalledWith(SHEET_RANGE);
     });
 
     it("should return multiple records when user has multiple entries", async () => {
@@ -162,7 +162,7 @@ describe("AttendanceRepository", () => {
       const [first, second] = records;
       expect(first?.discordId).toBe("1");
       expect(second?.discordId).toBe("2");
-      expect(mockGet).toHaveBeenCalledWith(SHEET_RANGE_READ);
+      expect(mockGet).toHaveBeenCalledWith(SHEET_RANGE);
     });
 
     it("should return empty array when sheet has only header", async () => {
@@ -230,7 +230,7 @@ describe("AttendanceRepository", () => {
       const result = await repository.append(record);
 
       expect(result.isOk()).toBe(true);
-      expect(mockAppend).toHaveBeenCalledWith(SHEET_RANGE_APPEND, [
+      expect(mockAppend).toHaveBeenCalledWith(SHEET_RANGE, [
         ["123", "YETI Robotics", "user#1234", "2025-01-15", "true"],
       ]);
     });
@@ -247,7 +247,7 @@ describe("AttendanceRepository", () => {
       const result = await repository.append(record);
 
       expect(result.isOk()).toBe(true);
-      expect(mockAppend).toHaveBeenCalledWith(SHEET_RANGE_APPEND, [
+      expect(mockAppend).toHaveBeenCalledWith(SHEET_RANGE, [
         ["456", "Dev", "dev#5678", "2025-01-16", "false"],
       ]);
     });

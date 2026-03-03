@@ -7,7 +7,7 @@ export class TwofaService {
   private readonly secret: string;
 
   constructor(private readonly config: AppConfigService) {
-    this.secret = this.config.get("attendance2faSecret");
+    this.secret = this.config.get("totpSecret");
   }
 
   /** Verifies a TOTP code against the shared secret. */
