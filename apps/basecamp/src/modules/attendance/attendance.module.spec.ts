@@ -44,7 +44,12 @@ describe("AttendanceModule", () => {
     mockConfig.get.mockClear();
 
     module = await Test.createTestingModule({
-      imports: [CacheModule.register({ isGlobal: true }), MockConfigModule, JwtModule.register({ global: true }), AttendanceModule],
+      imports: [
+        CacheModule.register({ isGlobal: true }),
+        MockConfigModule,
+        JwtModule.register({ global: true }),
+        AttendanceModule,
+      ],
     }).compile();
   });
 

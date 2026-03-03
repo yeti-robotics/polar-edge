@@ -99,9 +99,7 @@ describe("TwofaController", () => {
       jwtService.verify.mockImplementation(() => {
         throw new Error("jwt malformed");
       });
-      expect(() => controller.validateToken({ token: "bad-token" })).toThrow(
-        UnauthorizedException
-      );
+      expect(() => controller.validateToken({ token: "bad-token" })).toThrow(UnauthorizedException);
     });
 
     it("throws UnauthorizedException with 'Invalid token' message on bad token", () => {
