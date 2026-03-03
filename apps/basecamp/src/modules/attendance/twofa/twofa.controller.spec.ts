@@ -1,4 +1,4 @@
-import { HttpStatus, UnauthorizedException } from "@nestjs/common";
+import { UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { AppConfigService } from "src/config/config.service";
@@ -65,11 +65,9 @@ describe("TwofaController", () => {
     });
 
     it("returns 202 with token and secret on correct password", () => {
-      const { res, status, json } = makeRes();
-      controller.signIn({ password: CORRECT_PASSWORD }, res);
+      const result = controller.signIn({ password: CORRECT_PASSWORD });
 
-      expect(status).toHaveBeenCalledWith(HttpStatus.ACCEPTED);
-      expect(json).toHaveBeenCalledWith(
+      expect(result).toEqual(
         expect.objectContaining({
           message: "Accepted",
           token: SIGNED_TOKEN,
@@ -91,11 +89,9 @@ describe("TwofaController", () => {
   // -------------------------------------------------------------------------
   describe("validateToken (POST /2fa/validate)", () => {
     it("returns 200 with 'Valid' message for a valid token", () => {
-      const { res, status, json } = makeRes();
-      controller.validateToken({ token: "valid-token" }, res);
+      const result = controller.validateToken({ token: "valid-token" });
 
-      expect(status).toHaveBeenCalledWith(HttpStatus.OK);
-      expect(json).toHaveBeenCalledWith({ message: "Valid" });
+      expect(result).toEqual({ message: "Valid" });
       expect(jwtService.verify).toHaveBeenCalledWith("valid-token");
     });
 
