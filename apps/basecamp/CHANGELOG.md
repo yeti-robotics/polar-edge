@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.4...basecamp-v1.2.0) (2026-03-03)
+
+
+### Features
+
+* **basecamp:** security hardening for 2FA and basecamp-fe auth ([#471](https://github.com/yeti-robotics/polar-edge/issues/471)) ([fa717f9](https://github.com/yeti-robotics/polar-edge/commit/fa717f9a06ebfa0d34d1b065954723cccde84e93))
+
+
+### Bug Fixes
+
+* **basecamp:** attendance/outreach commands error handling and add logging utilities ([#473](https://github.com/yeti-robotics/polar-edge/issues/473)) ([0224d9d](https://github.com/yeti-robotics/polar-edge/commit/0224d9dc1d574ef51801773f6b9149fe3f5026bf))
+
 ## [1.1.4](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.3...basecamp-v1.1.4) (2026-03-01)
 
 
