@@ -1,7 +1,14 @@
 import type { LogLevel } from "@nestjs/common";
 import * as z from "zod";
 
-const LOG_LEVELS = ["fatal", "error", "warn", "log", "verbose", "debug"] as const satisfies LogLevel[];
+const LOG_LEVELS = [
+  "fatal",
+  "error",
+  "warn",
+  "log",
+  "verbose",
+  "debug",
+] as const satisfies LogLevel[];
 
 export const envSchema = z.object({
   // Discord
