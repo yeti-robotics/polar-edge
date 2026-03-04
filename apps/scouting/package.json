@@ -50,6 +50,7 @@
     "@repo/vitest-config": "workspace:*",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "catalog:",
+    "@types/papaparse": "^5.5.2",
     "@types/pg": "^8.16.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
