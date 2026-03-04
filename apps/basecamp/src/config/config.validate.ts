@@ -14,6 +14,7 @@ export function validateEnv(config: Record<string, unknown>): Env {
     totpSecret: config.TOTP_SECRET,
     attendance2faPassword: config.ATTENDANCE_2FA_PASSWORD,
     attendance2faEnabled: config.ATTENDANCE_2FA_ENABLED,
+    logLevel: config.LOG_LEVEL,
   });
 
   if (!result.success) {
