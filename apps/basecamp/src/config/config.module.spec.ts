@@ -28,6 +28,7 @@ const mockEnv: Env = {
   totpSecret: "totp-secret",
   attendance2faPassword: "2fa-password",
   attendance2faEnabled: false,
+  logLevel: "log",
 };
 
 describe("AppConfigModule", () => {
