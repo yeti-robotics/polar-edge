@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-fe-v1.1.0...basecamp-fe-v1.1.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* **basecamp-fe:** avoid setting cookies in render ([2d84366](https://github.com/yeti-robotics/polar-edge/commit/2d8436630f8ef940574d62f9b64da86269ba5c83))
+
 ## [1.1.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-fe-v1.0.1...basecamp-fe-v1.1.0) (2026-03-03)
 
 
