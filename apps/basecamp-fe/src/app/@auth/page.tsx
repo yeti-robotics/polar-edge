@@ -6,14 +6,14 @@ import { TOTPProgressBar } from "@/features/totp/components/TOTPProgressBar";
 import { TOTPTimer } from "@/features/totp/components/TOTPTimer";
 import { TOTPProvider } from "@/features/totp/contexts/TOTPContext";
 import teamsData from "@/features/totp/teams.json";
-import { refreshToken, validateToken } from "@/lib/auth";
+import { validateToken } from "@/lib/auth";
 
 export default async function AuthPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("toofaToken")?.value;
 
   if (!token || !(await validateToken(token))) {
-    if (!(await refreshToken())) return null;
+    return null;
   }
 
   const secret = cookieStore.get("toofaSecret")?.value;
