@@ -10,7 +10,8 @@ import { HandbookService } from "./handbook.service";
 function makeInteraction(overrides: Record<string, unknown> = {}) {
   const interaction = {
     user: { id: "user-discord-id" },
-    reply: vi.fn().mockResolvedValue(undefined),
+    deferReply: vi.fn().mockResolvedValue(undefined),
+    editReply: vi.fn().mockResolvedValue(undefined),
     ...overrides,
   };
   return interaction;
@@ -98,13 +99,22 @@ describe("HandbookCommands", () => {
       expect(service.askHandbookQuestion).toHaveBeenCalledWith("What is the answer?");
     });
 
+    it("defers reply before calling the service", async () => {
+      const interaction = makeInteraction();
+      service.askHandbookQuestion.mockResolvedValue(makeResponse({ text: "The answer is 42." }));
+
+      await commands.onHandbook([interaction] as never, { question: "What is the answer?" });
+
+      expect(interaction.deferReply).toHaveBeenCalledOnce();
+    });
+
     it("replies with formatted question and answer on success", async () => {
       const interaction = makeInteraction();
       service.askHandbookQuestion.mockResolvedValue(makeResponse({ text: "The answer is 42." }));
 
       await commands.onHandbook([interaction] as never, { question: "What is the answer?" });
 
-      expect(interaction.reply).toHaveBeenCalledWith(
+      expect(interaction.editReply).toHaveBeenCalledWith(
         expect.objectContaining({
           content: "**Question:** What is the answer?\n\n**Answer:** The answer is 42.",
         })
@@ -117,7 +127,7 @@ describe("HandbookCommands", () => {
 
       await commands.onHandbook([interaction] as never, { question: "Any question?" });
 
-      expect(interaction.reply).toHaveBeenCalledWith(
+      expect(interaction.editReply).toHaveBeenCalledWith(
         "Failed to get a response from the handbook agent."
       );
     });
@@ -171,7 +181,7 @@ describe("HandbookCommands", () => {
 
       await commands.onHandbook([interaction] as never, { question: "Will this fail?" });
 
-      expect(interaction.reply).toHaveBeenCalledWith(
+      expect(interaction.editReply).toHaveBeenCalledWith(
         "An unexpected error occurred while querying the handbook."
       );
     });

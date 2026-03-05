@@ -31,11 +31,13 @@ export class HandbookCommands {
 
     this.logger.log(`Handbook request from user ${userId}: ${question.substring(0, 50)}...`);
 
+    await interaction.deferReply();
+
     try {
       const response = await this.handbookService.askHandbookQuestion(question);
 
       if (!response || !response.text) {
-        return interaction.reply("Failed to get a response from the handbook agent.");
+        return interaction.editReply("Failed to get a response from the handbook agent.");
       }
 
       if (response.usage) {
@@ -44,13 +46,13 @@ export class HandbookCommands {
         );
       }
 
-      return interaction.reply({
+      return interaction.editReply({
         content: `**Question:** ${question}\n\n**Answer:** ${response.text}`,
         allowedMentions: { parse: [] },
       });
     } catch (error) {
       this.logger.error(`Handbook request failed for user ${userId}:`, error);
-      return interaction.reply("An unexpected error occurred while querying the handbook.");
+      return interaction.editReply("An unexpected error occurred while querying the handbook.");
     }
   }
 }
