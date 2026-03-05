@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.2.0...basecamp-v1.3.0) (2026-03-05)
+
+
+### Features
+
+* **basecamp:** implement dynamic logging levels based on environment variable ([77f6236](https://github.com/yeti-robotics/polar-edge/commit/77f62368ae4139787bda622fdb1b680eea9b1d44))
+
+
+### Bug Fixes
+
+* **basecamp:** update handbook command to use deferReply and editReply ([57120d1](https://github.com/yeti-robotics/polar-edge/commit/57120d1a2ad2a9ccc52c8a7eebe8ef3f8d301595))
+
 ## [1.2.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.4...basecamp-v1.2.0) (2026-03-03)
 
 
