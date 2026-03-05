@@ -17,11 +17,14 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
     "@repo/vitest-config": "workspace:*",
-    "turbo": "^2.8.12",
+    "turbo": "^2.8.13",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "packageManager": "pnpm@10.30.3",
   "dependencies": {
     "next": "catalog:"
