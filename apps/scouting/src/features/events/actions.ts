@@ -12,13 +12,7 @@ import {
   getActiveEventForOrganization,
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
-import { getTBAClient } from "@/lib/server/tba";
-
-function parseTeamKey(teamKey: string): number {
-  const num = Number.parseInt(teamKey.replace(/^frc/i, ""), 10);
-  if (!Number.isFinite(num)) throw new Error(`Invalid TBA team key: ${teamKey}`);
-  return num;
-}
+import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
 
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {
@@ -168,7 +162,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
             teamMatchRows.push({
               eventId,
               matchId,
-              teamNumber: parseTeamKey(redKey),
+              teamNumber: parseTbaTeamKey(redKey),
               alliance: "red",
               position: (i + 1) as 1 | 2 | 3,
               surrogate: redSurrogates.has(redKey),
@@ -178,7 +172,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
             teamMatchRows.push({
               eventId,
               matchId,
-              teamNumber: parseTeamKey(blueKey),
+              teamNumber: parseTbaTeamKey(blueKey),
               alliance: "blue",
               position: (i + 1) as 1 | 2 | 3,
               surrogate: blueSurrogates.has(blueKey),

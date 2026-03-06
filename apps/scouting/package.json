@@ -21,6 +21,7 @@
     "@ai-sdk/openai-compatible": "^2.0.35",
     "@aws-sdk/client-s3": "^3.1002.0",
     "@aws-sdk/s3-request-presigner": "^3.1002.0",
+    "@better-auth/drizzle-adapter": "^1.5.3",
     "@better-auth/passkey": "^1.5.3",
     "@repo/tba-sdk": "workspace:*",
     "@repo/ui": "workspace:*",
