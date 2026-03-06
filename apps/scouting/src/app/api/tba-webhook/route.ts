@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { MatchScorePayloadSchema, ScheduleUpdatedPayloadSchema } from "@/features/events/webhook-schemas";
-import { processMatchScore, processScheduleUpdated, verifyTbaHmac } from "@/features/events/webhook";
+import {
+  processMatchScore,
+  processScheduleUpdated,
+  verifyTbaHmac,
+} from "@/features/events/webhook";
+import {
+  MatchScorePayloadSchema,
+  ScheduleUpdatedPayloadSchema,
+} from "@/features/events/webhook-schemas";
 
 export async function POST(request: NextRequest) {
   const rawBody = await request.text();
@@ -49,10 +56,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: true, ignored: true });
       }
       const { event_key, match: m } = parsed.data.message_data;
-      console.info(`[tba-webhook] match_score: event=${event_key} match=${m.comp_level}${m.match_number}`);
+      console.info(
+        `[tba-webhook] match_score: event=${event_key} match=${m.comp_level}${m.match_number}`
+      );
       const result = await processMatchScore(parsed.data);
       if (result.updated) {
-        console.info(`[tba-webhook] match_score applied: ${event_key} ${m.comp_level}${m.match_number} red=${m.alliances.red.score} blue=${m.alliances.blue.score}`);
+        console.info(
+          `[tba-webhook] match_score applied: ${event_key} ${m.comp_level}${m.match_number} red=${m.alliances.red.score} blue=${m.alliances.blue.score}`
+        );
       } else {
         console.warn(`[tba-webhook] match_score not applied: ${result.reason}`);
       }
