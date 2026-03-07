@@ -28,14 +28,9 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       };
     }
 
-    const validated = await serverValidate(formData, (entry) => {
-      if (entry.path === "teamNumber" || entry.path === "capacity" || entry.path === "weight") {
-        return Number(entry.input);
-      }
-      if (entry.path === "canTrench" || entry.path === "canBump" || entry.path === "canShuttle") {
-        return entry.input === "on";
-      }
-      return entry.input;
+    const validated = await serverValidate(formData, {
+      numbers: ["teamNumber", "capacity", "weight"],
+      booleans: ["canTrench", "canBump", "canShuttle"],
     });
 
     // Parse and validate photo keys
