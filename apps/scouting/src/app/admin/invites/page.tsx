@@ -22,6 +22,7 @@ import { InviteLinkManager } from "@/features/org/invites/components/InviteLinkM
 import { RevokeButton } from "@/features/org/invites/components/RevokeButton";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { listInviteLinks } from "@/lib/server/invite-links";
+import { getBaseUrl } from "@/lib/utils";
 
 function LoadingTable() {
   return (
@@ -102,12 +103,7 @@ async function InvitesContent() {
                 </TableHeader>
                 <TableBody>
                   {inviteLinks.map((link) => {
-                    const baseUrl =
-                      process.env.NEXT_PUBLIC_APP_URL ||
-                      (process.env.VERCEL_URL
-                        ? `https://${process.env.VERCEL_URL}`
-                        : "http://localhost:3000");
-                    const url = `${baseUrl}/join/${link.token}`;
+                    const url = `${getBaseUrl()}/join/${link.token}`;
                     return (
                       <TableRow key={link.id}>
                         <TableCell>
