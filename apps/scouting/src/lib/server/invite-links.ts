@@ -164,10 +164,5 @@ export async function acceptInviteLink(token: string) {
     },
   });
 
-  await auth.api.setActiveOrganization({
-    headers: requestHeaders,
-    body: { organizationId: inviteLink.organizationId },
-  });
-
   return { success: true };
 }
