@@ -31,7 +31,7 @@ export async function setActiveEventAction(organizationId: string, eventId: stri
 
     const { success: canActivate } = await auth.api.hasPermission({
       headers: requestHeaders,
-      body: { permission: { event: ["activate"] } },
+      body: { permissions: { event: ["activate"] } },
     });
     if (!canActivate) {
       return { data: null, error: "Only organization admins and owners can set the active event" };
@@ -62,7 +62,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
 
     const { success: canSync } = await auth.api.hasPermission({
       headers: requestHeaders,
-      body: { permission: { event: ["sync"] } },
+      body: { permissions: { event: ["sync"] } },
     });
     if (!canSync) {
       return {
@@ -251,7 +251,7 @@ export async function enrichTeamNamesAction(organizationId: string) {
 
     const { success: canSync } = await auth.api.hasPermission({
       headers: requestHeaders,
-      body: { permission: { event: ["sync"] } },
+      body: { permissions: { event: ["sync"] } },
     });
     if (!canSync) {
       return { data: null, error: "Only organization admins and owners can enrich team names" };

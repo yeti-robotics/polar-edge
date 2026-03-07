@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.3.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.2.0...basecamp-v1.3.0) (2026-03-05)
+
+
+### Features
+
+* **basecamp:** implement dynamic logging levels based on environment variable ([77f6236](https://github.com/yeti-robotics/polar-edge/commit/77f62368ae4139787bda622fdb1b680eea9b1d44))
+
+
+### Bug Fixes
+
+* **basecamp:** update handbook command to use deferReply and editReply ([57120d1](https://github.com/yeti-robotics/polar-edge/commit/57120d1a2ad2a9ccc52c8a7eebe8ef3f8d301595))
+
+## [1.2.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.4...basecamp-v1.2.0) (2026-03-03)
+
+
+### Features
+
+* **basecamp:** security hardening for 2FA and basecamp-fe auth ([#471](https://github.com/yeti-robotics/polar-edge/issues/471)) ([fa717f9](https://github.com/yeti-robotics/polar-edge/commit/fa717f9a06ebfa0d34d1b065954723cccde84e93))
+
+
+### Bug Fixes
+
+* **basecamp:** attendance/outreach commands error handling and add logging utilities ([#473](https://github.com/yeti-robotics/polar-edge/issues/473)) ([0224d9d](https://github.com/yeti-robotics/polar-edge/commit/0224d9dc1d574ef51801773f6b9149fe3f5026bf))
+
+## [1.1.4](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.3...basecamp-v1.1.4) (2026-03-01)
+
+
+### Performance Improvements
+
+* **basecamp:** integrate cache manager for sheet service and update dependencies ([e669c48](https://github.com/yeti-robotics/polar-edge/commit/e669c487ec48b23704217b230a9af3ba9251fbb5))
+
 ## [1.1.3](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.1.2...basecamp-v1.1.3) (2026-03-01)
 
 

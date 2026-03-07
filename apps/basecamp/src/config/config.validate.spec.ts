@@ -21,7 +21,8 @@ const validConfig = {
   outreachSpreadsheetId: "outreach-sheet-id",
   doModelAccessKey: "do-model-key",
   jwtSecret: "jwt-secret",
-  attendance2faSecret: "2fa-secret",
+  totpSecret: "totp-secret",
+  attendance2faPassword: "2fa-password",
   attendance2faEnabled: false,
 };
 
@@ -78,7 +79,8 @@ describe("envSchema", () => {
       "outreachSpreadsheetId",
       "doModelAccessKey",
       "jwtSecret",
-      "attendance2faSecret",
+      "totpSecret",
+      "attendance2faPassword",
     ] as const;
 
     it.each(requiredFields)("fails when %s is missing", (field) => {
@@ -145,7 +147,8 @@ describe("validateEnv", () => {
     OUTREACH_SPREADSHEET_ID: "outreach-sheet-id",
     DO_MODEL_ACCESS_KEY: "do-model-key",
     JWT_SECRET: "jwt-secret",
-    ATTENDANCE_2FA_SECRET: "2fa-secret",
+    TOTP_SECRET: "totp-secret",
+    ATTENDANCE_2FA_PASSWORD: "2fa-password",
     ATTENDANCE_2FA_ENABLED: "false",
   };
 

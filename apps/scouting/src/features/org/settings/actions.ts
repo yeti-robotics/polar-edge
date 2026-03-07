@@ -30,7 +30,7 @@ export async function updateOrganizationNameAction(
 
     const { success: canUpdate } = await auth.api.hasPermission({
       headers: requestHeaders,
-      body: { permission: { organization: ["update"] } },
+      body: { permissions: { organization: ["update"] } },
     });
     if (!canUpdate) {
       return {

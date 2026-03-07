@@ -1,8 +1,10 @@
+import { CacheModule } from "@nestjs/cache-manager";
 import { Global, Module as NestModule } from "@nestjs/common";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { AppConfigService } from "src/config/config.service";
 import { type SheetCredentials } from "src/lib/sheet/sheet.service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { OUTREACH_CACHE_TTL_MS } from "./outreach.constants";
 import { OutreachModule } from "./outreach.module";
 import { OutreachService } from "./outreach.service";
 
@@ -41,7 +43,7 @@ describe("OutreachModule", () => {
     mockConfig.get.mockClear();
 
     module = await Test.createTestingModule({
-      imports: [MockConfigModule, OutreachModule],
+      imports: [CacheModule.register({ isGlobal: true }), MockConfigModule, OutreachModule],
     }).compile();
   });
 
@@ -50,7 +52,12 @@ describe("OutreachModule", () => {
   });
 
   it("should instantiate SheetService with credentials and spreadsheet id from config", () => {
-    expect(MockSheetService).toHaveBeenCalledWith(mockCredentials, "outreach-sheet-id");
+    expect(MockSheetService).toHaveBeenCalledWith(
+      mockCredentials,
+      "outreach-sheet-id",
+      expect.anything(),
+      OUTREACH_CACHE_TTL_MS
+    );
   });
 
   it("should export OutreachService", () => {

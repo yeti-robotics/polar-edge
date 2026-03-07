@@ -1,4 +1,14 @@
+import type { LogLevel } from "@nestjs/common";
 import * as z from "zod";
+
+const LOG_LEVELS = [
+  "fatal",
+  "error",
+  "warn",
+  "log",
+  "verbose",
+  "debug",
+] as const satisfies LogLevel[];
 
 export const envSchema = z.object({
   // Discord
@@ -25,8 +35,12 @@ export const envSchema = z.object({
 
   // Auth
   jwtSecret: z.string().min(1),
-  attendance2faSecret: z.string().min(1),
+  totpSecret: z.string().min(1),
+  attendance2faPassword: z.string().min(1),
   attendance2faEnabled: z.coerce.boolean().default(false),
+
+  // Logging
+  logLevel: z.enum(LOG_LEVELS).default("log"),
 });
 
 export type Env = z.infer<typeof envSchema>;

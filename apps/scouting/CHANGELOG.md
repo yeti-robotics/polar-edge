@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.13.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.13.0...scouting-v2026.13.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* **scouting:** correct permission key in setActiveEventAction function ([2e81790](https://github.com/yeti-robotics/polar-edge/commit/2e81790286da839d185f4fcbc408aea567493247))
+
 ## [2026.13.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.12.0...scouting-v2026.13.0) (2026-03-01)
 
 

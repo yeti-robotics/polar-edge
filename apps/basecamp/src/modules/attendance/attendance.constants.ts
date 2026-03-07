@@ -12,8 +12,7 @@ export const MS_PER_HOUR = 1000 * 60 * 60;
 
 /** Google Sheets configuration */
 export const SHEET_NAME = "Attendance";
-export const SHEET_RANGE_APPEND = `${SHEET_NAME}!A:D`;
-export const SHEET_RANGE_READ = `${SHEET_NAME}!A:E`;
+export const SHEET_RANGE = `${SHEET_NAME}!A:E`;
 
 /** Column indices in the attendance sheet */
 export const COLUMN_INDICES = {
@@ -35,3 +34,6 @@ export const TEAM_NAMES = {
 
 /** Default limit for leaderboard queries */
 export const DEFAULT_LEADERBOARD_LIMIT = 5;
+
+/** Cache TTL for attendance sheet reads (15 minutes) */
+export const ATTENDANCE_CACHE_TTL_MS = 900_000;

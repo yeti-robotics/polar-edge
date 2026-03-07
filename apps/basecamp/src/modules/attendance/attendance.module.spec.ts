@@ -1,8 +1,11 @@
+import { CacheModule } from "@nestjs/cache-manager";
 import { Global, Module as NestModule } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { AppConfigService } from "src/config/config.service";
 import { type SheetCredentials } from "src/lib/sheet/sheet.service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ATTENDANCE_CACHE_TTL_MS } from "./attendance.constants";
 import { AttendanceModule } from "./attendance.module";
 import { AttendanceService } from "./attendance.service";
 
@@ -41,7 +44,12 @@ describe("AttendanceModule", () => {
     mockConfig.get.mockClear();
 
     module = await Test.createTestingModule({
-      imports: [MockConfigModule, AttendanceModule],
+      imports: [
+        CacheModule.register({ isGlobal: true }),
+        MockConfigModule,
+        JwtModule.register({ global: true }),
+        AttendanceModule,
+      ],
     }).compile();
   });
 
@@ -50,7 +58,12 @@ describe("AttendanceModule", () => {
   });
 
   it("should instantiate SheetService with credentials and spreadsheet id from config", () => {
-    expect(MockSheetService).toHaveBeenCalledWith(mockCredentials, "attendance-sheet-id");
+    expect(MockSheetService).toHaveBeenCalledWith(
+      mockCredentials,
+      "attendance-sheet-id",
+      expect.anything(),
+      ATTENDANCE_CACHE_TTL_MS
+    );
   });
 
   it("should export AttendanceService", () => {

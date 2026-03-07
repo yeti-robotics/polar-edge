@@ -18,27 +18,38 @@ export async function login(password: string) {
 
   const { token, secret } = await res.json();
 
+  const cookieStore = await cookies();
+
   if (token) {
-    const cookieStore = await cookies();
     cookieStore.set("toofaToken", token, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      // No expiry - session cookie
     });
   }
 
   if (secret) {
-    const cookieStore = await cookies();
     cookieStore.set("toofaSecret", secret, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      // No expiry - session cookie
     });
   }
 
+  cookieStore.set("toofaPassword", password, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
   return true;
+}
+
+export async function refreshToken() {
+  const cookieStore = await cookies();
+  const password = cookieStore.get("toofaPassword")?.value;
+  if (!password) return false;
+  return login(password);
 }
 
 export async function validateToken(token: string) {

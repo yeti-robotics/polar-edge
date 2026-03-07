@@ -21,7 +21,7 @@ export async function updateMemberRole(memberId: string, role: string) {
 
     const { success: canUpdate } = await auth.api.hasPermission({
       headers: requestHeaders,
-      body: { permission: { member: ["update"] } },
+      body: { permissions: { member: ["update"] } },
     });
     if (!canUpdate) {
       return { data: null, error: "You do not have permission to update roles" };
@@ -76,7 +76,7 @@ export async function removeMember(memberId: string) {
     // Only admins and owners can remove members
     const { success: canDelete } = await auth.api.hasPermission({
       headers: requestHeaders,
-      body: { permission: { member: ["delete"] } },
+      body: { permissions: { member: ["delete"] } },
     });
     if (!canDelete) {
       return { data: null, error: "You do not have permission to remove members" };
