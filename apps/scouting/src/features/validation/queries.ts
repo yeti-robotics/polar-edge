@@ -1,10 +1,10 @@
 import "server-only";
 
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { match, member, standForm, teamMatch, user } from "@/lib/database/schema/tables";
+import { climb, cycle, match, member, standForm, teamMatch, user } from "@/lib/database/schema/tables";
 
 // ── Score Reconciliation ─────────────────────────────────────────────────────
 
@@ -21,7 +21,8 @@ export type ValidationMatchScoreRow = {
 
 /**
  * Per-match actual vs org-scoped predicted scores.
- * Only returns matches that have been scored (red_score IS NOT NULL).
+ * Only returns scored matches (red_score >= 0) where every team slot has
+ * at least one org-scoped stand form (so predictions are never missing a robot).
  */
 export async function getValidationMatchScores(
   eventId: string,
@@ -32,9 +33,6 @@ export async function getValidationMatchScores(
   cacheTag(cacheTags.matchScores(eventId));
   cacheTag(cacheTags.teamMetrics(eventId));
 
-  // Org-scoped replicate of vMatchGoblin logic using CTEs.
-  // Excludes: unplayed matches (score IS NULL or -1), and matches where any
-  // team slot has no org-scoped scouting (predictions would be unreliable).
   const rows = await db.execute(sql`
     WITH org_latest AS (
       SELECT
@@ -69,18 +67,19 @@ export async function getValidationMatchScores(
       LEFT JOIN org_consensus c ON c.team_match_id = tm.id
       GROUP BY tm.match_id
     ),
+    org_forms AS (
+      SELECT sf.team_match_id
+      FROM stand_form sf
+      JOIN member m ON m.id = sf.scout_member_id AND m.organization_id = ${organizationId}
+      WHERE sf.deleted_at IS NULL
+    ),
     slot_coverage AS (
       SELECT
         tm.match_id,
-        COUNT(*)                                                                     AS total_slots,
-        SUM(CASE WHEN EXISTS (
-          SELECT 1 FROM stand_form sf2
-          JOIN member m2 ON m2.id = sf2.scout_member_id
-          WHERE sf2.team_match_id = tm.id
-            AND sf2.deleted_at IS NULL
-            AND m2.organization_id = ${organizationId}
-        ) THEN 1 ELSE 0 END)                                                         AS covered_slots
+        COUNT(DISTINCT tm.id)                                         AS total_slots,
+        COUNT(DISTINCT CASE WHEN f.team_match_id IS NOT NULL THEN tm.id END) AS covered_slots
       FROM team_match tm
+      LEFT JOIN org_forms f ON f.team_match_id = tm.id
       WHERE tm.event_id = ${eventId}
       GROUP BY tm.match_id
     )
@@ -197,6 +196,7 @@ export type FlaggedFormRow = {
 
 /**
  * Stand forms with suspiciously empty or broken data, scoped to this org.
+ * Uses LEFT JOINs with aggregation instead of correlated subqueries.
  */
 export async function getFlaggedForms(
   eventId: string,
@@ -206,6 +206,9 @@ export async function getFlaggedForms(
   cacheLife("minutes");
   cacheTag(cacheTags.teamMetrics(eventId));
 
+  const cycleCount = sql<number>`count(DISTINCT ${cycle.id})::int`;
+  const climbCount = sql<number>`count(DISTINCT ${climb.id})::int`;
+
   const rows = await db
     .select({
       formId: standForm.id,
@@ -213,8 +216,8 @@ export async function getFlaggedForms(
       teamNumber: teamMatch.teamNumber,
       matchNumber: match.matchNumber,
       oofTimeSeconds: standForm.oofTimeSeconds,
-      cycleCount: sql<number>`(SELECT count(*)::int FROM cycle WHERE stand_form_id = ${standForm.id})`,
-      climbCount: sql<number>`(SELECT count(*)::int FROM climb WHERE stand_form_id = ${standForm.id})`,
+      cycleCount,
+      climbCount,
       createdAt: standForm.createdAt,
     })
     .from(standForm)
@@ -225,19 +228,23 @@ export async function getFlaggedForms(
       and(eq(member.id, standForm.scoutMemberId), eq(member.organizationId, organizationId))
     )
     .leftJoin(user, eq(user.id, member.userId))
-    .where(
-      and(
-        eq(teamMatch.eventId, eventId),
-        isNull(standForm.deletedAt),
-        sql`(
-          (
-            ${standForm.oofTimeSeconds} = 0
-            AND (SELECT count(*) FROM cycle WHERE stand_form_id = ${standForm.id}) = 0
-            AND (SELECT count(*) FROM climb WHERE stand_form_id = ${standForm.id}) = 0
-          )
-          OR ${standForm.oofTimeSeconds} >= 130
-        )`
-      )
+    .leftJoin(cycle, eq(cycle.standFormId, standForm.id))
+    .leftJoin(climb, eq(climb.standFormId, standForm.id))
+    .where(and(eq(teamMatch.eventId, eventId), isNull(standForm.deletedAt)))
+    .groupBy(
+      standForm.id,
+      user.name,
+      teamMatch.teamNumber,
+      match.matchNumber,
+      standForm.oofTimeSeconds,
+      standForm.createdAt
+    )
+    .having(
+      sql`(
+        count(DISTINCT ${cycle.id}) = 0
+        AND count(DISTINCT ${climb.id}) = 0
+        AND ${standForm.oofTimeSeconds} = 0
+      ) OR ${standForm.oofTimeSeconds} >= 130`
     )
     .orderBy(match.matchNumber);
 
@@ -266,6 +273,8 @@ export type ValidationSummary = {
 
 /**
  * Aggregated health stats for the event, org-scoped.
+ * Reuses cached getValidationMatchScores + getScoutCoverage to avoid
+ * duplicating the org-consensus CTE SQL.
  */
 export async function getValidationSummary(
   eventId: string,
@@ -277,90 +286,29 @@ export async function getValidationSummary(
   cacheTag(cacheTags.teamMetrics(eventId));
   cacheTag(cacheTags.eventTeams(eventId));
 
-  const [playedResult, slotResult] = await Promise.all([
-    // Org-scoped goblin per played match
-    db.execute(sql`
-      WITH org_latest AS (
-        SELECT
-          sf.team_match_id,
-          COALESCE(sf.scout_member_id, sf.id::text) AS scout_id,
-          e.exp_fuel_active,
-          e.exp_tower,
-          ROW_NUMBER() OVER (
-            PARTITION BY sf.team_match_id, COALESCE(sf.scout_member_id, sf.id::text)
-            ORDER BY sf.updated_at DESC, sf.created_at DESC
-          ) AS rn
-        FROM stand_form sf
-        JOIN v_stand_form_expected e ON e.stand_form_id = sf.id
-        JOIN member m ON m.id = sf.scout_member_id AND m.organization_id = ${organizationId}
-        WHERE sf.deleted_at IS NULL
-      ),
-      org_consensus AS (
-        SELECT
-          team_match_id,
-          PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY exp_fuel_active::float) AS exp_fuel_active,
-          PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY exp_tower::float)       AS exp_tower
-        FROM org_latest WHERE rn = 1
-        GROUP BY team_match_id
-      ),
-      org_match_totals AS (
-        SELECT
-          tm.match_id,
-          SUM(CASE WHEN tm.alliance = 'red'  THEN COALESCE(c.exp_fuel_active, 0) + COALESCE(c.exp_tower, 0) ELSE 0 END) AS exp_red_score,
-          SUM(CASE WHEN tm.alliance = 'blue' THEN COALESCE(c.exp_fuel_active, 0) + COALESCE(c.exp_tower, 0) ELSE 0 END) AS exp_blue_score
-        FROM team_match tm
-        LEFT JOIN org_consensus c ON c.team_match_id = tm.id
-        GROUP BY tm.match_id
-      )
-      SELECT
-        count(m.id)::int AS played_match_count,
-        AVG(ABS(
-          (m.red_score - m.blue_score)
-          - (COALESCE(mt.exp_red_score, 0) - COALESCE(mt.exp_blue_score, 0))
-        ))::float AS avg_abs_goblin
-      FROM match m
-      LEFT JOIN org_match_totals mt ON mt.match_id = m.id
-      WHERE m.event_id = ${eventId}
-        AND m.red_score IS NOT NULL
-        AND m.red_score >= 0
-    `),
-
-    // Slot coverage (org-scoped stand form counts)
+  const [playedCountResult, matchScores, coverage] = await Promise.all([
+    // Simple count of all TBA-scored matches (independent of coverage)
     db
-      .select({
-        teamMatchId: teamMatch.id,
-        scoutCount: sql<number>`count(${standForm.id})::int`,
-      })
-      .from(teamMatch)
-      .innerJoin(match, eq(match.id, teamMatch.matchId))
-      .leftJoin(
-        standForm,
-        and(
-          eq(standForm.teamMatchId, teamMatch.id),
-          isNull(standForm.deletedAt),
-          sql`(${standForm.scoutMemberId} IS NULL OR ${standForm.scoutMemberId} IN (
-            SELECT id FROM member WHERE organization_id = ${organizationId}
-          ))`
-        )
-      )
-      .where(eq(teamMatch.eventId, eventId))
-      .groupBy(teamMatch.id),
+      .select({ count: sql<number>`count(*)::int` })
+      .from(match)
+      .where(
+        and(eq(match.eventId, eventId), isNotNull(match.redScore), sql`${match.redScore} >= 0`)
+      ),
+    getValidationMatchScores(eventId, organizationId),
+    getScoutCoverage(eventId, organizationId),
   ]);
 
-  const playedRow = (playedResult.rows as Array<Record<string, unknown>>)[0];
-  const playedMatchCount = Number(playedRow?.played_match_count ?? 0);
-  const avgAbsGoblin = Number(playedRow?.avg_abs_goblin ?? 0);
-
-  const slots = slotResult;
-  const totalSlots = slots.length;
-  const scoutedSlots = slots.filter((s) => (s.scoutCount ?? 0) >= 1).length;
-  const singleScoutSlots = slots.filter((s) => (s.scoutCount ?? 0) === 1).length;
+  const playedMatchCount = playedCountResult[0]?.count ?? 0;
+  const avgAbsGoblin =
+    matchScores.length > 0
+      ? matchScores.reduce((sum, r) => sum + Math.abs(r.goblinMatch), 0) / matchScores.length
+      : 0;
 
   return {
     playedMatchCount,
     avgAbsGoblin,
-    totalSlots,
-    scoutedSlots,
-    singleScoutSlots,
+    totalSlots: coverage.length,
+    scoutedSlots: coverage.filter((s) => s.scoutCount >= 1).length,
+    singleScoutSlots: coverage.filter((s) => s.scoutCount === 1).length,
   };
 }

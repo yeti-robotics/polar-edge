@@ -17,43 +17,60 @@ import {
 } from "@/features/validation/queries";
 import { routes } from "@/lib/routes";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
-import { getActiveEventForOrganization, listOrganizationEvents } from "@/lib/server/organization/active-event";
+import {
+  getActiveEventForOrganization,
+  listOrganizationEvents,
+} from "@/lib/server/organization/active-event";
 
-function SummarySkeleton() {
+// ── Skeletons ─────────────────────────────────────────────────────────────────
+
+function SummaryCardsSkeleton() {
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-28 w-full rounded-xl" />
-        ))}
-      </div>
-      <Skeleton className="h-64 w-full rounded-xl" />
-      <Skeleton className="h-48 w-full rounded-xl" />
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Skeleton key={i} className="h-28 w-full rounded-xl" />
+      ))}
     </div>
   );
 }
 
-async function ValidationContent({ eventId }: { eventId: string }) {
-  // This component receives a validated eventId
-  const activeMember = await requireAdminMember();
-  const { organizationId } = activeMember;
+function CardSkeleton({ className }: { className?: string }) {
+  return <Skeleton className={`w-full rounded-xl ${className ?? "h-64"}`} />;
+}
 
-  const [summary, matchScores, coverage, flaggedForms] = await Promise.all([
-    getValidationSummary(eventId, organizationId),
+// ── Section components (each streams independently) ───────────────────────────
+
+type SectionProps = { eventId: string; organizationId: string };
+
+async function SummarySection({ eventId, organizationId }: SectionProps) {
+  const summary = await getValidationSummary(eventId, organizationId);
+  return <ValidationSummaryCards summary={summary} />;
+}
+
+async function ScoreSection({ eventId, organizationId }: SectionProps) {
+  // getValidationSummary calls getValidationMatchScores internally (cached),
+  // so this Promise.all results in only one DB round-trip for matchScores.
+  const [matchScores, summary] = await Promise.all([
     getValidationMatchScores(eventId, organizationId),
-    getScoutCoverage(eventId, organizationId),
-    getFlaggedForms(eventId, organizationId),
+    getValidationSummary(eventId, organizationId),
   ]);
-
   return (
-    <div className="space-y-8">
-      <ValidationSummaryCards summary={summary} />
-      <ScoreReconciliationTable rows={matchScores} totalPlayedCount={summary.playedMatchCount} />
-      <ScoutCoverageGrid rows={coverage} />
-      {flaggedForms.length > 0 && <FlaggedFormsTable forms={flaggedForms} />}
-    </div>
+    <ScoreReconciliationTable rows={matchScores} totalPlayedCount={summary.playedMatchCount} />
   );
 }
+
+async function CoverageSection({ eventId, organizationId }: SectionProps) {
+  const coverage = await getScoutCoverage(eventId, organizationId);
+  return <ScoutCoverageGrid rows={coverage} />;
+}
+
+async function FlaggedSection({ eventId, organizationId }: SectionProps) {
+  const forms = await getFlaggedForms(eventId, organizationId);
+  if (forms.length === 0) return null;
+  return <FlaggedFormsTable forms={forms} />;
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default async function DataValidationPage({
   searchParams,
@@ -63,14 +80,12 @@ export default async function DataValidationPage({
   const activeMember = await requireAdminMember();
   const { organizationId } = activeMember;
 
-  const [activeEvent, orgEvents] = await Promise.all([
+  const [activeEvent, orgEvents, { eventId: searchEventId }] = await Promise.all([
     getActiveEventForOrganization(organizationId),
     listOrganizationEvents(organizationId),
+    searchParams,
   ]);
 
-  const { eventId: searchEventId } = await searchParams;
-
-  // Resolve which event to display
   const validEvent =
     orgEvents.find((e) => e.id === searchEventId) ??
     (activeEvent ? orgEvents.find((e) => e.id === activeEvent.eventId) : null) ??
@@ -114,9 +129,20 @@ export default async function DataValidationPage({
           </CardContent>
         </Card>
       ) : (
-        <Suspense fallback={<SummarySkeleton />}>
-          <ValidationContent eventId={validEvent.id} />
-        </Suspense>
+        <div className="space-y-8">
+          <Suspense fallback={<SummaryCardsSkeleton />}>
+            <SummarySection eventId={validEvent.id} organizationId={organizationId} />
+          </Suspense>
+          <Suspense fallback={<CardSkeleton className="h-64" />}>
+            <ScoreSection eventId={validEvent.id} organizationId={organizationId} />
+          </Suspense>
+          <Suspense fallback={<CardSkeleton className="h-48" />}>
+            <CoverageSection eventId={validEvent.id} organizationId={organizationId} />
+          </Suspense>
+          <Suspense>
+            <FlaggedSection eventId={validEvent.id} organizationId={organizationId} />
+          </Suspense>
+        </div>
       )}
     </main>
   );

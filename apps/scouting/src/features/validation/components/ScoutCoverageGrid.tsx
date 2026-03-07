@@ -3,7 +3,7 @@
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { TypographyMuted } from "@repo/ui/components/typography";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ScoutCoverageRow } from "../queries";
 
 // A compact colored square showing scout count for one slot.
@@ -39,13 +39,22 @@ function hasProblem(
 }
 
 export function ScoutCoverageGrid({ rows }: { rows: ScoutCoverageRow[] }) {
-  const slotMap = new Map<string, number>();
-  for (const row of rows) {
-    slotMap.set(`${row.alliance}-${row.matchNumber}-${row.position}`, row.scoutCount);
-  }
+  const slotMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const row of rows) {
+      map.set(`${row.alliance}-${row.matchNumber}-${row.position}`, row.scoutCount);
+    }
+    return map;
+  }, [rows]);
 
-  const matchNumbers = [...new Set(rows.map((r) => r.matchNumber))].sort((a, b) => a - b);
-  const problemMatches = matchNumbers.filter((mn) => hasProblem(slotMap, mn));
+  const matchNumbers = useMemo(
+    () => [...new Set(rows.map((r) => r.matchNumber))].sort((a, b) => a - b),
+    [rows]
+  );
+  const problemMatches = useMemo(
+    () => matchNumbers.filter((mn) => hasProblem(slotMap, mn)),
+    [matchNumbers, slotMap]
+  );
 
   const [showAll, setShowAll] = useState(problemMatches.length === 0);
   const displayed = showAll ? matchNumbers : problemMatches;
