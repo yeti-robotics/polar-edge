@@ -55,9 +55,8 @@ export function ScoreReconciliationTable({
             <CardTitle>Score Reconciliation</CardTitle>
             {excludedFromCoverage > 0 && (
               <p className="text-xs text-muted-foreground mt-0.5">
-                {excludedFromCoverage} scored{" "}
-                {excludedFromCoverage === 1 ? "match" : "matches"} excluded — incomplete org
-                coverage
+                {excludedFromCoverage} scored {excludedFromCoverage === 1 ? "match" : "matches"}{" "}
+                excluded — incomplete org coverage
               </p>
             )}
           </div>
@@ -68,9 +67,7 @@ export function ScoreReconciliationTable({
               className="text-xs h-7 px-2"
               onClick={() => setShowAll((v) => !v)}
             >
-              {showAll
-                ? `Problems only (${problemRows.length})`
-                : `Show all (${rows.length})`}
+              {showAll ? `Problems only (${problemRows.length})` : `Show all (${rows.length})`}
             </Button>
           )}
         </div>
@@ -92,13 +89,9 @@ export function ScoreReconciliationTable({
               <TableHeader className="sticky top-0 z-10 bg-card">
                 <TableRow className="text-xs">
                   <TableHead className="py-2 px-3 w-16">Match</TableHead>
-                  <TableHead className="py-2 px-3 text-destructive">
-                    Red
-                  </TableHead>
+                  <TableHead className="py-2 px-3 text-destructive">Red</TableHead>
                   <TableHead className="py-2 px-3">Red Δ</TableHead>
-                  <TableHead className="py-2 px-3 text-primary">
-                    Blue
-                  </TableHead>
+                  <TableHead className="py-2 px-3 text-primary">Blue</TableHead>
                   <TableHead className="py-2 px-3">Blue Δ</TableHead>
                   <TableHead className="py-2 px-3">Goblin</TableHead>
                 </TableRow>
@@ -134,9 +127,7 @@ export function ScoreReconciliationTable({
                       >
                         {fmtDelta(blueDelta)}
                       </TableCell>
-                      <TableCell
-                        className={`py-1.5 px-3 font-mono ${deltaClass(row.goblinMatch)}`}
-                      >
+                      <TableCell className={`py-1.5 px-3 font-mono ${deltaClass(row.goblinMatch)}`}>
                         {fmtDelta(row.goblinMatch)}
                       </TableCell>
                     </TableRow>

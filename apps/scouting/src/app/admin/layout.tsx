@@ -9,7 +9,11 @@ const adminLinks = [
   { href: routes.admin.invites, label: "Invites", icon: <UserPlusIcon className="size-4" /> },
   { href: routes.admin.event, label: "Active Event", icon: <CalendarIcon className="size-4" /> },
   { href: routes.admin.settings, label: "Settings", icon: <SettingsIcon className="size-4" /> },
-  { href: routes.admin.validation, label: "Data Validation", icon: <ShieldCheckIcon className="size-4" /> },
+  {
+    href: routes.admin.validation,
+    label: "Data Validation",
+    icon: <ShieldCheckIcon className="size-4" />,
+  },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

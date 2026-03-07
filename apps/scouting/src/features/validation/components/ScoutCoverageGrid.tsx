@@ -25,10 +25,7 @@ function CoverageCell({ count }: { count: number }) {
   );
 }
 
-function hasProblem(
-  slotMap: Map<string, number>,
-  matchNumber: number
-): boolean {
+function hasProblem(slotMap: Map<string, number>, matchNumber: number): boolean {
   for (const alliance of ["red", "blue"]) {
     for (const pos of [1, 2, 3]) {
       const count = slotMap.get(`${alliance}-${matchNumber}-${pos}`) ?? 0;
@@ -80,9 +77,7 @@ export function ScoutCoverageGrid({ rows }: { rows: ScoutCoverageRow[] }) {
             <CardTitle>Scout Coverage</CardTitle>
             <p className="text-xs text-muted-foreground mt-0.5">
               {matchNumbers.length} matches ·{" "}
-              <span className="text-destructive">
-                {problemMatches.length} with gaps
-              </span>
+              <span className="text-destructive">{problemMatches.length} with gaps</span>
             </p>
           </div>
           <Button
@@ -91,9 +86,7 @@ export function ScoutCoverageGrid({ rows }: { rows: ScoutCoverageRow[] }) {
             className="text-xs h-7 px-2"
             onClick={() => setShowAll((v) => !v)}
           >
-            {showAll
-              ? `Gaps only (${problemMatches.length})`
-              : `Show all (${matchNumbers.length})`}
+            {showAll ? `Gaps only (${problemMatches.length})` : `Show all (${matchNumbers.length})`}
           </Button>
         </div>
       </CardHeader>
@@ -128,17 +121,13 @@ export function ScoutCoverageGrid({ rows }: { rows: ScoutCoverageRow[] }) {
                   <span className="font-mono text-xs font-medium">QM {matchNumber}</span>
                   {([1, 2, 3] as const).map((pos) => (
                     <div key={`r${pos}`} className="flex justify-center">
-                      <CoverageCell
-                        count={slotMap.get(`red-${matchNumber}-${pos}`) ?? 0}
-                      />
+                      <CoverageCell count={slotMap.get(`red-${matchNumber}-${pos}`) ?? 0} />
                     </div>
                   ))}
                   <span /> {/* spacer */}
                   {([1, 2, 3] as const).map((pos) => (
                     <div key={`b${pos}`} className="flex justify-center">
-                      <CoverageCell
-                        count={slotMap.get(`blue-${matchNumber}-${pos}`) ?? 0}
-                      />
+                      <CoverageCell count={slotMap.get(`blue-${matchNumber}-${pos}`) ?? 0} />
                     </div>
                   ))}
                 </div>

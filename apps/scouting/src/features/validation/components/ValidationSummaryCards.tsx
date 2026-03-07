@@ -31,9 +31,7 @@ export function ValidationSummaryCards({ summary }: { summary: ValidationSummary
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Avg |Goblin|
-          </CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Avg |Goblin|</CardTitle>
         </CardHeader>
         <CardContent>
           <span className={`text-3xl font-bold ${goblinColor(avgAbsGoblin) ?? ""}`}>
@@ -61,11 +59,7 @@ export function ValidationSummaryCards({ summary }: { summary: ValidationSummary
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <span
-            className={`text-3xl font-bold ${
-              singleScoutSlots > 0 ? "text-warning" : ""
-            }`}
-          >
+          <span className={`text-3xl font-bold ${singleScoutSlots > 0 ? "text-warning" : ""}`}>
             {singleScoutSlots}
           </span>
         </CardContent>

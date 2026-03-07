@@ -6,8 +6,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { EventSwitcher } from "@/features/validation/components/EventSwitcher";
 import { FlaggedFormsTable } from "@/features/validation/components/FlaggedFormsTable";
-import { ScoutCoverageGrid } from "@/features/validation/components/ScoutCoverageGrid";
 import { ScoreReconciliationTable } from "@/features/validation/components/ScoreReconciliationTable";
+import { ScoutCoverageGrid } from "@/features/validation/components/ScoutCoverageGrid";
 import { ValidationSummaryCards } from "@/features/validation/components/ValidationSummaryCards";
 import {
   getFlaggedForms,

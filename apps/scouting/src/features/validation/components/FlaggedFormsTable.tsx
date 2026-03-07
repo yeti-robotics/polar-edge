@@ -52,8 +52,8 @@ function DeleteFormButton({ formId }: { formId: string }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Delete scouting form?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will soft-delete the form and remove it from all calculations. This action can
-            only be undone via the database.
+            This will soft-delete the form and remove it from all calculations. This action can only
+            be undone via the database.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -89,16 +89,16 @@ export function FlaggedFormsTable({ forms }: { forms: FlaggedFormRow[] }) {
             <TableBody>
               {forms.map((form) => (
                 <TableRow key={form.formId}>
-                  <TableCell>{form.scoutName ?? <span className="text-muted-foreground">Unknown</span>}</TableCell>
+                  <TableCell>
+                    {form.scoutName ?? <span className="text-muted-foreground">Unknown</span>}
+                  </TableCell>
                   <TableCell className="font-mono">{form.teamNumber}</TableCell>
                   <TableCell className="font-mono">QM {form.matchNumber}</TableCell>
                   <TableCell>
                     {form.reason === "empty" ? (
                       <Badge variant="warning">Empty form</Badge>
                     ) : (
-                      <Badge variant="destructive">
-                        Robot broken ({form.oofTimeSeconds}s)
-                      </Badge>
+                      <Badge variant="destructive">Robot broken ({form.oofTimeSeconds}s)</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
