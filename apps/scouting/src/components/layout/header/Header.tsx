@@ -137,6 +137,9 @@ async function UserAvatar() {
   }
 
   try {
+    // Ensure a default organization is set before checking active member,
+    // otherwise on first login getActiveMember returns null (no active org yet)
+    await setDefaultOrganizationIfNeeded();
     const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });

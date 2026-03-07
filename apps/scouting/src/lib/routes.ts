@@ -12,6 +12,7 @@ export const routes = {
     invites: "/admin/invites",
     event: "/admin/event",
     settings: "/admin/settings",
+    validation: "/admin/data-validation",
   },
 
   // Analysis

@@ -1,7 +1,7 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
-import { CalendarIcon, MailIcon, Settings2Icon, UsersIcon } from "lucide-react";
+import { CalendarIcon, MailIcon, Settings2Icon, ShieldCheckIcon, UsersIcon } from "lucide-react";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
@@ -35,6 +35,12 @@ const navCards = [
     icon: Settings2Icon,
     title: "Settings",
     description: "Update your organization's name and display preferences.",
+  },
+  {
+    href: "/admin/data-validation",
+    icon: ShieldCheckIcon,
+    title: "Data Validation",
+    description: "Audit scouting accuracy and coverage for your active event.",
   },
 ];
 
