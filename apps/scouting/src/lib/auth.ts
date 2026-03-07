@@ -1,12 +1,15 @@
+import { randomBytes } from "node:crypto";
 import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { ac, admin, memberRole, owner } from "@/lib/access-control";
 import { db } from "@/lib/database";
+import { member } from "@/lib/database/schema/tables/member";
+import { session } from "@/lib/database/schema/tables/session";
 import { user as userTable } from "@/lib/database/schema/tables/user";
 import { isSuperAdmin } from "@/lib/permissions";
 import { getInviteLinkByToken } from "@/lib/server/invite-links";
@@ -48,17 +51,42 @@ export const auth = betterAuth({
       const isNewUser = Date.now() - createdAt < NEW_USER_WINDOW_MS;
       if (!isNewUser) return;
 
-      const allowed =
-        isSuperAdmin(user.email) ||
-        (await (async () => {
-          const inviteToken = ctx.getCookie(PENDING_INVITE_COOKIE);
-          if (!inviteToken) return false;
-          const link = await getInviteLinkByToken(inviteToken);
-          return link !== null && !link.revoked;
-        })());
+      const inviteToken = ctx.getCookie(PENDING_INVITE_COOKIE);
+      const inviteLink = inviteToken ? await getInviteLinkByToken(inviteToken) : null;
+      const allowed = isSuperAdmin(user.email) || (inviteLink !== null && !inviteLink.revoked);
 
       if (allowed) {
         ctx.setCookie(PENDING_INVITE_COOKIE, "", { maxAge: 0, path: "/" });
+
+        // Auto-accept the invite: add user to the org and set it as active
+        if (inviteLink && !inviteLink.revoked) {
+          const existingMember = await db
+            .select()
+            .from(member)
+            .where(
+              and(eq(member.organizationId, inviteLink.organizationId), eq(member.userId, userId))
+            )
+            .limit(1);
+
+          if (!existingMember[0]) {
+            await db.insert(member).values({
+              id: randomBytes(16).toString("hex"),
+              organizationId: inviteLink.organizationId,
+              userId,
+              role: "member",
+              createdAt: new Date(),
+            });
+          }
+
+          // Set the new org as active on the session so pages don't error
+          if (newSession.session?.id) {
+            await db
+              .update(session)
+              .set({ activeOrganizationId: inviteLink.organizationId })
+              .where(eq(session.id, newSession.session.id));
+          }
+        }
+
         return;
       }
 

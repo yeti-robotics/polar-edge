@@ -77,20 +77,24 @@ export default async function JoinPage({ params }: { params: Promise<{ token: st
   const session = await auth.api.getSession({ headers: requestHeaders });
 
   if (session?.user) {
-    const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-    if (activeMember?.organizationId === inviteLink.organizationId) {
-      return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-24">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle>Already a Member</CardTitle>
-              <CardDescription>
-                You are already a member of <strong>{org.name}</strong>.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </main>
-      );
+    try {
+      const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+      if (activeMember?.organizationId === inviteLink.organizationId) {
+        return (
+          <main className="flex min-h-screen flex-col items-center justify-center p-24">
+            <Card className="w-full max-w-md">
+              <CardHeader>
+                <CardTitle>Already a Member</CardTitle>
+                <CardDescription>
+                  You are already a member of <strong>{org.name}</strong>.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </main>
+        );
+      }
+    } catch {
+      // User is signed in but has no active organization yet (e.g. during sign-up flow)
     }
   }
 
