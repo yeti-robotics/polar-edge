@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026.14.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.1...scouting-v2026.14.2) (2026-03-07)
+
+
+### Bug Fixes
+
+* **scouting:** improve new user invite handling and session management ([b4bb5b4](https://github.com/yeti-robotics/polar-edge/commit/b4bb5b460433491ea72e6c258905462e4153391b))
+* **scouting:** refactor invite acceptance to use API for member addition ([ff293f1](https://github.com/yeti-robotics/polar-edge/commit/ff293f1fd818e6401b4c880f91e676d3096b1a56))
+
 ## [2026.14.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.0...scouting-v2026.14.1) (2026-03-07)
 
 
