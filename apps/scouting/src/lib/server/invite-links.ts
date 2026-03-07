@@ -156,12 +156,17 @@ export async function acceptInviteLink(token: string) {
   }
 
   // Add user to organization as a member
-  await db.insert(member).values({
-    id: generateId(),
-    organizationId: inviteLink.organizationId,
-    userId: session.user.id,
-    role: "member",
-    createdAt: new Date(),
+  await auth.api.addMember({
+    body: {
+      userId: session.user.id,
+      role: "member",
+      organizationId: inviteLink.organizationId,
+    },
+  });
+
+  await auth.api.setActiveOrganization({
+    headers: requestHeaders,
+    body: { organizationId: inviteLink.organizationId },
   });
 
   return { success: true };
