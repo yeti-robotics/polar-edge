@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +20,7 @@ import { isSuperAdmin } from "@/lib/permissions";
 import { routes } from "@/lib/routes";
 import { setDefaultOrganizationIfNeeded } from "@/lib/server/organization/default-organization";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
+import { HeaderNav } from "./HeaderNav";
 import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
 import { ThemeToggle } from "./ThemeToggle";
@@ -63,7 +68,9 @@ export function Header() {
     <header className="sticky top-0 z-50 py-2 min-w-0 border-b bg-background h-(--header-height) flex flex-col justify-between">
       <div className="flex items-center justify-between w-full px-6">
         <div className="flex items-center gap-4">
-          <span className="hidden md:block uppercase font-mono text-sm">Polar Edge</span>
+          <span className="hidden md:block uppercase font-mono text-sm">
+            Polar Edge
+          </span>
           <Suspense fallback={<OrganizationSelectorFallback />}>
             <OrganizationSelectorWrapper />
           </Suspense>
@@ -73,19 +80,11 @@ export function Header() {
         </Suspense>
       </div>
       <nav className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-            href={item.href}
-          >
-            {item.label}
-          </Link>
-        ))}
+        <HeaderNav items={navItems} />
+
         <Suspense fallback={null}>
           <LeaderboardNavItem />
         </Suspense>
-        <nav />
       </nav>
     </header>
   );
@@ -93,7 +92,9 @@ export function Header() {
 
 async function LeaderboardNavItem() {
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    const activeMember = await auth.api.getActiveMember({
+      headers: await headers(),
+    });
     if (!activeMember) return null;
   } catch {
     return null;
@@ -139,14 +140,20 @@ async function UserAvatar() {
     const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });
-    const isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
+    const isAdminOrOwner =
+      activeMember?.role === "admin" || activeMember?.role === "owner";
 
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="size-8 select-none">
-            <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
-            <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
+            <AvatarImage
+              src={session.user.image ?? ""}
+              alt={session.user.name ?? ""}
+            ></AvatarImage>
+            <AvatarFallback>
+              {session.user.name?.charAt(0) ?? ""}
+            </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="end" className="min-w-36">
