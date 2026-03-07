@@ -15,8 +15,10 @@ export async function setDefaultOrganizationIfNeeded(): Promise<string | null> {
   }
 
   try {
+    // getActiveMember throws when session has no activeOrganizationId,
+    // so catch it independently to avoid aborting the fallback logic.
     const [activeMember, organizations] = await Promise.all([
-      auth.api.getActiveMember({ headers: headerList }),
+      auth.api.getActiveMember({ headers: headerList }).catch(() => null),
       auth.api.listOrganizations({ headers: headerList }),
     ]);
 
