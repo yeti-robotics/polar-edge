@@ -45,13 +45,6 @@ export async function login(password: string) {
   return true;
 }
 
-export async function refreshToken() {
-  const cookieStore = await cookies();
-  const password = cookieStore.get("toofaPassword")?.value;
-  if (!password) return false;
-  return login(password);
-}
-
 export async function validateToken(token: string) {
   const res = await fetch(new URL("/2fa/validate", process.env.BASECAMP_URL), {
     method: "POST",
