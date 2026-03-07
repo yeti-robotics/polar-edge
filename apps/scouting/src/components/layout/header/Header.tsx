@@ -93,6 +93,8 @@ export function Header() {
 
 async function LeaderboardNavItem() {
   try {
+    const orgId = await setDefaultOrganizationIfNeeded();
+    if (!orgId) return null;
     const activeMember = await auth.api.getActiveMember({ headers: await headers() });
     if (!activeMember) return null;
   } catch {
@@ -180,8 +182,8 @@ async function UserAvatar() {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-  } catch (err) {
-    console.warn("Unauthorized organization access attempted: ", err);
+  } catch {
+    // User has no active organization (e.g. during sign-up before joining an org)
     return null;
   }
 }
