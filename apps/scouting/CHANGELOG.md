@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.14.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.0...scouting-v2026.14.1) (2026-03-07)
+
+
+### Bug Fixes
+
+* **scouting:** auto-accept invite during sign-up to prevent org errors ([#482](https://github.com/yeti-robotics/polar-edge/issues/482)) ([f01bd6c](https://github.com/yeti-robotics/polar-edge/commit/f01bd6c80783292717ec3af7b147090648fd7d5a))
+
 ## [2026.14.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.13.1...scouting-v2026.14.0) (2026-03-07)
 
 
