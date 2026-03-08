@@ -10,7 +10,7 @@ export function HeaderNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
+    <div className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
       {items.map((item) => {
         const isActive = pathname === item.href;
 
@@ -28,6 +28,6 @@ export function HeaderNav({ items }: { items: NavItem[] }) {
           </Link>
         );
       })}
-    </nav>
+    </div>
   );
 }

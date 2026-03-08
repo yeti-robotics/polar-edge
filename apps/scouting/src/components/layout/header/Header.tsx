@@ -80,7 +80,9 @@ export function Header() {
         </Suspense>
       </div>
       <nav className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
-        <HeaderNav items={navItems} />
+        <Suspense>
+          <HeaderNav items={navItems} />
+        </Suspense>
 
         <Suspense fallback={null}>
           <LeaderboardNavItem />
