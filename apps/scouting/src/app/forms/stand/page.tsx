@@ -22,6 +22,7 @@ function StandFormSkeleton() {
 }
 
 import { TypographyH1 } from "@repo/ui/components/typography";
+import { match } from "assert";
 import { NoActiveEvent } from "@/components/NoActiveEvent";
 import { ScoutingLabel } from "@/components/ShowStandFormLabel";
 import {
@@ -68,7 +69,7 @@ export default function StandFormPage() {
   return (
     <div className="py-6 max-w-3xl w-full mx-auto px-4">
       <TypographyH1 className="mb-6">Stand Form</TypographyH1>
-      <ScoutingLabel />
+      {/* <ScoutingLabel/>  fix error here add props to this and define the types  */}
 
       <main className="w-full">
         <Suspense fallback={<StandFormSkeleton />}>
