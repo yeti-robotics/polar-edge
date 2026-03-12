@@ -32,7 +32,6 @@ import {
 import { StandFormProvider } from "@/features/scouting/stand/components/StandFormProvider";
 import { StandFormTabs } from "@/features/scouting/stand/components/StandFormTabs";
 import { UnsavedChangesWarning } from "@/features/scouting/stand/components/UnsavedChangesWarning";
-import { team } from "@/lib/database/schema";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 
@@ -69,8 +68,7 @@ export default function StandFormPage() {
   return (
     <div className="py-6 max-w-3xl w-full mx-auto px-4">
       <TypographyH1 className="mb-6">Stand Form</TypographyH1>
-      {/* <ScoutingLabel/>  fix error here add props to this and define the types  */}
-
+      <ScoutingLabel />
       <main className="w-full">
         <Suspense fallback={<StandFormSkeleton />}>
           <StandFormContent />
