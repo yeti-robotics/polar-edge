@@ -9,8 +9,7 @@ export function ScoutingLabel({
   teamNumber?: number;
   matchNumber?: number;
 }) {
-  if (!teamNumber || !matchNumber)
-    return <Badge className="mb-4"> Enter Match Details </Badge>;
+  if (!teamNumber || !matchNumber) return <Badge className="mb-4"> Enter Match Details </Badge>;
 
   return (
     <Badge className="text-s mb-4">
