@@ -22,7 +22,7 @@ function StandFormSkeleton() {
 }
 
 import { TypographyH1 } from "@repo/ui/components/typography";
-import { match } from "assert";
+
 import { NoActiveEvent } from "@/components/NoActiveEvent";
 import { ScoutingLabel } from "@/components/ShowStandFormLabel";
 import {
@@ -37,9 +37,7 @@ import { getActiveEventForOrganization } from "@/lib/server/organization/active-
 
 async function StandFormContent() {
   const member = await requireActiveMember();
-  const activeEvent = await getActiveEventForOrganization(
-    member.organizationId,
-  );
+  const activeEvent = await getActiveEventForOrganization(member.organizationId);
 
   if (!activeEvent) {
     return <NoActiveEvent />;
