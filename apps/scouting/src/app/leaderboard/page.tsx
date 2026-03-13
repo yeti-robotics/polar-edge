@@ -1,6 +1,11 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@repo/ui/components/tabs";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
-import { ClipboardList, MapIcon, Trophy, Wrench } from "lucide-react";
+import { ClipboardList, MapIcon, Wrench } from "lucide-react";
 import { Suspense } from "react";
 import { LeaderboardContent } from "@/features/leaderboard/components/LeaderboardContent";
 import { LoadingSkeleton } from "@/features/leaderboard/components/LoadingSkeleton";
@@ -13,10 +18,11 @@ export default function LeaderboardPage({ searchParams }: PageProps) {
   return (
     <main className="container mx-auto max-w-4xl space-y-6 px-4 py-8">
       <div className="flex items-center gap-3">
-        <Trophy className="size-7 text-yellow-500" />
         <div>
           <TypographyH1>Scout Leaderboard</TypographyH1>
-          <TypographyMuted>Top contributors by form submissions.</TypographyMuted>
+          <TypographyMuted>
+            Top contributors by form submissions.
+          </TypographyMuted>
         </div>
       </div>
 
