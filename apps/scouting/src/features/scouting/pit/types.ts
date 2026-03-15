@@ -25,6 +25,7 @@ export const FormSchema = z.object({
     .refine((val): val is (typeof CLIMB_TYPE_OPTIONS)[number] => val !== "", {
       message: "Climb type is required",
     }),
+  comments: z.string(),
 });
 
 const defaultValues: z.input<typeof FormSchema> = {
@@ -36,6 +37,7 @@ const defaultValues: z.input<typeof FormSchema> = {
   capacity: 0,
   weight: 0,
   climbType: "",
+  comments: "",
 };
 
 export const formOpts = formOptions({

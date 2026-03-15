@@ -22,6 +22,7 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
+import { Textarea } from "@repo/ui/components/textarea";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
 import { startTransition, useActionState, useCallback, useEffect, useRef } from "react";
 import { submitPitForm } from "../actions";
@@ -115,6 +116,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
         formData.append("capacity", String(values.capacity));
         formData.append("weight", String(values.weight));
         formData.append("climbType", values.climbType);
+        formData.append("comments", values.comments);
 
         if (photoKeys && photoKeys.length > 0) {
           formData.append("photoKeys", JSON.stringify(photoKeys));
@@ -393,6 +395,38 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                   </RadioGroup>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </div>
+              );
+            }}
+          </form.Field>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>More Specific Information</CardTitle>
+          <CardDescription>
+            Add any extra robot details that do not fit in the fields above.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form.Field name="comments">
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field>
+                  <FieldLabel>Comments</FieldLabel>
+                  <Textarea
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Enter more specific information"
+                    aria-invalid={isInvalid}
+                    className="min-h-28 resize-y"
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
               );
             }}
           </form.Field>

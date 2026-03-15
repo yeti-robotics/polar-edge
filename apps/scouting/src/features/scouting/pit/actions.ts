@@ -17,6 +17,11 @@ const serverValidate = createServerValidate({
   onServerValidate: FormSchema,
 });
 
+const formDataInfo = {
+  numbers: ["teamNumber", "capacity", "weight"],
+  booleans: ["canTrench", "canBump", "canShuttle"],
+};
+
 export async function submitPitForm(_prevState: unknown, formData: FormData) {
   try {
     const activeMember = await auth.api.getActiveMember({ headers: await headers() });
@@ -28,10 +33,7 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       };
     }
 
-    const validated = await serverValidate(formData, {
-      numbers: ["teamNumber", "capacity", "weight"],
-      booleans: ["canTrench", "canBump", "canShuttle"],
-    });
+    const validated = await serverValidate(formData, formDataInfo as never);
 
     // Parse and validate photo keys
     const photoKeysJson = formData.get("photoKeys");
@@ -79,6 +81,7 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
             : validated.climbType === ""
               ? null
               : validated.climbType,
+        comments: validated.comments,
         scoutMemberId: activeMember.id,
       },
       photoKeys
