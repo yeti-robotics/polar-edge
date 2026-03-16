@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
-import { Input } from "@repo/ui/components/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui/components/select";
 import { TypographyH4 } from "@repo/ui/components/typography";
 import { useState } from "react";
 import { lookupTeamMatch } from "../actions";
@@ -9,9 +15,15 @@ import { useFormData } from "../contexts/FormDataContext";
 
 /**
  * Match selection tab with team match lookup.
- * Allows user to enter match number and team number, then lookup teamMatchId.
+ * Allows user to select match number and team number, then lookup teamMatchId.
  */
-export function MatchSelectionTab() {
+export function MatchSelectionTab({
+  matchOptions,
+  teamOptions,
+}: {
+  matchOptions: number[];
+  teamOptions: { teamNumber: number; teamName: string }[];
+}) {
   const { state, dispatch } = useFormData();
   const [matchNumber, setMatchNumber] = useState("");
   const [teamNumber, setTeamNumber] = useState("");
@@ -28,7 +40,10 @@ export function MatchSelectionTab() {
     setError(null);
 
     try {
-      const result = await lookupTeamMatch(parseInt(matchNumber, 10), parseInt(teamNumber, 10));
+      const result = await lookupTeamMatch(
+        parseInt(matchNumber, 10),
+        parseInt(teamNumber, 10),
+      );
 
       if (result.error) {
         setError(result.error);
@@ -56,22 +71,37 @@ export function MatchSelectionTab() {
     <div className="space-y-4">
       <TypographyH4>Match Selection</TypographyH4>
       <div className="space-y-4">
-        <Input
-          type="number"
-          id="match_number"
-          name="match_number"
-          placeholder="Enter Match Number"
+        <Select
           value={matchNumber}
-          onChange={(e) => setMatchNumber(e.target.value)}
-        />
-        <Input
-          type="number"
-          id="team_number"
-          name="team_number"
-          placeholder="Enter Team Number"
+          onValueChange={(val) => setMatchNumber(val)}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Match" />
+          </SelectTrigger>
+          <SelectContent>
+            {matchOptions.map((match) => (
+              <SelectItem key={match} value={String(match)}>
+                Match {match}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
           value={teamNumber}
-          onChange={(e) => setTeamNumber(e.target.value)}
-        />
+          onValueChange={(val) => setTeamNumber(val)}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Team" />
+          </SelectTrigger>
+          <SelectContent>
+            {teamOptions.map((team) => (
+              <SelectItem key={team.teamNumber} value={String(team.teamNumber)}>
+                {team.teamNumber} {team.teamName ? `- ${team.teamName}` : ""}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <Button
           onClick={handleLookup}
@@ -84,7 +114,9 @@ export function MatchSelectionTab() {
         {error && <p className="text-sm text-destructive">{error}</p>}
 
         {state.teamMatchId && (
-          <p className="text-sm text-green-600">✓ Match found (ID: {state.teamMatchId})</p>
+          <p className="text-sm text-green-600">
+            ✓ Match found (ID: {state.teamMatchId})
+          </p>
         )}
       </div>
     </div>
