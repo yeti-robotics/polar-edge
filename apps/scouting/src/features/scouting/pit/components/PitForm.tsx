@@ -126,9 +126,9 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
       // Upload photos if any, or submit form directly
       const photoKeys = await uploadPhotos(pendingFiles, teamNumber);
 
-      // If uploadPhotos returned null, there was an error (already handled by the hook)
+      // Photos are optional, so don't block form submission if upload fails.
       if (pendingFiles.length > 0 && photoKeys === null) {
-        return;
+        toast.warning("Photo upload failed. Submitting the pit form without photos.");
       }
 
       // Build FormData with form fields and photo keys
@@ -307,7 +307,11 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       type="number"
                       id="capacity"
                       name={field.name}
-                      value={field.state.value === 0 ? "" : field.state.value}
+                      value={
+                        typeof field.state.value === "number" && field.state.value !== 0
+                          ? field.state.value
+                          : ""
+                      }
                       onBlur={field.handleBlur}
                       onChange={(e) =>
                         field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
@@ -333,7 +337,11 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       type="number"
                       id="weight"
                       name={field.name}
-                      value={field.state.value === 0 ? "" : field.state.value}
+                      value={
+                        typeof field.state.value === "number" && field.state.value !== 0
+                          ? field.state.value
+                          : ""
+                      }
                       onBlur={field.handleBlur}
                       onChange={(e) =>
                         field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
