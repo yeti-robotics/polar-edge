@@ -1,10 +1,13 @@
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { GitGraphIcon, TableIcon, UsersIcon } from "lucide-react";
+import { headers } from "next/headers";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
+import { UserFormSubmissions } from "@/features/analysis/components/UserFormSubmissions";
 import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+import { auth } from "@/lib/auth";
 
 const navCards = [
   {
@@ -48,6 +51,35 @@ async function PitFormCountStat() {
   return <StatItem label="Pit Forms" value={count} />;
 }
 
+async function UserSubmissionsSection() {
+  await connection();
+  let activeMember = null;
+  try {
+    activeMember = await auth.api.getActiveMember({ headers: await headers() });
+  } catch {
+    activeMember = null;
+  }
+
+  if (!activeMember) {
+    return (
+      <section className="rounded-xl border bg-muted/20 px-6 py-5">
+        <h2 className="text-xl font-semibold text-foreground">Your Submissions</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Sign in to see the forms you&apos;ve submitted.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <UserFormSubmissions
+      memberId={activeMember.id}
+      title="Your Submissions"
+      emptyLabel="No forms submitted yet."
+    />
+  );
+}
+
 export default function AnalysisPage() {
   return (
     <div className="space-y-8">
@@ -56,6 +88,16 @@ export default function AnalysisPage() {
         <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
       </div>
 
+      <Suspense fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5" />}>
+        <UserSubmissionsSection />
+      </Suspense>
+
+      <div>
+        <h2 className="text-xl font-semibold text-foreground mb-1">All-Time Totals</h2>
+        <p className="text-sm text-muted-foreground">
+          Organization-wide counts across all events.
+        </p>
+      </div>
       <div className="rounded-xl border bg-muted/20 grid grid-cols-1 max-md:divide-y md:grid-cols-3">
         <div className="px-6 py-5 md:border-r">
           <Suspense fallback={<StatItemSkeleton />}>
