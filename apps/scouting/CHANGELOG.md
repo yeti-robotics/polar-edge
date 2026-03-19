@@ -1,5 +1,33 @@
 # Changelog
 
+## [2026.14.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.1...scouting-v2026.14.2) (2026-03-07)
+
+
+### Bug Fixes
+
+* **scouting:** improve new user invite handling and session management ([b4bb5b4](https://github.com/yeti-robotics/polar-edge/commit/b4bb5b460433491ea72e6c258905462e4153391b))
+* **scouting:** refactor invite acceptance to use API for member addition ([ff293f1](https://github.com/yeti-robotics/polar-edge/commit/ff293f1fd818e6401b4c880f91e676d3096b1a56))
+
+## [2026.14.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.0...scouting-v2026.14.1) (2026-03-07)
+
+
+### Bug Fixes
+
+* **scouting:** auto-accept invite during sign-up to prevent org errors ([#482](https://github.com/yeti-robotics/polar-edge/issues/482)) ([f01bd6c](https://github.com/yeti-robotics/polar-edge/commit/f01bd6c80783292717ec3af7b147090648fd7d5a))
+
+## [2026.14.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.13.1...scouting-v2026.14.0) (2026-03-07)
+
+
+### Features
+
+* **scouting:** add admin validation tooling ([#480](https://github.com/yeti-robotics/polar-edge/issues/480)) ([05a8beb](https://github.com/yeti-robotics/polar-edge/commit/05a8beb967cc1c73cc846917c91a7fec9b92586c))
+* **scouting:** add tba webhook functionality to keep scores and schedule in sync ([cdff359](https://github.com/yeti-robotics/polar-edge/commit/cdff3594f5722e043277839f76130f4e0bca9216))
+
+
+### Bug Fixes
+
+* **scouting:** fix logout flow and ensure default organization on first login ([#481](https://github.com/yeti-robotics/polar-edge/issues/481)) ([fb228f8](https://github.com/yeti-robotics/polar-edge/commit/fb228f8b46fffc13af4ce920a9a14e4fd47b1c4d))
+
 ## [2026.13.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.13.0...scouting-v2026.13.1) (2026-03-05)
 
 
