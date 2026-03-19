@@ -94,15 +94,9 @@ export function Header() {
 
 async function LeaderboardNavItem() {
   try {
-<<<<<<< HEAD
     const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });
-=======
-    const orgId = await setDefaultOrganizationIfNeeded();
-    if (!orgId) return null;
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
->>>>>>> 9efad204b331a869101b334e22b4e12fe7caf8b3
     if (!activeMember) return null;
   } catch {
     return null;
@@ -144,78 +138,27 @@ async function UserAvatar() {
     return null;
   }
 
-<<<<<<< HEAD
-  try {
-    // Ensure a default organization is set before checking active member,
-    // otherwise on first login getActiveMember returns null (no active org yet)
-    await setDefaultOrganizationIfNeeded();
-    const activeMember = await auth.api.getActiveMember({
-      headers: await headers(),
-    });
-    const isAdminOrOwner =
-      activeMember?.role === "admin" || activeMember?.role === "owner";
-
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Avatar className="size-8 select-none">
-            <AvatarImage
-              src={session.user.image ?? ""}
-              alt={session.user.name ?? ""}
-            ></AvatarImage>
-            <AvatarFallback>
-              {session.user.name?.charAt(0) ?? ""}
-            </AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" align="end" className="min-w-36">
-          <DropdownMenuGroup>
-            <DropdownMenuItemLink href={routes.home}>
-              <HomeIcon className="size-4 text-current" />
-              <span>Home</span>
-            </DropdownMenuItemLink>
-            <DropdownMenuItemLink href={routes.profile}>
-              <UserIcon className="size-4 text-current" />
-              <span>Profile</span>
-            </DropdownMenuItemLink>
-            {isAdminOrOwner && (
-              <DropdownMenuItemLink href={routes.admin.root}>
-                <ShieldCheckIcon className="size-4 text-current" />
-                <span>Admin</span>
-              </DropdownMenuItemLink>
-            )}
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <ThemeToggle />
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <LogoutButton />
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  } catch (err) {
-    console.warn("Unauthorized organization access attempted: ", err);
-    return null;
-=======
   await setDefaultOrganizationIfNeeded();
 
   let isAdminOrOwner = false;
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
-    isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
+    const activeMember = await auth.api.getActiveMember({
+      headers: await headers(),
+    });
+    isAdminOrOwner =
+      activeMember?.role === "admin" || activeMember?.role === "owner";
   } catch {
     // No active organization — still render the dropdown so the user can sign out
->>>>>>> 9efad204b331a869101b334e22b4e12fe7caf8b3
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="size-8 select-none">
-          <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
+          <AvatarImage
+            src={session.user.image ?? ""}
+            alt={session.user.name ?? ""}
+          ></AvatarImage>
           <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
