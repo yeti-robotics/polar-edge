@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026.15.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.2...scouting-v2026.15.0) (2026-03-20)
+
+
+### Features
+
+* **scouting:** enhance analysis features with AI-generated summaries and comments ([1d49c21](https://github.com/yeti-robotics/polar-edge/commit/1d49c219a52dd341ec1213ef726467c6ae439747))
+* **scouting:** enhance team comment summary generation with improved output and error handling ([fdf8983](https://github.com/yeti-robotics/polar-edge/commit/fdf8983a230b7f26d012d8f40059e8da96780701))
+
 ## [2026.14.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.1...scouting-v2026.14.2) (2026-03-07)
 
 
