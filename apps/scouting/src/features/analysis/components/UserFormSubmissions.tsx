@@ -1,18 +1,12 @@
 import { StatItem } from "@/components/stat-item";
-import {
-  getUserFormCounts,
-  getUserFormSubmissions,
-} from "@/features/analysis/queries";
+import { getUserFormCounts, getUserFormSubmissions } from "@/features/analysis/queries";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   dateStyle: "medium",
   timeStyle: "short",
 });
 
-function formatMatchLabel(
-  matchType: string | null,
-  matchNumber: number | null,
-) {
+function formatMatchLabel(matchType: string | null, matchNumber: number | null) {
   if (!matchType || matchNumber === null) return null;
   return `${matchType.toUpperCase()} ${matchNumber}`;
 }
@@ -56,10 +50,7 @@ export async function UserFormSubmissions({
         ) : (
           <ul className="divide-y">
             {submissions.map((submission) => {
-              const matchLabel = formatMatchLabel(
-                submission.matchType,
-                submission.matchNumber,
-              );
+              const matchLabel = formatMatchLabel(submission.matchType, submission.matchNumber);
               return (
                 <li
                   key={`${submission.type}-${submission.id}`}
@@ -67,9 +58,7 @@ export async function UserFormSubmissions({
                 >
                   <div className="text-sm font-medium text-foreground">
                     {submission.type === "stand" ? "Stand Form" : "Pit Form"}
-                    {submission.teamNumber
-                      ? ` • Team ${submission.teamNumber}`
-                      : null}
+                    {submission.teamNumber ? ` • Team ${submission.teamNumber}` : null}
                     {matchLabel ? ` • ${matchLabel}` : null}
                   </div>
                   <div className="text-xs text-muted-foreground">
