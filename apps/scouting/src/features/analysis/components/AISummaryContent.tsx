@@ -25,7 +25,7 @@ export function AISummaryContent({ summary }: { summary: CommentSummary }) {
         {summary.summary}
       </TypographyMuted>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {(
           [
             ["Reliability", summary.reliability],
@@ -60,7 +60,7 @@ export function AISummarySkeleton() {
         <Skeleton className="h-4 w-3/4 max-w-prose" />
         <Skeleton className="h-4 w-1/2 max-w-prose" />
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Skeleton className="h-14 w-full rounded-md" />
         <Skeleton className="h-14 w-full rounded-md" />
         <Skeleton className="h-14 w-full rounded-md" />
