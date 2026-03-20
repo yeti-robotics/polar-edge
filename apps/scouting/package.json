@@ -1,6 +1,6 @@
 {
   "name": "scouting",
-  "version": "2026.14.0",
+  "version": "2026.15.0",
   "description": "FRC scouting application for YETI Robotics",
   "private": true,
   "scripts": {
@@ -23,6 +23,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1002.0",
     "@better-auth/drizzle-adapter": "^1.5.3",
     "@better-auth/passkey": "^1.5.3",
+    "@repo/ai": "workspace:*",
     "@repo/tba-sdk": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-form-nextjs": "^1.28.4",
