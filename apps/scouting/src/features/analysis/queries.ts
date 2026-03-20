@@ -2,6 +2,7 @@ import "server-only";
 
 import { and, countDistinct, eq, isNull } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
+import { UserFormCounts, UserFormSubmission } from "@/app/profile/types";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { match, pitForm, standForm, team, teamMatch } from "@/lib/database/schema/tables";
@@ -35,21 +36,6 @@ export async function getPitFormCount(): Promise<number> {
   const result = await db.select({ count: countDistinct(pitForm.id) }).from(pitForm);
   return result[0]?.count ?? 0;
 }
-
-export type UserFormCounts = {
-  standCount: number;
-  pitCount: number;
-  total: number;
-};
-
-export type UserFormSubmission = {
-  id: string;
-  type: "stand" | "pit";
-  createdAt: Date;
-  teamNumber: number | null;
-  matchNumber: number | null;
-  matchType: string | null;
-};
 
 export async function getUserFormCounts(memberId: string): Promise<UserFormCounts> {
   const [standCountRow, pitCountRow] = await Promise.all([

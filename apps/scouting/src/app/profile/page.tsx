@@ -1,4 +1,4 @@
-import { TypographyH2 } from "@repo/ui/components/typography";
+import { TypographyH2, TypographyP } from "@repo/ui/components/typography";
 import { headers } from "next/headers";
 import Image from "next/image";
 import { ProfileLogoutButton } from "@/components/profile/ProfileLogoutButton";
@@ -14,9 +14,7 @@ export default async function ProfilePage() {
       <div className="min-h-screen flex items-center justify-center bg-black text-white p-8">
         <div className="max-w-xl w-full text-center">
           <TypographyH2 className="mb-2">You're not signed in</TypographyH2>
-          <p className="text-sm text-neutral-400">
-            Sign in to view your profile and progress.
-          </p>
+          <TypographyP> Sign in to view your profile and progress</TypographyP>
         </div>
       </div>
     );

@@ -1,4 +1,9 @@
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
+import {
+  TypographyH1,
+  TypographyH2,
+  TypographyMuted,
+  TypographyP,
+} from "@repo/ui/components/typography";
 import { GitGraphIcon, TableIcon, UsersIcon } from "lucide-react";
 import { headers } from "next/headers";
 import { connection } from "next/server";
@@ -6,7 +11,11 @@ import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
 import { UserFormSubmissions } from "@/features/analysis/components/UserFormSubmissions";
-import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+import {
+  getPitFormCount,
+  getStandFormCount,
+  getTeamCount,
+} from "@/features/analysis/queries";
 import { auth } from "@/lib/auth";
 
 const navCards = [
@@ -14,13 +23,15 @@ const navCards = [
     href: "/analysis/teams",
     icon: UsersIcon,
     title: "Teams",
-    description: "Browse all scouted teams and view detailed per-team breakdowns.",
+    description:
+      "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
     href: "/analysis/comparison",
     icon: GitGraphIcon,
     title: "Comparison",
-    description: "Compare multiple teams side-by-side across key performance metrics.",
+    description:
+      "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
     href: "/analysis/events",
@@ -34,7 +45,6 @@ const navCards = [
 // ── Async stat components ─────────────────────────────────────────────────────
 
 async function TeamCountStat() {
-  await connection();
   const count = await getTeamCount();
   return <StatItem label="Teams" value={count} />;
 }
@@ -52,7 +62,6 @@ async function PitFormCountStat() {
 }
 
 async function UserSubmissionsSection() {
-  await connection();
   let activeMember = null;
   try {
     activeMember = await auth.api.getActiveMember({ headers: await headers() });
@@ -63,10 +72,8 @@ async function UserSubmissionsSection() {
   if (!activeMember) {
     return (
       <section className="rounded-xl border bg-muted/20 px-6 py-5">
-        <h2 className="text-xl font-semibold text-foreground">Your Submissions</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Sign in to see the forms you&apos;ve submitted.
-        </p>
+        <TypographyH2> Your Submissions</TypographyH2>
+        <TypographyP>Sign in to see the forms you have submitted. </TypographyP>
       </section>
     );
   }
@@ -85,18 +92,20 @@ export default function AnalysisPage() {
     <div className="space-y-8">
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
+        <TypographyMuted>
+          Match and team data collected across all events.
+        </TypographyMuted>
       </div>
 
-      <Suspense fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5" />}>
+      <Suspense
+        fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5" />}
+      >
         <UserSubmissionsSection />
       </Suspense>
 
       <div>
-        <h2 className="text-xl font-semibold text-foreground mb-1">All-Time Totals</h2>
-        <p className="text-sm text-muted-foreground">
-          Organization-wide counts across all events.
-        </p>
+        <TypographyH2>All Time</TypographyH2>
+        <TypographyP> Organization-wide across all</TypographyP>
       </div>
       <div className="rounded-xl border bg-muted/20 grid grid-cols-1 max-md:divide-y md:grid-cols-3">
         <div className="px-6 py-5 md:border-r">
