@@ -54,10 +54,7 @@ export async function submitStandForm(data: unknown) {
       if (result.eventId) {
         revalidateTag(cacheTags.teamMetrics(result.eventId), "max");
         if (result.teamNumber) {
-          revalidateTag(
-            cacheTags.teamCommentSummary(result.teamNumber, result.eventId),
-            "max"
-          );
+          revalidateTag(cacheTags.teamCommentSummary(result.teamNumber, result.eventId), "max");
         }
       }
     }

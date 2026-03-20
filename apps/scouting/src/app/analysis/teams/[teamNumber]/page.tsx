@@ -253,7 +253,7 @@ export default async function TeamPage({
             <TypographyH3>Scout Insights</TypographyH3>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4 mt-0">
+        <CardContent className="space-y-4">
           <Suspense fallback={<AISummarySkeleton />}>
             <AISummarySection {...scopeProps} />
           </Suspense>

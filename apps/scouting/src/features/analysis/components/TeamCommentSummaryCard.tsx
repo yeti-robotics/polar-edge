@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Badge } from "@repo/ui/components/badge";
 import { ScrollArea } from "@repo/ui/components/scroll-area";
-import { cn } from "@repo/ui/lib/utils";
 import { TypographyLabel, TypographyMuted, TypographySmall } from "@repo/ui/components/typography";
+import { cn } from "@repo/ui/lib/utils";
 import { MessageSquareText } from "lucide-react";
+import { useState } from "react";
 import type { TeamComment } from "../team-queries";
 
 export function TeamCommentSummaryCard({
