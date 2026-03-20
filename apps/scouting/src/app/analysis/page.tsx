@@ -11,7 +11,11 @@ import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
 import { UserFormSubmissions } from "@/features/analysis/components/UserFormSubmissions";
-import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+import {
+  getPitFormCount,
+  getStandFormCount,
+  getTeamCount,
+} from "@/features/analysis/queries";
 import { auth } from "@/lib/auth";
 
 const navCards = [
@@ -19,13 +23,15 @@ const navCards = [
     href: "/analysis/teams",
     icon: UsersIcon,
     title: "Teams",
-    description: "Browse all scouted teams and view detailed per-team breakdowns.",
+    description:
+      "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
     href: "/analysis/comparison",
     icon: GitGraphIcon,
     title: "Comparison",
-    description: "Compare multiple teams side-by-side across key performance metrics.",
+    description:
+      "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
     href: "/analysis/events",
@@ -86,10 +92,15 @@ export default function AnalysisPage() {
     <div className="space-y-8">
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted> Match and team data collected across all events. </TypographyMuted>
+        <TypographyMuted>
+          {" "}
+          Match and team data collected across all events.{" "}
+        </TypographyMuted>
       </div>
 
-      <Suspense fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5" />}>
+      <Suspense
+        fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5" />}
+      >
         <UserSubmissionsSection />
       </Suspense>
 
@@ -116,6 +127,7 @@ export default function AnalysisPage() {
       </div>
 
       <NavCardGrid items={navCards} />
+      <TypographyH1> c</TypographyH1>
     </div>
   );
 }
