@@ -14,7 +14,6 @@ import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
 import { routes } from "@/lib/routes";
-import { setDefaultOrganizationIfNeeded } from "@/lib/server/organization/default-organization";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
 import { HeaderNav } from "./HeaderNav";
 import { LogoutButton } from "./LogoutButton";
@@ -88,9 +87,7 @@ export function Header() {
 
 async function LeaderboardNavItem() {
   try {
-    const activeMember = await auth.api.getActiveMember({
-      headers: await headers(),
-    });
+    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
     if (!activeMember) return null;
   } catch {
     return null;
@@ -113,8 +110,6 @@ async function OrganizationSelectorWrapper() {
     return null;
   }
 
-  await setDefaultOrganizationIfNeeded();
-
   const isUserSuperAdmin = isSuperAdmin(session.user.email);
   return (
     <>
@@ -131,8 +126,6 @@ async function UserAvatar() {
   if (!session?.user) {
     return null;
   }
-
-  await setDefaultOrganizationIfNeeded();
 
   let isAdminOrOwner = false;
   try {
