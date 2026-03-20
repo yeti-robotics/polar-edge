@@ -53,9 +53,7 @@ export default async function ProfilePage() {
         </header>
 
         <section className="bg-muted-black rounded-lg p-6 ring-ring size-full">
-          <TypographyH2 className="text-foreground-white mb-3">
-            Account
-          </TypographyH2>
+          <TypographyH2 className="text-foreground-white mb-3">Account</TypographyH2>
           <PasskeyManager />
           <div className="mt-10">
             {activeMember ? (

@@ -52,7 +52,10 @@ export async function UserFormSubmissions({
             {submissions.map((submission) => {
               const matchLabel = formatMatchLabel(submission.matchType, submission.matchNumber);
               return (
-                <li key={`${submission.type}-${submission.id}`} className="py-3 flex flex-col gap-1">
+                <li
+                  key={`${submission.type}-${submission.id}`}
+                  className="py-3 flex flex-col gap-1"
+                >
                   <div className="text-sm font-medium text-foreground">
                     {submission.type === "stand" ? "Stand Form" : "Pit Form"}
                     {submission.teamNumber ? ` • Team ${submission.teamNumber}` : null}
