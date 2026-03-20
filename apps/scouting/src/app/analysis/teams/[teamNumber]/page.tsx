@@ -9,15 +9,29 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
+import {
+  TypographyH1,
+  TypographyH3,
+  TypographyLabel,
+  TypographyMuted,
+} from "@repo/ui/components/typography";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import {
+  AISummaryContent,
+  AISummarySkeleton,
+} from "@/features/analysis/components/AISummaryContent";
+import { AnimatedSparkles } from "@/features/analysis/components/AnimatedSparkles";
+import { TeamCommentSummaryCard } from "@/features/analysis/components/TeamCommentSummaryCard";
 import { TeamKeyMetricsCard } from "@/features/analysis/components/TeamKeyMetricsCard";
-import { RadarChart } from "@/features/analysis/components/TeamRadarChart";
 import { TeamScopeControls } from "@/features/analysis/components/TeamScopeControls";
 import { SelectTeam } from "@/features/analysis/components/TeamSwitcher";
-import { getTeamKeyMetrics, getTeamRadarData } from "@/features/analysis/team-queries";
+import {
+  getTeamCommentSummary,
+  getTeamComments,
+  getTeamKeyMetrics,
+} from "@/features/analysis/team-queries";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import {
@@ -29,15 +43,13 @@ import {
   team as teamTable,
 } from "@/lib/database/schema";
 
-async function TeamKeyMetricsSection({
-  teamNum,
-  effectiveOrgId,
-  effectiveEventId,
-}: {
+type ScopeProps = {
   teamNum: number;
   effectiveOrgId: string | null;
   effectiveEventId: string | null;
-}) {
+};
+
+async function TeamKeyMetricsSection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
   const metrics = await getTeamKeyMetrics(teamNum, {
     organizationId: effectiveOrgId,
     eventId: effectiveEventId,
@@ -47,28 +59,92 @@ async function TeamKeyMetricsSection({
   return <TeamKeyMetricsCard metrics={metrics} />;
 }
 
-async function TeamRadarSection({
+async function AISummarySection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
+  const result = await getTeamCommentSummary(teamNum, {
+    organizationId: effectiveOrgId,
+    eventId: effectiveEventId,
+  });
+  if (!result) return null;
+  return <AISummaryContent summary={result} />;
+}
+
+async function TeamCommentsSection({
   teamNum,
   effectiveOrgId,
   effectiveEventId,
-}: {
-  teamNum: number;
-  effectiveOrgId: string | null;
-  effectiveEventId: string | null;
-}) {
-  const radarData = await getTeamRadarData(teamNum, {
+  isOrgAdmin,
+}: ScopeProps & { isOrgAdmin: boolean }) {
+  const comments = await getTeamComments(teamNum, {
     organizationId: effectiveOrgId,
     eventId: effectiveEventId,
   });
 
+  if (comments.length === 0) return null;
+
   return (
-    <RadarChart
-      data={radarData}
-      angleKey="subject"
-      valueKey="value"
-      name="Score"
-      domain={[0, 100]}
+    <TeamCommentSummaryCard
+      commentCount={comments.length}
+      comments={comments}
+      showScoutNames={isOrgAdmin}
     />
+  );
+}
+
+async function PitDataSection({ teamNum }: { teamNum: number }) {
+  const pitFormData = await db
+    .select()
+    .from(pitForm)
+    .where(eq(pitForm.teamNumber, teamNum))
+    .limit(1);
+  const pitData = pitFormData[0];
+
+  if (!pitData) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Pit Scouting Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TypographyMuted>No pit scouting data available</TypographyMuted>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Pit Scouting Data</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Drivetrain</TableHead>
+              <TableHead>Weight</TableHead>
+              <TableHead>Capacity</TableHead>
+              <TableHead>Climb Type</TableHead>
+              <TableHead>Capabilities</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>{pitData.drivetrainType}</TableCell>
+              <TableCell>{pitData.weight} lbs</TableCell>
+              <TableCell>{pitData.capacity}</TableCell>
+              <TableCell>{pitData.climbType || "N/A"}</TableCell>
+              <TableCell>
+                <div className="flex gap-2 flex-wrap">
+                  {pitData.canTrench && <Badge>Trench</Badge>}
+                  {pitData.canBump && <Badge>Bump</Badge>}
+                  {pitData.canShuttle && <Badge>Shuttle</Badge>}
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -79,8 +155,10 @@ export default async function TeamPage({
   params: Promise<{ teamNumber: string }>;
   searchParams: Promise<{ orgScope?: string; eventId?: string }>;
 }) {
-  const { teamNumber } = await params;
-  const { orgScope, eventId: eventIdParam } = await searchParams;
+  const [{ teamNumber }, { orgScope, eventId: eventIdParam }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
 
   const teamNum = parseInt(teamNumber, 10);
   const teamResults = await db.select().from(teamTable).where(eq(teamTable.teamNumber, teamNum));
@@ -93,7 +171,6 @@ export default async function TeamPage({
 
   const teamRow = teamResults[0] as NonNullable<(typeof teamResults)[0]>;
 
-  // Optional auth — no redirect, page is public
   let activeMember = null;
   try {
     activeMember = await auth.api.getActiveMember({ headers: await headers() });
@@ -102,9 +179,8 @@ export default async function TeamPage({
   }
 
   const organizationId = activeMember?.organizationId ?? null;
+  const isOrgAdmin = activeMember?.role === "admin" || activeMember?.role === "owner";
 
-  // Resolve effective scope from search params
-  // Event filter is independent of org scope
   const effectiveEventId = eventIdParam ?? null;
   const useOrgScope = orgScope === "1" && organizationId !== null;
   const effectiveOrgId = useOrgScope ? organizationId : null;
@@ -116,10 +192,7 @@ export default async function TeamPage({
     startDate: event.startDate,
   };
 
-  const [pitFormData, globalTeamEvents, orgTeamEvents] = await Promise.all([
-    db.select().from(pitForm).where(eq(pitForm.teamNumber, teamNum)).limit(1),
-
-    // All events this team has any team_match record for
+  const [globalTeamEvents, orgTeamEvents] = await Promise.all([
     db
       .selectDistinct(eventSelectShape)
       .from(teamMatch)
@@ -127,7 +200,6 @@ export default async function TeamPage({
       .where(eq(teamMatch.teamNumber, teamNum))
       .orderBy(desc(event.startDate)),
 
-    // Events where this org has scouted this team
     organizationId
       ? db
           .selectDistinct(eventSelectShape)
@@ -145,11 +217,14 @@ export default async function TeamPage({
         ),
   ]);
 
-  const pitData = pitFormData[0];
+  const scopeProps: ScopeProps = {
+    teamNum,
+    effectiveOrgId,
+    effectiveEventId,
+  };
 
   return (
     <div className="space-y-4">
-      {/* Page header — intentionally not a Card */}
       <div className="pb-4 border-b">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -168,60 +243,30 @@ export default async function TeamPage({
       </div>
 
       <Suspense fallback={<Skeleton className="h-56 w-full" />}>
-        <TeamKeyMetricsSection
-          teamNum={teamNum}
-          effectiveOrgId={effectiveOrgId}
-          effectiveEventId={effectiveEventId}
-        />
+        <TeamKeyMetricsSection {...scopeProps} />
       </Suspense>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Suspense fallback={<Skeleton className="h-90 w-full" />}>
-          <TeamRadarSection
-            teamNum={teamNum}
-            effectiveOrgId={effectiveOrgId}
-            effectiveEventId={effectiveEventId}
-          />
-        </Suspense>
+      <Card className="gap-y-3">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <AnimatedSparkles />
+            <TypographyH3>Scout Insights</TypographyH3>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Suspense fallback={<AISummarySkeleton />}>
+            <AISummarySection {...scopeProps} />
+          </Suspense>
 
-        <Card className="w-full pb-32" id="pit-data">
-          <CardHeader>
-            <CardTitle>Pit Scouting Data</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!pitData ? (
-              <p className="text-muted-foreground">No pit scouting data available</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Drivetrain</TableHead>
-                    <TableHead>Weight</TableHead>
-                    <TableHead>Capacity</TableHead>
-                    <TableHead>Climb Type</TableHead>
-                    <TableHead>Capabilities</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>{pitData.drivetrainType}</TableCell>
-                    <TableCell>{pitData.weight} lbs</TableCell>
-                    <TableCell>{pitData.capacity}</TableCell>
-                    <TableCell>{pitData.climbType || "N/A"}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2 flex-wrap">
-                        {pitData.canTrench && <Badge>Trench</Badge>}
-                        {pitData.canBump && <Badge>Bump</Badge>}
-                        {pitData.canShuttle && <Badge>Shuttle</Badge>}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+          <Suspense fallback={<Skeleton className="h-72 w-full rounded-lg" />}>
+            <TeamCommentsSection {...scopeProps} isOrgAdmin={isOrgAdmin} />
+          </Suspense>
+        </CardContent>
+      </Card>
+
+      <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+        <PitDataSection teamNum={teamNum} />
+      </Suspense>
     </div>
   );
 }
