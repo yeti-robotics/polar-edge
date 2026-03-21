@@ -33,6 +33,7 @@ export async function deleteStandFormAction(formId: string): Promise<{ error?: s
   const eventId = activeEvent.eventId;
   revalidateTag(cacheTags.teamMetrics(eventId), "max");
   revalidateTag(cacheTags.matchScores(eventId), "max");
+  revalidateTag(cacheTags.leaderboardStand(organizationId), "max");
 
   return {};
 }

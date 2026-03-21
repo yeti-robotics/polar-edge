@@ -269,6 +269,129 @@ export async function getFlaggedForms(
   }));
 }
 
+// ── Duplicate Forms ─────────────────────────────────────────────────────────
+
+export type DuplicateFormGroup = {
+  scoutName: string | null;
+  teamNumber: number;
+  matchNumber: number;
+  forms: {
+    formId: string;
+    createdAt: Date;
+    cycleCount: number;
+    climbCount: number;
+    oofTimeSeconds: number;
+  }[];
+};
+
+/**
+ * Finds stand forms where the same scout submitted multiple forms for the same
+ * team-match slot. Groups by (scout, team_match) so admins can pick which to keep.
+ */
+export async function getDuplicateForms(
+  eventId: string,
+  organizationId: string
+): Promise<DuplicateFormGroup[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(cacheTags.teamMetrics(eventId));
+
+  // Step 1: find (team_match_id, scout_member_id) combos with >1 form
+  const dupes = await db
+    .select({
+      teamMatchId: standForm.teamMatchId,
+      scoutMemberId: standForm.scoutMemberId,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(standForm)
+    .innerJoin(
+      member,
+      and(eq(member.id, standForm.scoutMemberId), eq(member.organizationId, organizationId))
+    )
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .where(and(eq(teamMatch.eventId, eventId), isNull(standForm.deletedAt)))
+    .groupBy(standForm.teamMatchId, standForm.scoutMemberId)
+    .having(sql`count(*) > 1`);
+
+  if (dupes.length === 0) return [];
+
+  // Step 2: fetch all forms for those duplicate combos
+  const cycleCount = sql<number>`count(DISTINCT ${cycle.id})::int`;
+  const climbCount = sql<number>`count(DISTINCT ${climb.id})::int`;
+
+  const dupeConditions = dupes.map(
+    (d) =>
+      sql`(${standForm.teamMatchId} = ${d.teamMatchId} AND ${standForm.scoutMemberId} = ${d.scoutMemberId})`
+  );
+
+  const rows = await db
+    .select({
+      formId: standForm.id,
+      scoutName: user.name,
+      scoutMemberId: standForm.scoutMemberId,
+      teamMatchId: standForm.teamMatchId,
+      teamNumber: teamMatch.teamNumber,
+      matchNumber: match.matchNumber,
+      oofTimeSeconds: standForm.oofTimeSeconds,
+      cycleCount,
+      climbCount,
+      createdAt: standForm.createdAt,
+    })
+    .from(standForm)
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .innerJoin(match, eq(match.id, teamMatch.matchId))
+    .innerJoin(
+      member,
+      and(eq(member.id, standForm.scoutMemberId), eq(member.organizationId, organizationId))
+    )
+    .leftJoin(user, eq(user.id, member.userId))
+    .leftJoin(cycle, eq(cycle.standFormId, standForm.id))
+    .leftJoin(climb, eq(climb.standFormId, standForm.id))
+    .where(
+      and(
+        eq(teamMatch.eventId, eventId),
+        isNull(standForm.deletedAt),
+        sql.join(dupeConditions, sql` OR `)
+      )
+    )
+    .groupBy(
+      standForm.id,
+      user.name,
+      standForm.scoutMemberId,
+      standForm.teamMatchId,
+      teamMatch.teamNumber,
+      match.matchNumber,
+      standForm.oofTimeSeconds,
+      standForm.createdAt
+    )
+    .orderBy(match.matchNumber, standForm.createdAt);
+
+  // Step 3: group into DuplicateFormGroup[]
+  const groupMap = new Map<string, DuplicateFormGroup>();
+  for (const r of rows) {
+    const key = `${r.teamMatchId}-${r.scoutMemberId}`;
+    let group = groupMap.get(key);
+    if (!group) {
+      group = {
+        scoutName: r.scoutName ?? null,
+        teamNumber: r.teamNumber,
+        matchNumber: r.matchNumber,
+        forms: [],
+      };
+      groupMap.set(key, group);
+    }
+    group.forms.push({
+      formId: r.formId,
+      createdAt: r.createdAt,
+      cycleCount: r.cycleCount ?? 0,
+      climbCount: r.climbCount ?? 0,
+      oofTimeSeconds: r.oofTimeSeconds,
+    });
+  }
+
+  return Array.from(groupMap.values());
+}
+
 // ── Summary ──────────────────────────────────────────────────────────────────
 
 export type ValidationSummary = {

@@ -4,12 +4,14 @@ import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { DuplicateFormsTable } from "@/features/validation/components/DuplicateFormsTable";
 import { EventSwitcher } from "@/features/validation/components/EventSwitcher";
 import { FlaggedFormsTable } from "@/features/validation/components/FlaggedFormsTable";
 import { ScoreReconciliationTable } from "@/features/validation/components/ScoreReconciliationTable";
 import { ScoutCoverageGrid } from "@/features/validation/components/ScoutCoverageGrid";
 import { ValidationSummaryCards } from "@/features/validation/components/ValidationSummaryCards";
 import {
+  getDuplicateForms,
   getFlaggedForms,
   getScoutCoverage,
   getValidationMatchScores,
@@ -62,6 +64,12 @@ async function ScoreSection({ eventId, organizationId }: SectionProps) {
 async function CoverageSection({ eventId, organizationId }: SectionProps) {
   const coverage = await getScoutCoverage(eventId, organizationId);
   return <ScoutCoverageGrid rows={coverage} />;
+}
+
+async function DuplicateSection({ eventId, organizationId }: SectionProps) {
+  const groups = await getDuplicateForms(eventId, organizationId);
+  if (groups.length === 0) return null;
+  return <DuplicateFormsTable groups={groups} />;
 }
 
 async function FlaggedSection({ eventId, organizationId }: SectionProps) {
@@ -138,6 +146,9 @@ export default async function DataValidationPage({
           </Suspense>
           <Suspense fallback={<CardSkeleton className="h-48" />}>
             <CoverageSection eventId={validEvent.id} organizationId={organizationId} />
+          </Suspense>
+          <Suspense>
+            <DuplicateSection eventId={validEvent.id} organizationId={organizationId} />
           </Suspense>
           <Suspense>
             <FlaggedSection eventId={validEvent.id} organizationId={organizationId} />
