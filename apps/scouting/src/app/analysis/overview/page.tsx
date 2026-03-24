@@ -1,13 +1,8 @@
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
+import { redirect } from "next/navigation";
+import { routes } from "@/lib/routes";
 
 function OverviewPage() {
-  return (
-    <div className="space-y-6">
-      <TypographyH1>Analysis Overview</TypographyH1>
-      <TypographyMuted>Skeleton for the overview page here</TypographyMuted>
-    </div>
-  );
+  redirect(routes.analysis.root);
 }
 
-// ask drew how one can render it the team details and anlsuyis page based on where the user is located
 export default OverviewPage;

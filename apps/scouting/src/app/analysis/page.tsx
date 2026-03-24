@@ -1,26 +1,48 @@
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
-import { GitGraphIcon, TableIcon, UsersIcon } from "lucide-react";
-import { connection } from "next/server";
+import { Card, CardContent } from "@repo/ui/components/card";
+import {
+  TypographyH1,
+  TypographyH2,
+  TypographyLabel,
+  TypographyMuted,
+} from "@repo/ui/components/typography";
+import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
+import { headers } from "next/headers";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
+import {
+  ScoutCoverageSection,
+  ScoutCoverageSectionSkeleton,
+} from "@/features/analysis/components/ScoutCoverageSection";
+import { listAllEvents } from "@/features/analysis/events/queries";
 import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+import { EventSwitcher } from "@/features/validation/components/EventSwitcher";
+import { auth } from "@/lib/auth";
+import { routes } from "@/lib/routes";
+import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 
 const navCards = [
   {
-    href: "/analysis/teams",
+    href: routes.analysis.teams,
     icon: UsersIcon,
     title: "Teams",
     description: "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
-    href: "/analysis/comparison",
+    href: routes.analysis.comparison,
     icon: GitGraphIcon,
     title: "Comparison",
     description: "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
-    href: "/analysis/events",
+    href: routes.analysis.scoutCoverage,
+    icon: ShieldCheckIcon,
+    title: "Scout Coverage",
+    description:
+      "Spot missing or thinly covered stand forms for a competition using the same coverage grid from validation.",
+  },
+  {
+    href: routes.analysis.events,
     icon: TableIcon,
     title: "Events",
     description:
@@ -31,19 +53,16 @@ const navCards = [
 // ── Async stat components ─────────────────────────────────────────────────────
 
 async function TeamCountStat() {
-  await connection();
   const count = await getTeamCount();
   return <StatItem label="Teams" value={count} />;
 }
 
 async function StandFormCountStat() {
-  await connection();
   const count = await getStandFormCount();
   return <StatItem label="Stand Forms" value={count} />;
 }
 
 async function PitFormCountStat() {
-  await connection();
   const count = await getPitFormCount();
   return <StatItem label="Pit Forms" value={count} />;
 }
@@ -73,7 +92,6 @@ export default function AnalysisPage() {
           </Suspense>
         </div>
       </div>
-
       <NavCardGrid items={navCards} />
     </div>
   );
