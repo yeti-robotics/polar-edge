@@ -60,6 +60,7 @@ export const COMMENTS_MIN_LENGTH = 32;
 
 export const StandFormSchema = z.object({
   teamMatchId: z.number().positive(),
+  canShuttle: z.boolean(),
   comments: z
     .string()
     .min(COMMENTS_MIN_LENGTH, `Comments must be at least ${COMMENTS_MIN_LENGTH} characters`),

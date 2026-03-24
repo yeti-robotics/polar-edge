@@ -1,0 +1,1 @@
+ALTER TABLE "stand_form" ADD COLUMN "can_shuttle" boolean DEFAULT false NOT NULL;
