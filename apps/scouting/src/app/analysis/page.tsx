@@ -1,25 +1,10 @@
-import { Card, CardContent } from "@repo/ui/components/card";
-import {
-  TypographyH1,
-  TypographyH2,
-  TypographyLabel,
-  TypographyMuted,
-} from "@repo/ui/components/typography";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
-import { headers } from "next/headers";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
-import {
-  ScoutCoverageSection,
-  ScoutCoverageSectionSkeleton,
-} from "@/features/analysis/components/ScoutCoverageSection";
-import { listAllEvents } from "@/features/analysis/events/queries";
 import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
-import { EventSwitcher } from "@/features/validation/components/EventSwitcher";
-import { auth } from "@/lib/auth";
 import { routes } from "@/lib/routes";
-import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 
 const navCards = [
   {
