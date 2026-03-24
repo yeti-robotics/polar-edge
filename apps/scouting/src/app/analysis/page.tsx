@@ -1,5 +1,6 @@
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
@@ -38,16 +39,19 @@ const navCards = [
 // ── Async stat components ─────────────────────────────────────────────────────
 
 async function TeamCountStat() {
+  await connection();
   const count = await getTeamCount();
   return <StatItem label="Teams" value={count} />;
 }
 
 async function StandFormCountStat() {
+  await connection();
   const count = await getStandFormCount();
   return <StatItem label="Stand Forms" value={count} />;
 }
 
 async function PitFormCountStat() {
+  await connection();
   const count = await getPitFormCount();
   return <StatItem label="Pit Forms" value={count} />;
 }
