@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +40,10 @@ const navItems = [
     label: "Picklist",
     href: routes.picklist.root,
   },
+  {
+    label: "Scouting Schedule",
+    href: routes.schedule.root,
+  },
 ];
 
 function OrganizationSelectorFallback() {
@@ -62,7 +70,9 @@ export function Header() {
     <header className="sticky top-0 z-50 py-2 min-w-0 border-b bg-background h-(--header-height) flex flex-col justify-between">
       <div className="flex items-center justify-between w-full px-6">
         <div className="flex items-center gap-4">
-          <span className="hidden md:block uppercase font-mono text-sm">Polar Edge</span>
+          <span className="hidden md:block uppercase font-mono text-sm">
+            Polar Edge
+          </span>
           <Suspense fallback={<OrganizationSelectorFallback />}>
             <OrganizationSelectorWrapper />
           </Suspense>
@@ -92,7 +102,9 @@ export function Header() {
 
 async function LeaderboardNavItem() {
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    const activeMember = await auth.api.getActiveMember({
+      headers: await headers(),
+    });
     if (!activeMember) return null;
   } catch {
     return null;
@@ -134,8 +146,11 @@ async function UserAvatar() {
 
   let isAdminOrOwner = false;
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
-    isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
+    const activeMember = await auth.api.getActiveMember({
+      headers: await headers(),
+    });
+    isAdminOrOwner =
+      activeMember?.role === "admin" || activeMember?.role === "owner";
   } catch {
     // No active organization — still render the dropdown so the user can sign out
   }
@@ -144,7 +159,10 @@ async function UserAvatar() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="size-8 select-none">
-          <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
+          <AvatarImage
+            src={session.user.image ?? ""}
+            alt={session.user.name ?? ""}
+          ></AvatarImage>
           <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

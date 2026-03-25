@@ -46,6 +46,10 @@ export const routes = {
     detail: (id: string) => `/picklist/${id}` as const,
   },
 
+  schedule: {
+    root: "/shift-schedule",
+  },
+
   // Other
   leaderboard: "/leaderboard",
   profile: "/profile",
