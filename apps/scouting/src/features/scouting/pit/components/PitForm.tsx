@@ -403,7 +403,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
 
       <Card>
         <CardHeader>
-          <CardTitle>More Specific Information</CardTitle>
+          <CardTitle> Comments </CardTitle>
           <CardDescription>
             Add any extra robot details that do not fit in the fields above.
           </CardDescription>

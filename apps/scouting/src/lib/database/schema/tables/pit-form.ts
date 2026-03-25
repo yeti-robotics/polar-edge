@@ -33,7 +33,7 @@ export const pitForm = pgTable(
     weight: smallint("weight").notNull().default(0),
 
     climbType: climbTypeEnum("climb_type"),
-    comments: text("comments").notNull().default(""),
+    comments: text("comments"),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })

@@ -33,7 +33,7 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       };
     }
 
-    const validated = await serverValidate(formData, formDataInfo as never);
+    const validated = await serverValidate(formData, formDataInfo);
 
     // Parse and validate photo keys
     const photoKeysJson = formData.get("photoKeys");
