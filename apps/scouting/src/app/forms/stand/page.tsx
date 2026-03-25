@@ -24,12 +24,12 @@ function StandFormSkeleton() {
 import { TypographyH1 } from "@repo/ui/components/typography";
 
 import { NoActiveEvent } from "@/components/NoActiveEvent";
-import { ScoutingLabel } from "@/components/ShowStandFormLabel";
 import {
   StandFormNavigation,
   StandFormProgress,
 } from "@/features/scouting/stand/components/StandFormNavigation";
 import { StandFormProvider } from "@/features/scouting/stand/components/StandFormProvider";
+import { StandFormScoutingLabel } from "@/features/scouting/stand/components/StandFormScoutingLabel";
 import { StandFormTabs } from "@/features/scouting/stand/components/StandFormTabs";
 import { UnsavedChangesWarning } from "@/features/scouting/stand/components/UnsavedChangesWarning";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
@@ -37,7 +37,9 @@ import { getActiveEventForOrganization } from "@/lib/server/organization/active-
 
 async function StandFormContent() {
   const member = await requireActiveMember();
-  const activeEvent = await getActiveEventForOrganization(member.organizationId);
+  const activeEvent = await getActiveEventForOrganization(
+    member.organizationId,
+  );
 
   if (!activeEvent) {
     return <NoActiveEvent />;
@@ -46,6 +48,7 @@ async function StandFormContent() {
   return (
     <StandFormProvider>
       <UnsavedChangesWarning />
+      <StandFormScoutingLabel />
       <div className="mb-4">
         <StandFormProgress />
       </div>
@@ -66,7 +69,6 @@ export default function StandFormPage() {
   return (
     <div className="py-6 max-w-3xl w-full mx-auto px-4">
       <TypographyH1 className="mb-6">Stand Form</TypographyH1>
-      <ScoutingLabel />
       <main className="w-full">
         <Suspense fallback={<StandFormSkeleton />}>
           <StandFormContent />
