@@ -45,6 +45,7 @@ const navCards = [
 // ── Async stat components ─────────────────────────────────────────────────────
 
 async function TeamCountStat() {
+  await connection();
   const count = await getTeamCount();
   return <StatItem label="Teams" value={count} />;
 }
