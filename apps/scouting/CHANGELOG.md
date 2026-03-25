@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.15.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.15.0...scouting-v2026.15.1) (2026-03-25)
+
+
+### Bug Fixes
+
+* add competiion exclusion ([77f5b5d](https://github.com/yeti-robotics/polar-edge/commit/77f5b5d53edfea64d6549782f0374ae0c1cb92ad))
+
 ## [2026.15.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.2...scouting-v2026.15.0) (2026-03-20)
 
 
