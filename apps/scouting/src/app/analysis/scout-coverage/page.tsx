@@ -1,11 +1,8 @@
 import { Card, CardContent } from "@repo/ui/components/card";
-import {
-  TypographyH1,
-  TypographyLabel,
-  TypographyMuted,
-} from "@repo/ui/components/typography";
+import { TypographyH1, TypographyLabel, TypographyMuted } from "@repo/ui/components/typography";
 import { CalendarIcon } from "lucide-react";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import {
   ScoutCoverageSection,
@@ -14,6 +11,7 @@ import {
 import { listAllEvents } from "@/features/analysis/events/queries";
 import { EventSwitcher } from "@/features/validation/components/EventSwitcher";
 import { auth } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 
 export default async function ScoutCoveragePage({
@@ -28,12 +26,16 @@ export default async function ScoutCoveragePage({
     const activeMember = await auth.api.getActiveMember({ headers: await headers() });
     organizationId = activeMember?.organizationId ?? null;
   } catch {
-    // not signed in
+    redirect(routes.home);
+  }
+
+  if (!organizationId) {
+    redirect(routes.home);
   }
 
   const [events, activeOrgEvent] = await Promise.all([
     listAllEvents(),
-    organizationId ? getActiveEventForOrganization(organizationId) : Promise.resolve(null),
+    getActiveEventForOrganization(organizationId),
   ]);
 
   const selectedEvent =
@@ -48,8 +50,8 @@ export default async function ScoutCoveragePage({
         <div>
           <TypographyH1>Scout Coverage</TypographyH1>
           <TypographyMuted className="mt-1 max-w-2xl">
-            See which qualification match slots are missing stand forms so users can spot
-            scouting gaps by competition.
+            See which qualification match slots are missing stand forms so users can spot scouting
+            gaps by competition.
           </TypographyMuted>
         </div>
         {selectedEvent && (
@@ -72,7 +74,9 @@ export default async function ScoutCoveragePage({
           <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
             <CalendarIcon className="size-10 text-muted-foreground" />
             <div>
-              <p className="font-semibold">No competitions available</p>
+              <TypographyLabel className="text-base font-semibold">
+                No competitions available
+              </TypographyLabel>
               <TypographyMuted className="mt-1">
                 Import an event to start tracking scout coverage.
               </TypographyMuted>
@@ -81,7 +85,7 @@ export default async function ScoutCoveragePage({
         </Card>
       ) : (
         <Suspense fallback={<ScoutCoverageSectionSkeleton />}>
-          <ScoutCoverageSection eventId={selectedEvent.id} />
+          <ScoutCoverageSection eventId={selectedEvent.id} organizationId={organizationId} />
         </Suspense>
       )}
     </div>

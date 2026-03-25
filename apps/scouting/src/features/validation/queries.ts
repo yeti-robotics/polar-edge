@@ -136,26 +136,24 @@ export type ScoutCoverageRow = {
 };
 
 /**
- * Per-slot scout count for an event, optionally scoped to this org's members.
+ * Per-slot scout count for an event, scoped to this org's members.
  */
 export async function getScoutCoverage(
   eventId: string,
-  organizationId?: string | null
+  organizationId: string
 ): Promise<ScoutCoverageRow[]> {
   "use cache";
   cacheLife("minutes");
   cacheTag(cacheTags.eventTeams(eventId));
   cacheTag(cacheTags.teamMetrics(eventId));
 
-  const coverageJoinCondition = organizationId
-    ? and(
-        eq(standForm.teamMatchId, teamMatch.id),
-        isNull(standForm.deletedAt),
-        sql`(${standForm.scoutMemberId} IS NULL OR ${standForm.scoutMemberId} IN (
-          SELECT id FROM member WHERE organization_id = ${organizationId}
-        ))`
-      )
-    : and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt));
+  const coverageJoinCondition = and(
+    eq(standForm.teamMatchId, teamMatch.id),
+    isNull(standForm.deletedAt),
+    sql`(${standForm.scoutMemberId} IS NULL OR ${standForm.scoutMemberId} IN (
+      SELECT id FROM member WHERE organization_id = ${organizationId}
+    ))`
+  );
 
   const rows = await db
     .select({
