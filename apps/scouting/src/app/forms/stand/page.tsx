@@ -37,9 +37,7 @@ import { getActiveEventForOrganization } from "@/lib/server/organization/active-
 
 async function StandFormContent() {
   const member = await requireActiveMember();
-  const activeEvent = await getActiveEventForOrganization(
-    member.organizationId,
-  );
+  const activeEvent = await getActiveEventForOrganization(member.organizationId);
 
   if (!activeEvent) {
     return <NoActiveEvent />;
