@@ -420,7 +420,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                 typeof field.state.value === "string" && field.state.value.length > 0;
 
               return (
-                <div className="space-y-3.5">
+                <Field className="space-y-3.5">
                   <div>
                     <RadioGroup
                       id={field.name}
@@ -460,10 +460,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
 
                       return (
                         <div>
-                          <Label
-                            htmlFor="can_shoot_while_moving"
-                            className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-border bg-muted/50 px-3.5 py-2.5 text-sm transition-colors hover:bg-accent has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60"
-                          >
+                          <Label htmlFor="can_shoot_while_moving">
                             <Checkbox
                               id="can_shoot_while_moving"
                               name={checkboxField.name}
@@ -484,7 +481,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       );
                     }}
                   </form.Field>
-                </div>
+                </Field>
               );
             }}
           </form.Field>
