@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
 import { Checkbox } from "@repo/ui/components/checkbox";
+import { Field } from "@repo/ui/components/field";
 import { Label } from "@repo/ui/components/label";
 import { Textarea } from "@repo/ui/components/textarea";
 import { TypographyH4 } from "@repo/ui/components/typography";
@@ -33,7 +34,7 @@ export function CommentsTab() {
             </ul>
           </AlertDescription>
         </Alert>
-        <div className="flex items-center gap-2">
+        <Field orientation="horizontal" className="flex items-center gap-2">
           <Checkbox
             id="can_shuttle"
             checked={state.canShuttle}
@@ -44,8 +45,8 @@ export function CommentsTab() {
           <Label htmlFor="can_shuttle" className="cursor-pointer">
             Can Shuttle
           </Label>
-        </div>
-        <div className="flex-1 flex flex-col gap-1 min-h-0">
+        </Field>
+        <Field className="flex-1 flex flex-col gap-1 min-h-0">
           <Textarea
             id="comments"
             name="comments"
@@ -59,7 +60,7 @@ export function CommentsTab() {
           >
             {state.comments.trim().length} / {COMMENTS_MIN_LENGTH}
           </p>
-        </div>
+        </Field>
       </div>
     </div>
   );

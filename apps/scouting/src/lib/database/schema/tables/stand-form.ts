@@ -23,7 +23,7 @@ export const standForm = pgTable(
     scoutMemberId: text("scout_member_id").references(() => member.id, { onDelete: "set null" }),
 
     comments: text("comments").notNull().default(""),
-    canShuttle: boolean("can_shuttle").notNull().default(false),
+    canShuttle: boolean("can_shuttle"),
     oofTimeSeconds: smallint("oof_time_seconds").notNull().default(0),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
