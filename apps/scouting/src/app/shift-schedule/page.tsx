@@ -1,11 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { TypographyMuted } from "@repo/ui/components/typography";
 import AdminEditing from "./components/AdminEditing";
+import { NoActiveEvent } from "@/components/NoActiveEvent";
+import { getShiftScheduleForActiveEvent } from "@/features/shift-schedule/queries";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 
 export default async function ScoutingSchedule() {
   const activeMember = await requireActiveMember();
   const isAdmin = activeMember.role === "admin" || activeMember.role === "owner";
+  const { activeEvent, entries } = await getShiftScheduleForActiveEvent(activeMember.organizationId);
 
   return (
     <main className="container mx-auto max-w-5xl px-4 py-8 space-y-6">
@@ -15,12 +18,16 @@ export default async function ScoutingSchedule() {
           <TypographyMuted>View the current shift schedule for the active event.</TypographyMuted>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-            Schedule details will appear here.
-          </div>
+          {!activeEvent ? (
+            <NoActiveEvent />
+          ) : (
+            <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
+              Schedule details for {activeEvent.name} will appear below.
+            </div>
+          )}
         </CardContent>
       </Card>
-      <AdminEditing isAdmin={isAdmin} />
+      <AdminEditing isAdmin={isAdmin} eventName={activeEvent?.name ?? null} initialEntries={entries} />
     </main>
   );
 }

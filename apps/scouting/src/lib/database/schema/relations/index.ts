@@ -12,6 +12,7 @@ import { picklistTeam } from "../tables/picklist-team";
 import { pitForm } from "../tables/pit-form";
 import { pitPhoto } from "../tables/pit-photo";
 import { session } from "../tables/session";
+import { shiftSchedule } from "../tables/shift-schedule";
 import { team } from "../tables/team";
 import { user } from "../tables/user";
 
@@ -43,6 +44,7 @@ export const organizationRelations = relations(organization, ({ many }) => ({
   inviteLinks: many(organizationInviteLink),
   organizationEvents: many(organizationEvent),
   picklists: many(picklist),
+  shiftSchedules: many(shiftSchedule),
 }));
 
 export const memberRelations = relations(member, ({ one }) => ({
@@ -131,5 +133,16 @@ export const picklistTeamRelations = relations(picklistTeam, ({ one }) => ({
   team: one(team, {
     fields: [picklistTeam.teamNumber],
     references: [team.teamNumber],
+  }),
+}));
+
+export const shiftScheduleRelations = relations(shiftSchedule, ({ one }) => ({
+  organization: one(organization, {
+    fields: [shiftSchedule.organizationId],
+    references: [organization.id],
+  }),
+  event: one(event, {
+    fields: [shiftSchedule.eventId],
+    references: [event.id],
   }),
 }));

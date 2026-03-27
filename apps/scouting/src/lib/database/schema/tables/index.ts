@@ -16,6 +16,7 @@ export { pitForm } from "./pit-form";
 export { pitPhoto } from "./pit-photo";
 export { session } from "./session";
 export { standForm } from "./stand-form";
+export { shiftSchedule } from "./shift-schedule";
 export { team } from "./team";
 export { teamMatch } from "./team-match";
 export { user } from "./user";
