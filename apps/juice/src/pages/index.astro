@@ -1,5 +1,6 @@
 ---
 import "../styles/globals.css";
+import { LogUploader } from "@/components/LogUploader";
 ---
 
 <html lang="en">
@@ -11,7 +12,10 @@ import "../styles/globals.css";
 		<meta name="generator" content={Astro.generator} />
 		<title>Juice</title>
 	</head>
-	<body>
-		<h1 class="text-2xl font-bold text-primary">Juice</h1>
+	<body class="min-h-screen bg-background text-foreground">
+		<main class="mx-auto max-w-2xl px-4 py-10">
+			<h1 class="mb-6 text-2xl font-bold">Juice</h1>
+			<LogUploader client:only="react" />
+		</main>
 	</body>
 </html>
