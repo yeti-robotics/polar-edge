@@ -136,7 +136,7 @@ export type ScoutCoverageRow = {
 };
 
 /**
- * Per-slot scout count scoped to this org's members.
+ * Per-slot scout count for an event, scoped to this org's members.
  */
 export async function getScoutCoverage(
   eventId: string,
@@ -146,6 +146,14 @@ export async function getScoutCoverage(
   cacheLife("minutes");
   cacheTag(cacheTags.eventTeams(eventId));
   cacheTag(cacheTags.teamMetrics(eventId));
+
+  const coverageJoinCondition = and(
+    eq(standForm.teamMatchId, teamMatch.id),
+    isNull(standForm.deletedAt),
+    sql`(${standForm.scoutMemberId} IS NULL OR ${standForm.scoutMemberId} IN (
+      SELECT id FROM member WHERE organization_id = ${organizationId}
+    ))`
+  );
 
   const rows = await db
     .select({
@@ -158,16 +166,7 @@ export async function getScoutCoverage(
     })
     .from(teamMatch)
     .innerJoin(match, eq(match.id, teamMatch.matchId))
-    .leftJoin(
-      standForm,
-      and(
-        eq(standForm.teamMatchId, teamMatch.id),
-        isNull(standForm.deletedAt),
-        sql`(${standForm.scoutMemberId} IS NULL OR ${standForm.scoutMemberId} IN (
-          SELECT id FROM member WHERE organization_id = ${organizationId}
-        ))`
-      )
-    )
+    .leftJoin(standForm, coverageJoinCondition)
     .where(eq(teamMatch.eventId, eventId))
     .groupBy(
       teamMatch.id,
