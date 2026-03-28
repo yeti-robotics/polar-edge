@@ -93,8 +93,6 @@ function getNoMeetingDateStrings(seasonYear: number): Set<string> {
     [seasonYear, 11, 28],
     [seasonYear + 1, 3, 7],
     [seasonYear + 1, 3, 8],
-    [seasonYear + 1, 3, 20], // Competition
-    [seasonYear + 1, 3, 21], // Competition
     [seasonYear + 1, 4, 2],
     [seasonYear + 1, 4, 3],
     [seasonYear + 1, 4, 4],
