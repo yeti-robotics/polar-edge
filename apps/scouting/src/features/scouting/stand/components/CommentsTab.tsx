@@ -29,7 +29,6 @@ export function CommentsTab() {
               <li>Reliability and consistency of the robot</li>
               <li>If defense was successful or not</li>
               <li>
-                {" "}
                 Robot-Alliance Compatibility Ex: “How does this robot work with other robots?”
               </li>
             </ul>
