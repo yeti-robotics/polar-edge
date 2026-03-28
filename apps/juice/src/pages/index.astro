@@ -1,5 +1,6 @@
 ---
 import "../styles/globals.css";
+import App from "../components/App";
 ---
 
 <html lang="en">
@@ -9,9 +10,9 @@ import "../styles/globals.css";
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Juice</title>
+		<title>Juice - FRC Match Data Analyzer</title>
 	</head>
-	<body>
-		<h1 class="text-2xl font-bold text-primary">Juice</h1>
+	<body class="bg-gray-50 min-h-screen">
+		<App client:load />
 	</body>
 </html>
