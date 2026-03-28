@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
-import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 import { ShiftSchedulePayloadSchema } from "@/features/shift-schedule/types";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
@@ -23,8 +23,8 @@ export async function GET() {
     return NextResponse.json({ error: "No active event" }, { status: 400 });
   }
 
-  const schedule = await db
-    .query.shiftSchedule.findFirst({
+  const schedule = await db.query.shiftSchedule
+    .findFirst({
       where: and(
         eq(shiftSchedule.organizationId, activeMember.organizationId),
         eq(shiftSchedule.eventId, activeEvent.event.id)
