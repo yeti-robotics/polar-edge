@@ -1,21 +1,18 @@
 ---
 import "../styles/globals.css";
-import { LogUploader } from "@/components/LogUploader";
+import { BatteryApp } from "@/components/battery/BatteryApp";
 ---
 
-<html lang="en">
+<html lang="en" class="dark">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Juice</title>
+		<title>Juice — Battery Analyzer</title>
 	</head>
 	<body class="min-h-screen bg-background text-foreground">
-		<main class="mx-auto max-w-2xl px-4 py-10">
-			<h1 class="mb-6 text-2xl font-bold">Juice</h1>
-			<LogUploader client:only="react" />
-		</main>
+		<BatteryApp client:only="react" />
 	</body>
 </html>
