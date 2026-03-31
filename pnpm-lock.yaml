@@ -330,6 +330,9 @@ importers:
       '@repo/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@repo/seed':
+        specifier: workspace:*
+        version: link:../../packages/seed
       '@repo/tba-sdk':
         specifier: workspace:*
         version: link:../../packages/tba-sdk
@@ -449,6 +452,15 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+
+  packages/seed:
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.10.13
 
   packages/tba-sdk:
     dependencies:

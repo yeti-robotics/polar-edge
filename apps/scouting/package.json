@@ -13,6 +13,7 @@
     "db:reset": "pnpm db:start && pnpm db:drop && pnpm db:migrate && pnpm db:seed",
     "db:clear": "pnpm db:start && pnpm db:drop && pnpm db:migrate",
     "db:studio": "drizzle-kit studio",
+    "join:seed": "tsx scripts/join-seed-org.ts",
     "build": "next build",
     "start": "next start",
     "test": "vitest run --passWithNoTests"
@@ -27,6 +28,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@repo/ai": "workspace:*",
+    "@repo/seed": "workspace:*",
     "@repo/tba-sdk": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-form-nextjs": "^1.28.4",
