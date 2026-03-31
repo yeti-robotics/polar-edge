@@ -4,7 +4,8 @@ export function downsample<T>(arr: T[], maxPoints = 900): T[] {
   if (step === 1) return arr;
   const out: T[] = [];
   for (let i = 0; i < arr.length; i += step) {
-    out.push(arr[i]!);
+    const val = arr[i];
+    if (val !== undefined) out.push(val);
   }
   return out;
 }
@@ -12,8 +13,5 @@ export function downsample<T>(arr: T[], maxPoints = 900): T[] {
 /** Create downsampled index array for a given length. */
 export function downsampleIndices(n: number, maxPoints = 900): number[] {
   const step = Math.max(1, Math.floor(n / maxPoints));
-  return Array.from(
-    { length: Math.ceil(n / step) },
-    (_, i) => i * step
-  );
+  return Array.from({ length: Math.ceil(n / step) }, (_, i) => i * step);
 }

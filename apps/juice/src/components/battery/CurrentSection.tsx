@@ -1,44 +1,38 @@
-import { useCallback, useMemo, useState } from "react";
 import type { ChartData, ChartOptions } from "chart.js";
-import { rollingMean } from "@/services/analysis/rolling";
-import {
-  formatEquation,
-  regressionLine,
-} from "@/services/analysis/regression";
-import {
-  computeCurrentStats,
-  findCurrentPeaks,
-} from "@/services/analysis/battery";
+import { useCallback, useMemo, useState } from "react";
+import { computeCurrentStats, findCurrentPeaks } from "@/services/analysis/battery";
 import { downloadCurrentCSV } from "@/services/analysis/csv-export";
+import { formatEquation, regressionLine } from "@/services/analysis/regression";
+import { rollingMean } from "@/services/analysis/rolling";
 import type { MergedData } from "@/services/analysis/types";
-import { StatCard } from "./StatCard";
 import { ChartCard, type SeriesToggle } from "./ChartCard";
+import { StatCard } from "./StatCard";
 
 // YETI dark mode chart palette
 const COLORS = {
   raw: "oklch(0.7366 0.1138 232.04 / 0.5)", // yeti-400 (semi-transparent)
-  rawSolid: "oklch(0.7366 0.1138 232.04)",   // yeti-400
-  peaks: "oklch(0.645 0.246 16.439 / 0.7)",  // chart-5 red
-  reg: "oklch(0.627 0.265 303.9)",           // chart-4 magenta
+  rawSolid: "oklch(0.7366 0.1138 232.04)", // yeti-400
+  peaks: "oklch(0.645 0.246 16.439 / 0.7)", // chart-5 red
+  reg: "oklch(0.627 0.265 303.9)", // chart-4 magenta
 };
 
 // Distinct colors for per-channel lines
 const CHANNEL_COLORS = [
-  "oklch(0.696 0.17 162.48)",    // chart-2 teal
-  "oklch(0.769 0.188 70.08)",    // chart-3 yellow
-  "oklch(0.627 0.265 303.9)",    // chart-4 magenta
-  "oklch(0.645 0.246 16.439)",   // chart-5 red
-  "oklch(0.488 0.243 264.376)",  // chart-1 purple
+  "oklch(0.696 0.17 162.48)", // chart-2 teal
+  "oklch(0.769 0.188 70.08)", // chart-3 yellow
+  "oklch(0.627 0.265 303.9)", // chart-4 magenta
+  "oklch(0.645 0.246 16.439)", // chart-5 red
+  "oklch(0.488 0.243 264.376)", // chart-1 purple
   "oklch(0.7366 0.1138 232.04)", // yeti-400
   "oklch(0.8135 0.0831 232.31)", // yeti-300
   "oklch(0.5538 0.1209 240.68)", // yeti-600
-  "oklch(0.768 0.165 54)",       // warning
-  "oklch(0.704 0.191 22.216)",   // destructive
-  "oklch(0.6 0.118 184.704)",    // light chart-2
-  "oklch(0.828 0.189 84.429)",   // light chart-4
-  "oklch(0.646 0.222 41.116)",   // light chart-1
-  "oklch(0.398 0.07 227.392)",   // light chart-3
-  "oklch(0.769 0.188 70.08)",    // chart-3
+  "oklch(0.768 0.165 54)", // warning
+  "oklch(0.704 0.191 22.216)", // destructive
+  "oklch(0.6 0.118 184.704)", // light chart-2
+  "oklch(0.828 0.189 84.429)", // light chart-4
+  "oklch(0.646 0.222 41.116)", // light chart-1
+  "oklch(0.398 0.07 227.392)", // light chart-3
+  "oklch(0.769 0.188 70.08)", // chart-3
   "oklch(0.4747 0.1025 241.12)", // yeti-700
 ];
 
@@ -66,41 +60,31 @@ export function CurrentSection({ data }: CurrentSectionProps) {
   });
 
   const channelNames = useMemo(
-    () => Object.keys(data.channels).sort((a, b) => {
-      const numA = Number.parseInt(a.replace(/\D/g, ""), 10);
-      const numB = Number.parseInt(b.replace(/\D/g, ""), 10);
-      return numA - numB;
-    }),
+    () =>
+      Object.keys(data.channels).sort((a, b) => {
+        const numA = Number.parseInt(a.replace(/\D/g, ""), 10);
+        const numB = Number.parseInt(b.replace(/\D/g, ""), 10);
+        return numA - numB;
+      }),
     [data.channels]
   );
 
-  const [enabledChannels, setEnabledChannels] = useState<Set<string>>(
-    () => new Set<string>()
-  );
+  const [enabledChannels, setEnabledChannels] = useState<Set<string>>(() => new Set<string>());
 
   const safeCurr = useMemo(
     () => data.currents.map((c) => (Number.isNaN(c) ? 0 : Math.max(0, c))),
     [data.currents]
   );
 
-  const stats = useMemo(
-    () => computeCurrentStats(data.currents),
-    [data.currents]
-  );
+  const stats = useMemo(() => computeCurrentStats(data.currents), [data.currents]);
 
-  const peakIdx = useMemo(
-    () => findCurrentPeaks(data.currents, data.dt),
-    [data.currents, data.dt]
-  );
+  const peakIdx = useMemo(() => findCurrentPeaks(data.currents, data.dt), [data.currents, data.dt]);
 
-  const rollC = useMemo(
-    () => rollingMean(new Float64Array(safeCurr), window),
-    [safeCurr, window]
-  );
+  const rollC = useMemo(() => rollingMean(new Float64Array(safeCurr), window), [safeCurr, window]);
 
   const { reg } = useMemo(() => {
-    const pTimes = peakIdx.map((i) => data.times[i]!);
-    const pVals = peakIdx.map((i) => safeCurr[i]!);
+    const pTimes = peakIdx.map((i) => data.times[i] ?? 0);
+    const pVals = peakIdx.map((i) => safeCurr[i] ?? 0);
     return regressionLine(pTimes, pVals);
   }, [peakIdx, data.times, safeCurr]);
 
@@ -111,23 +95,23 @@ export function CurrentSection({ data }: CurrentSectionProps) {
     const rollVals: number[] = [];
 
     for (let i = 0; i < data.times.length; i += step) {
-      labels.push(Number(data.times[i]!.toFixed(2)));
-      rawVals.push(Number(safeCurr[i]!.toFixed(2)));
-      rollVals.push(Number(rollC[i]!.toFixed(2)));
+      labels.push(Number(data.times[i]?.toFixed(2)));
+      rawVals.push(Number(safeCurr[i]?.toFixed(2)));
+      rollVals.push(Number(rollC[i]?.toFixed(2)));
     }
 
     const scatterPts = peakIdx.map((i) => ({
-      x: Number(data.times[i]!.toFixed(2)),
-      y: Number(safeCurr[i]!.toFixed(2)),
+      x: Number(data.times[i]?.toFixed(2)),
+      y: Number(safeCurr[i]?.toFixed(2)),
     }));
 
     const regPts =
       data.times.length > 0
         ? [
-            { x: data.times[0]!, y: reg.m * data.times[0]! + reg.b },
+            { x: data.times[0] ?? 0, y: reg.m * (data.times[0] ?? 0) + reg.b },
             {
-              x: data.times[data.times.length - 1]!,
-              y: reg.m * data.times[data.times.length - 1]! + reg.b,
+              x: data.times[data.times.length - 1] ?? 0,
+              y: reg.m * (data.times[data.times.length - 1] ?? 0) + reg.b,
             },
           ]
         : [];
@@ -177,18 +161,19 @@ export function CurrentSection({ data }: CurrentSectionProps) {
     // Add per-channel lines for enabled channels (with rolling window applied)
     for (const chName of channelNames) {
       if (!enabledChannels.has(chName)) continue;
-      const chData = data.channels[chName]!;
+      const chData = data.channels[chName];
+      if (!chData) continue;
       const smoothed = rollingMean(new Float64Array(chData), window);
       const chVals: number[] = [];
       for (let i = 0; i < chData.length; i += step) {
-        chVals.push(Number(smoothed[i]!.toFixed(2)));
+        chVals.push(Number(smoothed[i]?.toFixed(2)));
       }
       const colorIdx = channelNames.indexOf(chName) % CHANNEL_COLORS.length;
       datasets.push({
         type: "line" as const,
         label: chName,
         data: chVals,
-        borderColor: CHANNEL_COLORS[colorIdx]!,
+        borderColor: CHANNEL_COLORS[colorIdx] ?? CHANNEL_COLORS[0],
         borderWidth: 1.2,
         pointRadius: 0,
         fill: false,
@@ -226,7 +211,12 @@ export function CurrentSection({ data }: CurrentSectionProps) {
   const seriesToggle: SeriesToggle[] = [
     { key: "raw", label: "Total current", color: COLORS.rawSolid, active: toggles.raw },
     { key: "roll", label: "Rolling mean", color: COLORS.rawSolid, active: toggles.roll },
-    { key: "peaks", label: "Peak scatter", color: "oklch(0.645 0.246 16.439)", active: toggles.peaks },
+    {
+      key: "peaks",
+      label: "Peak scatter",
+      color: "oklch(0.645 0.246 16.439)",
+      active: toggles.peaks,
+    },
     { key: "reg", label: "Regression (peaks)", color: COLORS.reg, active: toggles.reg },
   ];
 
@@ -255,9 +245,7 @@ export function CurrentSection({ data }: CurrentSectionProps) {
             </span>
             <h2 className="text-xl font-medium">Current</h2>
           </div>
-          <p className="font-mono text-xs text-muted-foreground">
-            No current data available.
-          </p>
+          <p className="font-mono text-xs text-muted-foreground">No current data available.</p>
         </div>
       </section>
     );
@@ -275,11 +263,8 @@ export function CurrentSection({ data }: CurrentSectionProps) {
 
         <p className="mb-5 text-sm leading-relaxed text-muted-foreground">
           Current is the{" "}
-          <strong className="text-foreground">
-            sum of all PDP/PDH channel currents
-          </strong>
-          . Relative maxima (local peaks) are plotted as scatter to
-          visualize spike events.
+          <strong className="text-foreground">sum of all PDP/PDH channel currents</strong>. Relative
+          maxima (local peaks) are plotted as scatter to visualize spike events.
         </p>
 
         <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -350,14 +335,7 @@ export function CurrentSection({ data }: CurrentSectionProps) {
           windowLabel={windowLabel(window, data.dt)}
           onWindowChange={setWindow}
           equation={`Regression (peaks): ${formatEquation(reg, "t", "I")}`}
-          onDownload={() =>
-            downloadCurrentCSV(
-              data.times,
-              data.currents,
-              rollC,
-              new Set(peakIdx)
-            )
-          }
+          onDownload={() => downloadCurrentCSV(data.times, data.currents, rollC, new Set(peakIdx))}
         />
       </div>
     </section>

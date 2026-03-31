@@ -56,9 +56,7 @@ export function parseCANJSON(text: string): CANCurrentPoint[] | null {
   return extractCurrents(records);
 }
 
-function normalizeToRecords(
-  json: unknown
-): Record<string, unknown>[] | null {
+function normalizeToRecords(json: unknown): Record<string, unknown>[] | null {
   if (Array.isArray(json)) {
     return json as Record<string, unknown>[];
   }
@@ -67,9 +65,7 @@ function normalizeToRecords(
     const obj = json as Record<string, unknown>;
     // Columnar format: { timestamps: [], device1: [], device2: [] }
     const timeArr =
-      (obj.timestamps as unknown[]) ??
-      (obj.time as unknown[]) ??
-      (obj.t as unknown[]);
+      (obj.timestamps as unknown[]) ?? (obj.time as unknown[]) ?? (obj.t as unknown[]);
     if (Array.isArray(timeArr)) {
       const otherKeys = Object.keys(obj).filter(
         (k) => k !== "timestamps" && k !== "time" && k !== "t" && Array.isArray(obj[k])
@@ -89,10 +85,9 @@ function normalizeToRecords(
   return null;
 }
 
-function extractCurrents(
-  records: Record<string, unknown>[]
-): CANCurrentPoint[] | null {
-  const sample = records[0]!;
+function extractCurrents(records: Record<string, unknown>[]): CANCurrentPoint[] | null {
+  const sample = records[0];
+  if (!sample) return null;
 
   // Find current keys by name heuristic
   let currentKeys = Object.keys(sample).filter(
@@ -113,7 +108,8 @@ function extractCurrents(
 
   const data: CANCurrentPoint[] = [];
   for (let idx = 0; idx < records.length; idx++) {
-    const rec = records[idx]!;
+    const rec = records[idx];
+    if (!rec) continue;
     const t = timeKey ? Number(rec[timeKey]) : idx * 0.02;
     if (Number.isNaN(t)) continue;
 

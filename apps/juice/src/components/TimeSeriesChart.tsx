@@ -73,19 +73,17 @@ export function TimeSeriesChart({
   const dataMax = forceMax ?? Math.max(...data);
   const range = dataMax - dataMin || 1;
 
-  const totalSeconds = durationSeconds ?? (data.length * 0.02);
+  const totalSeconds = durationSeconds ?? data.length * 0.02;
 
-  const toY = (v: number) =>
-    chartTop + chartHeight - ((v - dataMin) / range) * chartHeight;
-  const toX = (i: number) =>
-    chartLeft + (i / (data.length - 1)) * chartWidth;
+  const toY = (v: number) => chartTop + chartHeight - ((v - dataMin) / range) * chartHeight;
+  const toX = (i: number) => chartLeft + (i / (data.length - 1)) * chartWidth;
 
   // Downsample for perf if > 2000 points
   const step = data.length > 2000 ? Math.ceil(data.length / 2000) : 1;
 
   const points: string[] = [];
   for (let i = 0; i < data.length; i += step) {
-    points.push(`${toX(i).toFixed(1)},${toY(data[i]!).toFixed(1)}`);
+    points.push(`${toX(i).toFixed(1)},${toY(data[i] ?? 0).toFixed(1)}`);
   }
   const polyline = points.join(" ");
 
@@ -114,6 +112,7 @@ export function TimeSeriesChart({
       preserveAspectRatio="xMidYMid meet"
       style={{ height }}
     >
+      <title>Time series chart</title>
       {/* Grid lines */}
       {yTicks.map((tick) => (
         <line
@@ -129,37 +128,34 @@ export function TimeSeriesChart({
       ))}
 
       {/* Phase segment background bands */}
-      {segments && (
-        <>
-          {(() => {
-            const bands: { startIdx: number; endIdx: number; color: string }[] = [];
-            let currentColor = segments[0]?.color ?? "transparent";
-            let bandStart = 0;
-            for (let i = 1; i < segments.length; i += step) {
-              const segColor = segments[i]?.color ?? "transparent";
-              if (segColor !== currentColor) {
-                bands.push({ startIdx: bandStart, endIdx: i, color: currentColor });
-                currentColor = segColor;
-                bandStart = i;
-              }
+      {segments &&
+        (() => {
+          const bands: { startIdx: number; endIdx: number; color: string }[] = [];
+          let currentColor = segments[0]?.color ?? "transparent";
+          let bandStart = 0;
+          for (let i = 1; i < segments.length; i += step) {
+            const segColor = segments[i]?.color ?? "transparent";
+            if (segColor !== currentColor) {
+              bands.push({ startIdx: bandStart, endIdx: i, color: currentColor });
+              currentColor = segColor;
+              bandStart = i;
             }
-            bands.push({ startIdx: bandStart, endIdx: segments.length - 1, color: currentColor });
-            return bands
-              .filter((b) => b.color !== "transparent")
-              .map((b) => (
-                <rect
-                  key={b.startIdx}
-                  x={toX(b.startIdx)}
-                  y={chartTop}
-                  width={toX(b.endIdx) - toX(b.startIdx)}
-                  height={chartHeight}
-                  fill={b.color}
-                  opacity={0.1}
-                />
-              ));
-          })()}
-        </>
-      )}
+          }
+          bands.push({ startIdx: bandStart, endIdx: segments.length - 1, color: currentColor });
+          return bands
+            .filter((b) => b.color !== "transparent")
+            .map((b) => (
+              <rect
+                key={b.startIdx}
+                x={toX(b.startIdx)}
+                y={chartTop}
+                width={toX(b.endIdx) - toX(b.startIdx)}
+                height={chartHeight}
+                fill={b.color}
+                opacity={0.1}
+              />
+            ));
+        })()}
 
       {/* Threshold lines */}
       {thresholds?.map((t) => (
@@ -174,22 +170,14 @@ export function TimeSeriesChart({
             strokeDasharray="6 3"
             opacity={0.5}
           />
-          <text
-            x={chartLeft + 4}
-            y={toY(t.value) - 3}
-            fill={t.color}
-            fontSize={9}
-            opacity={0.7}
-          >
+          <text x={chartLeft + 4} y={toY(t.value) - 3} fill={t.color} fontSize={9} opacity={0.7}>
             {t.label}
           </text>
         </g>
       ))}
 
       {/* Fill area */}
-      {fillPoints && (
-        <polygon points={fillPoints} fill={fillColor} opacity={0.15} />
-      )}
+      {fillPoints && <polygon points={fillPoints} fill={fillColor} opacity={0.15} />}
 
       {/* Data line */}
       <polyline

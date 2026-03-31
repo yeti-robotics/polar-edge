@@ -1,22 +1,22 @@
-import { useMemo, useRef } from "react";
+import { Button } from "@repo/ui/components/button";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  LineController,
   BarController,
+  BarElement,
+  CategoryScale,
+  type ChartData,
+  Chart as ChartJS,
+  type ChartOptions,
+  Filler,
+  LinearScale,
+  LineController,
+  LineElement,
+  type Plugin,
+  PointElement,
   ScatterController,
   Tooltip,
-  Filler,
-  type ChartData,
-  type ChartOptions,
-  type Plugin,
 } from "chart.js";
+import { useMemo, useRef } from "react";
 import { Chart } from "react-chartjs-2";
-import { Button } from "@repo/ui/components/button";
 
 // Register only what we need
 ChartJS.register(
@@ -144,12 +144,8 @@ export function ChartCard({
                   className="rounded px-2.5 py-1 font-mono text-[10px] transition-colors border"
                   style={{
                     backgroundColor: t.active ? t.color : "transparent",
-                    color: t.active
-                      ? "var(--background)"
-                      : "var(--muted-foreground)",
-                    borderColor: t.active
-                      ? t.color
-                      : "var(--border)",
+                    color: t.active ? "var(--background)" : "var(--muted-foreground)",
+                    borderColor: t.active ? t.color : "var(--border)",
                     fontWeight: t.active ? 500 : 400,
                   }}
                 >
@@ -169,14 +165,10 @@ export function ChartCard({
                 min={1}
                 max={250}
                 value={windowValue}
-                onChange={(e) =>
-                  onWindowChange(Number(e.target.value))
-                }
+                onChange={(e) => onWindowChange(Number(e.target.value))}
                 className="h-1 w-28 cursor-pointer appearance-none rounded-full bg-muted accent-primary"
               />
-              <span className="min-w-[36px] font-mono text-[11px] text-primary">
-                {windowLabel}
-              </span>
+              <span className="min-w-[36px] font-mono text-[11px] text-primary">{windowLabel}</span>
             </div>
           )}
 
@@ -193,9 +185,7 @@ export function ChartCard({
         <h3 className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
           {title}
         </h3>
-        <p className="mb-3 text-[11px] text-muted-foreground">
-          {subtitle}
-        </p>
+        <p className="mb-3 text-[11px] text-muted-foreground">{subtitle}</p>
         <div style={{ height }}>
           <Chart
             ref={chartRef}

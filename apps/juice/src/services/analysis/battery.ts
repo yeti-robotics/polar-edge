@@ -18,12 +18,9 @@ export function estimateOCV(volts: number[]): number {
 }
 
 /** Compute instantaneous power P = V × I. */
-export function computePower(
-  volts: number[],
-  currents: number[]
-): number[] {
+export function computePower(volts: number[], currents: number[]): number[] {
   return volts.map((v, i) => {
-    const c = currents[i]!;
+    const c = currents[i] ?? 0;
     return !Number.isNaN(c) ? Math.max(0, v * c) : NaN;
   });
 }
@@ -40,21 +37,21 @@ export function computeImpedance(
   ocv: number,
   dt: number
 ): ImpedanceSample[] {
-  const safeCurr = currents.map((c) =>
-    Number.isNaN(c) ? 0 : Math.max(0, c)
-  );
+  const safeCurr = currents.map((c) => (Number.isNaN(c) ? 0 : Math.max(0, c)));
   const minGap = Math.max(1, Math.round(0.1 / dt));
   const peakIdx = findLocalMaxima(safeCurr, I_MIN_IMPEDANCE, minGap);
 
   return peakIdx
     .map((idx) => {
-      const sag = Math.max(0, ocv - volts[idx]!);
-      const R = safeCurr[idx]! > 0 ? (sag / safeCurr[idx]!) * 1000 : NaN;
+      const v = volts[idx] ?? 0;
+      const c = safeCurr[idx] ?? 0;
+      const sag = Math.max(0, ocv - v);
+      const R = c > 0 ? (sag / c) * 1000 : NaN;
       return {
         idx,
-        t: times[idx]!,
-        v: volts[idx]!,
-        c: safeCurr[idx]!,
+        t: times[idx] ?? 0,
+        v,
+        c,
         sag,
         R,
       };
@@ -63,22 +60,13 @@ export function computeImpedance(
 }
 
 /** Find indices of current peaks above 30A (for scatter plot). */
-export function findCurrentPeaks(
-  currents: number[],
-  dt: number
-): number[] {
-  const safeCurr = currents.map((c) =>
-    Number.isNaN(c) ? 0 : Math.max(0, c)
-  );
+export function findCurrentPeaks(currents: number[], dt: number): number[] {
+  const safeCurr = currents.map((c) => (Number.isNaN(c) ? 0 : Math.max(0, c)));
   const minGap = Math.max(1, Math.round(0.1 / dt));
   return findLocalMaxima(safeCurr, 30, minGap);
 }
 
-export function computeVoltageStats(
-  volts: number[],
-  ocv: number,
-  dt: number
-): VoltageStats {
+export function computeVoltageStats(volts: number[], ocv: number, dt: number): VoltageStats {
   const min = Math.min(...volts);
   const max = Math.max(...volts);
   const mean = volts.reduce((a, b) => a + b, 0) / volts.length;
@@ -99,25 +87,16 @@ export function computeCurrentStats(currents: number[]): CurrentStats {
   const valid = currents.filter((c) => !Number.isNaN(c) && c > 0);
   return {
     peak: valid.length ? Math.max(...valid) : 0,
-    mean: valid.length
-      ? valid.reduce((a, b) => a + b, 0) / valid.length
-      : 0,
-    samplesAbove120: currents.filter(
-      (c) => !Number.isNaN(c) && c > 120
-    ).length,
+    mean: valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : 0,
+    samplesAbove120: currents.filter((c) => !Number.isNaN(c) && c > 120).length,
   };
 }
 
-export function computePowerStats(
-  power: number[],
-  dt: number
-): PowerStats {
+export function computePowerStats(power: number[], dt: number): PowerStats {
   const valid = power.filter((p) => !Number.isNaN(p) && p > 0);
   const peak = valid.length ? Math.max(...valid) : 0;
-  const mean = valid.length
-    ? valid.reduce((a, b) => a + b, 0) / valid.length
-    : 0;
-  const totalWh = valid.reduce((a, b) => a + b, 0) * dt / 3600;
+  const mean = valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : 0;
+  const totalWh = (valid.reduce((a, b) => a + b, 0) * dt) / 3600;
 
   return {
     peak,
@@ -127,9 +106,7 @@ export function computePowerStats(
   };
 }
 
-export function computeImpedanceStats(
-  samples: ImpedanceSample[]
-): ImpedanceStats {
+export function computeImpedanceStats(samples: ImpedanceSample[]): ImpedanceStats {
   if (samples.length < 3) {
     return {
       medianR: 0,
@@ -141,8 +118,8 @@ export function computeImpedanceStats(
   }
 
   const Rs = samples.map((s) => s.R).sort((a, b) => a - b);
-  const medianR = Rs[Math.floor(Rs.length / 2)]!;
-  const p90R = Rs[Math.floor(Rs.length * 0.9)]!;
+  const medianR = Rs[Math.floor(Rs.length / 2)] ?? 0;
+  const p90R = Rs[Math.floor(Rs.length * 0.9)] ?? 0;
   // CCA estimate: 7200 / R_median (empirical formula for FRC batteries)
   const estimatedCCA = medianR > 0 ? Math.round(7200 / medianR) : 0;
 

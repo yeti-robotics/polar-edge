@@ -1,11 +1,11 @@
 import { useState } from "react";
-import type { MergedData } from "@/services/analysis/types";
-import { parseDSFile } from "@/services/analysis/parse-voltage";
-import { parseCANJSON } from "@/services/can/parser";
-import { mergeData } from "@/services/analysis/merge";
 import { generateDemoData } from "@/services/analysis/demo";
-import { BatteryLanding } from "./BatteryLanding";
+import { mergeData } from "@/services/analysis/merge";
+import { parseDSFile } from "@/services/analysis/parse-voltage";
+import type { MergedData } from "@/services/analysis/types";
+import { parseCANJSON } from "@/services/can/parser";
 import { BatteryAnalysis } from "./BatteryAnalysis";
+import { BatteryLanding } from "./BatteryLanding";
 
 type Phase = "landing" | "analysis";
 
@@ -48,9 +48,7 @@ export function BatteryApp() {
       setMergedData(merged);
       setPhase("analysis");
     } catch (e) {
-      setError(
-        e instanceof Error ? e.message : "Failed to analyze files"
-      );
+      setError(e instanceof Error ? e.message : "Failed to analyze files");
     } finally {
       setLoading(false);
     }
