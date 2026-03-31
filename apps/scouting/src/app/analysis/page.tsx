@@ -6,6 +6,8 @@ import {
 } from "@repo/ui/components/typography";
 import { GitGraphIcon, TableIcon, UsersIcon } from "lucide-react";
 import { headers } from "next/headers";
+import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
+import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
@@ -17,24 +19,33 @@ import {
   getTeamCount,
 } from "@/features/analysis/queries";
 import { auth } from "@/lib/auth";
+import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+import { routes } from "@/lib/routes";
 
 const navCards = [
   {
-    href: "/analysis/teams",
+    href: routes.analysis.teams,
     icon: UsersIcon,
     title: "Teams",
     description:
       "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
-    href: "/analysis/comparison",
+    href: routes.analysis.comparison,
     icon: GitGraphIcon,
     title: "Comparison",
     description:
       "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
-    href: "/analysis/events",
+    href: routes.analysis.scoutCoverage,
+    icon: ShieldCheckIcon,
+    title: "Scout Coverage",
+    description:
+      "Spot missing or thinly covered stand forms for a competition using the same coverage grid from validation.",
+  },
+  {
+    href: routes.analysis.events,
     icon: TableIcon,
     title: "Events",
     description:
@@ -126,7 +137,6 @@ export default function AnalysisPage() {
           </Suspense>
         </div>
       </div>
-
       <NavCardGrid items={navCards} />
       <TypographyH1> c</TypographyH1>
     </div>

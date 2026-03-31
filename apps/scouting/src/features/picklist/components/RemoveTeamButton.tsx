@@ -10,7 +10,14 @@ interface RemoveTeamButtonProps {
 
 export function RemoveTeamButton({ teamNumber, onRemove }: RemoveTeamButtonProps) {
   return (
-    <Button variant="ghost" size="icon" onClick={() => onRemove(teamNumber)}>
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label={`Remove team ${teamNumber} from picklist`}
+      title="Remove team"
+      onClick={() => onRemove(teamNumber)}
+    >
       <XIcon className="size-4" />
     </Button>
   );

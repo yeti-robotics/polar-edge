@@ -3,7 +3,12 @@
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!apps/basecamp-fe/src/app/@auth/teams.json"]
+    "includes": [
+      "**",
+      "!apps/basecamp-fe/src/app/@auth/teams.json",
+      "!apps/basecamp-fe/src/features/totp/teams.json",
+      "!apps/scouting/scripts/teams.json"
+    ]
   },
   "formatter": {
     "enabled": true,

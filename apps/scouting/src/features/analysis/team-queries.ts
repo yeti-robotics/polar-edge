@@ -423,7 +423,7 @@ Respond ONLY with valid JSON:
 
 ## Definitions
 - reliability: mechanical reliability, uptime, consistency
-- defense: defensive capability, blocking, field control
+- defense: defensive capability, blocking, field control. If no defensive observations exist, rate as "Neutral" — not every robot plays defense and that is perfectly fine.
 - overall: general sentiment across all observations
 - summary: synthesize key observations in 3-5 sentences
 

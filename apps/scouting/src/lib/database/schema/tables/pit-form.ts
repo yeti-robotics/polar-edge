@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { climbTypeEnum } from "../types/climb-type-enum";
 import { drivetrainEnum } from "../types/drivetrain-enum";
+import { shooterTypeEnum } from "../types/shooter-type-enum";
 import { member } from "./member";
 import { team } from "./team";
 
@@ -33,6 +34,8 @@ export const pitForm = pgTable(
     weight: smallint("weight").notNull().default(0),
 
     climbType: climbTypeEnum("climb_type"),
+    shooterType: shooterTypeEnum("shooter_type"),
+    canShootWhileMoving: boolean("can_shoot_while_moving").notNull().default(false),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
