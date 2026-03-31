@@ -20,6 +20,21 @@ const NEW_USER_WINDOW_MS = 60_000; // 1 minute
 const betterAuthUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 const hostname = new URL(betterAuthUrl).hostname;
 
+async function getInitialOrganization(userId: string) {
+  const user = await db.query.user.findFirst({
+    where: eq(userTable.id, userId),
+    with: {
+      members: {
+        with: {
+          organization: true,
+        },
+      },
+    },
+  });
+
+  return user?.members[0]?.organization;
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -117,6 +132,21 @@ export const auth = betterAuth({
         }
       }
     }),
+  },
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const organization = await getInitialOrganization(session.userId);
+          return {
+            data: {
+              ...session,
+              activeOrganizationId: organization?.id,
+            },
+          };
+        },
+      },
+    },
   },
   plugins: [
     organization({

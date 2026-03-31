@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.3.1...basecamp-v1.3.2) (2026-03-25)
+
+
+### Bug Fixes
+
+* add competiion exclusion ([77f5b5d](https://github.com/yeti-robotics/polar-edge/commit/77f5b5d53edfea64d6549782f0374ae0c1cb92ad))
+
+## [1.3.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.3.0...basecamp-v1.3.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* **basecamp:** add exclusion for cab ([f065093](https://github.com/yeti-robotics/polar-edge/commit/f0650933f8bf6c6feef53fd427766abcc0a6b1ba))
+
 ## [1.3.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.2.0...basecamp-v1.3.0) (2026-03-05)
 
 

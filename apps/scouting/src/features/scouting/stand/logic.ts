@@ -66,7 +66,7 @@ export async function submitStandForm(
   }
 
   const validTeamMatch = await db
-    .select({ id: teamMatch.id })
+    .select({ id: teamMatch.id, teamNumber: teamMatch.teamNumber })
     .from(teamMatch)
     .innerJoin(match, eq(teamMatch.matchId, match.id))
     .where(and(eq(teamMatch.id, data.teamMatchId), eq(match.eventId, activeEvent.event.id)))
@@ -116,5 +116,9 @@ export async function submitStandForm(
     }
   });
 
-  return { success: true, eventId: activeEvent.event.id };
+  return {
+    success: true,
+    eventId: activeEvent.event.id,
+    teamNumber: validTeamMatch[0]?.teamNumber,
+  };
 }
