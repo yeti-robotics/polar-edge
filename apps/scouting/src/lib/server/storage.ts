@@ -4,6 +4,7 @@ import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 type PresignerClient = Parameters<typeof getSignedUrl>[0];
+type PresignerCommand = Parameters<typeof getSignedUrl>[1];
 
 function getStorageConfig() {
   const endpoint = process.env.SPACES_ENDPOINT;
@@ -74,9 +75,13 @@ export async function createPresignedUploadUrl(
     ContentLength: maxSizeBytes, // Enforce maximum upload size at S3 level
   });
 
-  const url = await getSignedUrl(client as unknown as PresignerClient, command, {
-    expiresIn: UPLOAD_EXPIRATION_SECONDS,
-  });
+  const url = await getSignedUrl(
+    client as unknown as PresignerClient,
+    command as unknown as PresignerCommand,
+    {
+      expiresIn: UPLOAD_EXPIRATION_SECONDS,
+    }
+  );
 
   return { url, key: objectKey };
 }
@@ -90,9 +95,13 @@ export async function createPresignedDownloadUrl(objectKey: string): Promise<str
     Key: objectKey,
   });
 
-  return getSignedUrl(client as unknown as PresignerClient, command, {
-    expiresIn: DOWNLOAD_EXPIRATION_SECONDS,
-  });
+  return getSignedUrl(
+    client as unknown as PresignerClient,
+    command as unknown as PresignerCommand,
+    {
+      expiresIn: DOWNLOAD_EXPIRATION_SECONDS,
+    }
+  );
 }
 
 /**
