@@ -1,21 +1,18 @@
-import { useCallback, useMemo, useState } from "react";
 import type { ChartData, ChartOptions } from "chart.js";
-import { rollingMean } from "@/services/analysis/rolling";
-import {
-  formatEquation,
-  regressionLine,
-} from "@/services/analysis/regression";
+import { useCallback, useMemo, useState } from "react";
 import { computePowerStats } from "@/services/analysis/battery";
 import { downloadPowerCSV } from "@/services/analysis/csv-export";
+import { formatEquation, regressionLine } from "@/services/analysis/regression";
+import { rollingMean } from "@/services/analysis/rolling";
 import type { MergedData } from "@/services/analysis/types";
-import { StatCard } from "./StatCard";
 import { ChartCard, type SeriesToggle } from "./ChartCard";
+import { StatCard } from "./StatCard";
 
 // YETI dark mode chart palette
 const COLORS = {
-  raw: "oklch(0.627 0.265 303.9 / 0.4)",  // chart-4 magenta (semi-transparent)
-  rawSolid: "oklch(0.627 0.265 303.9)",    // chart-4 magenta
-  reg: "oklch(0.696 0.17 162.48)",         // chart-2 teal
+  raw: "oklch(0.627 0.265 303.9 / 0.4)", // chart-4 magenta (semi-transparent)
+  rawSolid: "oklch(0.627 0.265 303.9)", // chart-4 magenta
+  reg: "oklch(0.696 0.17 162.48)", // chart-2 teal
 };
 
 const TICK_STYLE = {
@@ -41,25 +38,13 @@ export function PowerSection({ data, power }: PowerSectionProps) {
     reg: true,
   });
 
-  const safePow = useMemo(
-    () => power.map((p) => (Number.isNaN(p) ? 0 : p)),
-    [power]
-  );
+  const safePow = useMemo(() => power.map((p) => (Number.isNaN(p) ? 0 : p)), [power]);
 
-  const stats = useMemo(
-    () => computePowerStats(power, data.dt),
-    [power, data.dt]
-  );
+  const stats = useMemo(() => computePowerStats(power, data.dt), [power, data.dt]);
 
-  const rollP = useMemo(
-    () => rollingMean(new Float64Array(safePow), window),
-    [safePow, window]
-  );
+  const rollP = useMemo(() => rollingMean(new Float64Array(safePow), window), [safePow, window]);
 
-  const { reg } = useMemo(
-    () => regressionLine(data.times, safePow),
-    [data.times, safePow]
-  );
+  const { reg } = useMemo(() => regressionLine(data.times, safePow), [data.times, safePow]);
 
   const chartData = useMemo<ChartData<"line">>(() => {
     const step = Math.max(1, Math.floor(data.times.length / 900));
@@ -69,12 +54,10 @@ export function PowerSection({ data, power }: PowerSectionProps) {
     const regVals: number[] = [];
 
     for (let i = 0; i < data.times.length; i += step) {
-      labels.push(Number(data.times[i]!.toFixed(2)));
-      rawVals.push(Number(safePow[i]!.toFixed(1)));
-      rollVals.push(Number(rollP[i]!.toFixed(1)));
-      regVals.push(
-        Number((reg.m * data.times[i]! + reg.b).toFixed(1))
-      );
+      labels.push(Number(data.times[i]?.toFixed(2)));
+      rawVals.push(Number(safePow[i]?.toFixed(1)));
+      rollVals.push(Number(rollP[i]?.toFixed(1)));
+      regVals.push(Number((reg.m * (data.times[i] ?? 0) + reg.b).toFixed(1)));
     }
 
     return {
@@ -185,8 +168,8 @@ export function PowerSection({ data, power }: PowerSectionProps) {
           <span className="inline-flex items-baseline gap-0.5 rounded border border-border bg-card px-2 py-0.5 font-mono text-xs text-foreground">
             <i>P</i> = <i>V</i> × <i>I</i>
           </span>{" "}
-          using DS log voltage and summed current. The regression line
-          shows whether power demand trends up or remains flat.
+          using DS log voltage and summed current. The regression line shows whether power demand
+          trends up or remains flat.
         </p>
 
         <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -231,18 +214,14 @@ export function PowerSection({ data, power }: PowerSectionProps) {
           subtitle="P = V × I. Dashed: 1500W sustained warning."
           data={chartData}
           options={chartOptions}
-          thresholds={[
-            { y: 1500, color: "oklch(0.769 0.188 70.08 / 0.5)", label: "1500W" },
-          ]}
+          thresholds={[{ y: 1500, color: "oklch(0.769 0.188 70.08 / 0.5)", label: "1500W" }]}
           toggles={seriesToggle}
           onToggle={handleToggle}
           windowValue={window}
           windowLabel={windowLabel(window, data.dt)}
           onWindowChange={setWindow}
           equation={`Regression: ${formatEquation(reg, "t", "P")}`}
-          onDownload={() =>
-            downloadPowerCSV(data.times, power, rollP, reg)
-          }
+          onDownload={() => downloadPowerCSV(data.times, power, rollP, reg)}
         />
       </div>
     </section>

@@ -26,7 +26,6 @@ export function FileUploadCard({
   const isOptional = variant === "optional";
   const hasFile = file !== null;
 
-  const accentColor = isOptional ? "amber" : "primary";
   const borderClass = hasFile
     ? isOptional
       ? "border-amber-500 bg-amber-500/5"
@@ -34,7 +33,8 @@ export function FileUploadCard({
     : "border-border hover:border-primary/50";
 
   return (
-    <div
+    <button
+      type="button"
       onClick={() => inputRef.current?.click()}
       onDragOver={(e) => {
         e.preventDefault();
@@ -60,16 +60,10 @@ export function FileUploadCard({
         {label}
       </span>
       <span className="text-sm font-medium text-foreground">{title}</span>
-      <span className="text-xs leading-relaxed text-muted-foreground">
-        {description}
-      </span>
+      <span className="text-xs leading-relaxed text-muted-foreground">{description}</span>
       <span
         className={`font-mono text-[11px] ${
-          hasFile
-            ? isOptional
-              ? "text-amber-500"
-              : "text-primary"
-            : "text-muted-foreground"
+          hasFile ? (isOptional ? "text-amber-500" : "text-primary") : "text-muted-foreground"
         }`}
       >
         {hasFile ? file.name : "No file selected"}
@@ -84,6 +78,6 @@ export function FileUploadCard({
           if (f) onFileSelect(f);
         }}
       />
-    </div>
+    </button>
   );
 }

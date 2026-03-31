@@ -19,11 +19,7 @@ export function generateDemoData(): {
     if (i < 250) {
       load = 8 + Math.random() * 4;
     } else if (i < 1000) {
-      load =
-        70 +
-        Math.sin(i * 0.2) * 40 +
-        (Math.random() < 0.08 ? 140 : 0) +
-        Math.random() * 10;
+      load = 70 + Math.sin(i * 0.2) * 40 + (Math.random() < 0.08 ? 140 : 0) + Math.random() * 10;
     } else {
       load =
         52 +
@@ -34,10 +30,7 @@ export function generateDemoData(): {
     }
 
     const imp = 0.013 + (1 - soc) * 0.028 + (Math.random() - 0.5) * 0.003;
-    const v = Math.max(
-      6.1,
-      12.6 * soc - load * imp + (Math.random() - 0.5) * 0.07
-    );
+    const v = Math.max(6.1, 12.6 * soc - load * imp + (Math.random() - 0.5) * 0.07);
 
     dsData.push({
       t: Number(t.toFixed(3)),

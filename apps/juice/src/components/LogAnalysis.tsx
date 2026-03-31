@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { LogStoreService } from "@/services/LogStore";
-import type { StoredLog, StoredRecord } from "@/services/LogStore";
 import type { DSLogParsedRecord } from "@/services/dslog";
+import type { StoredLog, StoredRecord } from "@/services/LogStore";
+import { LogStoreService } from "@/services/LogStore";
 import { TimeSeriesChart } from "./TimeSeriesChart";
 
 type DSLogStoredRecord = StoredRecord<DSLogParsedRecord>;
@@ -109,15 +109,18 @@ function StatCard({
   value,
   sub,
   warn,
-}: { label: string; value: string; sub?: string; warn?: boolean }) {
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  warn?: boolean;
+}) {
   return (
     <div
       className={`rounded-lg border px-3 py-2 ${warn ? "border-destructive/30 bg-destructive/5" : ""}`}
     >
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`text-lg font-semibold ${warn ? "text-destructive" : ""}`}>
-        {value}
-      </p>
+      <p className={`text-lg font-semibold ${warn ? "text-destructive" : ""}`}>{value}</p>
       {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
     </div>
   );
@@ -172,10 +175,7 @@ function PhaseBar({ summary }: { summary: AnalysisSummary }) {
   );
 }
 
-function ChartSection({
-  title,
-  children,
-}: { title: string; children: React.ReactNode }) {
+function ChartSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
       <h3 className="text-xs font-medium text-muted-foreground">{title}</h3>
@@ -185,10 +185,10 @@ function ChartSection({
 }
 
 function PdpHeatmap({ records }: { records: DSLogStoredRecord[] }) {
-  if (records.length === 0 || records[0]!.data.pdpChannels.length === 0)
+  if (records.length === 0 || records[0]?.data.pdpChannels.length === 0)
     return <p className="text-xs text-muted-foreground">No PDP data</p>;
 
-  const channelCount = records[0]!.data.pdpChannels.length;
+  const channelCount = records[0]?.data.pdpChannels.length;
   const avgCurrents: number[] = [];
   const maxCurrents: number[] = [];
 
@@ -209,7 +209,7 @@ function PdpHeatmap({ records }: { records: DSLogStoredRecord[] }) {
   return (
     <div className="grid grid-cols-4 gap-1">
       {avgCurrents.map((avg, i) => {
-        const intensity = maxCurrents[i]! / globalMax;
+        const intensity = (maxCurrents[i] ?? 0) / globalMax;
         return (
           <div
             key={i}
@@ -221,7 +221,7 @@ function PdpHeatmap({ records }: { records: DSLogStoredRecord[] }) {
             <span className="text-[10px] text-muted-foreground">CH {i}</span>
             <span className="text-xs font-medium">{avg.toFixed(1)}A</span>
             <span className="text-[10px] text-muted-foreground">
-              peak {maxCurrents[i]!.toFixed(1)}A
+              peak {maxCurrents[i]?.toFixed(1)}A
             </span>
           </div>
         );
@@ -238,10 +238,7 @@ export function LogAnalysis({ log, onBack }: LogAnalysisProps) {
     let cancelled = false;
     (async () => {
       const store = await LogStoreService.getInstance();
-      const data = await store.getRecordsForLog<DSLogParsedRecord>(
-        log.id,
-        log.logType
-      );
+      const data = await store.getRecordsForLog<DSLogParsedRecord>(log.id, log.logType);
       if (!cancelled) {
         setRecords(data);
         setLoading(false);
@@ -263,9 +260,7 @@ export function LogAnalysis({ log, onBack }: LogAnalysisProps) {
   const packetLoss = records.map((r) => r.data.packetLossPercent);
   const canUtil = records.map((r) => r.data.canUtilizationPercent * 100);
   const cpu = records.map((r) => r.data.rioCpuPercent * 100);
-  const totalCurrent = records.map((r) =>
-    r.data.pdpChannels.reduce((a, b) => a + b, 0)
-  );
+  const totalCurrent = records.map((r) => r.data.pdpChannels.reduce((a, b) => a + b, 0));
 
   const phaseSegments = records.map((r) => ({
     color: r.data.robotAuto
@@ -290,8 +285,7 @@ export function LogAnalysis({ log, onBack }: LogAnalysisProps) {
           <p className="text-xs text-muted-foreground">
             {new Date(log.startTime).toLocaleString()}
             {" · "}
-            {summary.durationSeconds.toFixed(1)}s
-            {" · "}
+            {summary.durationSeconds.toFixed(1)}s{" · "}
             {log.recordCount.toLocaleString()} samples
           </p>
         </div>
@@ -334,14 +328,8 @@ export function LogAnalysis({ log, onBack }: LogAnalysisProps) {
           value={`${(summary.avgCpu * 100).toFixed(1)}%`}
           warn={summary.avgCpu > 0.8}
         />
-        <StatCard
-          label="Auto Time"
-          value={`${summary.autoSeconds.toFixed(1)}s`}
-        />
-        <StatCard
-          label="Teleop Time"
-          value={`${summary.teleopSeconds.toFixed(1)}s`}
-        />
+        <StatCard label="Auto Time" value={`${summary.autoSeconds.toFixed(1)}s`} />
+        <StatCard label="Teleop Time" value={`${summary.teleopSeconds.toFixed(1)}s`} />
       </div>
 
       <ChartSection title="Battery Voltage (V)">
@@ -368,9 +356,7 @@ export function LogAnalysis({ log, onBack }: LogAnalysisProps) {
           fillColor="hsl(221, 83%, 53%)"
           min={0}
           segments={phaseSegments}
-          thresholds={[
-            { value: 10, color: "hsl(48, 96%, 53%)", label: "10ms" },
-          ]}
+          thresholds={[{ value: 10, color: "hsl(48, 96%, 53%)", label: "10ms" }]}
         />
       </ChartSection>
 
@@ -395,9 +381,7 @@ export function LogAnalysis({ log, onBack }: LogAnalysisProps) {
           min={0}
           max={100}
           segments={phaseSegments}
-          thresholds={[
-            { value: 70, color: "hsl(48, 96%, 53%)", label: "70%" },
-          ]}
+          thresholds={[{ value: 70, color: "hsl(48, 96%, 53%)", label: "70%" }]}
         />
       </ChartSection>
 

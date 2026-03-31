@@ -1,22 +1,18 @@
-import { useCallback, useMemo, useState } from "react";
 import type { ChartData, ChartOptions } from "chart.js";
-import { rollingMin } from "@/services/analysis/rolling";
-import {
-  formatEquation,
-  regressionLine,
-} from "@/services/analysis/regression";
+import { useCallback, useMemo, useState } from "react";
 import { computeVoltageStats } from "@/services/analysis/battery";
 import { downloadVoltageCSV } from "@/services/analysis/csv-export";
-import { downsample } from "@/services/analysis/downsample";
-import type { MergedData, RegressionResult } from "@/services/analysis/types";
-import { StatCard } from "./StatCard";
+import { formatEquation, regressionLine } from "@/services/analysis/regression";
+import { rollingMin } from "@/services/analysis/rolling";
+import type { MergedData } from "@/services/analysis/types";
 import { ChartCard, type SeriesToggle } from "./ChartCard";
+import { StatCard } from "./StatCard";
 
 // YETI dark mode chart palette
 const CHART_COLORS = {
-  raw: "oklch(0.696 0.17 162.48)",    // chart-2 teal
-  roll: "oklch(0.769 0.188 70.08)",   // chart-3 yellow
-  reg: "oklch(0.627 0.265 303.9)",    // chart-4 magenta
+  raw: "oklch(0.696 0.17 162.48)", // chart-2 teal
+  roll: "oklch(0.769 0.188 70.08)", // chart-3 yellow
+  reg: "oklch(0.627 0.265 303.9)", // chart-4 magenta
 };
 
 const TICK_STYLE = {
@@ -42,19 +38,15 @@ export function VoltageSection({ data, ocv }: VoltageSectionProps) {
     reg: true,
   });
 
-  const stats = useMemo(
-    () => computeVoltageStats(data.volts, ocv, data.dt),
-    [data, ocv]
-  );
+  const stats = useMemo(() => computeVoltageStats(data.volts, ocv, data.dt), [data, ocv]);
 
   const rollV = useMemo(
     () => rollingMin(new Float64Array(data.volts), window),
     [data.volts, window]
   );
 
-  const { reg, regPoints } = useMemo(() => {
-    const { reg, points } = regressionLine(data.times, data.volts);
-    return { reg, regPoints: points };
+  const { reg } = useMemo(() => {
+    return regressionLine(data.times, data.volts);
   }, [data]);
 
   const chartData = useMemo<ChartData<"line">>(() => {
@@ -65,10 +57,10 @@ export function VoltageSection({ data, ocv }: VoltageSectionProps) {
     const regVals: number[] = [];
 
     for (let i = 0; i < data.times.length; i += step) {
-      labels.push(Number(data.times[i]!.toFixed(2)));
-      rawVals.push(Number(data.volts[i]!.toFixed(4)));
-      rollVals.push(Number(rollV[i]!.toFixed(4)));
-      regVals.push(Number((reg.m * data.times[i]! + reg.b).toFixed(4)));
+      labels.push(Number(data.times[i]?.toFixed(2)));
+      rawVals.push(Number(data.volts[i]?.toFixed(4)));
+      rollVals.push(Number(rollV[i]?.toFixed(4)));
+      regVals.push(Number((reg.m * (data.times[i] ?? 0) + reg.b).toFixed(4)));
     }
 
     return {
@@ -156,8 +148,7 @@ export function VoltageSection({ data, ocv }: VoltageSectionProps) {
     setToggles((prev) => ({ ...prev, [key]: !prev[key as keyof typeof prev] }));
   }, []);
 
-  const f2 = (v: number) =>
-    Number.isNaN(v) ? "—" : v.toFixed(2);
+  const f2 = (v: number) => (Number.isNaN(v) ? "—" : v.toFixed(2));
 
   return (
     <section className="scroll-mt-14 border-b border-border px-7 py-10" id="s-voltage">
@@ -171,10 +162,10 @@ export function VoltageSection({ data, ocv }: VoltageSectionProps) {
 
         <p className="mb-5 text-sm leading-relaxed text-muted-foreground">
           Voltage sourced from the DS log.{" "}
-          <strong className="text-foreground">Rolling window</strong> uses
-          a causal minimum (worst-case dip) to expose brownout events. The{" "}
-          <strong className="text-foreground">regression line</strong>{" "}
-          shows the overall depletion trend.
+          <strong className="text-foreground">Rolling window</strong> uses a causal minimum
+          (worst-case dip) to expose brownout events. The{" "}
+          <strong className="text-foreground">regression line</strong> shows the overall depletion
+          trend.
         </p>
 
         <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">

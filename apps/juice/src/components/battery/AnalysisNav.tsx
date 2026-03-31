@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { Button } from "@repo/ui/components/button";
+import { useEffect, useRef, useState } from "react";
 
 const SECTIONS = [
   { id: "s-voltage", label: "① Voltage" },

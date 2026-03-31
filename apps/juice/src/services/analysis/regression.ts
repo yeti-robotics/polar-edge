@@ -1,9 +1,6 @@
 import type { RegressionResult } from "./types";
 
-export function linearRegression(
-  xs: number[],
-  ys: number[]
-): RegressionResult {
+export function linearRegression(xs: number[], ys: number[]): RegressionResult {
   const n = Math.min(xs.length, ys.length);
   if (n < 3) return { m: 0, b: 0, r2: 0 };
 
@@ -13,11 +10,13 @@ export function linearRegression(
   let sxy = 0;
   let syy = 0;
   for (let i = 0; i < n; i++) {
-    sx += xs[i]!;
-    sy += ys[i]!;
-    sxx += xs[i]! * xs[i]!;
-    sxy += xs[i]! * ys[i]!;
-    syy += ys[i]! * ys[i]!;
+    const xi = xs[i] ?? 0;
+    const yi = ys[i] ?? 0;
+    sx += xi;
+    sy += yi;
+    sxx += xi * xi;
+    sxy += xi * yi;
+    syy += yi * yi;
   }
 
   const denom = n * sxx - sx * sx;
@@ -42,8 +41,8 @@ export function regressionLine(
 ): { reg: RegressionResult; points: { x: number; y: number }[] } {
   const reg = linearRegression(xs, ys);
   if (!xs.length) return { reg, points: [] };
-  const x0 = xs[0]!;
-  const x1 = xs[xs.length - 1]!;
+  const x0 = xs[0] ?? 0;
+  const x1 = xs[xs.length - 1] ?? 0;
   return {
     reg,
     points: [
@@ -53,11 +52,7 @@ export function regressionLine(
   };
 }
 
-export function formatEquation(
-  reg: RegressionResult,
-  xLabel = "t",
-  yLabel = "y"
-): string {
+export function formatEquation(reg: RegressionResult, xLabel = "t", yLabel = "y"): string {
   const sign = reg.b >= 0 ? "+" : "-";
   return `${yLabel} = ${reg.m.toExponential(3)}·${xLabel} ${sign} ${Math.abs(reg.b).toFixed(4)}  (R²=${reg.r2.toFixed(3)})`;
 }

@@ -14,7 +14,7 @@ export function mergeData(
   const volts = sorted.map((d) => d.v);
   const dt =
     times.length > 1
-      ? (times[times.length - 1]! - times[0]!) / (times.length - 1)
+      ? ((times[times.length - 1] ?? 0) - (times[0] ?? 0)) / (times.length - 1)
       : 0.02;
 
   let currents: number[];
@@ -31,27 +31,23 @@ export function mergeData(
   return { times, volts, currents, channels, dt, hasCurrent };
 }
 
-function interpolateCurrents(
-  dsData: DSVoltagePoint[],
-  canData: CANCurrentPoint[]
-): number[] {
+function interpolateCurrents(dsData: DSVoltagePoint[], canData: CANCurrentPoint[]): number[] {
   const currents: number[] = [];
   let ci = 0;
 
   for (const ds of dsData) {
-    while (ci < canData.length - 2 && canData[ci + 1]!.t <= ds.t) ci++;
+    while (ci < canData.length - 2 && canData[ci + 1]?.t <= ds.t) ci++;
 
     if (ci >= canData.length - 1) {
-      currents.push(canData[canData.length - 1]!.current);
-    } else if (ds.t <= canData[0]!.t) {
-      currents.push(canData[0]!.current);
+      currents.push(canData[canData.length - 1]?.current);
+    } else if (ds.t <= canData[0]?.t) {
+      currents.push(canData[0]?.current);
     } else {
-      const a = canData[ci]!;
-      const b = canData[ci + 1]!;
+      const a = canData[ci];
+      const b = canData[ci + 1];
+      if (!a || !b) continue;
       const frac = b.t === a.t ? 0 : (ds.t - a.t) / (b.t - a.t);
-      currents.push(
-        Number((a.current + frac * (b.current - a.current)).toFixed(3))
-      );
+      currents.push(Number((a.current + frac * (b.current - a.current)).toFixed(3)));
     }
   }
 
