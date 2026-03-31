@@ -22,6 +22,7 @@ import {
   getTeamCount,
 } from "@/features/analysis/queries";
 import { auth } from "@/lib/auth";
+
 import { routes } from "@/lib/routes";
 
 const navCards = [
