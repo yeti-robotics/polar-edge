@@ -5,7 +5,11 @@ import { authClient } from "@/lib/auth-client";
 type StateFunction<T> = (prevState: T) => T;
 
 type ExtractSuccessData<R> = R extends { error: null; data: infer D } ? D : never;
+<<<<<<< HEAD
 type PasskeyResult = { error: { message?: string | unknown } | null; data: unknown };
+=======
+type PasskeyResult = { error: { message?: unknown } | null; data: unknown };
+>>>>>>> bb8d3b1 (build issues)
 
 export function usePasskey() {
   const [passkeys, setPasskeys] = useState([] as Passkey[]);
@@ -38,11 +42,22 @@ export function usePasskey() {
     }
 
     if (result.error) {
+<<<<<<< HEAD
       setError(
         typeof result.error.message === "string"
           ? result.error.message
           : "An unknown error occurred"
       );
+=======
+      const msg =
+        typeof result.error.message === "string"
+          ? result.error.message
+          : result.error.message
+            ? JSON.stringify(result.error.message)
+            : "An unknown error occurred";
+
+      setError(msg);
+>>>>>>> bb8d3b1 (build issues)
       return;
     } else {
       setError("");
