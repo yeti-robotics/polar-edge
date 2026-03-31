@@ -3,29 +3,42 @@ import * as z from "zod";
 
 export const DRIVETRAIN_OPTIONS = ["tank", "swerve", "mecanum", "other"] as const;
 export const CLIMB_TYPE_OPTIONS = ["sides", "center", "left", "right", "any", "none"] as const;
+export const SHOOTER_OPTIONS = ["turret", "fixed"] as const;
 
-export const FormSchema = z.object({
-  teamNumber: z.coerce.number().int().positive("Team number is required"),
-  drivetrainType: z
-    .union([z.enum(DRIVETRAIN_OPTIONS), z.literal("")])
-    .refine((val): val is (typeof DRIVETRAIN_OPTIONS)[number] => val !== "", {
-      message: "Drivetrain type is required",
-    }),
-  canTrench: z.boolean().optional(),
-  canBump: z.boolean().optional(),
-  canShuttle: z.boolean().optional(),
-  capacity: z
-    .number()
-    .int()
-    .positive("Capacity is required")
-    .max(200, "Capacity cannot exceed 200"),
-  weight: z.number().int().positive("Weight is required"),
-  climbType: z
-    .union([z.enum(CLIMB_TYPE_OPTIONS), z.literal("")])
-    .refine((val): val is (typeof CLIMB_TYPE_OPTIONS)[number] => val !== "", {
-      message: "Climb type is required",
-    }),
-});
+export const FormSchema = z
+  .object({
+    teamNumber: z.coerce.number().int().positive("Team number is required"),
+    drivetrainType: z
+      .union([z.enum(DRIVETRAIN_OPTIONS), z.literal("")])
+      .refine((val): val is (typeof DRIVETRAIN_OPTIONS)[number] => val !== "", {
+        message: "Drivetrain type is required",
+      }),
+    canTrench: z.boolean().optional(),
+    canBump: z.boolean().optional(),
+    canShuttle: z.boolean().optional(),
+    capacity: z
+      .number()
+      .int()
+      .positive("Capacity is required")
+      .max(200, "Capacity cannot exceed 200"),
+    weight: z.number().int().positive("Weight is required"),
+    climbType: z
+      .union([z.enum(CLIMB_TYPE_OPTIONS), z.literal("")])
+      .refine((val): val is (typeof CLIMB_TYPE_OPTIONS)[number] => val !== "", {
+        message: "Climb type is required",
+      }),
+    shooterType: z.union([z.enum(SHOOTER_OPTIONS), z.literal("")]),
+    canShootWhileMoving: z.boolean().optional(),
+  })
+  .superRefine((values, ctx) => {
+    if (values.canShootWhileMoving && values.shooterType === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["canShootWhileMoving"],
+        message: "Select a shooter type before enabling moving shots",
+      });
+    }
+  });
 
 const defaultValues: z.input<typeof FormSchema> = {
   teamNumber: 0,
@@ -36,6 +49,8 @@ const defaultValues: z.input<typeof FormSchema> = {
   capacity: 0,
   weight: 0,
   climbType: "",
+  shooterType: "",
+  canShootWhileMoving: false,
 };
 
 export const formOpts = formOptions({

@@ -1,4 +1,4 @@
-name: Coverage Report
+name: GitHub Pages
 
 on:
   push:
@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  coverage:
-    name: Generate coverage report
+  build:
+    name: Build pages content
     runs-on: ubuntu-latest
     environment: ci
     steps:
@@ -50,14 +50,23 @@ jobs:
       - name: Generate coverage report
         run: pnpm coverage
 
+      - name: Build Juice
+        run: pnpm turbo build --filter=juice
+
+      - name: Assemble pages artifact
+        run: |
+          mkdir -p _site/juice _site/coverage
+          cp -r packages/vitest-config/coverage/report/* _site/coverage/
+          cp -r apps/juice/dist/* _site/juice/
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/vitest-config/coverage/report
+          path: _site
 
   deploy:
     name: Deploy to GitHub Pages
-    needs: coverage
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
