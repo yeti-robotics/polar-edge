@@ -1,21 +1,20 @@
-<<<<<<< HEAD
 import {
   TypographyH1,
   TypographyH2,
   TypographyMuted,
   TypographyP,
 } from "@repo/ui/components/typography";
-import { GitGraphIcon, TableIcon, UsersIcon } from "lucide-react";
+import {
+  GitGraphIcon,
+  ShieldCheckIcon,
+  TableIcon,
+  UsersIcon,
+} from "lucide-react";
 import { headers } from "next/headers";
-=======
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
-import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
->>>>>>> c2f6d71d5d1d7076eea6db969e4d176fab8d11d6
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
-<<<<<<< HEAD
 import { UserFormSubmissions } from "@/features/analysis/components/UserFormSubmissions";
 import {
   getPitFormCount,
@@ -23,10 +22,7 @@ import {
   getTeamCount,
 } from "@/features/analysis/queries";
 import { auth } from "@/lib/auth";
-=======
-import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
 import { routes } from "@/lib/routes";
->>>>>>> c2f6d71d5d1d7076eea6db969e4d176fab8d11d6
 
 const navCards = [
   {
@@ -144,7 +140,6 @@ export default function AnalysisPage() {
         </div>
       </div>
       <NavCardGrid items={navCards} />
-      <TypographyH1> c</TypographyH1>
     </div>
   );
 }
