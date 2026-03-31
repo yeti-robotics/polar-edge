@@ -1,5 +1,5 @@
 import { DSLogParser } from "../dslog";
-import type { DSVoltagePoint, CANCurrentPoint } from "./types";
+import type { CANCurrentPoint, DSVoltagePoint } from "./types";
 
 export interface DSLogParseResult {
   voltage: DSVoltagePoint[];
@@ -13,10 +13,7 @@ export interface DSLogParseResult {
  * Extracts both voltage and total current (sum of PDP channels).
  * Falls back to CSV parsing for non-.dslog files.
  */
-export function parseDSFile(
-  fileName: string,
-  buffer: ArrayBuffer
-): DSLogParseResult | null {
+export function parseDSFile(fileName: string, buffer: ArrayBuffer): DSLogParseResult | null {
   const lower = fileName.toLowerCase();
 
   if (lower.endsWith(".dslog")) {
@@ -37,7 +34,7 @@ function parseDSLogBinary(buffer: ArrayBuffer): DSLogParseResult | null {
     const result = parser.parse(buffer);
     if (result.records.length < 10) return null;
 
-    const startTs = result.records[0]!.timestamp;
+    const _startTs = result.records[0]?.timestamp;
 
     const voltage: DSVoltagePoint[] = [];
     const current: CANCurrentPoint[] = [];
@@ -48,8 +45,8 @@ function parseDSLogBinary(buffer: ArrayBuffer): DSLogParseResult | null {
     );
     if (enabled.length < 10) return null;
 
-    const enabledStartTs = enabled[0]!.timestamp;
-    const channelCount = enabled[0]!.pdpChannels.length;
+    const enabledStartTs = enabled[0]?.timestamp;
+    const channelCount = enabled[0]?.pdpChannels.length;
     const channels: Record<string, number[]> = {};
     for (let ch = 0; ch < channelCount; ch++) {
       channels[`CH ${ch}`] = [];
@@ -63,7 +60,7 @@ function parseDSLogBinary(buffer: ArrayBuffer): DSLogParseResult | null {
       current.push({ t, current: Number(totalCurrent.toFixed(3)) });
 
       for (let ch = 0; ch < record.pdpChannels.length; ch++) {
-        channels[`CH ${ch}`]!.push(record.pdpChannels[ch]!);
+        channels[`CH ${ch}`]?.push(record.pdpChannels[ch] ?? 0);
       }
     }
 
@@ -88,23 +85,16 @@ function parseDSCSV(raw: string): DSVoltagePoint[] | null {
   const commaCount = (sample.match(/,/g) || []).length;
   const semiCount = (sample.match(/;/g) || []).length;
   const delim =
-    tabCount > commaCount && tabCount > semiCount
-      ? "\t"
-      : semiCount > commaCount
-        ? ";"
-        : ",";
+    tabCount > commaCount && tabCount > semiCount ? "\t" : semiCount > commaCount ? ";" : ",";
 
-  const split = (l: string) =>
-    l.split(delim).map((s) => s.trim().replace(/"/g, ""));
+  const split = (l: string) => l.split(delim).map((s) => s.trim().replace(/"/g, ""));
 
   // Find header row
   let hIdx = 0;
   let hdrs: string[] = [];
   for (let i = 0; i < Math.min(8, lines.length); i++) {
-    const cols = split(lines[i]!);
-    const numericCount = cols.filter(
-      (c) => !Number.isNaN(Number.parseFloat(c)) && c !== ""
-    ).length;
+    const cols = split(lines[i] ?? "");
+    const numericCount = cols.filter((c) => !Number.isNaN(Number.parseFloat(c)) && c !== "").length;
     if (numericCount < cols.length * 0.65) {
       hdrs = cols;
       hIdx = i;
@@ -116,7 +106,10 @@ function parseDSCSV(raw: string): DSVoltagePoint[] | null {
     for (const kw of keywords) {
       const k = kw.toLowerCase().replace(/[^a-z]/g, "");
       const idx = hdrs.findIndex((h) =>
-        h.toLowerCase().replace(/[^a-z]/g, "").includes(k)
+        h
+          .toLowerCase()
+          .replace(/[^a-z]/g, "")
+          .includes(k)
       );
       if (idx !== -1) return idx;
     }
@@ -128,22 +121,18 @@ function parseDSCSV(raw: string): DSVoltagePoint[] | null {
 
   // Fallback: detect voltage column by value range
   if (iV === -1) {
-    const ncols = split(lines[hIdx + 1] || lines[0]!).length;
+    const ncols = split(lines[hIdx + 1] || lines[0] || "").length;
     const colSamples: number[][] = Array.from({ length: ncols }, () => []);
-    for (
-      let i = hIdx + 1;
-      i < Math.min(hIdx + 200, lines.length);
-      i++
-    ) {
-      split(lines[i]!).forEach((c, j) => {
+    for (let i = hIdx + 1; i < Math.min(hIdx + 200, lines.length); i++) {
+      split(lines[i] ?? "").forEach((c, j) => {
         const v = Number.parseFloat(c);
-        if (!Number.isNaN(v) && j < ncols) colSamples[j]!.push(v);
+        if (!Number.isNaN(v) && j < ncols) colSamples[j]?.push(v);
       });
     }
     for (let j = 0; j < ncols; j++) {
-      const sorted = [...colSamples[j]!].sort((a, b) => a - b);
+      const sorted = [...(colSamples[j] ?? [])].sort((a, b) => a - b);
       const med = sorted[Math.floor(sorted.length / 2)];
-      if (med !== undefined && med >= 9 && med <= 13.5 && sorted[0]! >= 5) {
+      if (med !== undefined && med >= 9 && med <= 13.5 && (sorted[0] ?? 0) >= 5) {
         iV = j;
         if (iT === -1 && j > 0) iT = 0;
         break;
@@ -155,11 +144,10 @@ function parseDSCSV(raw: string): DSVoltagePoint[] | null {
 
   const data: DSVoltagePoint[] = [];
   for (let i = hIdx + 1; i < lines.length; i++) {
-    const cols = split(lines[i]!);
-    const v = Number.parseFloat(cols[iV]!);
+    const cols = split(lines[i] ?? "");
+    const v = Number.parseFloat(cols[iV] ?? "");
     if (Number.isNaN(v) || v < 3 || v > 16) continue;
-    const t =
-      iT !== -1 ? Number.parseFloat(cols[iT]!) : data.length * 0.02;
+    const t = iT !== -1 ? Number.parseFloat(cols[iT] ?? "") : data.length * 0.02;
     data.push({
       t: Number.isNaN(t) ? data.length * 0.02 : t,
       v: Number(v.toFixed(4)),

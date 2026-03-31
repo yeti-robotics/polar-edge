@@ -1,2 +1,2 @@
 export { DSLogParser } from "./parser";
-export type { DSLogParsedRecord, DSLogHeader, PdpType, StatusFlags } from "./types";
+export type { DSLogHeader, DSLogParsedRecord, PdpType, StatusFlags } from "./types";

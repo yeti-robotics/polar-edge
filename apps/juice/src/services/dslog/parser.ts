@@ -146,8 +146,9 @@ function extractChannel(bytes: Uint8Array, bitOffset: number): number {
  * Offsets include +8 for the 1-byte CAN ID at the start of pdpBytes.
  * Formula: floor(i/6)*64 + (i%6)*10 + 8
  */
-const CTRE_CHANNEL_BIT_OFFSETS = Array.from({ length: 16 }, (_, i) =>
-  Math.floor(i / 6) * 64 + (i % 6) * 10 + 8
+const CTRE_CHANNEL_BIT_OFFSETS = Array.from(
+  { length: 16 },
+  (_, i) => Math.floor(i / 6) * 64 + (i % 6) * 10 + 8
 );
 
 function parseCtrePdp(pdpBytes: Uint8Array): {
@@ -173,8 +174,9 @@ function parseCtrePdp(pdpBytes: Uint8Array): {
  * Offsets include +8 for the 1-byte CAN ID.
  * Formula: floor(i/3)*32 + (i%3)*10 + 8
  */
-const REV_CHANNEL_BIT_OFFSETS = Array.from({ length: 20 }, (_, i) =>
-  Math.floor(i / 3) * 32 + (i % 3) * 10 + 8
+const REV_CHANNEL_BIT_OFFSETS = Array.from(
+  { length: 20 },
+  (_, i) => Math.floor(i / 3) * 32 + (i % 3) * 10 + 8
 );
 
 function parseRevPdh(pdpBytes: Uint8Array): {

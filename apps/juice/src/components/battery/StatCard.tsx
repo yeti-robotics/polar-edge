@@ -21,14 +21,10 @@ export function StatCard({ label, value, unit, note, color }: StatCardProps) {
     <div
       className={`rounded-md border border-border bg-card p-3 border-l-2 ${borderColors[color]}`}
     >
-      <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-        {label}
-      </p>
+      <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className="mt-1 font-mono text-xl font-semibold leading-none text-foreground">
         {value}
-        <span className="ml-0.5 text-xs font-normal text-muted-foreground">
-          {unit}
-        </span>
+        <span className="ml-0.5 text-xs font-normal text-muted-foreground">{unit}</span>
       </p>
       <p className="mt-1 text-[11px] text-muted-foreground">{note}</p>
     </div>

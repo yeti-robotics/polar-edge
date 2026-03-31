@@ -1,21 +1,18 @@
-import { useCallback, useMemo, useState } from "react";
 import type { ChartData, ChartOptions } from "chart.js";
-import { rollingMedian } from "@/services/analysis/rolling";
-import {
-  formatEquation,
-  linearRegression,
-} from "@/services/analysis/regression";
+import { useCallback, useMemo, useState } from "react";
 import { computeImpedanceStats } from "@/services/analysis/battery";
 import { downloadImpedanceCSV } from "@/services/analysis/csv-export";
+import { formatEquation, linearRegression } from "@/services/analysis/regression";
+import { rollingMedian } from "@/services/analysis/rolling";
 import type { ImpedanceSample } from "@/services/analysis/types";
-import { StatCard } from "./StatCard";
 import { ChartCard, type SeriesToggle } from "./ChartCard";
+import { StatCard } from "./StatCard";
 
 // YETI dark mode chart palette
 const COLORS = {
-  bar: "oklch(0.769 0.188 70.08)",          // chart-3 yellow
-  roll: "oklch(0.769 0.188 70.08)",         // chart-3 yellow
-  reg: "oklch(0.696 0.17 162.48)",          // chart-2 teal
+  bar: "oklch(0.769 0.188 70.08)", // chart-3 yellow
+  roll: "oklch(0.769 0.188 70.08)", // chart-3 yellow
+  reg: "oklch(0.696 0.17 162.48)", // chart-2 teal
   vscat: "oklch(0.488 0.243 264.376 / 0.4)", // chart-1 purple
 };
 
@@ -43,41 +40,31 @@ export function ImpedanceSection({ samples, dt }: ImpedanceSectionProps) {
     vscat: true,
   });
 
-  const stats = useMemo(
-    () => computeImpedanceStats(samples),
-    [samples]
-  );
+  const stats = useMemo(() => computeImpedanceStats(samples), [samples]);
 
   const iT = useMemo(() => samples.map((s) => s.t), [samples]);
-  const iR = useMemo(
-    () => samples.map((s) => Number(s.R.toFixed(3))),
-    [samples]
-  );
+  const iR = useMemo(() => samples.map((s) => Number(s.R.toFixed(3))), [samples]);
 
   const rollI = useMemo(
     () => rollingMedian(new Float64Array(iR), Math.max(1, window)),
     [iR, window]
   );
 
-  const reg = useMemo(
-    () => linearRegression(iT, iR),
-    [iT, iR]
-  );
+  const reg = useMemo(() => linearRegression(iT, iR), [iT, iR]);
 
   const chartData = useMemo<ChartData<"line" | "bar" | "scatter">>(() => {
     const labels = iT.map((t) => Number(t.toFixed(2)));
 
-    const barColors = iR.map((r) =>
-      r < 18
-        ? "oklch(0.696 0.17 162.48 / 0.6)"     // teal = good
-        : r < 28
-          ? "oklch(0.769 0.188 70.08 / 0.65)"   // yellow = warning
-          : "oklch(0.645 0.246 16.439 / 0.7)"    // red = bad
+    const barColors = iR.map(
+      (r) =>
+        r < 18
+          ? "oklch(0.696 0.17 162.48 / 0.6)" // teal = good
+          : r < 28
+            ? "oklch(0.769 0.188 70.08 / 0.65)" // yellow = warning
+            : "oklch(0.645 0.246 16.439 / 0.7)" // red = bad
     );
 
-    const regLine = iT.map((t) =>
-      Number((reg.m * t + reg.b).toFixed(3))
-    );
+    const regLine = iT.map((t) => Number((reg.m * t + reg.b).toFixed(3)));
 
     const vScatPts = samples.map((s) => ({
       x: Number(s.t.toFixed(2)),
@@ -173,7 +160,12 @@ export function ImpedanceSection({ samples, dt }: ImpedanceSectionProps) {
     { key: "raw", label: "Impedance (mΩ)", color: COLORS.roll, active: toggles.raw },
     { key: "roll", label: "Rolling median", color: COLORS.roll, active: toggles.roll },
     { key: "reg", label: "Regression", color: COLORS.reg, active: toggles.reg },
-    { key: "vscat", label: "Voltage @ peaks", color: "oklch(0.488 0.243 264.376)", active: toggles.vscat },
+    {
+      key: "vscat",
+      label: "Voltage @ peaks",
+      color: "oklch(0.488 0.243 264.376)",
+      active: toggles.vscat,
+    },
   ];
 
   const handleToggle = useCallback((key: string) => {
@@ -214,13 +206,12 @@ export function ImpedanceSection({ samples, dt }: ImpedanceSectionProps) {
         <p className="mb-5 text-sm leading-relaxed text-muted-foreground">
           Internal resistance{" "}
           <span className="inline-flex items-baseline gap-0.5 rounded border border-border bg-card px-2 py-0.5 font-mono text-xs text-foreground">
-            <i>R</i> = (<i>V</i><sub>oc</sub> − <i>V</i>) / <i>I</i>
+            <i>R</i> = (<i>V</i>
+            <sub>oc</sub> − <i>V</i>) / <i>I</i>
           </span>
           , computed at every current peak (<i>I</i> &gt; 15A). The{" "}
-          <strong className="text-foreground">
-            voltage-at-peak scatter
-          </strong>{" "}
-          overlays terminal voltage at each impedance sample.
+          <strong className="text-foreground">voltage-at-peak scatter</strong> overlays terminal
+          voltage at each impedance sample.
         </p>
 
         <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
@@ -243,13 +234,7 @@ export function ImpedanceSection({ samples, dt }: ImpedanceSectionProps) {
             value={f1(stats.spikeFactor)}
             unit="×"
             note="P90/Median"
-            color={
-              stats.spikeFactor <= 2
-                ? "green"
-                : stats.spikeFactor <= 3.5
-                  ? "yellow"
-                  : "red"
-            }
+            color={stats.spikeFactor <= 2 ? "green" : stats.spikeFactor <= 3.5 ? "yellow" : "red"}
           />
           <StatCard
             label="Est. CCA"
@@ -257,11 +242,7 @@ export function ImpedanceSection({ samples, dt }: ImpedanceSectionProps) {
             unit="A"
             note="7200/R_median empirical"
             color={
-              stats.estimatedCCA >= 400
-                ? "green"
-                : stats.estimatedCCA >= 260
-                  ? "yellow"
-                  : "red"
+              stats.estimatedCCA >= 400 ? "green" : stats.estimatedCCA >= 260 ? "yellow" : "red"
             }
           />
           <StatCard
@@ -292,9 +273,7 @@ export function ImpedanceSection({ samples, dt }: ImpedanceSectionProps) {
           windowLabel={windowLabel(window, dt)}
           onWindowChange={setWindow}
           equation={`Regression: ${formatEquation(reg, "t", "R(mΩ)")}`}
-          onDownload={() =>
-            downloadImpedanceCSV(samples, rollI, reg)
-          }
+          onDownload={() => downloadImpedanceCSV(samples, rollI, reg)}
           height={340}
         />
       </div>
