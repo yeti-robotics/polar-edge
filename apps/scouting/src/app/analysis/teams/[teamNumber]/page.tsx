@@ -32,6 +32,12 @@ import {
   getTeamComments,
   getTeamKeyMetrics,
 } from "@/features/analysis/team-queries";
+import { DriveRatingCard } from "@/features/scouting/drive-ranking/components/DriveRatingCard";
+import { DriveRatingHistoryTable } from "@/features/scouting/drive-ranking/components/DriveRatingHistory";
+import {
+  getDriveRatingHistory,
+  getDriveTeamRatings,
+} from "@/features/scouting/drive-ranking/queries";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import {
@@ -87,6 +93,32 @@ async function TeamCommentsSection({
       comments={comments}
       showScoutNames={isOrgAdmin}
     />
+  );
+}
+
+async function DriveRatingSection({
+  teamNum,
+  organizationId,
+  effectiveEventId,
+}: {
+  teamNum: number;
+  organizationId: string | null;
+  effectiveEventId: string | null;
+}) {
+  if (!organizationId) return null;
+
+  const [ratings, history] = await Promise.all([
+    getDriveTeamRatings(organizationId, effectiveEventId),
+    getDriveRatingHistory(teamNum, organizationId, effectiveEventId),
+  ]);
+
+  const teamRating = ratings.find((r) => r.teamNumber === teamNum) ?? null;
+
+  return (
+    <div className="space-y-4">
+      <DriveRatingCard rating={teamRating} />
+      <DriveRatingHistoryTable history={history} />
+    </div>
   );
 }
 
@@ -266,6 +298,14 @@ export default async function TeamPage({
 
       <Suspense fallback={<Skeleton className="h-40 w-full" />}>
         <PitDataSection teamNum={teamNum} />
+      </Suspense>
+
+      <Suspense fallback={<Skeleton className="h-56 w-full" />}>
+        <DriveRatingSection
+          teamNum={teamNum}
+          organizationId={organizationId}
+          effectiveEventId={effectiveEventId}
+        />
       </Suspense>
     </div>
   );

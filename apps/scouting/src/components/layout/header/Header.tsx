@@ -14,6 +14,7 @@ import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
 import { routes } from "@/lib/routes";
+import { isScoutLeadOrAbove } from "@/lib/server/auth/require-member";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
 import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
@@ -82,7 +83,7 @@ export function Header() {
           </Link>
         ))}
         <Suspense fallback={null}>
-          <LeaderboardNavItem />
+          <ConditionalNavItems />
         </Suspense>
         <nav />
       </nav>
@@ -90,21 +91,32 @@ export function Header() {
   );
 }
 
-async function LeaderboardNavItem() {
+async function ConditionalNavItems() {
+  let activeMember = null;
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    activeMember = await auth.api.getActiveMember({ headers: await headers() });
     if (!activeMember) return null;
   } catch {
     return null;
   }
 
   return (
-    <Link
-      className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-      href={routes.leaderboard}
-    >
-      Leaderboard
-    </Link>
+    <>
+      {isScoutLeadOrAbove(activeMember.role) && (
+        <Link
+          className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+          href={routes.forms.driveRanking}
+        >
+          Drive Ranking
+        </Link>
+      )}
+      <Link
+        className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+        href={routes.leaderboard}
+      >
+        Leaderboard
+      </Link>
+    </>
   );
 }
 
