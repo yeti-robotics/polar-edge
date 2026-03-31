@@ -177,28 +177,28 @@ export function PowerSection({ data, power }: PowerSectionProps) {
             label="Peak power"
             value={f0(stats.peak)}
             unit="W"
-            note="Highest instantaneous W"
+            note="Maximum power burst"
             color={stats.peak < 2000 ? "green" : stats.peak < 3000 ? "yellow" : "red"}
           />
           <StatCard
             label="Mean power"
             value={f0(stats.mean)}
             unit="W"
-            note="Average demand"
+            note="Typical power usage"
             color={stats.mean < 800 ? "green" : stats.mean < 1200 ? "yellow" : "red"}
           />
           <StatCard
             label="Total energy"
             value={f2(stats.totalWh)}
             unit="Wh"
-            note="Used this match"
+            note="Battery consumed"
             color={stats.totalWh < 108 ? "green" : stats.totalWh < 151 ? "yellow" : "red"}
           />
           <StatCard
             label="% of 216Wh"
             value={f1(stats.percentOfCapacity)}
             unit="%"
-            note="Battery capacity used"
+            note="Battery life used"
             color={
               stats.percentOfCapacity < 50
                 ? "green"

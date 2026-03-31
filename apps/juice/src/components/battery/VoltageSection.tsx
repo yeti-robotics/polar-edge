@@ -173,35 +173,35 @@ export function VoltageSection({ data, ocv }: VoltageSectionProps) {
             label="Min voltage"
             value={f2(stats.min)}
             unit="V"
-            note="Lowest single sample"
+            note="The lowest voltage point recorded"
             color={stats.min >= 8.5 ? "green" : stats.min >= 7.5 ? "yellow" : "red"}
           />
           <StatCard
             label="OCV estimate"
             value={f2(stats.ocv)}
             unit="V"
-            note="Top-3% sample average"
+            note="Battery's resting voltage level"
             color="blue"
           />
           <StatCard
             label="Mean voltage"
             value={f2(stats.mean)}
             unit="V"
-            note="Average across match"
+            note="Typical voltage during the match"
             color={stats.mean >= 11 ? "green" : stats.mean >= 10 ? "yellow" : "red"}
           />
           <StatCard
             label="< 8.5V time"
             value={f2(stats.timeBelow85)}
             unit="s"
-            note="Motor torque loss zone"
+            note="Time motors were weak"
             color={stats.timeBelow85 === 0 ? "green" : stats.timeBelow85 < 1 ? "yellow" : "red"}
           />
           <StatCard
             label="< 6.3V time"
             value={f2(stats.timeBelow63)}
             unit="s"
-            note="Radio brownout zone"
+            note="Time communication was at risk"
             color={stats.timeBelow63 === 0 ? "green" : "red"}
           />
         </div>

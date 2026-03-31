@@ -219,28 +219,28 @@ export function ImpedanceSection({ samples, dt }: ImpedanceSectionProps) {
             label="Median R"
             value={f1(stats.medianR)}
             unit="mΩ"
-            note="Representative resistance"
+            note="Battery's internal resistance"
             color={stats.medianR <= 18 ? "green" : stats.medianR <= 28 ? "yellow" : "red"}
           />
           <StatCard
             label="P90 R"
             value={f1(stats.p90R)}
             unit="mΩ"
-            note="Under heavy current"
+            note="Resistance under stress"
             color={stats.p90R <= 25 ? "green" : stats.p90R <= 40 ? "yellow" : "red"}
           />
           <StatCard
             label="Spike factor"
             value={f1(stats.spikeFactor)}
             unit="×"
-            note="P90/Median"
+            note="How much resistance spikes"
             color={stats.spikeFactor <= 2 ? "green" : stats.spikeFactor <= 3.5 ? "yellow" : "red"}
           />
           <StatCard
             label="Est. CCA"
             value={f0(stats.estimatedCCA)}
             unit="A"
-            note="7200/R_median empirical"
+            note="Battery health score"
             color={
               stats.estimatedCCA >= 400 ? "green" : stats.estimatedCCA >= 260 ? "yellow" : "red"
             }
@@ -249,7 +249,7 @@ export function ImpedanceSection({ samples, dt }: ImpedanceSectionProps) {
             label="R samples"
             value={String(stats.sampleCount)}
             unit=""
-            note="I>15A peak samples used"
+            note="Data points measured"
             color="blue"
           />
         </div>

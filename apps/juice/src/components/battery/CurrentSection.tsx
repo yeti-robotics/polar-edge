@@ -272,21 +272,21 @@ export function CurrentSection({ data }: CurrentSectionProps) {
             label="Peak current"
             value={f1(stats.peak)}
             unit="A"
-            note="Highest summed sample"
+            note="Maximum power draw moment"
             color={stats.peak < 120 ? "green" : stats.peak < 160 ? "yellow" : "red"}
           />
           <StatCard
             label="Mean current"
             value={f1(stats.mean)}
             unit="A"
-            note="Average demand"
+            note="Typical power usage"
             color={stats.mean < 60 ? "green" : stats.mean < 90 ? "yellow" : "red"}
           />
           <StatCard
             label="> 120A samples"
             value={String(stats.samplesAbove120)}
             unit=""
-            note="Above main breaker threshold"
+            note="Risk of tripping breaker"
             color={stats.samplesAbove120 === 0 ? "green" : "red"}
           />
         </div>
