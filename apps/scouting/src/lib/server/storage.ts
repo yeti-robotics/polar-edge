@@ -74,7 +74,7 @@ export async function createPresignedUploadUrl(
     ContentLength: maxSizeBytes, // Enforce maximum upload size at S3 level
   });
 
-  const url = await getSignedUrl(client as PresignerClient, command, {
+  const url = await getSignedUrl(client as unknown as PresignerClient, command, {
     expiresIn: UPLOAD_EXPIRATION_SECONDS,
   });
 
@@ -90,7 +90,7 @@ export async function createPresignedDownloadUrl(objectKey: string): Promise<str
     Key: objectKey,
   });
 
-  return getSignedUrl(client as PresignerClient, command, {
+  return getSignedUrl(client as unknown as PresignerClient, command, {
     expiresIn: DOWNLOAD_EXPIRATION_SECONDS,
   });
 }
