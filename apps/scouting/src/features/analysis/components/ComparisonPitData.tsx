@@ -39,6 +39,12 @@ function PitCard({
             <Row label="Weight" value={data.weight ? `${data.weight} lbs` : "—"} />
             <Row label="Capacity" value={data.capacity ? `${data.capacity}` : "—"} />
             {data.climbType && <Row label="Climb Type" value={formatClimbType(data.climbType)} />}
+            {data.shooterType && (
+              <Row label="Shooter" value={formatShooterType(data.shooterType)} />
+            )}
+            {data.shooterType && (
+              <Row label="Shoot on Move" value={data.canShootWhileMoving ? "Yes" : "No"} />
+            )}
             <div className="flex items-start gap-3">
               <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground w-24 shrink-0 pt-0.5">
                 Capabilities
@@ -101,6 +107,14 @@ function formatClimbType(type: string): string {
     buddy: "Buddy Climb",
   };
   return map[type] ?? type;
+}
+
+function formatShooterType(type: NonNullable<(typeof pitForm.$inferSelect)["shooterType"]>) {
+  const map = {
+    turret: "Turret Shooter",
+    fixed: "Fixed Shooter",
+  } satisfies Record<NonNullable<(typeof pitForm.$inferSelect)["shooterType"]>, string>;
+  return map[type];
 }
 
 export async function ComparisonPitData({ teamNumbers, teamNames }: Props) {

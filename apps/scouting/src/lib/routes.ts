@@ -18,6 +18,7 @@ export const routes = {
   // Analysis
   analysis: {
     root: "/analysis",
+    scoutCoverage: "/analysis/scout-coverage",
     teams: "/analysis/teams",
     comparison: "/analysis/comparison",
     events: "/analysis/events",
