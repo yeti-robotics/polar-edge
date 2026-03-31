@@ -24,6 +24,7 @@ export type DriveTeamRating = {
 export type DriveRatingHistoryPoint = {
   matchNumber: number;
   matchType: string;
+  eventCode: string;
   ordinal: number;
   mu: number;
   sigma: number;

@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -154,11 +153,18 @@ async function UserAvatar() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Avatar className="size-8 select-none">
-          <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
-          <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
-        </Avatar>
+      <DropdownMenuTrigger className="cursor-pointer rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        {session.user.image ? (
+          <img
+            src={session.user.image}
+            alt={session.user.name ?? ""}
+            className="size-8 rounded-full select-none object-cover"
+          />
+        ) : (
+          <span className="flex size-8 items-center justify-center rounded-full bg-muted select-none text-sm font-medium">
+            {session.user.name?.charAt(0) ?? ""}
+          </span>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end" className="min-w-36">
         <DropdownMenuGroup>

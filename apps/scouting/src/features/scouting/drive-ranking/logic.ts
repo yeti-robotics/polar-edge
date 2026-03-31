@@ -5,6 +5,7 @@ import type { DriveRatingHistoryPoint, DriveTeamRating } from "./types";
 type RankingObservation = {
   matchNumber: number;
   matchType: string;
+  eventCode: string;
   /** Team numbers in rank order: [1st, 2nd, 3rd] */
   rankedTeams: number[];
 };
@@ -53,6 +54,7 @@ export function computeDriveRatings(
       history.get(teamNum)?.push({
         matchNumber: obs.matchNumber,
         matchType: obs.matchType,
+        eventCode: obs.eventCode,
         ordinal: ordinal(newRating),
         mu: newRating.mu,
         sigma: newRating.sigma,

@@ -114,7 +114,7 @@ export default async function EventDetailPage({
       </Suspense>
 
       <Suspense fallback={<Skeleton className="h-64 w-full" />}>
-        <DriveRankingsSection eventId={eventId} organizationId={effectiveOrgId} />
+        <DriveRankingsSection eventId={eventId} organizationId={organizationId} />
       </Suspense>
     </div>
   );

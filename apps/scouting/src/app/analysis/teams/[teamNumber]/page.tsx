@@ -33,7 +33,7 @@ import {
   getTeamKeyMetrics,
 } from "@/features/analysis/team-queries";
 import { DriveRatingCard } from "@/features/scouting/drive-ranking/components/DriveRatingCard";
-import { DriveRatingHistoryTable } from "@/features/scouting/drive-ranking/components/DriveRatingHistory";
+import { DriveRatingHistoryChart } from "@/features/scouting/drive-ranking/components/DriveRatingHistory";
 import {
   getDriveRatingHistory,
   getDriveTeamRatings,
@@ -117,7 +117,7 @@ async function DriveRatingSection({
   return (
     <div className="space-y-4">
       <DriveRatingCard rating={teamRating} />
-      <DriveRatingHistoryTable history={history} />
+      <DriveRatingHistoryChart history={history} />
     </div>
   );
 }

@@ -4,7 +4,13 @@ import { and, asc, eq, inArray } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { driveTeamRanking, driveTeamRankingEntry, match, team } from "@/lib/database/schema";
+import {
+  driveTeamRanking,
+  driveTeamRankingEntry,
+  event,
+  match,
+  team,
+} from "@/lib/database/schema";
 import { computeDriveRatings } from "./logic";
 import type { DriveRatingHistoryPoint, DriveTeamRating } from "./types";
 
@@ -25,17 +31,26 @@ async function getRankingObservations(organizationId: string, eventId?: string |
       teamNumber: driveTeamRankingEntry.teamNumber,
       rank: driveTeamRankingEntry.rank,
       rankingId: driveTeamRanking.id,
+      eventStartDate: event.startDate,
+      eventCode: event.eventCode,
     })
     .from(driveTeamRankingEntry)
     .innerJoin(driveTeamRanking, eq(driveTeamRankingEntry.rankingId, driveTeamRanking.id))
     .innerJoin(match, eq(driveTeamRanking.matchId, match.id))
+    .innerJoin(event, eq(match.eventId, event.id))
     .where(and(...conditions))
-    .orderBy(asc(match.matchNumber));
+    .orderBy(asc(event.startDate), asc(match.matchNumber));
 
   // Group entries by ranking ID to reconstruct per-match observations
   const byRanking = new Map<
     string,
-    { matchNumber: number; matchType: string; entries: { teamNumber: number; rank: number }[] }
+    {
+      matchNumber: number;
+      matchType: string;
+      eventStartDate: Date | null;
+      eventCode: string;
+      entries: { teamNumber: number; rank: number }[];
+    }
   >();
 
   for (const row of rows) {
@@ -43,6 +58,8 @@ async function getRankingObservations(organizationId: string, eventId?: string |
       byRanking.set(row.rankingId, {
         matchNumber: row.matchNumber,
         matchType: row.matchType,
+        eventStartDate: row.eventStartDate,
+        eventCode: row.eventCode,
         entries: [],
       });
     }
@@ -52,12 +69,18 @@ async function getRankingObservations(organizationId: string, eventId?: string |
     });
   }
 
-  // Convert to ordered observations
+  // Sort chronologically: by event start date, then match number
   return Array.from(byRanking.values())
-    .sort((a, b) => a.matchNumber - b.matchNumber)
+    .sort((a, b) => {
+      const dateA = a.eventStartDate?.getTime() ?? 0;
+      const dateB = b.eventStartDate?.getTime() ?? 0;
+      if (dateA !== dateB) return dateA - dateB;
+      return a.matchNumber - b.matchNumber;
+    })
     .map((obs) => ({
       matchNumber: obs.matchNumber,
       matchType: obs.matchType,
+      eventCode: obs.eventCode,
       rankedTeams: obs.entries.sort((a, b) => a.rank - b.rank).map((e) => e.teamNumber),
     }));
 }
