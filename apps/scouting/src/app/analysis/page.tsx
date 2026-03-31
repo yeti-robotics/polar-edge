@@ -1,10 +1,55 @@
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
-import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
+import {
+  TypographyH1,
+  TypographyH2,
+  TypographyMuted,
+  TypographyP,
+} from "@repo/ui/components/typography";
+import {
+  GitGraphIcon,
+  ShieldCheckIcon,
+  TableIcon,
+  UsersIcon,
+} from "lucide-react";
+import { headers } from "next/headers";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
-import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+
+// Temporary placeholder for UserFormSubmissions. The original component
+// appears to have been moved or removed; provide a minimal inline
+// implementation so the analysis page compiles. Replace with the real
+// implementation when available.
+function UserFormSubmissions({
+  memberId,
+  title,
+  emptyLabel,
+}: {
+  memberId?: string;
+  title?: string;
+  emptyLabel?: string;
+}) {
+  return (
+    <section className="rounded-xl border bg-muted/20 px-6 py-5">
+      <TypographyH2>{title ?? "Your Submissions"}</TypographyH2>
+      {memberId && (
+        <TypographyP className="mt-2 text-xs text-muted-foreground">
+          Member: {memberId}
+        </TypographyP>
+      )}
+      <TypographyP className="mt-2 text-sm text-muted-foreground">
+        {emptyLabel ?? "No forms submitted yet."}
+      </TypographyP>
+    </section>
+  );
+}
+
+import {
+  getPitFormCount,
+  getStandFormCount,
+  getTeamCount,
+} from "@/features/analysis/queries";
+import { auth } from "@/lib/auth";
 import { routes } from "@/lib/routes";
 
 const navCards = [
@@ -12,13 +57,15 @@ const navCards = [
     href: routes.analysis.teams,
     icon: UsersIcon,
     title: "Teams",
-    description: "Browse all scouted teams and view detailed per-team breakdowns.",
+    description:
+      "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
     href: routes.analysis.comparison,
     icon: GitGraphIcon,
     title: "Comparison",
-    description: "Compare multiple teams side-by-side across key performance metrics.",
+    description:
+      "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
     href: routes.analysis.scoutCoverage,
@@ -56,14 +103,53 @@ async function PitFormCountStat() {
   return <StatItem label="Pit Forms" value={count} />;
 }
 
+async function UserSubmissionsSection() {
+  let activeMember = null;
+  try {
+    activeMember = await auth.api.getActiveMember({ headers: await headers() });
+  } catch {
+    activeMember = null;
+  }
+
+  if (!activeMember) {
+    return (
+      <section className="rounded-xl border bg-muted/20 px-6 py-5">
+        <TypographyH2> Your Submissions</TypographyH2>
+        <TypographyP>Sign in to see the forms you have submitted. </TypographyP>
+      </section>
+    );
+  }
+
+  return (
+    <UserFormSubmissions
+      memberId={activeMember.id}
+      title="Your Submissions"
+      emptyLabel="No forms submitted yet."
+    />
+  );
+}
+
 export default function AnalysisPage() {
   return (
     <div className="space-y-8">
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
+        <TypographyMuted>
+          {" "}
+          Match and team data collected across all events.{" "}
+        </TypographyMuted>
       </div>
 
+      <Suspense
+        fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5" />}
+      >
+        <UserSubmissionsSection />
+      </Suspense>
+
+      <div>
+        <TypographyH2>All Time</TypographyH2>
+        <TypographyP> Organization-wide across all</TypographyP>
+      </div>
       <div className="rounded-xl border bg-muted/20 grid grid-cols-1 max-md:divide-y md:grid-cols-3">
         <div className="px-6 py-5 md:border-r">
           <Suspense fallback={<StatItemSkeleton />}>
@@ -82,6 +168,7 @@ export default function AnalysisPage() {
         </div>
       </div>
       <NavCardGrid items={navCards} />
+      <TypographyH1> c</TypographyH1>
     </div>
   );
 }
