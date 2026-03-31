@@ -3,6 +3,8 @@ import "server-only";
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+type PresignerClient = Parameters<typeof getSignedUrl>[0];
+
 function getStorageConfig() {
   const endpoint = process.env.SPACES_ENDPOINT;
   const bucket = process.env.SPACES_BUCKET;
@@ -72,7 +74,7 @@ export async function createPresignedUploadUrl(
     ContentLength: maxSizeBytes, // Enforce maximum upload size at S3 level
   });
 
-  const url = await getSignedUrl(client, command, {
+  const url = await getSignedUrl(client as PresignerClient, command, {
     expiresIn: UPLOAD_EXPIRATION_SECONDS,
   });
 
@@ -88,7 +90,7 @@ export async function createPresignedDownloadUrl(objectKey: string): Promise<str
     Key: objectKey,
   });
 
-  return getSignedUrl(client, command, {
+  return getSignedUrl(client as PresignerClient, command, {
     expiresIn: DOWNLOAD_EXPIRATION_SECONDS,
   });
 }
