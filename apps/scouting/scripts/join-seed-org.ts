@@ -18,7 +18,7 @@ const appRoot = path.resolve(__dirname, "..");
 dotenv.config({ path: path.join(appRoot, ".env.local") });
 dotenv.config({ path: path.join(appRoot, ".env") });
 
-const email = process.argv[2];
+const email: string = process.argv[2] ?? "";
 if (!email) {
   console.error("Usage: pnpm join:seed <your-email>");
   process.exit(1);
