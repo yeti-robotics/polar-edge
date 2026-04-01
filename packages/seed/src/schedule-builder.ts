@@ -1,5 +1,4 @@
 import { gameConfig } from "./game-config";
-import { gaussianRandom } from "./team-model";
 import type { SimulatedMatch, TeamProfile } from "./types";
 
 /** Event definition produced by district planning. */
@@ -40,11 +39,12 @@ export function planDistrict(profiles: TeamProfile[]): PlannedEvent[] {
   const targetSlots = teamCount * 2;
   while (totalSlots !== targetSlots) {
     const idx = Math.floor(Math.random() * numEvents);
-    if (totalSlots < targetSlots && eventSizes[idx]! < maxTeams) {
-      eventSizes[idx]!++;
+    const currentSize = eventSizes[idx] ?? 0;
+    if (totalSlots < targetSlots && currentSize < maxTeams) {
+      eventSizes[idx] = currentSize + 1;
       totalSlots++;
-    } else if (totalSlots > targetSlots && eventSizes[idx]! > minTeams) {
-      eventSizes[idx]!--;
+    } else if (totalSlots > targetSlots && currentSize > minTeams) {
+      eventSizes[idx] = currentSize - 1;
       totalSlots--;
     }
   }
@@ -66,25 +66,26 @@ export function planDistrict(profiles: TeamProfile[]): PlannedEvent[] {
   const eventCapacity = [...eventSizes];
 
   for (const teamNum of teamPool) {
-    const assigned = teamAssignments.get(teamNum)!;
+    const assigned = teamAssignments.get(teamNum);
+    if (!assigned) continue;
     if (assigned.length >= 2) continue;
 
     // Find an event with capacity that this team isn't already in
     let bestEvent = -1;
     let bestCapacity = 0;
     for (let i = 0; i < numEvents; i++) {
-      if (eventCapacity[i]! <= 0) continue;
-      if (eventTeams[i]!.includes(teamNum)) continue;
-      // Prefer events with more remaining capacity (balances assignment)
-      if (eventCapacity[i]! > bestCapacity) {
-        bestCapacity = eventCapacity[i]!;
+      const cap = eventCapacity[i] ?? 0;
+      if (cap <= 0) continue;
+      if (eventTeams[i]?.includes(teamNum)) continue;
+      if (cap > bestCapacity) {
+        bestCapacity = cap;
         bestEvent = i;
       }
     }
 
     if (bestEvent >= 0) {
-      eventTeams[bestEvent]!.push(teamNum);
-      eventCapacity[bestEvent]!--;
+      eventTeams[bestEvent]?.push(teamNum);
+      eventCapacity[bestEvent] = (eventCapacity[bestEvent] ?? 0) - 1;
       assigned.push(bestEvent);
     }
   }
@@ -118,11 +119,7 @@ export function planDistrict(profiles: TeamProfile[]): PlannedEvent[] {
  * Each team gets a "selection score" = skill * bias + random * (1 - bias).
  * Top N by selection score advance.
  */
-function selectDcmpTeams(
-  profiles: TeamProfile[],
-  count: number,
-  bias: number
-): number[] {
+function selectDcmpTeams(profiles: TeamProfile[], count: number, bias: number): number[] {
   const scored = profiles.map((p) => ({
     teamNumber: p.teamNumber,
     score: p.skill * bias + Math.random() * (1 - bias),
@@ -135,10 +132,7 @@ function selectDcmpTeams(
 /**
  * Build a qualification match schedule for a set of teams.
  */
-export function buildSchedule(
-  teamNumbers: number[],
-  matchesPerTeam: number
-): SimulatedMatch[] {
+export function buildSchedule(teamNumbers: number[], matchesPerTeam: number): SimulatedMatch[] {
   const teamsPerMatch = 6;
   const totalSlots = teamNumbers.length * matchesPerTeam;
   const matchCount = Math.ceil(totalSlots / teamsPerMatch);
@@ -163,12 +157,12 @@ export function buildSchedule(
     // Deduplicate within a match
     const seen = new Set<number>();
     for (let i = 0; i < matchTeams.length; i++) {
-      const t = matchTeams[i]!;
+      const t = matchTeams[i] ?? 0;
       if (seen.has(t)) {
         let swapped = false;
         for (let j = start + teamsPerMatch; j < pool.length; j++) {
-          if (!seen.has(pool[j]!)) {
-            [matchTeams[i], pool[j]] = [pool[j]!, matchTeams[i]!];
+          if (!seen.has(pool[j] ?? 0)) {
+            [matchTeams[i], pool[j]] = [pool[j] ?? 0, matchTeams[i] ?? 0];
             swapped = true;
             break;
           }
@@ -176,11 +170,11 @@ export function buildSchedule(
         if (!swapped) {
           const candidates = teamNumbers.filter((tn) => !seen.has(tn));
           if (candidates.length > 0) {
-            matchTeams[i] = candidates[Math.floor(Math.random() * candidates.length)]!;
+            matchTeams[i] = candidates[Math.floor(Math.random() * candidates.length)] ?? 0;
           }
         }
       }
-      seen.add(matchTeams[i]!);
+      seen.add(matchTeams[i] ?? 0);
     }
 
     const red = matchTeams.slice(0, 3);
@@ -200,6 +194,6 @@ export function buildSchedule(
 function shuffle<T>(arr: T[]): void {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
+    [arr[i], arr[j]] = [arr[j] as T, arr[i] as T];
   }
 }

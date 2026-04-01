@@ -70,9 +70,7 @@ async function ComparisonDriveRatingSection({
     ...teamNums.map((n) => getDriveRatingHistory(n, organizationId, effectiveEventId)),
   ]);
 
-  const ratingsPerTeam = teamNums.map(
-    (n) => ratings.find((r) => r.teamNumber === n) ?? null
-  );
+  const ratingsPerTeam = teamNums.map((n) => ratings.find((r) => r.teamNumber === n) ?? null);
 
   return (
     <ComparisonDriveRating

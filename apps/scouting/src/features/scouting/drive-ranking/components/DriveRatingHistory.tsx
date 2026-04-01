@@ -120,7 +120,10 @@ export function DriveRatingHistoryChart({ history }: { history: DriveRatingHisto
               tickLine={false}
               axisLine={false}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "4 4" }} />
+            <Tooltip
+              content={<CustomTooltip />}
+              cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "4 4" }}
+            />
             <Area
               type="monotone"
               dataKey="ordinal"
@@ -128,7 +131,12 @@ export function DriveRatingHistoryChart({ history }: { history: DriveRatingHisto
               strokeWidth={2}
               fill="url(#driveRatingGradient)"
               dot={{ r: 4, fill: "var(--yeti-500)", strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: "var(--yeti-500)", stroke: "var(--background)", strokeWidth: 2 }}
+              activeDot={{
+                r: 6,
+                fill: "var(--yeti-500)",
+                stroke: "var(--background)",
+                strokeWidth: 2,
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>

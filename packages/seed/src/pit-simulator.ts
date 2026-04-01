@@ -10,7 +10,7 @@ function weightedPickFromRecord(weights: Record<string, number>): string {
     rand -= weight;
     if (rand <= 0) return key;
   }
-  return entries[entries.length - 1]![0];
+  return (entries[entries.length - 1] ?? [""])[0];
 }
 
 /** Probability that scales linearly with skill between [low, high]. */
@@ -37,7 +37,7 @@ export function simulatePitForm(profile: TeamProfile): SimulatedPitForm {
 
   const hasClimb = skillProbability(profile.skill, cfg.hasClimbRate);
   const climbType = hasClimb
-    ? cfg.climbTypeOptions[Math.floor(Math.random() * cfg.climbTypeOptions.length)]!
+    ? (cfg.climbTypeOptions[Math.floor(Math.random() * cfg.climbTypeOptions.length)] ?? null)
     : null;
 
   const capacity = Math.round(lerp(profile.skill, cfg.capacityRange));

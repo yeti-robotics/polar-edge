@@ -2,7 +2,12 @@ import { randomBytes } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { SimulatedDriveRanking, SimulatedMatchResult, SimulatedTeamMatch, TeamProfile } from "@repo/seed";
+import type {
+  SimulatedDriveRanking,
+  SimulatedMatchResult,
+  SimulatedTeamMatch,
+  TeamProfile,
+} from "@repo/seed";
 import {
   buildSchedule,
   gameConfig,
@@ -112,7 +117,7 @@ async function main() {
 
     await db.insert(schemaTables.user).values({
       id: userId,
-      name: scoutNames[i]!,
+      name: scoutNames[i] ?? `Scout ${i + 1}`,
       email: `scout${i + 1}@polar-edge.dev`,
       emailVerified: true,
       createdAt: new Date(),
@@ -133,15 +138,19 @@ async function main() {
   const allMemberIds = [ownerMemberId, ...scoutMembers.map((m) => m.id)];
   const scoutLeadIds = scoutMembers.filter((m) => m.role === "scout_lead").map((m) => m.id);
 
-  const randomMemberId = () => allMemberIds[Math.floor(Math.random() * allMemberIds.length)]!;
-  const randomScoutLeadId = () => scoutLeadIds[Math.floor(Math.random() * scoutLeadIds.length)]!;
+  const randomMemberId = () =>
+    allMemberIds[Math.floor(Math.random() * allMemberIds.length)] ?? ownerMemberId;
+  const randomScoutLeadId = () =>
+    scoutLeadIds[Math.floor(Math.random() * scoutLeadIds.length)] ?? ownerMemberId;
 
   // ── 2. Teams ─────────────────────────────────────────────────
 
   console.log("Seeding teams...");
 
   const teamNames = await readTeamNames();
-  const shuffledNames = [...teamNames].sort(() => Math.random() - 0.5).slice(0, gameConfig.teamCount);
+  const shuffledNames = [...teamNames]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, gameConfig.teamCount);
 
   const teamNumbers: number[] = [];
   const usedNumbers = new Set<number>();
@@ -483,7 +492,9 @@ async function main() {
   console.log(`  Teams: ${teamNumbers.length}`);
   console.log(`  Events: ${plannedEvents.length} (${plannedEvents.length - 1} district + 1 DCMP)`);
   console.log(`  Matches: ${totalMatches}`);
-  console.log(`  Stand forms: ${totalStandForms} (~${(totalStandForms / (totalMatches * 6)).toFixed(1)} per team-match)`);
+  console.log(
+    `  Stand forms: ${totalStandForms} (~${(totalStandForms / (totalMatches * 6)).toFixed(1)} per team-match)`
+  );
   console.log(`  Cycles: ${totalCycles}`);
   console.log(`  Climbs: ${totalClimbs}`);
   console.log(`  Drive rankings: ${totalDriveRankings}`);

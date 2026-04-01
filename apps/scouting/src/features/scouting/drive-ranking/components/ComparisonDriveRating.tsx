@@ -14,13 +14,7 @@ import {
 } from "recharts";
 import type { DriveRatingHistoryPoint, DriveTeamRating } from "../types";
 
-const TEAM_COLORS = [
-  "var(--yeti-500)",
-  "#f97316",
-  "#22c55e",
-  "#a855f7",
-  "#ec4899",
-];
+const TEAM_COLORS = ["var(--yeti-500)", "#f97316", "#22c55e", "#a855f7", "#ec4899"];
 
 type Props = {
   teamNumbers: number[];
@@ -50,10 +44,7 @@ function CustomTooltip({
       <p className="text-xs text-muted-foreground mb-1">Observation {label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2 text-sm">
-          <span
-            className="size-2 rounded-full shrink-0"
-            style={{ backgroundColor: entry.color }}
-          />
+          <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
           <span className="font-medium">Team {entry.dataKey}</span>
           <span className="tabular-nums ml-auto">{entry.value.toFixed(1)}</span>
         </div>
@@ -118,16 +109,15 @@ export function ComparisonDriveRating({
                     style={{ backgroundColor: TEAM_COLORS[i % TEAM_COLORS.length] }}
                   />
                   <span className="text-xs text-muted-foreground truncate">
-                    {num}{name ? ` — ${name}` : ""}
+                    {num}
+                    {name ? ` — ${name}` : ""}
                   </span>
                 </div>
                 <p className="text-2xl font-bold tabular-nums leading-none">
                   {rating ? rating.ordinal.toFixed(1) : "—"}
                 </p>
                 {rating && (
-                  <p className="text-xs text-muted-foreground">
-                    {rating.matchesRanked} ranked
-                  </p>
+                  <p className="text-xs text-muted-foreground">{rating.matchesRanked} ranked</p>
                 )}
               </div>
             );

@@ -58,9 +58,9 @@ export const gameConfig = {
      * Each is an array of weights for buckets 0-5.
      */
     bucketWeights: {
-      low: [0.35, 0.35, 0.20, 0.08, 0.02, 0.00],
-      mid: [0.10, 0.20, 0.30, 0.25, 0.10, 0.05],
-      high: [0.02, 0.05, 0.15, 0.30, 0.28, 0.20],
+      low: [0.35, 0.35, 0.2, 0.08, 0.02, 0.0],
+      mid: [0.1, 0.2, 0.3, 0.25, 0.1, 0.05],
+      high: [0.02, 0.05, 0.15, 0.3, 0.28, 0.2],
     },
   },
 
@@ -74,9 +74,9 @@ export const gameConfig = {
     durationRange: [35.0, 3.0] as [number, number],
     /** Climb level weights by skill tier. Index = level (0-3). */
     levelWeights: {
-      low: [0.40, 0.45, 0.12, 0.03],
-      mid: [0.10, 0.30, 0.40, 0.20],
-      high: [0.02, 0.10, 0.38, 0.50],
+      low: [0.4, 0.45, 0.12, 0.03],
+      mid: [0.1, 0.3, 0.4, 0.2],
+      high: [0.02, 0.1, 0.38, 0.5],
     },
     /** Probability that the climb happens during auto (vs teleop). */
     autoClimbRate: 0.05,
@@ -95,8 +95,8 @@ export const gameConfig = {
   // ── Pit form ───────────────────────────────────────────────────
   pit: {
     drivetrainWeights: {
-      swerve: 0.80,
-      tank: 0.10,
+      swerve: 0.8,
+      tank: 0.1,
       mecanum: 0.07,
       other: 0.03,
     } as Record<string, number>,
@@ -105,10 +105,10 @@ export const gameConfig = {
     shooterWeights: { turret: 0.4, fixed: 0.4, none: 0.2 } as Record<string, number>,
     /** Probability of each capability at skill=0 and skill=1. */
     capabilities: {
-      canTrench: [0.15, 0.90] as [number, number],
-      canBump: [0.25, 0.90] as [number, number],
-      canShuttle: [0.10, 0.85] as [number, number],
-      canShootWhileMoving: [0.05, 0.70] as [number, number],
+      canTrench: [0.15, 0.9] as [number, number],
+      canBump: [0.25, 0.9] as [number, number],
+      canShuttle: [0.1, 0.85] as [number, number],
+      canShootWhileMoving: [0.05, 0.7] as [number, number],
     },
     climbTypeOptions: ["sides", "center", "left", "right", "any"] as const,
     /** Probability of having any climb capability, at [skill=0, skill=1]. */

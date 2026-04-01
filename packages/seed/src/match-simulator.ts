@@ -1,5 +1,5 @@
 import { gameConfig } from "./game-config";
-import { clamp, gaussianRandom } from "./team-model";
+import { gaussianRandom } from "./team-model";
 import type {
   SimulatedClimb,
   SimulatedCycle,
@@ -14,10 +14,12 @@ function weightedPick<T>(options: T[], weights: readonly number[]): T {
   const total = weights.reduce((sum, w) => sum + w, 0);
   let rand = Math.random() * total;
   for (let i = 0; i < options.length; i++) {
-    rand -= weights[i]!;
-    if (rand <= 0) return options[i]!;
+    const w = weights[i] ?? 0;
+    const opt = options[i];
+    rand -= w;
+    if (rand <= 0 && opt !== undefined) return opt;
   }
-  return options[options.length - 1]!;
+  return options[options.length - 1] as T;
 }
 
 /** Linear interpolation between two values based on t in [0, 1]. */
@@ -102,7 +104,7 @@ function simulateOof(profile: TeamProfile): number {
 function pickComment(profile: TeamProfile): string {
   const tier = skillTier(profile.skill);
   const templates = gameConfig.comments[tier];
-  return templates[Math.floor(Math.random() * templates.length)]!;
+  return templates[Math.floor(Math.random() * templates.length)] ?? "";
 }
 
 function calculatePoints(cycles: SimulatedCycle[], climb: SimulatedClimb | null): number {

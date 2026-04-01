@@ -27,15 +27,13 @@ if (!email) {
 async function main() {
   const { db } = await import("@/lib/database");
   const { eq, and } = await import("drizzle-orm");
-  const { user, member, organization, session } = await import(
-    "../src/lib/database/schema/tables"
-  );
+  const { user, member, organization, session } = await import("../src/lib/database/schema/tables");
 
   // Find user
   const userRow = await db
     .select({ id: user.id, name: user.name })
     .from(user)
-    .where(eq(user.email, email!.toLowerCase()))
+    .where(eq(user.email, email.toLowerCase()))
     .limit(1);
 
   if (!userRow[0]) {
@@ -76,7 +74,7 @@ async function main() {
   }
 
   // Set active org on all their sessions
-  const updated = await db
+  await db
     .update(session)
     .set({ activeOrganizationId: orgRow[0].id })
     .where(eq(session.userId, userRow[0].id));

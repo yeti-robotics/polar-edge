@@ -174,9 +174,7 @@ export function DriveRankingForm() {
           <span className={alliance === "red" ? "text-red-500" : "text-blue-500"}>
             {alliance} alliance
           </span>
-          {alreadyRanked && (
-            <span className="text-amber-600"> &middot; overwriting</span>
-          )}
+          {alreadyRanked && <span className="text-amber-600"> &middot; overwriting</span>}
         </TypographyLabel>
       </CardHeader>
       <CardContent>

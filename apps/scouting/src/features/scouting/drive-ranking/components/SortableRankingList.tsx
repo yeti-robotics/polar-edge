@@ -28,7 +28,7 @@ interface SortableRankingListProps {
   onReorder: (teams: RankingTeam[]) => void;
 }
 
-export function SortableRankingList({ teams, alliance, onReorder }: SortableRankingListProps) {
+export function SortableRankingList({ teams, onReorder }: SortableRankingListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -51,12 +51,8 @@ export function SortableRankingList({ teams, alliance, onReorder }: SortableRank
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <div className="flex flex-col divide-y divide-border rounded-lg overflow-hidden border">
-          {teams.map((t, i) => (
-            <SortableTeamRow
-              key={t.teamNumber}
-              teamNumber={t.teamNumber}
-              teamName={t.teamName}
-            />
+          {teams.map((t) => (
+            <SortableTeamRow key={t.teamNumber} teamNumber={t.teamNumber} teamName={t.teamName} />
           ))}
         </div>
       </SortableContext>
@@ -64,13 +60,7 @@ export function SortableRankingList({ teams, alliance, onReorder }: SortableRank
   );
 }
 
-function SortableTeamRow({
-  teamNumber,
-  teamName,
-}: {
-  teamNumber: number;
-  teamName: string;
-}) {
+function SortableTeamRow({ teamNumber, teamName }: { teamNumber: number; teamName: string }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: teamNumber,
   });

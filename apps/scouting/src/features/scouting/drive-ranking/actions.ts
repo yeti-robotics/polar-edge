@@ -6,7 +6,13 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { driveTeamRanking, driveTeamRankingEntry, match, team, teamMatch } from "@/lib/database/schema";
+import {
+  driveTeamRanking,
+  driveTeamRankingEntry,
+  match,
+  team,
+  teamMatch,
+} from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { DriveRankingSubmissionSchema } from "./types";
 
