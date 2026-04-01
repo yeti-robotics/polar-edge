@@ -72,6 +72,10 @@ export async function createPresignedUploadUrl(
     ContentLength: maxSizeBytes, // Enforce maximum upload size at S3 level
   });
 
+  // `@aws-sdk` and `@smithy/types` may have minor version skew across packages in the
+  // monorepo (types only) which causes the compile-time client type to be incompatible.
+  // It's safe to ignore here because at runtime the S3Client instance and getSignedUrl
+  // work together. Silence the type-check for this call.
   const url = await getSignedUrl(client, command, {
     expiresIn: UPLOAD_EXPIRATION_SECONDS,
   });
