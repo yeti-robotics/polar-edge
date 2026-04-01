@@ -38,7 +38,11 @@ export function usePasskey() {
     }
 
     if (result.error) {
-      setError(typeof result.error.message === "string" ? result.error.message : "An unknown error occurred");
+      setError(
+        typeof result.error.message === "string"
+          ? result.error.message
+          : "An unknown error occurred"
+      );
       return;
     } else {
       setError("");
