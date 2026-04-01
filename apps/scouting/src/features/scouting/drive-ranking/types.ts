@@ -12,6 +12,8 @@ export const DriveRankingSubmissionSchema = z.object({
 
 export type DriveRankingSubmission = z.infer<typeof DriveRankingSubmissionSchema>;
 
+export type Alliance = "red" | "blue";
+
 export type DriveTeamRating = {
   teamNumber: number;
   teamName: string;

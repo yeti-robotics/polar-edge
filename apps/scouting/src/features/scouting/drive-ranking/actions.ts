@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { driveTeamRanking, driveTeamRankingEntry, match, teamMatch } from "@/lib/database/schema";
+import { driveTeamRanking, driveTeamRankingEntry, match, team, teamMatch } from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { DriveRankingSubmissionSchema } from "./types";
 
@@ -38,9 +38,11 @@ export async function lookupAllianceTeams(matchNumber: number, alliance: "red" |
   const teams = await db
     .select({
       teamNumber: teamMatch.teamNumber,
+      teamName: team.teamName,
       position: teamMatch.position,
     })
     .from(teamMatch)
+    .innerJoin(team, eq(team.teamNumber, teamMatch.teamNumber))
     .where(and(eq(teamMatch.matchId, matchRecord.id), eq(teamMatch.alliance, alliance)))
     .orderBy(teamMatch.position);
 
@@ -61,7 +63,7 @@ export async function lookupAllianceTeams(matchNumber: number, alliance: "red" |
 
   return {
     matchId: matchRecord.id,
-    teams: teams.map((t) => t.teamNumber),
+    teams: teams.map((t) => ({ teamNumber: t.teamNumber, teamName: t.teamName })),
     alreadyRanked: existing.length > 0,
   };
 }

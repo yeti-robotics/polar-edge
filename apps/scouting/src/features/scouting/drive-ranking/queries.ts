@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray, lte } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
@@ -10,18 +10,33 @@ import {
   event,
   match,
   team,
+  teamMatch,
 } from "@/lib/database/schema";
 import { computeDriveRatings } from "./logic";
 import type { DriveRatingHistoryPoint, DriveTeamRating } from "./types";
 
 /**
- * Get all drive team ranking observations for an organization, optionally filtered by event.
- * Returns them chronologically for OpenSkill processing.
+ * Get all drive team ranking observations for an organization.
+ *
+ * When eventId is provided, returns all observations up to and including
+ * that event (by start date) — so ratings reflect the full season history
+ * without leaking future data.
  */
 async function getRankingObservations(organizationId: string, eventId?: string | null) {
   const conditions = [eq(driveTeamRanking.organizationId, organizationId)];
+
   if (eventId) {
-    conditions.push(eq(match.eventId, eventId));
+    // Look up the event's start date to use as a cutoff
+    const targetEvent = await db
+      .select({ startDate: event.startDate })
+      .from(event)
+      .where(eq(event.id, eventId))
+      .limit(1);
+
+    const cutoff = targetEvent[0]?.startDate;
+    if (cutoff) {
+      conditions.push(lte(event.startDate, cutoff));
+    }
   }
 
   const rows = await db
@@ -93,8 +108,8 @@ export async function getDriveTeamRatings(
   eventId?: string | null
 ): Promise<DriveTeamRating[]> {
   "use cache";
-  cacheLife("minutes");
-  cacheTag(cacheTags.driveRanking(organizationId));
+  cacheLife("seconds");
+  cacheTag(cacheTags.driveRanking(organizationId, eventId));
 
   const observations = await getRankingObservations(organizationId, eventId);
   if (observations.length === 0) return [];
@@ -108,6 +123,18 @@ export async function getDriveTeamRatings(
 
   const teamNames = new Map(teamRows.map((t) => [t.teamNumber, t.teamName]));
   const { ratings } = computeDriveRatings(observations, teamNames);
+
+  // When scoped to an event, only return teams actually at that event
+  if (eventId) {
+    const eventTeamRows = await db
+      .selectDistinct({ teamNumber: teamMatch.teamNumber })
+      .from(teamMatch)
+      .where(eq(teamMatch.eventId, eventId));
+
+    const eventTeamNumbers = new Set(eventTeamRows.map((r) => r.teamNumber));
+    return ratings.filter((r) => eventTeamNumbers.has(r.teamNumber));
+  }
+
   return ratings;
 }
 
@@ -120,8 +147,8 @@ export async function getDriveRatingHistory(
   eventId?: string | null
 ): Promise<DriveRatingHistoryPoint[]> {
   "use cache";
-  cacheLife("minutes");
-  cacheTag(cacheTags.driveRanking(organizationId));
+  cacheLife("seconds");
+  cacheTag(cacheTags.driveRanking(organizationId, eventId));
 
   const observations = await getRankingObservations(organizationId, eventId);
   if (observations.length === 0) return [];

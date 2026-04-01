@@ -15,84 +15,16 @@ import { ComparisonPitData } from "@/features/analysis/components/ComparisonPitD
 import { ComparisonScopeControls } from "@/features/analysis/components/ComparisonScopeControls";
 import { ComparisonTeamHeader } from "@/features/analysis/components/ComparisonTeamHeader";
 import { ComparisonTeamSelector } from "@/features/analysis/components/ComparisonTeamSelector";
-import type { MultiTeamRadarDataPoint } from "@/features/analysis/components/MultiTeamRadarChart";
+import { getTeamKeyMetrics } from "@/features/analysis/team-queries";
+import { ComparisonDriveRating } from "@/features/scouting/drive-ranking/components/ComparisonDriveRating";
 import {
-  MultiTeamRadarChart,
-  TEAM_COLORS,
-} from "@/features/analysis/components/MultiTeamRadarChart";
-import { RadarChart } from "@/features/analysis/components/TeamRadarChart";
-import type { RadarPoint } from "@/features/analysis/team-queries";
-import { getTeamKeyMetrics, getTeamRadarData } from "@/features/analysis/team-queries";
+  getDriveRatingHistory,
+  getDriveTeamRatings,
+} from "@/features/scouting/drive-ranking/queries";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { event, member, standForm, team, teamMatch } from "@/lib/database/schema";
 import { routes } from "@/lib/routes";
-
-function mergeRadarData(
-  teamNums: number[],
-  allRadarData: RadarPoint[][]
-): MultiTeamRadarDataPoint[] {
-  if (allRadarData.length === 0 || (allRadarData[0]?.length ?? 0) === 0) return [];
-  return (allRadarData[0] ?? []).map((point, idx) => {
-    const merged: MultiTeamRadarDataPoint = { subject: point.subject };
-    for (let i = 0; i < teamNums.length; i++) {
-      merged[String(teamNums[i])] = allRadarData[i]?.[idx]?.value ?? 0;
-    }
-    return merged;
-  });
-}
-
-async function ComparisonRadarSection({
-  teamNums,
-  effectiveOrgId,
-  effectiveEventId,
-}: {
-  teamNums: number[];
-  effectiveOrgId: string | null;
-  effectiveEventId: string | null;
-}) {
-  const allRadarData = await Promise.all(
-    teamNums.map((n) =>
-      getTeamRadarData(n, { organizationId: effectiveOrgId, eventId: effectiveEventId })
-    )
-  );
-  const merged = mergeRadarData(teamNums, allRadarData);
-
-  return (
-    <div className="space-y-4">
-      {/* Overlaid multi-team radar */}
-      <MultiTeamRadarChart data={merged} teamNumbers={teamNums} />
-
-      {/* Side-by-side individual radars (only shown when 2+ teams) */}
-      {teamNums.length >= 2 && (
-        <div className="space-y-3">
-          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-            Individual Profiles
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {teamNums.map((num, i) => (
-              <div key={num} className="space-y-2">
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                  Team {num}
-                </p>
-                <RadarChart
-                  data={allRadarData[i] ?? []}
-                  angleKey="subject"
-                  valueKey="value"
-                  name={`Team ${num}`}
-                  domain={[0, 100]}
-                  color={TEAM_COLORS[i % TEAM_COLORS.length]}
-                  fillOpacity={0.3}
-                  showLegend={false}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 async function ComparisonMetricsSection({
   teamNums,
@@ -116,6 +48,38 @@ async function ComparisonMetricsSection({
       teamNumbers={teamNums}
       teamNames={teamNames}
       metricsPerTeam={allMetrics}
+    />
+  );
+}
+
+async function ComparisonDriveRatingSection({
+  teamNums,
+  teamNames,
+  organizationId,
+  effectiveEventId,
+}: {
+  teamNums: number[];
+  teamNames: (string | null)[];
+  organizationId: string | null;
+  effectiveEventId: string | null;
+}) {
+  if (!organizationId) return null;
+
+  const [ratings, ...histories] = await Promise.all([
+    getDriveTeamRatings(organizationId, effectiveEventId),
+    ...teamNums.map((n) => getDriveRatingHistory(n, organizationId, effectiveEventId)),
+  ]);
+
+  const ratingsPerTeam = teamNums.map(
+    (n) => ratings.find((r) => r.teamNumber === n) ?? null
+  );
+
+  return (
+    <ComparisonDriveRating
+      teamNumbers={teamNums}
+      teamNames={teamNames}
+      ratingsPerTeam={ratingsPerTeam}
+      historyPerTeam={histories}
     />
   );
 }
@@ -229,21 +193,22 @@ export default async function ComparisonPage({
           {/* Hero header */}
           <ComparisonTeamHeader teamNumbers={teamNums} teamNames={teamNames} />
 
-          {/* Radar charts */}
-          <Suspense fallback={<Skeleton className="h-[420px] w-full" />}>
-            <ComparisonRadarSection
-              teamNums={teamNums}
-              effectiveOrgId={effectiveOrgId}
-              effectiveEventId={effectiveEventId}
-            />
-          </Suspense>
-
           {/* Metrics table */}
           <Suspense fallback={<Skeleton className="h-64 w-full" />}>
             <ComparisonMetricsSection
               teamNums={teamNums}
               teamNameMap={teamNameMap}
               effectiveOrgId={effectiveOrgId}
+              effectiveEventId={effectiveEventId}
+            />
+          </Suspense>
+
+          {/* Drive team skill comparison */}
+          <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+            <ComparisonDriveRatingSection
+              teamNums={teamNums}
+              teamNames={teamNames}
+              organizationId={organizationId}
               effectiveEventId={effectiveEventId}
             />
           </Suspense>

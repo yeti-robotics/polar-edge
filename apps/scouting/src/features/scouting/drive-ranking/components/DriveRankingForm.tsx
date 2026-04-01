@@ -7,12 +7,12 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
-import { TypographyH4, TypographyMuted } from "@repo/ui/components/typography";
+import { TypographyLabel } from "@repo/ui/components/typography";
 import { useForm } from "@tanstack/react-form-nextjs";
-import { useCallback, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { lookupAllianceTeams, submitDriveRanking } from "../actions";
 import { ALLIANCE_OPTIONS, driveRankingFormOpts } from "../form-options";
-import { SortableRankingList } from "./SortableRankingList";
+import { type RankingTeam, SortableRankingList } from "./SortableRankingList";
 
 type FormStage = "match_selection" | "ranking";
 
@@ -21,9 +21,8 @@ export function DriveRankingForm() {
   const [lookupLoading, setLookupLoading] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
 
-  // Ranking stage state
   const [matchId, setMatchId] = useState<string | null>(null);
-  const [teamNumbers, setTeamNumbers] = useState<number[]>([]);
+  const [teams, setTeams] = useState<RankingTeam[]>([]);
   const [alreadyRanked, setAlreadyRanked] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -31,7 +30,7 @@ export function DriveRankingForm() {
     ...driveRankingFormOpts,
   });
 
-  const handleLookup = useCallback(async () => {
+  async function handleLookup() {
     const { matchNumber, alliance } = form.state.values;
     if (!matchNumber || matchNumber <= 0) {
       setLookupError("Please enter a valid match number");
@@ -50,7 +49,7 @@ export function DriveRankingForm() {
       }
 
       setMatchId(result.matchId);
-      setTeamNumbers(result.teams);
+      setTeams(result.teams);
       setAlreadyRanked(result.alreadyRanked);
       setStage("ranking");
     } catch {
@@ -58,17 +57,17 @@ export function DriveRankingForm() {
     } finally {
       setLookupLoading(false);
     }
-  }, [form.state.values]);
+  }
 
   function handleBack() {
     setStage("match_selection");
     setMatchId(null);
-    setTeamNumbers([]);
+    setTeams([]);
     setLookupError(null);
   }
 
   function handleSubmit() {
-    if (!matchId || teamNumbers.length !== 3) return;
+    if (!matchId || teams.length !== 3) return;
 
     const { matchNumber, alliance } = form.state.values;
 
@@ -76,7 +75,7 @@ export function DriveRankingForm() {
       const result = await submitDriveRanking({
         matchNumber,
         alliance,
-        rankings: teamNumbers,
+        rankings: teams.map((t) => t.teamNumber),
       });
 
       if ("error" in result) {
@@ -88,14 +87,12 @@ export function DriveRankingForm() {
       form.reset();
       setStage("match_selection");
       setMatchId(null);
-      setTeamNumbers([]);
+      setTeams([]);
       setAlreadyRanked(false);
     });
   }
 
   if (stage === "match_selection") {
-    const { matchNumber } = form.state.values;
-
     return (
       <Card>
         <CardHeader>
@@ -151,13 +148,17 @@ export function DriveRankingForm() {
           {lookupError && <p className="text-sm text-destructive">{lookupError}</p>}
         </CardContent>
         <CardFooter>
-          <Button
-            onClick={handleLookup}
-            disabled={lookupLoading || !matchNumber || matchNumber <= 0}
-            className="w-full"
-          >
-            {lookupLoading ? "Looking up..." : "Find Teams"}
-          </Button>
+          <form.Subscribe selector={(state) => state.values.matchNumber}>
+            {(matchNumber) => (
+              <Button
+                onClick={handleLookup}
+                disabled={lookupLoading || !matchNumber || matchNumber <= 0}
+                className="w-full"
+              >
+                {lookupLoading ? "Looking up..." : "Find Teams"}
+              </Button>
+            )}
+          </form.Subscribe>
         </CardFooter>
       </Card>
     );
@@ -168,21 +169,18 @@ export function DriveRankingForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          Rank Drive Teams &mdash; Match {matchNumber}{" "}
+        <TypographyLabel>
+          Match {matchNumber} &middot;{" "}
           <span className={alliance === "red" ? "text-red-500" : "text-blue-500"}>
-            ({alliance})
+            {alliance} alliance
           </span>
-        </CardTitle>
-        {alreadyRanked && (
-          <TypographyMuted className="text-amber-600">
-            A ranking already exists for this match/alliance. Submitting will overwrite it.
-          </TypographyMuted>
-        )}
+          {alreadyRanked && (
+            <span className="text-amber-600"> &middot; overwriting</span>
+          )}
+        </TypographyLabel>
       </CardHeader>
       <CardContent>
-        <TypographyH4 className="mb-3">Drag to reorder (top = best)</TypographyH4>
-        <SortableRankingList teamNumbers={teamNumbers} onReorder={setTeamNumbers} />
+        <SortableRankingList teams={teams} alliance={alliance} onReorder={setTeams} />
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={handleBack} disabled={isPending}>

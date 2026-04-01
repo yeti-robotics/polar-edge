@@ -11,5 +11,8 @@ export const cacheTags = {
   matchScores: (eventId: string) => `match-scores-${eventId}`,
   teamCommentSummary: (teamNumber: number, eventId: string) =>
     `team-comment-summary-${teamNumber}-${eventId}`,
-  driveRanking: (organizationId: string) => `drive-ranking-${organizationId}`,
+  driveRanking: (organizationId: string, eventId?: string | null) =>
+    eventId
+      ? `drive-ranking-${organizationId}-${eventId}`
+      : `drive-ranking-${organizationId}`,
 };

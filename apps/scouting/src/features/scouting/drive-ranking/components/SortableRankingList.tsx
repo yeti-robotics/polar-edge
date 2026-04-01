@@ -17,15 +17,18 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Card } from "@repo/ui/components/card";
 import { GripVerticalIcon } from "lucide-react";
+import type { Alliance } from "../types";
+
+export type RankingTeam = { teamNumber: number; teamName: string };
 
 interface SortableRankingListProps {
-  teamNumbers: number[];
-  onReorder: (teamNumbers: number[]) => void;
+  teams: RankingTeam[];
+  alliance: Alliance;
+  onReorder: (teams: RankingTeam[]) => void;
 }
 
-export function SortableRankingList({ teamNumbers, onReorder }: SortableRankingListProps) {
+export function SortableRankingList({ teams, alliance, onReorder }: SortableRankingListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -33,21 +36,27 @@ export function SortableRankingList({ teamNumbers, onReorder }: SortableRankingL
     })
   );
 
+  const ids = teams.map((t) => t.teamNumber);
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const oldIndex = teamNumbers.indexOf(Number(active.id));
-    const newIndex = teamNumbers.indexOf(Number(over.id));
-    onReorder(arrayMove(teamNumbers, oldIndex, newIndex));
+    const oldIndex = ids.indexOf(Number(active.id));
+    const newIndex = ids.indexOf(Number(over.id));
+    onReorder(arrayMove(teams, oldIndex, newIndex));
   }
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={teamNumbers} strategy={verticalListSortingStrategy}>
-        <div className="space-y-2">
-          {teamNumbers.map((teamNumber, index) => (
-            <SortableTeamCard key={teamNumber} teamNumber={teamNumber} rank={index + 1} />
+      <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+        <div className="flex flex-col divide-y divide-border rounded-lg overflow-hidden border">
+          {teams.map((t, i) => (
+            <SortableTeamRow
+              key={t.teamNumber}
+              teamNumber={t.teamNumber}
+              teamName={t.teamName}
+            />
           ))}
         </div>
       </SortableContext>
@@ -55,34 +64,39 @@ export function SortableRankingList({ teamNumbers, onReorder }: SortableRankingL
   );
 }
 
-function SortableTeamCard({ teamNumber, rank }: { teamNumber: number; rank: number }) {
+function SortableTeamRow({
+  teamNumber,
+  teamName,
+}: {
+  teamNumber: number;
+  teamName: string;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: teamNumber,
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: isDragging ? "none" : transition,
   };
 
-  const rankLabel = rank === 1 ? "1st" : rank === 2 ? "2nd" : "3rd";
-
   return (
-    <Card
+    <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 px-4 py-3 select-none ${isDragging ? "opacity-50 shadow-lg" : ""}`}
+      className={`
+        flex items-center gap-4 px-4 py-3 bg-card select-none cursor-grab active:cursor-grabbing
+        first:rounded-t-lg last:rounded-b-lg
+        ${isDragging ? "opacity-80 shadow-lg z-10 ring-1 ring-primary/20" : ""}
+      `}
+      {...attributes}
+      {...listeners}
     >
-      <button
-        type="button"
-        className="cursor-grab touch-none text-muted-foreground hover:text-foreground"
-        {...attributes}
-        {...listeners}
-      >
-        <GripVerticalIcon className="size-5" />
-      </button>
-      <span className="text-sm font-mono text-muted-foreground w-8">{rankLabel}</span>
-      <span className="font-semibold tabular-nums">Team {teamNumber}</span>
-    </Card>
+      <GripVerticalIcon className="size-5 text-muted-foreground/40 shrink-0" />
+      <div className="min-w-0">
+        <p className="text-xl font-bold tabular-nums leading-tight">{teamNumber}</p>
+        <p className="text-sm text-muted-foreground truncate">{teamName}</p>
+      </div>
+    </div>
   );
 }
