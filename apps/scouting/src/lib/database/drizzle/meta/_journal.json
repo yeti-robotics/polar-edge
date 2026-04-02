@@ -92,6 +92,13 @@
       "when": 1774397299996,
       "tag": "0012_clear_alex_power",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1774981873284,
+      "tag": "0013_green_exodus",
+      "breakpoints": true
     }
   ]
 }

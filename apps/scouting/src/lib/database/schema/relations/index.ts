@@ -1,5 +1,7 @@
 import { relations } from "drizzle-orm";
 import { account } from "../tables/account";
+import { driveTeamRanking } from "../tables/drive-team-ranking";
+import { driveTeamRankingEntry } from "../tables/drive-team-ranking-entry";
 import { event } from "../tables/event";
 import { invitation } from "../tables/invitation";
 import { member } from "../tables/member";
@@ -130,6 +132,21 @@ export const picklistTeamRelations = relations(picklistTeam, ({ one }) => ({
   }),
   team: one(team, {
     fields: [picklistTeam.teamNumber],
+    references: [team.teamNumber],
+  }),
+}));
+
+export const driveTeamRankingRelations = relations(driveTeamRanking, ({ many }) => ({
+  entries: many(driveTeamRankingEntry),
+}));
+
+export const driveTeamRankingEntryRelations = relations(driveTeamRankingEntry, ({ one }) => ({
+  ranking: one(driveTeamRanking, {
+    fields: [driveTeamRankingEntry.rankingId],
+    references: [driveTeamRanking.id],
+  }),
+  team: one(team, {
+    fields: [driveTeamRankingEntry.teamNumber],
     references: [team.teamNumber],
   }),
 }));
