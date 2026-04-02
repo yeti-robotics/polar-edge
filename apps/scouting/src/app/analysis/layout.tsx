@@ -1,4 +1,10 @@
-import { ArrowLeftRightIcon, LayoutDashboardIcon, ShieldIcon, TableIcon } from "lucide-react";
+import {
+  ArrowLeftRightIcon,
+  LayoutDashboardIcon,
+  ShieldCheckIcon,
+  ShieldIcon,
+  TableIcon,
+} from "lucide-react";
 import { headers } from "next/headers";
 import { type NavLink, NavSidebar } from "@/components/NavSidebar";
 import { SidebarSheet } from "@/components/SidebarSheet";
@@ -34,6 +40,11 @@ export default async function DataLayout({ children }: { children: React.ReactNo
       label: "Overview",
       icon: <LayoutDashboardIcon className="size-4" />,
       exact: true,
+    },
+    {
+      href: routes.analysis.scoutCoverage,
+      label: "Scout Coverage",
+      icon: <ShieldCheckIcon className="size-4" />,
     },
     { href: routes.analysis.teams, label: "Teams", icon: <ShieldIcon className="size-4" /> },
     {
