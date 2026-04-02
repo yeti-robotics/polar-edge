@@ -15,6 +15,7 @@ import { isSuperAdmin } from "@/lib/permissions";
 import { routes } from "@/lib/routes";
 import { isScoutLeadOrAbove } from "@/lib/server/auth/require-member";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
+import { HeaderNav } from "./HeaderNav";
 import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
 import { ThemeToggle } from "./ThemeToggle";
@@ -72,19 +73,13 @@ export function Header() {
         </Suspense>
       </div>
       <nav className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-            href={item.href}
-          >
-            {item.label}
-          </Link>
-        ))}
+        <Suspense>
+          <HeaderNav items={navItems} />
+        </Suspense>
+
         <Suspense fallback={null}>
           <ConditionalNavItems />
         </Suspense>
-        <nav />
       </nav>
     </header>
   );
@@ -145,7 +140,9 @@ async function UserAvatar() {
 
   let isAdminOrOwner = false;
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    const activeMember = await auth.api.getActiveMember({
+      headers: await headers(),
+    });
     isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
   } catch {
     // No active organization — still render the dropdown so the user can sign out

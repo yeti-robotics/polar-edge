@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, countDistinct, eq, isNull } from "drizzle-orm";
+import { and, countDistinct, eq, isNull, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { UserFormCounts, UserFormSubmission } from "@/app/profile/types";
 import { cacheTags } from "@/lib/cache";
@@ -39,6 +39,17 @@ export async function getPitFormCount(): Promise<number> {
 
 export async function getUserFormCounts(memberId: string): Promise<UserFormCounts> {
   const [standCountRow, pitCountRow] = await Promise.all([
+export type UserFormCounts = {
+  standCount: number;
+  pitCount: number;
+  total: number;
+};
+
+export async function getUserFormCounts(memberId: string): Promise<UserFormCounts> {
+  "use cache";
+  cacheLife("minutes");
+
+  const [standRows, pitRows] = await Promise.all([
     db
       .select({ count: countDistinct(standForm.id) })
       .from(standForm)
@@ -49,59 +60,50 @@ export async function getUserFormCounts(memberId: string): Promise<UserFormCount
       .where(eq(pitForm.scoutMemberId, memberId)),
   ]);
 
-  const standCount = standCountRow[0]?.count ?? 0;
-  const pitCount = pitCountRow[0]?.count ?? 0;
-
-  return {
-    standCount,
-    pitCount,
-    total: standCount + pitCount,
-  };
+  const standCount = standRows[0]?.count ?? 0;
+  const pitCount = pitRows[0]?.count ?? 0;
+  return { standCount, pitCount, total: standCount + pitCount };
 }
 
+export type UserFormSubmission = {
+  type: "stand" | "pit";
+  id: string;
+  teamNumber: number | null;
+  matchType: string | null;
+  matchNumber: number | null;
+  createdAt: Date;
+};
+
 export async function getUserFormSubmissions(memberId: string): Promise<UserFormSubmission[]> {
-  const [standForms, pitForms] = await Promise.all([
+  "use cache";
+  cacheLife("minutes");
+
+  const [standRows, pitRows] = await Promise.all([
     db
       .select({
+        type: sql<"stand">`'stand'`.as("type"),
         id: standForm.id,
-        createdAt: standForm.createdAt,
         teamNumber: teamMatch.teamNumber,
-        matchNumber: match.matchNumber,
         matchType: match.matchType,
+        matchNumber: match.matchNumber,
+        createdAt: standForm.createdAt,
       })
       .from(standForm)
-      .innerJoin(teamMatch, eq(standForm.teamMatchId, teamMatch.id))
-      .innerJoin(match, eq(teamMatch.matchId, match.id))
+      .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+      .innerJoin(match, eq(match.id, teamMatch.matchId))
       .where(and(eq(standForm.scoutMemberId, memberId), isNull(standForm.deletedAt))),
     db
       .select({
+        type: sql<"pit">`'pit'`.as("type"),
         id: pitForm.id,
-        createdAt: pitForm.createdAt,
         teamNumber: pitForm.teamNumber,
+        matchType: sql<null>`null`.as("matchType"),
+        matchNumber: sql<null>`null`.as("matchNumber"),
+        createdAt: pitForm.createdAt,
       })
       .from(pitForm)
       .where(eq(pitForm.scoutMemberId, memberId)),
   ]);
 
-  const normalizedStand = standForms.map((row) => ({
-    id: row.id,
-    type: "stand" as const,
-    createdAt: row.createdAt,
-    teamNumber: row.teamNumber,
-    matchNumber: row.matchNumber,
-    matchType: row.matchType,
-  }));
-
-  const normalizedPit = pitForms.map((row) => ({
-    id: row.id,
-    type: "pit" as const,
-    createdAt: row.createdAt,
-    teamNumber: row.teamNumber,
-    matchNumber: null,
-    matchType: null,
-  }));
-
-  return [...normalizedStand, ...normalizedPit].sort(
-    (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-  );
+  return [...standRows, ...pitRows].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
