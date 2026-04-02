@@ -48,6 +48,9 @@ export const routes = {
     detail: (id: string) => `/picklist/${id}` as const,
   },
 
+  // Alliance Simulation
+  allianceSim: "/alliance-sim",
+
   // Other
   leaderboard: "/leaderboard",
   profile: "/profile",
