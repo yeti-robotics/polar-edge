@@ -5,6 +5,7 @@ import { authClient } from "@/lib/auth-client";
 type StateFunction<T> = (prevState: T) => T;
 
 type ExtractSuccessData<R> = R extends { error: null; data: infer D } ? D : never;
+type PasskeyResult = { error: { message?: unknown } | null; data: unknown };
 
 export function usePasskey() {
   const [passkeys, setPasskeys] = useState([] as Passkey[]);
@@ -18,7 +19,7 @@ export function usePasskey() {
     setPasskeys((s) => passkeyArr(s).sort((a, b) => (a.name ?? "Z").localeCompare(b.name ?? "Z")));
   };
 
-  const runPasskeyAction = async <R = unknown>(
+  const runPasskeyAction = async <R extends PasskeyResult>(
     action: () => Promise<R>,
     updateFn: (prevState: Passkey[], newData: ExtractSuccessData<R>) => Passkey[],
     isFetch: boolean = false
@@ -36,16 +37,10 @@ export function usePasskey() {
       setLoading(false);
     }
 
-    // Narrow the result shape so TypeScript can read `error` and `data`.
-    const typedResult = result as unknown as {
-      error?: { message?: unknown } | null;
-      data?: unknown;
-    };
-
-    if (typedResult.error) {
+    if (result.error) {
       setError(
-        typeof typedResult.error.message === "string"
-          ? typedResult.error.message
+        typeof result.error.message === "string"
+          ? result.error.message
           : "An unknown error occurred"
       );
       return;
@@ -53,7 +48,7 @@ export function usePasskey() {
       setError("");
     }
 
-    const data = typedResult.data as ExtractSuccessData<R>;
+    const data = result.data as ExtractSuccessData<R>;
 
     updatePasskeyArr((p) => updateFn(p, data));
 
