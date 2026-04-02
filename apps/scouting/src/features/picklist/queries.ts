@@ -2,6 +2,7 @@ import "server-only";
 
 import { and, count, eq, notInArray, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
+import { getWorkabilitySummaryForEvent } from "@/features/scouting/workability/queries";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
@@ -13,6 +14,7 @@ import {
   teamMatch,
   vTeamMatchConsensus,
 } from "@/lib/database/schema";
+import type { TeamWorkabilitySummary, WorkabilityNote } from "@/features/scouting/workability/types";
 
 /**
  * Get all picklists for a specific organization and event
@@ -65,17 +67,23 @@ export async function getPicklistWithTeams(picklistId: string, organizationId: s
     .orderBy(picklistTeam.rank);
 
   // Get metrics for all teams at this event
-  const metricsMap = await getTeamMetricsForEvent(picklistRecord.eventId);
+  const [metricsMap, workabilitySummary] = await Promise.all([
+    getTeamMetricsForEvent(picklistRecord.eventId),
+    getWorkabilitySummaryForEvent(picklistRecord.eventId, organizationId),
+  ]);
 
   // Attach metrics to each team
   const teamsWithMetrics = teams.map((t) => {
     const metrics = metricsMap.get(t.teamNumber);
+    const compatibility = getCompatibilityMetricsForTeam(workabilitySummary, t.teamNumber);
+
     return {
       ...t,
       avgTotalPoints: metrics?.avgTotalPoints,
       climbSuccessPct: metrics?.climbSuccessPct,
       uptimePct: metrics?.uptimePct,
       matchesScouted: metrics?.matchesScouted,
+      ...compatibility,
     };
   });
 
@@ -138,6 +146,15 @@ export interface TeamMetrics {
   climbSuccessPct: number;
   uptimePct: number;
   matchesScouted: number;
+}
+
+export interface TeamCompatibilityMetrics {
+  avgDriverWorkability: number | null;
+  avgHumanPlayerWorkability: number | null;
+  compositeCompatibilityScore: number | null;
+  submissionCount: number;
+  noteCount: number;
+  compatibilityNotes: WorkabilityNote[];
 }
 
 /**
@@ -213,4 +230,20 @@ export async function getTeamMetricsForEvent(eventId: string): Promise<Map<numbe
   }
 
   return metricsMap;
+}
+
+export function getCompatibilityMetricsForTeam(
+  workabilityMap: Map<number, TeamWorkabilitySummary>,
+  teamNumber: number
+) {
+  const compatibility = workabilityMap.get(teamNumber);
+
+  return {
+    avgDriverWorkability: compatibility?.avgDriverWorkability ?? null,
+    avgHumanPlayerWorkability: compatibility?.avgHumanPlayerWorkability ?? null,
+    compositeCompatibilityScore: compatibility?.compositeCompatibilityScore ?? null,
+    submissionCount: compatibility?.submissionCount ?? 0,
+    noteCount: compatibility?.noteCount ?? 0,
+    compatibilityNotes: compatibility?.notes ?? [],
+  };
 }

@@ -308,6 +308,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
             <form.Field name="capacity">
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                const fieldValue = typeof field.state.value === "number" ? field.state.value : 0;
                 return (
                   <Field>
                     <FieldLabel>Capacity (pieces)</FieldLabel>
@@ -315,7 +316,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       type="number"
                       id="capacity"
                       name={field.name}
-                      value={field.state.value === 0 ? "" : field.state.value}
+                      value={fieldValue === 0 ? "" : fieldValue}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
                         field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
@@ -334,6 +335,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
             <form.Field name="weight">
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                const fieldValue = typeof field.state.value === "number" ? field.state.value : 0;
                 return (
                   <Field>
                     <FieldLabel>Weight (lbs)</FieldLabel>
@@ -341,7 +343,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       type="number"
                       id="weight"
                       name={field.name}
-                      value={field.state.value === 0 ? "" : field.state.value}
+                      value={fieldValue === 0 ? "" : fieldValue}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
                         field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))

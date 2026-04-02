@@ -20,3 +20,4 @@ export { team } from "./team";
 export { teamMatch } from "./team-match";
 export { user } from "./user";
 export { verification } from "./verification";
+export { workabilityForm } from "./workability-form";

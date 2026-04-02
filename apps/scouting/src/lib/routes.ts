@@ -39,6 +39,7 @@ export const routes = {
   forms: {
     pit: "/forms/pit",
     stand: "/forms/stand",
+    workability: "/forms/workability",
   },
 
   // Picklist

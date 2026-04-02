@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import { Button } from "@repo/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +28,10 @@ const navItems = [
   {
     label: "Stand Form",
     href: routes.forms.stand,
+  },
+  {
+    label: "Workability",
+    href: routes.forms.workability,
   },
   {
     label: "Analysis",
@@ -143,10 +148,18 @@ async function UserAvatar() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="size-8 select-none">
-          <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
-          <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
-        </Avatar>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className="size-8 rounded-full p-0"
+          aria-label="Open user menu"
+        >
+          <Avatar className="size-8 select-none">
+            <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
+            <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
+          </Avatar>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end" className="min-w-36">
         <DropdownMenuGroup>

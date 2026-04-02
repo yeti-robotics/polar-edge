@@ -14,6 +14,7 @@ import { pitPhoto } from "../tables/pit-photo";
 import { session } from "../tables/session";
 import { team } from "../tables/team";
 import { user } from "../tables/user";
+import { workabilityForm } from "../tables/workability-form";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -130,6 +131,21 @@ export const picklistTeamRelations = relations(picklistTeam, ({ one }) => ({
   }),
   team: one(team, {
     fields: [picklistTeam.teamNumber],
+    references: [team.teamNumber],
+  }),
+}));
+
+export const workabilityFormRelations = relations(workabilityForm, ({ one }) => ({
+  event: one(event, {
+    fields: [workabilityForm.eventId],
+    references: [event.id],
+  }),
+  member: one(member, {
+    fields: [workabilityForm.scoutMemberId],
+    references: [member.id],
+  }),
+  team: one(team, {
+    fields: [workabilityForm.teamNumber],
     references: [team.teamNumber],
   }),
 }));

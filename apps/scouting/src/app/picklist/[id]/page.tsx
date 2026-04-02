@@ -68,6 +68,7 @@ export default async function PicklistDetailPage({ params }: PicklistDetailPageP
             eventId={picklist.eventId}
             picklistId={id}
             picklistTeams={teams.map((t) => t.teamNumber)}
+            organizationId={activeMember.organizationId}
           />
         </div>
       </div>
