@@ -191,14 +191,13 @@ export async function getScoutCoverage(
 
 export type DriveRankingCoverageRow = {
   matchNumber: number;
-  matchType: string;
   alliance: string;
   hasRanking: boolean;
 };
 
 /**
- * Per-match, per-alliance drive ranking coverage for an event, scoped to this org.
- * Each match has 2 alliance slots (red, blue) that can each have a ranking.
+ * Per-match, per-alliance drive ranking coverage for qual matches at an event,
+ * scoped to this org. Drive rankings are only collected for qualification matches.
  */
 export async function getDriveRankingCoverage(
   eventId: string,
@@ -214,15 +213,14 @@ export async function getDriveRankingCoverage(
       SELECT DISTINCT
         m.id AS match_id,
         m.match_number,
-        m.match_type,
         tm.alliance
       FROM match m
       JOIN team_match tm ON tm.match_id = m.id
       WHERE m.event_id = ${eventId}
+        AND m.match_type = 'qm'
     )
     SELECT
       ma.match_number,
-      ma.match_type,
       ma.alliance,
       CASE WHEN dr.id IS NOT NULL THEN true ELSE false END AS has_ranking
     FROM match_alliances ma
@@ -235,9 +233,8 @@ export async function getDriveRankingCoverage(
 
   return (rows.rows as Array<Record<string, unknown>>).map((r) => ({
     matchNumber: Number(r.match_number),
-    matchType: r.match_type as string,
     alliance: r.alliance as string,
-    hasRanking: r.has_ranking === true,
+    hasRanking: Boolean(r.has_ranking),
   }));
 }
 
