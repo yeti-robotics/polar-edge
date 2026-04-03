@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026.17.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.16.0...scouting-v2026.17.0) (2026-04-03)
+
+
+### Features
+
+* **scouting:** add drive ranking coverage to data validation ([#507](https://github.com/yeti-robotics/polar-edge/issues/507)) ([f8ac622](https://github.com/yeti-robotics/polar-edge/commit/f8ac622b070793223aa80b4bffe3d49fe9cba786))
+* **scouting:** highlight current page in navbar ([#479](https://github.com/yeti-robotics/polar-edge/issues/479)) ([dfec6af](https://github.com/yeti-robotics/polar-edge/commit/dfec6af8c4002d644fae82d34234a7cf0373c2d4))
+
 ## [2026.16.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.15.1...scouting-v2026.16.0) (2026-04-02)
 
 
