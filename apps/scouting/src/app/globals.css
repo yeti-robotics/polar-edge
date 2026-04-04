@@ -3,6 +3,8 @@
 
 :root {
   --header-height: 5rem;
+  --font-libre-franklin:
+    "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
 }
 
 @keyframes reveal {

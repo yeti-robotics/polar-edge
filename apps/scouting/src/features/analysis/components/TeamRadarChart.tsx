@@ -1,5 +1,6 @@
 "use client";
 import { Card } from "@repo/ui/components/card";
+import type { TypedDataKey } from "recharts/types/util/typedDataKey";
 import {
   Legend,
   PolarAngleAxis,
@@ -12,12 +13,26 @@ import {
 
 export type RadarChartDataPoint = Record<string, string | number>;
 
+type StringKeyOf<T> = Extract<
+  {
+    [K in keyof T]: T[K] extends string ? K : never;
+  }[keyof T],
+  string
+>;
+
+type NumberKeyOf<T> = Extract<
+  {
+    [K in keyof T]: T[K] extends number ? K : never;
+  }[keyof T],
+  string
+>;
+
 export type RadarChartProps<T extends RadarChartDataPoint> = {
   data: T[];
   /** Key for axis labels (default: "subject") */
-  angleKey?: keyof T & string;
+  angleKey?: StringKeyOf<T>;
   /** Key for values (default: "value") */
-  valueKey?: keyof T & string;
+  valueKey?: NumberKeyOf<T>;
   /** Series label in legend (default: "Score") */
   name?: string;
   /** Min and max for radius axis (default: [0, 100]) */
@@ -34,8 +49,8 @@ export type RadarChartProps<T extends RadarChartDataPoint> = {
 
 export const RadarChart = <T extends RadarChartDataPoint>({
   data,
-  angleKey = "subject" as keyof T & string,
-  valueKey = "value" as keyof T & string,
+  angleKey = "subject" as StringKeyOf<T>,
+  valueKey = "value" as NumberKeyOf<T>,
   name = "Score",
   domain = [0, 100],
   color = "#8884d8",
@@ -43,17 +58,20 @@ export const RadarChart = <T extends RadarChartDataPoint>({
   showLegend = true,
   animation = false,
 }: RadarChartProps<T>) => {
+  const typedAngleKey = angleKey as TypedDataKey<T, string>;
+  const typedValueKey = valueKey as TypedDataKey<T, number>;
+
   return (
     <Card className="w-full p-6 rounded-lg shadow-md">
       <div className="w-full">
         <ResponsiveContainer minWidth={0} width="100%" height={360}>
           <RechartsRadarChart data={data}>
             <PolarGrid />
-            <PolarAngleAxis dataKey={angleKey} />
+            <PolarAngleAxis dataKey={typedAngleKey} />
             <PolarRadiusAxis angle={90} domain={domain} />
             <Radar
               name={name}
-              dataKey={valueKey}
+              dataKey={typedValueKey}
               stroke={color}
               fill={color}
               fillOpacity={fillOpacity}
