@@ -11,7 +11,10 @@ import {
   DialogTrigger,
 } from "@repo/ui/components/dialog";
 import { MessageSquareTextIcon } from "lucide-react";
-import { WORKABILITY_ROLE_LABELS, type WorkabilityNote } from "@/features/scouting/workability/types";
+import {
+  WORKABILITY_ROLE_LABELS,
+  type WorkabilityNote,
+} from "@/features/scouting/workability/types";
 
 interface CompatibilityNotesDialogProps {
   notes: WorkabilityNote[];
@@ -27,10 +30,7 @@ function formatUpdatedAt(updatedAt: string) {
   }).format(new Date(updatedAt));
 }
 
-export function CompatibilityNotesDialog({
-  notes,
-  noteCount,
-}: CompatibilityNotesDialogProps) {
+export function CompatibilityNotesDialog({ notes, noteCount }: CompatibilityNotesDialogProps) {
   if (noteCount === 0) {
     return <span className="text-muted-foreground">—</span>;
   }
@@ -56,6 +56,7 @@ export function CompatibilityNotesDialog({
             <div key={`${note.role}-${note.updatedAt}-${index}`} className="rounded-lg border p-3">
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <Badge variant="outline">{WORKABILITY_ROLE_LABELS[note.role]}</Badge>
+                <Badge variant="secondary">Match {note.matchNumber}</Badge>
                 {note.authorName ? (
                   <span className="text-sm font-medium">{note.authorName}</span>
                 ) : null}

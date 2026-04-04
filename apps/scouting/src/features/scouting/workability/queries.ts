@@ -1,13 +1,14 @@
 import "server-only";
 
-import { and, count, desc, eq, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, isNotNull, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { member, user, workabilityForm } from "@/lib/database/schema";
+import { match, member, team, teamMatch, user, workabilityForm } from "@/lib/database/schema";
 import type {
   EditableWorkabilitySubmission,
   TeamWorkabilitySummary,
+  WorkabilityMatchOption,
   WorkabilityNote,
 } from "./types";
 
@@ -28,6 +29,45 @@ function getCompositeCompatibilityScore(
   return round1(ratings.reduce((sum, value) => sum + value, 0) / ratings.length);
 }
 
+export async function getEventWorkabilityMatchOptions(eventId: string) {
+  "use cache";
+  cacheLife("minutes");
+
+  const rows = await db
+    .select({
+      matchNumber: match.matchNumber,
+      teamNumber: teamMatch.teamNumber,
+      teamName: team.teamName,
+      alliance: teamMatch.alliance,
+      position: teamMatch.position,
+    })
+    .from(teamMatch)
+    .innerJoin(match, eq(teamMatch.matchId, match.id))
+    .innerJoin(team, eq(team.teamNumber, teamMatch.teamNumber))
+    .where(eq(teamMatch.eventId, eventId))
+    .orderBy(asc(match.matchNumber), asc(teamMatch.alliance), asc(teamMatch.position));
+
+  const matchMap = new Map<number, WorkabilityMatchOption>();
+
+  for (const row of rows) {
+    const current = matchMap.get(row.matchNumber) ?? {
+      matchNumber: row.matchNumber,
+      teams: [],
+    };
+
+    current.teams.push({
+      teamNumber: row.teamNumber,
+      teamName: row.teamName,
+      alliance: row.alliance,
+      position: row.position,
+    });
+
+    matchMap.set(row.matchNumber, current);
+  }
+
+  return Array.from(matchMap.values());
+}
+
 export async function getMemberWorkabilitySubmissions(eventId: string, memberId: string) {
   "use cache";
   cacheLife("minutes");
@@ -36,6 +76,7 @@ export async function getMemberWorkabilitySubmissions(eventId: string, memberId:
   const submissions = await db
     .select({
       id: workabilityForm.id,
+      matchNumber: match.matchNumber,
       teamNumber: workabilityForm.teamNumber,
       role: workabilityForm.role,
       rating: workabilityForm.rating,
@@ -43,11 +84,19 @@ export async function getMemberWorkabilitySubmissions(eventId: string, memberId:
       updatedAt: workabilityForm.updatedAt,
     })
     .from(workabilityForm)
-    .where(and(eq(workabilityForm.eventId, eventId), eq(workabilityForm.scoutMemberId, memberId)))
+    .innerJoin(match, eq(match.id, workabilityForm.matchId))
+    .where(
+      and(
+        eq(workabilityForm.eventId, eventId),
+        eq(workabilityForm.scoutMemberId, memberId),
+        isNotNull(workabilityForm.matchId)
+      )
+    )
     .orderBy(desc(workabilityForm.updatedAt));
 
   return submissions.map<EditableWorkabilitySubmission>((submission) => ({
     id: submission.id,
+    matchNumber: submission.matchNumber,
     teamNumber: submission.teamNumber,
     role: submission.role,
     rating: submission.rating,
@@ -78,10 +127,17 @@ export async function getWorkabilitySummaryForEvent(eventId: string, organizatio
       })
       .from(workabilityForm)
       .innerJoin(member, eq(member.id, workabilityForm.scoutMemberId))
-      .where(and(eq(workabilityForm.eventId, eventId), eq(member.organizationId, organizationId)))
+      .where(
+        and(
+          eq(workabilityForm.eventId, eventId),
+          eq(member.organizationId, organizationId),
+          isNotNull(workabilityForm.matchId)
+        )
+      )
       .groupBy(workabilityForm.teamNumber),
     db
       .select({
+        matchNumber: match.matchNumber,
         teamNumber: workabilityForm.teamNumber,
         role: workabilityForm.role,
         note: workabilityForm.notes,
@@ -89,12 +145,14 @@ export async function getWorkabilitySummaryForEvent(eventId: string, organizatio
         updatedAt: workabilityForm.updatedAt,
       })
       .from(workabilityForm)
+      .innerJoin(match, eq(match.id, workabilityForm.matchId))
       .innerJoin(member, eq(member.id, workabilityForm.scoutMemberId))
       .innerJoin(user, eq(user.id, member.userId))
       .where(
         and(
           eq(workabilityForm.eventId, eventId),
           eq(member.organizationId, organizationId),
+          isNotNull(workabilityForm.matchId),
           sql`length(trim(${workabilityForm.notes})) > 0`
         )
       )
@@ -110,6 +168,7 @@ export async function getWorkabilitySummaryForEvent(eventId: string, organizatio
     }
 
     currentNotes.push({
+      matchNumber: row.matchNumber,
       role: row.role,
       note: row.note,
       authorName: row.authorName ?? null,

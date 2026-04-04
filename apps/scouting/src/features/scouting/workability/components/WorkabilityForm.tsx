@@ -37,6 +37,7 @@ import {
   FormSchema,
   formOpts,
   normalizeWorkabilityRating,
+  WORKABILITY_FORM_DEFAULT_VALUES,
   WORKABILITY_NOTES_MAX_LENGTH,
   WORKABILITY_RATING_DEFAULT,
   WORKABILITY_RATING_MAX,
@@ -45,15 +46,17 @@ import {
   WORKABILITY_ROLE_DESCRIPTIONS,
   WORKABILITY_ROLE_LABELS,
   WORKABILITY_ROLE_OPTIONS,
+  type WorkabilityMatchOption,
   type WorkabilityRole,
 } from "../types";
 
 interface WorkabilityFormProps {
-  teams: { teamNumber: number; teamName: string }[];
+  matchOptions: WorkabilityMatchOption[];
   initialSubmissions: EditableWorkabilitySubmission[];
 }
 
 interface WorkabilityFormValues {
+  matchNumber: number;
   teamNumber: number;
   role: WorkabilityRole;
   rating: number;
@@ -66,11 +69,24 @@ type WorkabilitySubmitState = typeof initialFormState & {
   submission?: EditableWorkabilitySubmission | null;
 };
 
-function getSubmissionKey(teamNumber: number, role: WorkabilityRole) {
-  return `${teamNumber}:${role}`;
+function getSubmissionKey(matchNumber: number, teamNumber: number, role: WorkabilityRole) {
+  return `${matchNumber}:${teamNumber}:${role}`;
 }
 
-export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormProps) {
+function formatMatchLabel(matchOption: WorkabilityMatchOption) {
+  return `Match ${matchOption.matchNumber}`;
+}
+
+function formatMatchTeamSummary(matchOption: WorkabilityMatchOption) {
+  return matchOption.teams.map((team) => team.teamNumber).join(", ");
+}
+
+function formatMatchTeamLabel(team: WorkabilityMatchOption["teams"][number]) {
+  const allianceLabel = `${team.alliance === "red" ? "Red" : "Blue"} ${team.position}`;
+  return `${team.teamNumber} - ${team.teamName} (${allianceLabel})`;
+}
+
+export function WorkabilityForm({ matchOptions, initialSubmissions }: WorkabilityFormProps) {
   const [state, action, isPending] = useActionState(
     submitWorkabilityForm as (
       prevState: WorkabilitySubmitState,
@@ -94,19 +110,44 @@ export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormPr
   const submissionMap = useMemo(() => {
     return new Map<string, EditableWorkabilitySubmission>(
       submissions.map((submission) => [
-        getSubmissionKey(submission.teamNumber, submission.role),
+        getSubmissionKey(submission.matchNumber, submission.teamNumber, submission.role),
         submission,
       ])
     );
   }, [submissions]);
 
-  const formValues = form.state.values as WorkabilityFormValues;
+  const matchOptionMap = useMemo(
+    () =>
+      new Map<number, WorkabilityMatchOption>(
+        matchOptions.map((option) => [option.matchNumber, option])
+      ),
+    [matchOptions]
+  );
+
+  const formValues = (form.state.values ??
+    WORKABILITY_FORM_DEFAULT_VALUES) as WorkabilityFormValues;
+  const selectedMatchNumber = formValues.matchNumber;
   const selectedTeamNumber = formValues.teamNumber;
   const selectedRole = formValues.role;
+  const selectedMatch = matchOptionMap.get(selectedMatchNumber) ?? null;
+  const matchTeams = selectedMatch?.teams ?? [];
+
+  useEffect(() => {
+    if (selectedTeamNumber === 0) {
+      return;
+    }
+
+    const teamExistsInMatch = matchTeams.some((team) => team.teamNumber === selectedTeamNumber);
+    if (!teamExistsInMatch) {
+      form.setFieldValue("teamNumber", 0);
+    }
+  }, [form, matchTeams, selectedTeamNumber]);
 
   useEffect(() => {
     const selectionKey =
-      selectedTeamNumber > 0 ? getSubmissionKey(selectedTeamNumber, selectedRole) : null;
+      selectedMatchNumber > 0 && selectedTeamNumber > 0
+        ? getSubmissionKey(selectedMatchNumber, selectedTeamNumber, selectedRole)
+        : null;
 
     if (selectionKey === hydratedSelectionRef.current) {
       return;
@@ -128,7 +169,7 @@ export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormPr
     );
     form.setFieldValue("notes", existingSubmission?.notes ?? "");
     hydratedSelectionRef.current = selectionKey;
-  }, [form, selectedRole, selectedTeamNumber, submissionMap]);
+  }, [form, selectedMatchNumber, selectedRole, selectedTeamNumber, submissionMap]);
 
   useEffect(() => {
     if (
@@ -145,6 +186,7 @@ export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormPr
         const filtered = current.filter(
           (submission) =>
             !(
+              submission.matchNumber === savedSubmission.matchNumber &&
               submission.teamNumber === savedSubmission.teamNumber &&
               submission.role === savedSubmission.role
             )
@@ -153,11 +195,13 @@ export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormPr
         return [savedSubmission, ...filtered];
       });
 
+      form.setFieldValue("matchNumber", savedSubmission.matchNumber);
       form.setFieldValue("teamNumber", savedSubmission.teamNumber);
       form.setFieldValue("role", savedSubmission.role);
       form.setFieldValue("rating", normalizeWorkabilityRating(savedSubmission.rating));
       form.setFieldValue("notes", savedSubmission.notes);
       hydratedSelectionRef.current = getSubmissionKey(
+        savedSubmission.matchNumber,
         savedSubmission.teamNumber,
         savedSubmission.role
       );
@@ -190,6 +234,7 @@ export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormPr
 
     const values = form.state.values as WorkabilityFormValues;
     const formData = new FormData();
+    formData.append("matchNumber", String(values.matchNumber));
     formData.append("teamNumber", String(values.teamNumber));
     formData.append("role", values.role);
     formData.append("rating", String(values.rating));
@@ -206,17 +251,18 @@ export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormPr
         <CardHeader>
           <CardTitle>Team & Perspective</CardTitle>
           <CardDescription>
-            Rate how easy a team is to work with from the selected in-match perspective.
+            Choose the match first, then rate how easy that team was to work with in that specific
+            appearance.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <form.Field name="teamNumber">
+          <form.Field name="matchNumber">
             {(field) => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
               return (
                 <Field>
-                  <FieldLabel>Team Number</FieldLabel>
+                  <FieldLabel>Match</FieldLabel>
                   <Combobox
                     id={field.name}
                     name={field.name}
@@ -227,32 +273,103 @@ export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormPr
                     }
                     onValueChange={(value) => {
                       field.handleChange(value ? Number(value) : 0);
+                      form.setFieldValue("teamNumber", 0);
                     }}
-                    items={teams}
+                    items={matchOptions}
                     itemToStringLabel={(value) => {
-                      const team = teams.find((item) => item.teamNumber.toString() === value);
-                      return team ? `${team.teamNumber} - ${team.teamName}` : (value ?? "");
+                      const matchOption = matchOptions.find(
+                        (item) => item.matchNumber.toString() === value
+                      );
+                      return matchOption ? formatMatchLabel(matchOption) : (value ?? "");
                     }}
                   >
                     <ComboboxInput
                       onBlur={field.handleBlur}
                       aria-invalid={isInvalid}
-                      aria-label="Team number"
-                      placeholder="Select a team at the current event"
+                      aria-label="Match number"
+                      placeholder="Select a match from the active event"
                     />
                     <ComboboxContent>
-                      <ComboboxEmpty>No teams found.</ComboboxEmpty>
+                      <ComboboxEmpty>No matches found.</ComboboxEmpty>
                       <ComboboxList>
-                        {(team) => (
-                          <ComboboxItem key={team.teamNumber} value={team.teamNumber.toString()}>
-                            {team.teamNumber} - {team.teamName}
+                        {(matchOption) => (
+                          <ComboboxItem
+                            key={matchOption.matchNumber}
+                            value={matchOption.matchNumber.toString()}
+                          >
+                            <div className="flex flex-col">
+                              <span>{formatMatchLabel(matchOption)}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {formatMatchTeamSummary(matchOption)}
+                              </span>
+                            </div>
                           </ComboboxItem>
                         )}
                       </ComboboxList>
                     </ComboboxContent>
                   </Combobox>
                   <FieldDescription>
-                    Only teams from the active event are available here.
+                    Workability feedback is tracked per match so repeated pairings stay distinct.
+                  </FieldDescription>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+
+          <form.Field name="teamNumber">
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+              return (
+                <Field>
+                  <FieldLabel>Team Number</FieldLabel>
+                  <Combobox
+                    key={selectedMatchNumber > 0 ? `match-${selectedMatchNumber}` : "match-empty"}
+                    id={field.name}
+                    name={field.name}
+                    value={
+                      typeof field.state.value === "number" && field.state.value > 0
+                        ? String(field.state.value)
+                        : ""
+                    }
+                    onValueChange={(value) => {
+                      field.handleChange(value ? Number(value) : 0);
+                    }}
+                    items={matchTeams}
+                    itemToStringLabel={(value) => {
+                      const team = matchTeams.find((item) => item.teamNumber.toString() === value);
+                      return team ? formatMatchTeamLabel(team) : (value ?? "");
+                    }}
+                  >
+                    <ComboboxInput
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                      aria-label="Team number"
+                      placeholder={
+                        selectedMatchNumber > 0
+                          ? "Select a team from the chosen match"
+                          : "Choose a match first"
+                      }
+                      disabled={selectedMatchNumber <= 0}
+                    />
+                    <ComboboxContent>
+                      <ComboboxEmpty>
+                        {selectedMatchNumber > 0
+                          ? "No teams found for that match."
+                          : "Choose a match first."}
+                      </ComboboxEmpty>
+                      <ComboboxList>
+                        {(team) => (
+                          <ComboboxItem key={team.teamNumber} value={team.teamNumber.toString()}>
+                            {formatMatchTeamLabel(team)}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                  <FieldDescription>
+                    Only teams that actually played in the selected match are available here.
                   </FieldDescription>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>

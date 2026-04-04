@@ -29,6 +29,7 @@ export function normalizeWorkabilityRating(rating: number) {
 }
 
 export const FormSchema = z.object({
+  matchNumber: z.coerce.number().int().positive("Match number is required"),
   teamNumber: z.coerce.number().int().positive("Team number is required"),
   role: z.enum(WORKABILITY_ROLE_OPTIONS),
   rating: z.coerce
@@ -39,7 +40,8 @@ export const FormSchema = z.object({
   notes: z.string().max(WORKABILITY_NOTES_MAX_LENGTH, "Notes are too long"),
 });
 
-const defaultValues: z.input<typeof FormSchema> = {
+export const WORKABILITY_FORM_DEFAULT_VALUES: z.input<typeof FormSchema> = {
+  matchNumber: 0,
   teamNumber: 0,
   role: "driver",
   rating: WORKABILITY_RATING_DEFAULT,
@@ -47,11 +49,12 @@ const defaultValues: z.input<typeof FormSchema> = {
 };
 
 export const formOpts = formOptions({
-  defaultValues,
+  defaultValues: WORKABILITY_FORM_DEFAULT_VALUES,
 });
 
 export interface EditableWorkabilitySubmission {
   id: string;
+  matchNumber: number;
   teamNumber: number;
   role: WorkabilityRole;
   rating: number;
@@ -59,7 +62,20 @@ export interface EditableWorkabilitySubmission {
   updatedAt: string;
 }
 
+export interface WorkabilityMatchTeamOption {
+  teamNumber: number;
+  teamName: string;
+  alliance: "red" | "blue";
+  position: number;
+}
+
+export interface WorkabilityMatchOption {
+  matchNumber: number;
+  teams: WorkabilityMatchTeamOption[];
+}
+
 export interface WorkabilityNote {
+  matchNumber: number;
   role: WorkabilityRole;
   note: string;
   authorName: string | null;

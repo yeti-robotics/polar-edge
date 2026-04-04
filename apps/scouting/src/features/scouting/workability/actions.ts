@@ -10,7 +10,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { upsertWorkabilityForm } from "./logic";
+import { getWorkabilityMatchSelection, upsertWorkabilityForm } from "./logic";
 import { FormSchema, formOpts } from "./types";
 
 const serverValidate = createServerValidate({
@@ -39,11 +39,25 @@ export async function submitWorkabilityForm(_prevState: unknown, formData: FormD
     }
 
     const validated = await serverValidate(formData, {
-      numbers: ["teamNumber", "rating"],
+      numbers: ["matchNumber", "teamNumber", "rating"],
     });
+
+    const matchSelection = await getWorkabilityMatchSelection(
+      activeEvent.event.id,
+      Number(validated.matchNumber),
+      Number(validated.teamNumber)
+    );
+
+    if (!matchSelection) {
+      return {
+        ...initialFormState,
+        _error: `Team ${validated.teamNumber} was not found in match ${validated.matchNumber}.`,
+      };
+    }
 
     const submission = await upsertWorkabilityForm({
       eventId: activeEvent.event.id,
+      matchId: matchSelection.matchId,
       teamNumber: Number(validated.teamNumber),
       scoutMemberId: activeMember.id,
       role: validated.role,
@@ -64,6 +78,7 @@ export async function submitWorkabilityForm(_prevState: unknown, formData: FormD
       submission: submission
         ? {
             id: submission.id,
+            matchNumber: matchSelection.matchNumber,
             teamNumber: submission.teamNumber,
             role: submission.role,
             rating: submission.rating,

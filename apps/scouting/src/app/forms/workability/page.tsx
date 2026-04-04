@@ -1,11 +1,13 @@
 import { Card, CardContent } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
+import { TypographyH1 } from "@repo/ui/components/typography";
 import { Suspense } from "react";
 import { NoActiveEvent } from "@/components/NoActiveEvent";
-import { getEventTeams } from "@/features/scouting/pit/queries";
 import { WorkabilityForm } from "@/features/scouting/workability/components/WorkabilityForm";
-import { getMemberWorkabilitySubmissions } from "@/features/scouting/workability/queries";
+import {
+  getEventWorkabilityMatchOptions,
+  getMemberWorkabilitySubmissions,
+} from "@/features/scouting/workability/queries";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 
@@ -33,22 +35,22 @@ async function WorkabilityFormContent() {
     return <NoActiveEvent />;
   }
 
-  const [teams, submissions] = await Promise.all([
-    getEventTeams(activeEvent.event.id),
+  const [matchOptions, submissions] = await Promise.all([
+    getEventWorkabilityMatchOptions(activeEvent.event.id),
     getMemberWorkabilitySubmissions(activeEvent.event.id, member.id),
   ]);
 
-  if (teams.length === 0) {
+  if (matchOptions.length === 0) {
     return (
       <Card>
         <CardContent className="py-12 text-center text-muted-foreground">
-          No teams are available for the active event yet.
+          No matches are available for the active event yet.
         </CardContent>
       </Card>
     );
   }
 
-  return <WorkabilityForm teams={teams} initialSubmissions={submissions} />;
+  return <WorkabilityForm matchOptions={matchOptions} initialSubmissions={submissions} />;
 }
 
 export default function WorkabilityFormPage() {

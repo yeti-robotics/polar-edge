@@ -12,6 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { workabilityRoleEnum } from "../types/workability-role-enum";
 import { event } from "./event";
+import { match } from "./match";
 import { member } from "./member";
 import { team } from "./team";
 
@@ -23,6 +24,8 @@ export const workabilityForm = pgTable(
     eventId: uuid("event_id")
       .notNull()
       .references(() => event.id, { onDelete: "cascade" }),
+
+    matchId: uuid("match_id").references(() => match.id, { onDelete: "cascade" }),
 
     teamNumber: integer("team_number")
       .notNull()
@@ -44,9 +47,10 @@ export const workabilityForm = pgTable(
     check("workability_rating_range", sql`${table.rating} between 1 and 5`),
     index("idx_workability_event_team").on(table.eventId, table.teamNumber),
     index("idx_workability_member").on(table.scoutMemberId),
+    index("idx_workability_match_team").on(table.matchId, table.teamNumber),
     index("idx_workability_event_team_role").on(table.eventId, table.teamNumber, table.role),
     unique("uniq_workability_submission").on(
-      table.eventId,
+      table.matchId,
       table.teamNumber,
       table.scoutMemberId,
       table.role
