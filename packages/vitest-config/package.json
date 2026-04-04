@@ -9,7 +9,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "collect-json-reports": "npx tsx src/scripts/collect-json-outputs.ts",
+    "collect-json-reports": "tsx src/scripts/collect-json-outputs.ts",
     "merge-json-reports": "nyc merge coverage/raw coverage/merged/merged-coverage.json",
     "report": "nyc report -t coverage/merged --report-dir coverage/report --reporter=html --exclude-after-remap false",
     "view-report": "open coverage/report/index.html"
