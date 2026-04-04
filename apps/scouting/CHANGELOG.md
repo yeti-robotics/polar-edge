@@ -1,5 +1,38 @@
 # Changelog
 
+## [2026.17.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.16.0...scouting-v2026.17.0) (2026-04-03)
+
+
+### Features
+
+* **scouting:** add drive ranking coverage to data validation ([#507](https://github.com/yeti-robotics/polar-edge/issues/507)) ([f8ac622](https://github.com/yeti-robotics/polar-edge/commit/f8ac622b070793223aa80b4bffe3d49fe9cba786))
+* **scouting:** highlight current page in navbar ([#479](https://github.com/yeti-robotics/polar-edge/issues/479)) ([dfec6af](https://github.com/yeti-robotics/polar-edge/commit/dfec6af8c4002d644fae82d34234a7cf0373c2d4))
+
+## [2026.16.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.15.1...scouting-v2026.16.0) (2026-04-02)
+
+
+### Features
+
+* **scouting:** add CitrusRank drive team ranking system ([#504](https://github.com/yeti-robotics/polar-edge/issues/504)) ([fbef03d](https://github.com/yeti-robotics/polar-edge/commit/fbef03ddecb877928c020aeba48487a5a3b740ea))
+* **scouting:** picklist filters and removal accessibility ([#501](https://github.com/yeti-robotics/polar-edge/issues/501)) ([e5bf60e](https://github.com/yeti-robotics/polar-edge/commit/e5bf60eb536b93d7888c18055127f3d718645455))
+* **scouting:** pitform added turret or fixed shooter and added shoot while moving ([#498](https://github.com/yeti-robotics/polar-edge/issues/498)) ([34b299d](https://github.com/yeti-robotics/polar-edge/commit/34b299d9321d8f1cec4c8b4e2f82f15604934c68))
+* **scouting:** public scout coverage ([#496](https://github.com/yeti-robotics/polar-edge/issues/496)) ([ef6db41](https://github.com/yeti-robotics/polar-edge/commit/ef6db4186273d795b1704a1f50326af865698497))
+
+## [2026.15.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.15.0...scouting-v2026.15.1) (2026-03-25)
+
+
+### Bug Fixes
+
+* add competiion exclusion ([77f5b5d](https://github.com/yeti-robotics/polar-edge/commit/77f5b5d53edfea64d6549782f0374ae0c1cb92ad))
+
+## [2026.15.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.2...scouting-v2026.15.0) (2026-03-20)
+
+
+### Features
+
+* **scouting:** enhance analysis features with AI-generated summaries and comments ([1d49c21](https://github.com/yeti-robotics/polar-edge/commit/1d49c219a52dd341ec1213ef726467c6ae439747))
+* **scouting:** enhance team comment summary generation with improved output and error handling ([fdf8983](https://github.com/yeti-robotics/polar-edge/commit/fdf8983a230b7f26d012d8f40059e8da96780701))
+
 ## [2026.14.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.14.1...scouting-v2026.14.2) (2026-03-07)
 
 

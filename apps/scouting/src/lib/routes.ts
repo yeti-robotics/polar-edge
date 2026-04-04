@@ -18,6 +18,7 @@ export const routes = {
   // Analysis
   analysis: {
     root: "/analysis",
+    scoutCoverage: "/analysis/scout-coverage",
     teams: "/analysis/teams",
     comparison: "/analysis/comparison",
     events: "/analysis/events",
@@ -38,6 +39,7 @@ export const routes = {
   forms: {
     pit: "/forms/pit",
     stand: "/forms/stand",
+    driveRanking: "/forms/drive-ranking",
   },
 
   // Picklist

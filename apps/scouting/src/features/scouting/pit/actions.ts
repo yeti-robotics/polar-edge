@@ -33,7 +33,10 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       };
     }
 
-    const validated = await serverValidate(formData, formDataInfo);
+    const validated = await serverValidate(formData, {
+      numbers: ["teamNumber", "capacity", "weight"],
+      booleans: ["canTrench", "canBump", "canShuttle", "canShootWhileMoving"],
+    });
 
     // Parse and validate photo keys
     const photoKeysJson = formData.get("photoKeys");
@@ -81,7 +84,8 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
             : validated.climbType === ""
               ? null
               : validated.climbType,
-        comments: validated.comments,
+        shooterType: validated.shooterType === "" ? null : validated.shooterType,
+        canShootWhileMoving: validated.canShootWhileMoving ?? false,
         scoutMemberId: activeMember.id,
       },
       photoKeys

@@ -9,4 +9,8 @@ export const cacheTags = {
   activeEvent: (organizationId: string) => `active-event-${organizationId}`,
   eventTeams: (eventId: string) => `event-teams-${eventId}`,
   matchScores: (eventId: string) => `match-scores-${eventId}`,
+  teamCommentSummary: (teamNumber: number, eventId: string) =>
+    `team-comment-summary-${teamNumber}-${eventId}`,
+  driveRanking: (organizationId: string, eventId?: string | null) =>
+    eventId ? `drive-ranking-${organizationId}-${eventId}` : `drive-ranking-${organizationId}`,
 };

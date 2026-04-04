@@ -6,7 +6,7 @@ import { createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
 import { and, eq, isNull } from "drizzle-orm";
-import { ac, admin, memberRole, owner } from "@/lib/access-control";
+import { ac, admin, memberRole, owner, scoutLead } from "@/lib/access-control";
 import { db } from "@/lib/database";
 import { member } from "@/lib/database/schema/tables/member";
 import { session } from "@/lib/database/schema/tables/session";
@@ -19,6 +19,21 @@ const NEW_USER_WINDOW_MS = 60_000; // 1 minute
 
 const betterAuthUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 const hostname = new URL(betterAuthUrl).hostname;
+
+async function getInitialOrganization(userId: string) {
+  const user = await db.query.user.findFirst({
+    where: eq(userTable.id, userId),
+    with: {
+      members: {
+        with: {
+          organization: true,
+        },
+      },
+    },
+  });
+
+  return user?.members[0]?.organization;
+}
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -118,11 +133,27 @@ export const auth = betterAuth({
       }
     }),
   },
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const organization = await getInitialOrganization(session.userId);
+          return {
+            data: {
+              ...session,
+              activeOrganizationId: organization?.id,
+            },
+          };
+        },
+      },
+    },
+  },
   plugins: [
     organization({
       ac,
       roles: {
         member: memberRole,
+        scout_lead: scoutLead,
         admin,
         owner,
       },
