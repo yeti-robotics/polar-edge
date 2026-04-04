@@ -10,7 +10,7 @@ export function HeaderNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <div className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
+    <>
       {items.map((item) => {
         const isActive = pathname === item.href;
 
@@ -20,14 +20,14 @@ export function HeaderNav({ items }: { items: NavItem[] }) {
             href={item.href}
             className={
               isActive
-                ? "font-bold font-mono text-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                ? "font-bold font-mono text-foreground whitespace-nowrap"
+                : "text-muted-foreground hover:text-foreground whitespace-nowrap"
             }
           >
             {item.label}
           </Link>
         );
       })}
-    </div>
+    </>
   );
 }
