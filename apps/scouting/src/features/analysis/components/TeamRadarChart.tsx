@@ -1,6 +1,5 @@
 "use client";
 import { Card } from "@repo/ui/components/card";
-import type { TypedDataKey } from "recharts/types/util/typedDataKey";
 import {
   Legend,
   PolarAngleAxis,
@@ -58,20 +57,17 @@ export const RadarChart = <T extends RadarChartDataPoint>({
   showLegend = true,
   animation = false,
 }: RadarChartProps<T>) => {
-  const typedAngleKey = angleKey as TypedDataKey<T, string>;
-  const typedValueKey = valueKey as TypedDataKey<T, number>;
-
   return (
     <Card className="w-full p-6 rounded-lg shadow-md">
       <div className="w-full">
         <ResponsiveContainer minWidth={0} width="100%" height={360}>
           <RechartsRadarChart data={data}>
             <PolarGrid />
-            <PolarAngleAxis dataKey={typedAngleKey} />
+            <PolarAngleAxis dataKey={angleKey} />
             <PolarRadiusAxis angle={90} domain={domain} />
             <Radar
               name={name}
-              dataKey={typedValueKey}
+              dataKey={valueKey}
               stroke={color}
               fill={color}
               fillOpacity={fillOpacity}
