@@ -40,6 +40,7 @@ export const routes = {
     pit: "/forms/pit",
     stand: "/forms/stand",
     driveRanking: "/forms/drive-ranking",
+    workability: "/forms/workability",
   },
 
   // Picklist
