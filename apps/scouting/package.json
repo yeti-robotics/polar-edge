@@ -1,6 +1,6 @@
 {
   "name": "scouting",
-  "version": "2026.16.0",
+  "version": "2026.17.0",
   "description": "FRC scouting application for YETI Robotics",
   "private": true,
   "scripts": {
@@ -65,7 +65,7 @@
     "drizzle-kit": "^0.31.10",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.1",
-    "tsx": "^4.21.0",
+    "tsx": "catalog:",
     "vitest": "catalog:"
   }
 }
