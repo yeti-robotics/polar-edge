@@ -38,14 +38,6 @@ export async function getPitFormCount(): Promise<number> {
 }
 
 export async function getUserFormCounts(memberId: string): Promise<UserFormCounts> {
-  const [standCountRow, pitCountRow] = await Promise.all([
-export type UserFormCounts = {
-  standCount: number;
-  pitCount: number;
-  total: number;
-};
-
-export async function getUserFormCounts(memberId: string): Promise<UserFormCounts> {
   "use cache";
   cacheLife("minutes");
 
@@ -64,15 +56,6 @@ export async function getUserFormCounts(memberId: string): Promise<UserFormCount
   const pitCount = pitRows[0]?.count ?? 0;
   return { standCount, pitCount, total: standCount + pitCount };
 }
-
-export type UserFormSubmission = {
-  type: "stand" | "pit";
-  id: string;
-  teamNumber: number | null;
-  matchType: string | null;
-  matchNumber: number | null;
-  createdAt: Date;
-};
 
 export async function getUserFormSubmissions(memberId: string): Promise<UserFormSubmission[]> {
   "use cache";
