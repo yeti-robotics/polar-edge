@@ -41,11 +41,4 @@ async function collectJsonOutputs(): Promise<void> {
   console.log(`Collected to ./${RAW_DIR}`);
 }
 
-// Only execute when run directly as a script, not when imported as a module
-const isDirectRun =
-  process.argv[1]?.endsWith("collect-json-outputs.mjs") ||
-  process.argv[1]?.endsWith("collect-json-outputs.cjs");
-
-if (isDirectRun) {
-  collectJsonOutputs();
-}
+collectJsonOutputs();
