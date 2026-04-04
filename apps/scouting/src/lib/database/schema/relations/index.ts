@@ -16,7 +16,6 @@ import { pitPhoto } from "../tables/pit-photo";
 import { session } from "../tables/session";
 import { team } from "../tables/team";
 import { user } from "../tables/user";
-import { workabilityForm } from "../tables/workability-form";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
