@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { routes } from "@/lib/routes";
 import type { WorkabilityNote } from "@/features/scouting/workability/types";
+import { formatWorkabilityScore, getCoverageLabel } from "@/features/scouting/workability/utils";
 import { CompatibilityNotesDialog } from "./CompatibilityNotesDialog";
 
 interface CompatibleTeam {
@@ -25,26 +26,6 @@ interface CompatibleTeam {
   submissionCount: number;
   noteCount: number;
   compatibilityNotes: WorkabilityNote[];
-}
-
-function formatScore(value: number | null | undefined) {
-  return value === null || value === undefined ? "—" : value.toFixed(1);
-}
-
-function getCoverageLabel(team: CompatibleTeam) {
-  if (team.avgDriverWorkability !== null && team.avgHumanPlayerWorkability !== null) {
-    return "Full";
-  }
-
-  if (team.avgDriverWorkability !== null) {
-    return "Driver only";
-  }
-
-  if (team.avgHumanPlayerWorkability !== null) {
-    return "HP only";
-  }
-
-  return "No ratings";
 }
 
 export function CompatibilitySection({ teams }: { teams: CompatibleTeam[] }) {
@@ -112,13 +93,13 @@ export function CompatibilitySection({ teams }: { teams: CompatibleTeam[] }) {
                       </TableCell>
                       <TableCell>{team.teamName ?? "—"}</TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {formatScore(team.avgDriverWorkability)}
+                        {formatWorkabilityScore(team.avgDriverWorkability)}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {formatScore(team.avgHumanPlayerWorkability)}
+                        {formatWorkabilityScore(team.avgHumanPlayerWorkability)}
                       </TableCell>
                       <TableCell className="text-right tabular-nums font-semibold">
-                        {formatScore(team.compositeCompatibilityScore)}
+                        {formatWorkabilityScore(team.compositeCompatibilityScore)}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
                         {team.avgTotalPoints !== undefined ? team.avgTotalPoints.toFixed(1) : "—"}

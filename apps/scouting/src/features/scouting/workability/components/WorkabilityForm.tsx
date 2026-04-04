@@ -66,8 +66,6 @@ type WorkabilitySubmitState = typeof initialFormState & {
   submission?: EditableWorkabilitySubmission | null;
 };
 
-type SubmissionMapValue = EditableWorkabilitySubmission;
-
 function getSubmissionKey(teamNumber: number, role: WorkabilityRole) {
   return `${teamNumber}:${role}`;
 }
@@ -94,7 +92,7 @@ export function WorkabilityForm({ teams, initialSubmissions }: WorkabilityFormPr
   });
 
   const submissionMap = useMemo(() => {
-    return new Map<string, SubmissionMapValue>(
+    return new Map<string, EditableWorkabilitySubmission>(
       submissions.map((submission) => [
         getSubmissionKey(submission.teamNumber, submission.role),
         submission,

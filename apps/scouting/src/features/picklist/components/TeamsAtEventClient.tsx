@@ -22,11 +22,16 @@ import {
 } from "@tanstack/react-table";
 import { ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { WorkabilityNote } from "@/features/scouting/workability/types";
+import { formatWorkabilityScore, getCoverageLabel } from "@/features/scouting/workability/utils";
 import { routes } from "@/lib/routes";
 import { CompatibilityNotesDialog } from "./CompatibilityNotesDialog";
 import { QuickAddTeamButton } from "./QuickAddTeamButton";
+
+interface CellMeta {
+  align?: "right";
+}
 
 interface TeamWithMetrics {
   teamNumber: number;
@@ -51,26 +56,6 @@ interface TeamsAtEventClientProps {
 }
 
 const columnHelper = createColumnHelper<TeamWithMetrics>();
-
-function formatCompatibilityValue(value: number | null | undefined) {
-  return value === null || value === undefined ? "—" : value.toFixed(1);
-}
-
-function getCoverageLabel(team: TeamWithMetrics) {
-  if (team.avgDriverWorkability !== null && team.avgHumanPlayerWorkability !== null) {
-    return "Full";
-  }
-
-  if (team.avgDriverWorkability !== null) {
-    return "Driver only";
-  }
-
-  if (team.avgHumanPlayerWorkability !== null) {
-    return "HP only";
-  }
-
-  return "None";
-}
 
 function SortingButton({ header }: { header: Header<TeamWithMetrics, unknown> }) {
   const Icon =
@@ -106,123 +91,135 @@ export function TeamsAtEventClient({
     { id: "compositeCompatibilityScore", desc: true },
   ]);
 
-  const columns = [
-    columnHelper.display({
-      id: "add",
-      header: "",
-      enableSorting: false,
-      cell: ({ row }) => {
-        const inPicklist = picklistTeams.includes(row.original.teamNumber);
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: "add",
+        header: "",
+        enableSorting: false,
+        cell: ({ row }) => {
+          const inPicklist = picklistTeams.includes(row.original.teamNumber);
 
-        return (
-          <div className="inline-flex items-center justify-end">
-            {inPicklist ? (
-              <span className="text-muted-foreground">Added</span>
-            ) : (
-              <QuickAddTeamButton
-                picklistId={currentPicklistId}
-                teamNumber={row.original.teamNumber}
-                rank={nextRank}
-              />
-            )}
+          return (
+            <div className="inline-flex items-center justify-end">
+              {inPicklist ? (
+                <span className="text-muted-foreground">Added</span>
+              ) : (
+                <QuickAddTeamButton
+                  picklistId={currentPicklistId}
+                  teamNumber={row.original.teamNumber}
+                  rank={nextRank}
+                />
+              )}
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("teamNumber", {
+        header: "Team",
+        sortDescFirst: false,
+        cell: ({ getValue }) => (
+          <Link
+            href={routes.analysis.team(getValue())}
+            className="font-mono font-bold text-primary hover:underline"
+          >
+            {getValue()}
+          </Link>
+        ),
+      }),
+      columnHelper.accessor("teamName", {
+        header: "Name",
+        cell: ({ getValue }) => getValue() ?? "—",
+      }),
+      columnHelper.accessor((row) => row.compositeCompatibilityScore ?? -1, {
+        id: "compositeCompatibilityScore",
+        header: "Compat",
+        meta: { align: "right" },
+        cell: ({ row }) => (
+          <span className="tabular-nums font-semibold">
+            {formatWorkabilityScore(row.original.compositeCompatibilityScore)}
+          </span>
+        ),
+      }),
+      columnHelper.accessor((row) => row.avgDriverWorkability ?? -1, {
+        id: "avgDriverWorkability",
+        header: "Driver",
+        meta: { align: "right" },
+        cell: ({ row }) => (
+          <span className="tabular-nums">
+            {formatWorkabilityScore(row.original.avgDriverWorkability)}
+          </span>
+        ),
+      }),
+      columnHelper.accessor((row) => row.avgHumanPlayerWorkability ?? -1, {
+        id: "avgHumanPlayerWorkability",
+        header: "Human Player",
+        meta: { align: "right" },
+        cell: ({ row }) => (
+          <span className="tabular-nums">
+            {formatWorkabilityScore(row.original.avgHumanPlayerWorkability)}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("avgTotalPoints", {
+        header: "Avg Pts",
+        meta: { align: "right" },
+        cell: ({ getValue }) => (
+          <span className="tabular-nums">
+            {getValue() !== undefined ? getValue()!.toFixed(1) : "—"}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("climbSuccessPct", {
+        header: "Climb %",
+        meta: { align: "right" },
+        cell: ({ getValue }) => (
+          <span className="tabular-nums">
+            {getValue() !== undefined ? `${Math.round(getValue()!)}%` : "—"}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("uptimePct", {
+        header: "Uptime %",
+        meta: { align: "right" },
+        cell: ({ getValue }) => (
+          <span className="tabular-nums">
+            {getValue() !== undefined ? `${Math.round(getValue()!)}%` : "—"}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("matchesScouted", {
+        header: "Matches",
+        meta: { align: "right" },
+        cell: ({ getValue }) => (
+          <span className="tabular-nums">{getValue() !== undefined ? getValue() : "—"}</span>
+        ),
+      }),
+      columnHelper.accessor("submissionCount", {
+        header: "Submissions",
+        meta: { align: "right" },
+        cell: ({ row }) => (
+          <div className="flex flex-col items-end">
+            <span className="tabular-nums">{row.original.submissionCount}</span>
+            <span className="text-xs text-muted-foreground">{getCoverageLabel(row.original)}</span>
           </div>
-        );
-      },
-    }),
-    columnHelper.accessor("teamNumber", {
-      header: "Team",
-      sortDescFirst: false,
-      cell: ({ getValue }) => (
-        <Link
-          href={routes.analysis.team(getValue())}
-          className="font-mono font-bold text-primary hover:underline"
-        >
-          {getValue()}
-        </Link>
-      ),
-    }),
-    columnHelper.accessor("teamName", {
-      header: "Name",
-      cell: ({ getValue }) => getValue() ?? "—",
-    }),
-    columnHelper.accessor((row) => row.compositeCompatibilityScore ?? -1, {
-      id: "compositeCompatibilityScore",
-      header: "Compat",
-      cell: ({ row }) => (
-        <span className="tabular-nums font-semibold">
-          {formatCompatibilityValue(row.original.compositeCompatibilityScore)}
-        </span>
-      ),
-    }),
-    columnHelper.accessor((row) => row.avgDriverWorkability ?? -1, {
-      id: "avgDriverWorkability",
-      header: "Driver",
-      cell: ({ row }) => (
-        <span className="tabular-nums">
-          {formatCompatibilityValue(row.original.avgDriverWorkability)}
-        </span>
-      ),
-    }),
-    columnHelper.accessor((row) => row.avgHumanPlayerWorkability ?? -1, {
-      id: "avgHumanPlayerWorkability",
-      header: "Human Player",
-      cell: ({ row }) => (
-        <span className="tabular-nums">
-          {formatCompatibilityValue(row.original.avgHumanPlayerWorkability)}
-        </span>
-      ),
-    }),
-    columnHelper.accessor("avgTotalPoints", {
-      header: "Avg Pts",
-      cell: ({ getValue }) => (
-        <span className="tabular-nums">
-          {getValue() !== undefined ? getValue()!.toFixed(1) : "—"}
-        </span>
-      ),
-    }),
-    columnHelper.accessor("climbSuccessPct", {
-      header: "Climb %",
-      cell: ({ getValue }) => (
-        <span className="tabular-nums">
-          {getValue() !== undefined ? `${Math.round(getValue()!)}%` : "—"}
-        </span>
-      ),
-    }),
-    columnHelper.accessor("uptimePct", {
-      header: "Uptime %",
-      cell: ({ getValue }) => (
-        <span className="tabular-nums">
-          {getValue() !== undefined ? `${Math.round(getValue()!)}%` : "—"}
-        </span>
-      ),
-    }),
-    columnHelper.accessor("matchesScouted", {
-      header: "Matches",
-      cell: ({ getValue }) => (
-        <span className="tabular-nums">{getValue() !== undefined ? getValue() : "—"}</span>
-      ),
-    }),
-    columnHelper.accessor("submissionCount", {
-      header: "Submissions",
-      cell: ({ row }) => (
-        <div className="flex flex-col items-end">
-          <span className="tabular-nums">{row.original.submissionCount}</span>
-          <span className="text-xs text-muted-foreground">{getCoverageLabel(row.original)}</span>
-        </div>
-      ),
-    }),
-    columnHelper.display({
-      id: "notes",
-      header: "Notes",
-      enableSorting: false,
-      cell: ({ row }) => (
-        <CompatibilityNotesDialog
-          notes={row.original.compatibilityNotes}
-          noteCount={row.original.noteCount}
-        />
-      ),
-    }),
-  ];
+        ),
+      }),
+      columnHelper.display({
+        id: "notes",
+        header: "Notes",
+        enableSorting: false,
+        meta: { align: "right" },
+        cell: ({ row }) => (
+          <CompatibilityNotesDialog
+            notes={row.original.compatibilityNotes}
+            noteCount={row.original.noteCount}
+          />
+        ),
+      }),
+    ],
+    [picklistTeams, currentPicklistId, nextRank]
+  );
 
   const table = useReactTable({
     data: teams,
@@ -274,20 +271,8 @@ export function TeamsAtEventClient({
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        typeof cell.column.columnDef.header === "string" &&
-                          [
-                            "Compat",
-                            "Driver",
-                            "Human Player",
-                            "Avg Pts",
-                            "Climb %",
-                            "Uptime %",
-                            "Matches",
-                            "Submissions",
-                            "Notes",
-                          ].includes(cell.column.columnDef.header)
-                          ? "text-right"
-                          : undefined
+                        (cell.column.columnDef.meta as CellMeta | undefined)?.align === "right" &&
+                          "text-right"
                       )}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

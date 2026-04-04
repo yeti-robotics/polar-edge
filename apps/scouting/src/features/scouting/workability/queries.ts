@@ -61,44 +61,45 @@ export async function getWorkabilitySummaryForEvent(eventId: string, organizatio
   cacheLife("minutes");
   cacheTag(cacheTags.workabilityEvent(eventId, organizationId));
 
-  const aggregateRows = await db
-    .select({
-      teamNumber: workabilityForm.teamNumber,
-      avgDriverWorkability: sql<number | null>`
-        avg(case when ${workabilityForm.role} = 'driver' then ${workabilityForm.rating} end)
-      `.as("avg_driver_workability"),
-      avgHumanPlayerWorkability: sql<number | null>`
-        avg(case when ${workabilityForm.role} = 'human_player' then ${workabilityForm.rating} end)
-      `.as("avg_human_player_workability"),
-      submissionCount: count(workabilityForm.id),
-      noteCount: sql<number>`
-        sum(case when length(trim(${workabilityForm.notes})) > 0 then 1 else 0 end)::int
-      `.as("note_count"),
-    })
-    .from(workabilityForm)
-    .innerJoin(member, eq(member.id, workabilityForm.scoutMemberId))
-    .where(and(eq(workabilityForm.eventId, eventId), eq(member.organizationId, organizationId)))
-    .groupBy(workabilityForm.teamNumber);
-
-  const noteRows = await db
-    .select({
-      teamNumber: workabilityForm.teamNumber,
-      role: workabilityForm.role,
-      note: workabilityForm.notes,
-      authorName: user.name,
-      updatedAt: workabilityForm.updatedAt,
-    })
-    .from(workabilityForm)
-    .innerJoin(member, eq(member.id, workabilityForm.scoutMemberId))
-    .innerJoin(user, eq(user.id, member.userId))
-    .where(
-      and(
-        eq(workabilityForm.eventId, eventId),
-        eq(member.organizationId, organizationId),
-        sql`length(trim(${workabilityForm.notes})) > 0`
+  const [aggregateRows, noteRows] = await Promise.all([
+    db
+      .select({
+        teamNumber: workabilityForm.teamNumber,
+        avgDriverWorkability: sql<number | null>`
+          avg(case when ${workabilityForm.role} = 'driver' then ${workabilityForm.rating} end)
+        `.as("avg_driver_workability"),
+        avgHumanPlayerWorkability: sql<number | null>`
+          avg(case when ${workabilityForm.role} = 'human_player' then ${workabilityForm.rating} end)
+        `.as("avg_human_player_workability"),
+        submissionCount: count(workabilityForm.id),
+        noteCount: sql<number>`
+          sum(case when length(trim(${workabilityForm.notes})) > 0 then 1 else 0 end)::int
+        `.as("note_count"),
+      })
+      .from(workabilityForm)
+      .innerJoin(member, eq(member.id, workabilityForm.scoutMemberId))
+      .where(and(eq(workabilityForm.eventId, eventId), eq(member.organizationId, organizationId)))
+      .groupBy(workabilityForm.teamNumber),
+    db
+      .select({
+        teamNumber: workabilityForm.teamNumber,
+        role: workabilityForm.role,
+        note: workabilityForm.notes,
+        authorName: user.name,
+        updatedAt: workabilityForm.updatedAt,
+      })
+      .from(workabilityForm)
+      .innerJoin(member, eq(member.id, workabilityForm.scoutMemberId))
+      .innerJoin(user, eq(user.id, member.userId))
+      .where(
+        and(
+          eq(workabilityForm.eventId, eventId),
+          eq(member.organizationId, organizationId),
+          sql`length(trim(${workabilityForm.notes})) > 0`
+        )
       )
-    )
-    .orderBy(desc(workabilityForm.updatedAt));
+      .orderBy(desc(workabilityForm.updatedAt)),
+  ]);
 
   const notesByTeam = new Map<number, WorkabilityNote[]>();
 

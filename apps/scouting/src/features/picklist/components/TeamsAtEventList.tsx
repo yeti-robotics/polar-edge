@@ -46,7 +46,7 @@ export async function TeamsAtEventList({
       <CardHeader>
         <CardTitle>Event Teams</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="max-h-[calc(100vh-16rem)] space-y-4 overflow-y-auto">
         <CompatibilitySection teams={teamsWithMetrics} />
         <div className="space-y-3">
           <div>
