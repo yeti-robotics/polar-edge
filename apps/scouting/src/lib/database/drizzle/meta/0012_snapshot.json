@@ -1,5 +1,5 @@
 {
-  "id": "95152382-b77d-40cb-bb0b-d1a3395f617f",
+  "id": "1bb1ae52-fb03-4afd-9bc5-9326ac595421",
   "prevId": "e60955a8-c913-4060-866f-b17f1efc2c3e",
   "version": "7",
   "dialect": "postgresql",
@@ -1449,6 +1449,20 @@
           "primaryKey": false,
           "notNull": false
         },
+        "shooter_type": {
+          "name": "shooter_type",
+          "type": "shooter_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "can_shoot_while_moving": {
+          "name": "can_shoot_while_moving",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -1722,13 +1736,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "''"
-        },
-        "can_shuttle": {
-          "name": "can_shuttle",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
         },
         "oof_time_seconds": {
           "name": "oof_time_seconds",
@@ -2182,6 +2189,11 @@
       "name": "phase",
       "schema": "public",
       "values": ["auto", "teleop"]
+    },
+    "public.shooter_type": {
+      "name": "shooter_type",
+      "schema": "public",
+      "values": ["turret", "fixed"]
     }
   },
   "schemas": {},
