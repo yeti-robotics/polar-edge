@@ -17,11 +17,6 @@ const serverValidate = createServerValidate({
   onServerValidate: FormSchema,
 });
 
-const formDataInfo = {
-  numbers: ["teamNumber", "capacity", "weight"],
-  booleans: ["canTrench", "canBump", "canShuttle"],
-};
-
 export async function submitPitForm(_prevState: unknown, formData: FormData) {
   try {
     const activeMember = await auth.api.getActiveMember({ headers: await headers() });
