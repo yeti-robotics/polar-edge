@@ -2,31 +2,14 @@
   "name": "@repo/vitest-config",
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./base": {
-      "types": "./dist/configs/base-config.d.mts",
-      "import": "./dist/configs/base-config.mjs",
-      "require": "./dist/configs/base-config.cjs"
-    },
-    "./ui": {
-      "types": "./dist/configs/ui-config.d.mts",
-      "import": "./dist/configs/ui-config.mjs",
-      "require": "./dist/configs/ui-config.cjs"
-    }
+    ".": "./src/index.ts",
+    "./base": "./src/configs/base-config.ts",
+    "./ui": "./src/configs/ui-config.ts"
   },
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
-    "collect-json-reports": "node dist/scripts/collect-json-outputs.mjs",
+    "collect-json-reports": "npx tsx src/scripts/collect-json-outputs.ts",
     "merge-json-reports": "nyc merge coverage/raw coverage/merged/merged-coverage.json",
     "report": "nyc report -t coverage/merged --report-dir coverage/report --reporter=html --exclude-after-remap false",
     "view-report": "open coverage/report/index.html"
@@ -41,7 +24,7 @@
     "@types/node": "catalog:",
     "glob": "^13.0.6",
     "nyc": "^18.0.0",
-    "tsdown": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:"
   }
 }

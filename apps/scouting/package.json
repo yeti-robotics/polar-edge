@@ -65,7 +65,7 @@
     "drizzle-kit": "^0.31.10",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.1",
-    "tsx": "^4.21.0",
+    "tsx": "catalog:",
     "vitest": "catalog:"
   }
 }
