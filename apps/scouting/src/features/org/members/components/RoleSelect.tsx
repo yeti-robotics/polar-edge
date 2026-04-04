@@ -29,6 +29,7 @@ interface RoleSelectProps {
 const roleLabels: Record<string, string> = {
   owner: "Owner",
   admin: "Admin",
+  scout_lead: "Scouting Lead",
   member: "Member",
 };
 
@@ -80,6 +81,7 @@ export function RoleSelect({ memberId, memberName, currentRole }: RoleSelectProp
         <SelectContent>
           <SelectItem value="owner">Owner</SelectItem>
           <SelectItem value="admin">Admin</SelectItem>
+          <SelectItem value="scout_lead">Scouting Lead</SelectItem>
           <SelectItem value="member">Member</SelectItem>
         </SelectContent>
       </Select>
