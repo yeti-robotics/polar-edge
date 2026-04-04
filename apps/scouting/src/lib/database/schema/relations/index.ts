@@ -1,5 +1,7 @@
 import { relations } from "drizzle-orm";
 import { account } from "../tables/account";
+import { driveTeamRanking } from "../tables/drive-team-ranking";
+import { driveTeamRankingEntry } from "../tables/drive-team-ranking-entry";
 import { event } from "../tables/event";
 import { invitation } from "../tables/invitation";
 import { member } from "../tables/member";
@@ -135,17 +137,17 @@ export const picklistTeamRelations = relations(picklistTeam, ({ one }) => ({
   }),
 }));
 
-export const workabilityFormRelations = relations(workabilityForm, ({ one }) => ({
-  event: one(event, {
-    fields: [workabilityForm.eventId],
-    references: [event.id],
-  }),
-  member: one(member, {
-    fields: [workabilityForm.scoutMemberId],
-    references: [member.id],
+export const driveTeamRankingRelations = relations(driveTeamRanking, ({ many }) => ({
+  entries: many(driveTeamRankingEntry),
+}));
+
+export const driveTeamRankingEntryRelations = relations(driveTeamRankingEntry, ({ one }) => ({
+  ranking: one(driveTeamRanking, {
+    fields: [driveTeamRankingEntry.rankingId],
+    references: [driveTeamRanking.id],
   }),
   team: one(team, {
-    fields: [workabilityForm.teamNumber],
+    fields: [driveTeamRankingEntry.teamNumber],
     references: [team.teamNumber],
   }),
 }));

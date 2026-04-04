@@ -10,6 +10,8 @@ import { EventOverviewTable } from "@/features/analysis/events/components/EventO
 import { EventScopeControls } from "@/features/analysis/events/components/EventScopeControls";
 import { EventSummaryCard } from "@/features/analysis/events/components/EventSummaryCard";
 import { getMainEventOverviewRow } from "@/features/analysis/events/queries";
+import { DriveRatingLeaderboard } from "@/features/scouting/drive-ranking/components/DriveRatingLeaderboard";
+import { getDriveTeamRatings } from "@/features/scouting/drive-ranking/queries";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { event } from "@/lib/database/schema";
@@ -29,6 +31,18 @@ async function EventAnalysis({
       <EventOverviewTable rows={rows} />
     </>
   );
+}
+
+async function DriveRankingsSection({
+  eventId,
+  organizationId,
+}: {
+  eventId: string;
+  organizationId: string | null;
+}) {
+  if (!organizationId) return null;
+  const ratings = await getDriveTeamRatings(organizationId, eventId);
+  return <DriveRatingLeaderboard ratings={ratings} />;
 }
 
 function EventAnalysisSkeleton() {
@@ -97,6 +111,10 @@ export default async function EventDetailPage({
 
       <Suspense fallback={<EventAnalysisSkeleton />}>
         <EventAnalysis eventId={eventId} organizationId={effectiveOrgId} />
+      </Suspense>
+
+      <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+        <DriveRankingsSection eventId={eventId} organizationId={organizationId} />
       </Suspense>
     </div>
   );

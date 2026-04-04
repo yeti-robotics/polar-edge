@@ -1,5 +1,5 @@
 {
-  "id": "f3f3359b-f5c9-4d61-bc6d-294d8f6bc5a0",
+  "id": "2664f25f-24d0-4f87-8509-bbe652f7896a",
   "prevId": "1bb1ae52-fb03-4afd-9bc5-9326ac595421",
   "version": "7",
   "dialect": "postgresql",
@@ -429,6 +429,213 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.drive_team_ranking": {
+      "name": "drive_team_ranking",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "match_id": {
+          "name": "match_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alliance": {
+          "name": "alliance",
+          "type": "alliance",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "scout_member_id": {
+          "name": "scout_member_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_drive_ranking_match": {
+          "name": "idx_drive_ranking_match",
+          "columns": [
+            {
+              "expression": "match_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_drive_ranking_org": {
+          "name": "idx_drive_ranking_org",
+          "columns": [
+            {
+              "expression": "organization_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_drive_ranking_scout": {
+          "name": "idx_drive_ranking_scout",
+          "columns": [
+            {
+              "expression": "scout_member_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "drive_team_ranking_organization_id_organization_id_fk": {
+          "name": "drive_team_ranking_organization_id_organization_id_fk",
+          "tableFrom": "drive_team_ranking",
+          "tableTo": "organization",
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "drive_team_ranking_match_id_match_id_fk": {
+          "name": "drive_team_ranking_match_id_match_id_fk",
+          "tableFrom": "drive_team_ranking",
+          "tableTo": "match",
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "drive_team_ranking_scout_member_id_member_id_fk": {
+          "name": "drive_team_ranking_scout_member_id_member_id_fk",
+          "tableFrom": "drive_team_ranking",
+          "tableTo": "member",
+          "columnsFrom": ["scout_member_id"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "uniq_drive_ranking_org_match_alliance": {
+          "name": "uniq_drive_ranking_org_match_alliance",
+          "nullsNotDistinct": false,
+          "columns": ["organization_id", "match_id", "alliance"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.drive_team_ranking_entry": {
+      "name": "drive_team_ranking_entry",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "ranking_id": {
+          "name": "ranking_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "team_number": {
+          "name": "team_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rank": {
+          "name": "rank",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "drive_team_ranking_entry_ranking_id_drive_team_ranking_id_fk": {
+          "name": "drive_team_ranking_entry_ranking_id_drive_team_ranking_id_fk",
+          "tableFrom": "drive_team_ranking_entry",
+          "tableTo": "drive_team_ranking",
+          "columnsFrom": ["ranking_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "drive_team_ranking_entry_team_number_team_team_number_fk": {
+          "name": "drive_team_ranking_entry_team_number_team_team_number_fk",
+          "tableFrom": "drive_team_ranking_entry",
+          "tableTo": "team",
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "uniq_ranking_team": {
+          "name": "uniq_ranking_team",
+          "nullsNotDistinct": false,
+          "columns": ["ranking_id", "team_number"]
+        },
+        "uniq_ranking_rank": {
+          "name": "uniq_ranking_rank",
+          "nullsNotDistinct": false,
+          "columns": ["ranking_id", "rank"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -2162,181 +2369,6 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
-    },
-    "public.workability_form": {
-      "name": "workability_form",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "event_id": {
-          "name": "event_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "team_number": {
-          "name": "team_number",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "scout_member_id": {
-          "name": "scout_member_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "role": {
-          "name": "role",
-          "type": "workability_role",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "rating": {
-          "name": "rating",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "notes": {
-          "name": "notes",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "idx_workability_event_team": {
-          "name": "idx_workability_event_team",
-          "columns": [
-            {
-              "expression": "event_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "team_number",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_workability_member": {
-          "name": "idx_workability_member",
-          "columns": [
-            {
-              "expression": "scout_member_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_workability_event_team_role": {
-          "name": "idx_workability_event_team_role",
-          "columns": [
-            {
-              "expression": "event_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "team_number",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "role",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "workability_form_event_id_event_id_fk": {
-          "name": "workability_form_event_id_event_id_fk",
-          "tableFrom": "workability_form",
-          "tableTo": "event",
-          "columnsFrom": ["event_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "workability_form_team_number_team_team_number_fk": {
-          "name": "workability_form_team_number_team_team_number_fk",
-          "tableFrom": "workability_form",
-          "tableTo": "team",
-          "columnsFrom": ["team_number"],
-          "columnsTo": ["team_number"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "workability_form_scout_member_id_member_id_fk": {
-          "name": "workability_form_scout_member_id_member_id_fk",
-          "tableFrom": "workability_form",
-          "tableTo": "member",
-          "columnsFrom": ["scout_member_id"],
-          "columnsTo": ["id"],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "uniq_workability_submission": {
-          "name": "uniq_workability_submission",
-          "nullsNotDistinct": false,
-          "columns": ["event_id", "team_number", "scout_member_id", "role"]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {
-        "workability_rating_range": {
-          "name": "workability_rating_range",
-          "value": "\"workability_form\".\"rating\" between 1 and 5"
-        }
-      },
-      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -2369,11 +2401,6 @@
       "name": "shooter_type",
       "schema": "public",
       "values": ["turret", "fixed"]
-    },
-    "public.workability_role": {
-      "name": "workability_role",
-      "schema": "public",
-      "values": ["driver", "human_player"]
     }
   },
   "schemas": {},

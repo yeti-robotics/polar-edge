@@ -33,3 +33,23 @@ export async function requireAdminMember() {
   }
   return member;
 }
+
+const SCOUT_LEAD_ROLES = new Set(["scout_lead", "admin", "owner"]);
+
+/**
+ * Require scout_lead, admin, or owner role. Redirects to "/" otherwise.
+ */
+export async function requireScoutLeadMember() {
+  const member = await requireActiveMember();
+  if (!SCOUT_LEAD_ROLES.has(member.role)) {
+    redirect(routes.home);
+  }
+  return member;
+}
+
+/**
+ * Check if a role has scout lead (or higher) permissions.
+ */
+export function isScoutLeadOrAbove(role: string) {
+  return SCOUT_LEAD_ROLES.has(role);
+}

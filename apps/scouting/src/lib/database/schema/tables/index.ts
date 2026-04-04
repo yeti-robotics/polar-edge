@@ -2,6 +2,8 @@ export { account } from "./account";
 export { autoPath } from "./auto-path";
 export { climb } from "./climb";
 export { cycle } from "./cycle";
+export { driveTeamRanking } from "./drive-team-ranking";
+export { driveTeamRankingEntry } from "./drive-team-ranking-entry";
 export { event } from "./event";
 export { invitation } from "./invitation";
 export { match } from "./match";
