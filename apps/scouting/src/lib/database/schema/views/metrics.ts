@@ -1,17 +1,6 @@
 import { sql } from "drizzle-orm";
 import { bigint, integer, numeric, pgView, text, uuid } from "drizzle-orm/pg-core";
 
-const BPS_MIDPOINT_CASE_SQL = sql`
-  case c.bucket
-    when 0 then 0.0
-    when 1 then 1.0
-    when 2 then 2.25
-    when 3 then 4.0
-    when 4 then 6.0
-    when 5 then 8.0
-    else 0.0
-  end
-`;
 export const vStandFormExpected = pgView("v_stand_form_expected", {
   standFormId: uuid("stand_form_id").notNull(),
   teamMatchId: bigint("team_match_id", { mode: "number" }).notNull(),
@@ -26,12 +15,41 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
 
   cyclesCount: integer("cycles_count").notNull(),
 }).as(sql`
-  with cycle_fuel as (
+  with team_phase_duration as (
+    select
+      tm.event_id,
+      tm.team_number,
+      c.phase,
+      sum(greatest(coalesce(c.dump_duration, 0.0), 0.0)) as total_duration
+    from cycle c
+    join stand_form sf2 on sf2.id = c.stand_form_id
+    join team_match tm on tm.id = sf2.team_match_id
+    where sf2.deleted_at is null
+    group by tm.event_id, tm.team_number, c.phase
+  ),
+  cycle_fuel as (
     select
       c.stand_form_id,
-      sum( (${BPS_MIDPOINT_CASE_SQL}) * greatest(coalesce(c.dump_duration, 0.0), 0.0) ) as fuel_active,
+      sum(
+        case
+          when tpd.total_duration > 0 then
+            (case c.phase
+              when 'auto' then coalesce(copr.auto_fuel_count, 0.0)
+              when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0) + coalesce(copr.endgame_fuel_count, 0.0)
+              else 0.0
+            end)
+            / tpd.total_duration
+            * greatest(coalesce(c.dump_duration, 0.0), 0.0)
+          else 0.0
+        end
+      ) as fuel_active,
       count(*) as cycles_count
     from cycle c
+    join stand_form sf3 on sf3.id = c.stand_form_id
+    join team_match tm on tm.id = sf3.team_match_id
+    left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number
+    left join team_phase_duration tpd on tpd.event_id = tm.event_id and tpd.team_number = tm.team_number and tpd.phase = c.phase
+    where sf3.deleted_at is null
     group by c.stand_form_id
   ),
   climb_pts as (

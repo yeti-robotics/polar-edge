@@ -11,6 +11,7 @@ import {
   pitForm,
   standForm,
   team,
+  teamEventCopr,
   teamMatch,
   vStandFormExpected,
 } from "@/lib/database/schema";
@@ -47,30 +48,62 @@ export async function getMainEventOverviewRow(
     cacheTag(cacheTags.teamMetrics(`${eventId}-${organizationId}`));
   }
 
-  const fuelPointsExpr = sql`
-    (case ${cycle.bucket}
-      when 0 then 0.0
-      when 1 then 1.0
-      when 2 then 2.25
-      when 3 then 4.0
-      when 4 then 6.0
-      when 5 then 8.0
-      else 0.0
-    end) * greatest(coalesce(${cycle.dumpDuration}, 0), 0)
-  `;
-  //started the query writing here (finally wrote them queries :)
+  // CTE: total scouted shooting time per team per event per phase (for COPR-based BPS)
+  const eventTeamPhaseDuration = db.$with("event_tpd").as(
+    db
+      .select({
+        eventId: teamMatch.eventId,
+        teamNumber: teamMatch.teamNumber,
+        phase: cycle.phase,
+        totalDuration: sql<number>`sum(greatest(coalesce(${cycle.dumpDuration}, 0), 0))`.as(
+          "total_duration"
+        ),
+      })
+      .from(cycle)
+      .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
+      .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+      .groupBy(teamMatch.eventId, teamMatch.teamNumber, cycle.phase)
+  );
+
+  const eventCoprFuelExpr = (phase: "auto" | "teleop") => sql`
+    case
+      when event_tpd.total_duration > 0 then
+        ${phase === "auto" ? sql`coalesce(${teamEventCopr.autoFuelCount}, 0)` : sql`coalesce(${teamEventCopr.teleopFuelCount}, 0) + coalesce(${teamEventCopr.endgameFuelCount}, 0)`}
+        / event_tpd.total_duration
+        * greatest(coalesce(${cycle.dumpDuration}, 0), 0)
+      else 0
+    end`;
+
+  // COPR-based fuel points per stand form, split by auto/teleop
   const standCyclePoints = db.$with("stand_cycle_points").as(
     db
       .select({
         standFormId: cycle.standFormId,
         autoFuelPoints: sql<number>`
-          sum(case when ${cycle.phase} = 'auto' then ${fuelPointsExpr} else 0 end)
+          sum(case when ${cycle.phase} = 'auto' then ${eventCoprFuelExpr("auto")} else 0 end)
         `.as("auto_fuel_points"),
         teleopFuelPoints: sql<number>`
-          sum(case when ${cycle.phase} = 'teleop' then ${fuelPointsExpr} else 0 end)
+          sum(case when ${cycle.phase} = 'teleop' then ${eventCoprFuelExpr("teleop")} else 0 end)
         `.as("teleop_fuel_points"),
       })
       .from(cycle)
+      .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
+      .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+      .leftJoin(
+        teamEventCopr,
+        and(
+          eq(teamEventCopr.eventId, teamMatch.eventId),
+          eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
+        )
+      )
+      .leftJoin(
+        eventTeamPhaseDuration,
+        and(
+          eq(eventTeamPhaseDuration.eventId, teamMatch.eventId),
+          eq(eventTeamPhaseDuration.teamNumber, teamMatch.teamNumber),
+          eq(eventTeamPhaseDuration.phase, cycle.phase)
+        )
+      )
       .groupBy(cycle.standFormId)
   );
 
@@ -206,6 +239,7 @@ export async function getMainEventOverviewRow(
 
   const rawRows = await db
     .with(
+      eventTeamPhaseDuration,
       standCyclePoints,
       standPoints,
       teamMatchConsensusPoints,

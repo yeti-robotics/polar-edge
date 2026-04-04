@@ -23,8 +23,8 @@ export function ShootingActiveLayout() {
 
   const handleDialogOpen = () => setDialogOpenedAt(Date.now());
   const handleDialogCancel = () => setDialogOpenedAt(null);
-  const handleComplete = (bucket: number) => {
-    completeShootingCycle(bucket, dialogOpenedAt ?? undefined);
+  const handleComplete = () => {
+    completeShootingCycle(dialogOpenedAt ?? undefined);
     setDialogOpenedAt(null);
   };
 

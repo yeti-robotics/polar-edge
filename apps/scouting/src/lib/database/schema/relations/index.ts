@@ -15,6 +15,7 @@ import { pitForm } from "../tables/pit-form";
 import { pitPhoto } from "../tables/pit-photo";
 import { session } from "../tables/session";
 import { team } from "../tables/team";
+import { teamEventCopr } from "../tables/team-event-copr";
 import { user } from "../tables/user";
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -147,6 +148,17 @@ export const driveTeamRankingEntryRelations = relations(driveTeamRankingEntry, (
   }),
   team: one(team, {
     fields: [driveTeamRankingEntry.teamNumber],
+    references: [team.teamNumber],
+  }),
+}));
+
+export const teamEventCoprRelations = relations(teamEventCopr, ({ one }) => ({
+  event: one(event, {
+    fields: [teamEventCopr.eventId],
+    references: [event.id],
+  }),
+  team: one(team, {
+    fields: [teamEventCopr.teamNumber],
     references: [team.teamNumber],
   }),
 }));
