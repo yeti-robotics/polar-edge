@@ -1,7 +1,14 @@
 import { Badge } from "@repo/ui/components/badge";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
-import { CalendarIcon, MailIcon, Settings2Icon, ShieldCheckIcon, UsersIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ClipboardListIcon,
+  MailIcon,
+  Settings2Icon,
+  ShieldCheckIcon,
+  UsersIcon,
+} from "lucide-react";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
@@ -29,6 +36,12 @@ const navCards = [
     icon: CalendarIcon,
     title: "Active Event",
     description: "Set the competition your organization is currently scouting.",
+  },
+  {
+    href: "/shift-schedule",
+    icon: ClipboardListIcon,
+    title: "Schedule",
+    description: "Assign scouting roles and shifts for members in your organization.",
   },
   {
     href: "/admin/settings",

@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/database";
 import { shiftSchedule } from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import type { ShiftScheduleEntry } from "./types";
+import { normalizeShiftScheduleEntries, type ShiftScheduleEntry } from "./types";
 
 export async function getShiftScheduleForActiveEvent(organizationId: string) {
   const activeEvent = await getActiveEventForOrganization(organizationId);
@@ -35,8 +35,8 @@ export async function getShiftScheduleForActiveEvent(organizationId: string) {
     throw error;
   }
 
-  const scheduleData = schedule?.scheduleData as { entries?: ShiftScheduleEntry[] } | null;
-  const entries = Array.isArray(scheduleData?.entries) ? scheduleData.entries : [];
+  const scheduleData = schedule?.scheduleData as { entries?: unknown } | null;
+  const entries = normalizeShiftScheduleEntries(scheduleData?.entries);
 
   return { activeEvent: activeEvent.event, entries };
 }

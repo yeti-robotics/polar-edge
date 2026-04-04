@@ -11,6 +11,7 @@ export const routes = {
     members: "/admin/members",
     invites: "/admin/invites",
     event: "/admin/event",
+    schedule: "/shift-schedule",
     settings: "/admin/settings",
     validation: "/admin/data-validation",
   },

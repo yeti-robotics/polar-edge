@@ -1,7 +1,10 @@
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { ShiftSchedulePayloadSchema } from "@/features/shift-schedule/types";
+import {
+  normalizeShiftScheduleEntries,
+  ShiftSchedulePayloadSchema,
+} from "@/features/shift-schedule/types";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { shiftSchedule } from "@/lib/database/schema";
@@ -45,10 +48,10 @@ export async function GET() {
       throw error;
     });
 
-  const scheduleData = schedule?.scheduleData as { entries?: unknown[] } | null;
+  const scheduleData = schedule?.scheduleData as { entries?: unknown } | null;
 
   return NextResponse.json({
-    entries: Array.isArray(scheduleData?.entries) ? scheduleData?.entries : [],
+    entries: normalizeShiftScheduleEntries(scheduleData?.entries),
     eventId: activeEvent.event.id,
     eventName: activeEvent.event.name,
   });

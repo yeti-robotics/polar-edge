@@ -1,5 +1,12 @@
 "use client";
-import { CalendarIcon, SettingsIcon, ShieldCheckIcon, UserPlusIcon, UsersIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ClipboardListIcon,
+  SettingsIcon,
+  ShieldCheckIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "lucide-react";
 import { NavSidebar } from "@/components/NavSidebar";
 import { SidebarSheet } from "@/components/SidebarSheet";
 import { routes } from "@/lib/routes";
@@ -8,6 +15,12 @@ const adminLinks = [
   { href: routes.admin.members, label: "Members", icon: <UsersIcon className="size-4" /> },
   { href: routes.admin.invites, label: "Invites", icon: <UserPlusIcon className="size-4" /> },
   { href: routes.admin.event, label: "Active Event", icon: <CalendarIcon className="size-4" /> },
+  {
+    href: routes.admin.schedule,
+    label: "Schedule",
+    icon: <ClipboardListIcon className="size-4" />,
+    exact: true,
+  },
   { href: routes.admin.settings, label: "Settings", icon: <SettingsIcon className="size-4" /> },
   {
     href: routes.admin.validation,
