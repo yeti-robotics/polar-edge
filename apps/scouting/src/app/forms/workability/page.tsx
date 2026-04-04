@@ -56,7 +56,6 @@ export default function WorkabilityFormPage() {
     <main className="container mx-auto max-w-4xl px-5 py-6">
       <div className="mb-6">
         <TypographyH1>Workability Form</TypographyH1>
-        <TypographyMuted className="mt-2"></TypographyMuted>
       </div>
       <Suspense fallback={<WorkabilityFormSkeleton />}>
         <WorkabilityFormContent />

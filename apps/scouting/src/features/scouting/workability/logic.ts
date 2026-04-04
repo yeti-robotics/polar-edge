@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 
 import { db } from "@/lib/database";
 import { workabilityForm } from "@/lib/database/schema";

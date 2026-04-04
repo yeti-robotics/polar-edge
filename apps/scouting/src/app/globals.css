@@ -3,8 +3,6 @@
 
 :root {
   --header-height: 5rem;
-  --font-libre-franklin:
-    "Libre Franklin", "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @keyframes reveal {
