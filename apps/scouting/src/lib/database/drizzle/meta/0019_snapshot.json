@@ -110,12 +110,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -225,12 +221,8 @@
           "name": "auto_path_team_number_team_team_number_fk",
           "tableFrom": "auto_path",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -238,12 +230,8 @@
           "name": "auto_path_created_by_member_id_member_id_fk",
           "tableFrom": "auto_path",
           "tableTo": "member",
-          "columnsFrom": [
-            "created_by_member_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_member_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -328,12 +316,8 @@
           "name": "climb_stand_form_id_stand_form_id_fk",
           "tableFrom": "climb",
           "tableTo": "stand_form",
-          "columnsFrom": [
-            "stand_form_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stand_form_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -437,12 +421,8 @@
           "name": "cycle_stand_form_id_stand_form_id_fk",
           "tableFrom": "cycle",
           "tableTo": "stand_form",
-          "columnsFrom": [
-            "stand_form_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stand_form_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -556,12 +536,8 @@
           "name": "drive_team_ranking_organization_id_organization_id_fk",
           "tableFrom": "drive_team_ranking",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -569,12 +545,8 @@
           "name": "drive_team_ranking_match_id_match_id_fk",
           "tableFrom": "drive_team_ranking",
           "tableTo": "match",
-          "columnsFrom": [
-            "match_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -582,12 +554,8 @@
           "name": "drive_team_ranking_scout_member_id_member_id_fk",
           "tableFrom": "drive_team_ranking",
           "tableTo": "member",
-          "columnsFrom": [
-            "scout_member_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["scout_member_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -597,11 +565,7 @@
         "uniq_drive_ranking_org_match_alliance": {
           "name": "uniq_drive_ranking_org_match_alliance",
           "nullsNotDistinct": false,
-          "columns": [
-            "organization_id",
-            "match_id",
-            "alliance"
-          ]
+          "columns": ["organization_id", "match_id", "alliance"]
         }
       },
       "policies": {},
@@ -644,12 +608,8 @@
           "name": "drive_team_ranking_entry_ranking_id_drive_team_ranking_id_fk",
           "tableFrom": "drive_team_ranking_entry",
           "tableTo": "drive_team_ranking",
-          "columnsFrom": [
-            "ranking_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["ranking_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -657,12 +617,8 @@
           "name": "drive_team_ranking_entry_team_number_team_team_number_fk",
           "tableFrom": "drive_team_ranking_entry",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -672,18 +628,12 @@
         "uniq_ranking_team": {
           "name": "uniq_ranking_team",
           "nullsNotDistinct": false,
-          "columns": [
-            "ranking_id",
-            "team_number"
-          ]
+          "columns": ["ranking_id", "team_number"]
         },
         "uniq_ranking_rank": {
           "name": "uniq_ranking_rank",
           "nullsNotDistinct": false,
-          "columns": [
-            "ranking_id",
-            "rank"
-          ]
+          "columns": ["ranking_id", "rank"]
         }
       },
       "policies": {},
@@ -740,9 +690,7 @@
         "event_event_code_unique": {
           "name": "event_event_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "event_code"
-          ]
+          "columns": ["event_code"]
         }
       },
       "policies": {},
@@ -841,12 +789,8 @@
           "name": "invitation_organization_id_organization_id_fk",
           "tableFrom": "invitation",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -854,12 +798,8 @@
           "name": "invitation_inviter_id_user_id_fk",
           "tableFrom": "invitation",
           "tableTo": "user",
-          "columnsFrom": [
-            "inviter_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["inviter_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -935,12 +875,8 @@
           "name": "match_event_id_event_id_fk",
           "tableFrom": "match",
           "tableTo": "event",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -950,11 +886,7 @@
         "uniq_match_event": {
           "name": "uniq_match_event",
           "nullsNotDistinct": false,
-          "columns": [
-            "event_id",
-            "match_number",
-            "match_type"
-          ]
+          "columns": ["event_id", "match_number", "match_type"]
         }
       },
       "policies": {},
@@ -1034,12 +966,8 @@
           "name": "member_organization_id_organization_id_fk",
           "tableFrom": "member",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1047,12 +975,8 @@
           "name": "member_user_id_user_id_fk",
           "tableFrom": "member",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1127,9 +1051,7 @@
         "organization_slug_unique": {
           "name": "organization_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1203,12 +1125,8 @@
           "name": "organization_event_organization_id_organization_id_fk",
           "tableFrom": "organization_event",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1216,12 +1134,8 @@
           "name": "organization_event_event_id_event_id_fk",
           "tableFrom": "organization_event",
           "tableTo": "event",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1229,10 +1143,7 @@
       "compositePrimaryKeys": {
         "organization_event_organization_id_event_id_pk": {
           "name": "organization_event_organization_id_event_id_pk",
-          "columns": [
-            "organization_id",
-            "event_id"
-          ]
+          "columns": ["organization_id", "event_id"]
         }
       },
       "uniqueConstraints": {},
@@ -1320,12 +1231,8 @@
           "name": "organization_invite_link_organization_id_organization_id_fk",
           "tableFrom": "organization_invite_link",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1333,12 +1240,8 @@
           "name": "organization_invite_link_created_by_id_user_id_fk",
           "tableFrom": "organization_invite_link",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1348,9 +1251,7 @@
         "organization_invite_link_token_unique": {
           "name": "organization_invite_link_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -1465,12 +1366,8 @@
           "name": "passkey_user_id_user_id_fk",
           "tableFrom": "passkey",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1559,12 +1456,8 @@
           "name": "picklist_organization_id_organization_id_fk",
           "tableFrom": "picklist",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1572,12 +1465,8 @@
           "name": "picklist_event_id_event_id_fk",
           "tableFrom": "picklist",
           "tableTo": "event",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1585,12 +1474,8 @@
           "name": "picklist_created_by_member_id_member_id_fk",
           "tableFrom": "picklist",
           "tableTo": "member",
-          "columnsFrom": [
-            "created_by_member_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_member_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1667,12 +1552,8 @@
           "name": "picklist_team_picklist_id_picklist_id_fk",
           "tableFrom": "picklist_team",
           "tableTo": "picklist",
-          "columnsFrom": [
-            "picklist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["picklist_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1680,12 +1561,8 @@
           "name": "picklist_team_team_number_team_team_number_fk",
           "tableFrom": "picklist_team",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1695,18 +1572,12 @@
         "uniq_picklist_team_number": {
           "name": "uniq_picklist_team_number",
           "nullsNotDistinct": false,
-          "columns": [
-            "picklist_id",
-            "team_number"
-          ]
+          "columns": ["picklist_id", "team_number"]
         },
         "uniq_picklist_rank": {
           "name": "uniq_picklist_rank",
           "nullsNotDistinct": false,
-          "columns": [
-            "picklist_id",
-            "rank"
-          ]
+          "columns": ["picklist_id", "rank"]
         }
       },
       "policies": {},
@@ -1851,12 +1722,8 @@
           "name": "pit_form_scout_member_id_member_id_fk",
           "tableFrom": "pit_form",
           "tableTo": "member",
-          "columnsFrom": [
-            "scout_member_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["scout_member_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1864,12 +1731,8 @@
           "name": "pit_form_team_number_team_team_number_fk",
           "tableFrom": "pit_form",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1939,12 +1802,8 @@
           "name": "pit_photo_pit_form_id_pit_form_id_fk",
           "tableFrom": "pit_photo",
           "tableTo": "pit_form",
-          "columnsFrom": [
-            "pit_form_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["pit_form_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2037,12 +1896,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2052,9 +1907,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -2183,12 +2036,8 @@
           "name": "stand_form_team_match_id_team_match_id_fk",
           "tableFrom": "stand_form",
           "tableTo": "team_match",
-          "columnsFrom": [
-            "team_match_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team_match_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2196,12 +2045,8 @@
           "name": "stand_form_scout_member_id_member_id_fk",
           "tableFrom": "stand_form",
           "tableTo": "member",
-          "columnsFrom": [
-            "scout_member_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["scout_member_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2306,12 +2151,8 @@
           "name": "team_event_copr_event_id_event_id_fk",
           "tableFrom": "team_event_copr",
           "tableTo": "event",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2319,12 +2160,8 @@
           "name": "team_event_copr_team_number_team_team_number_fk",
           "tableFrom": "team_event_copr",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2334,10 +2171,7 @@
         "uq_team_event_copr": {
           "name": "uq_team_event_copr",
           "nullsNotDistinct": false,
-          "columns": [
-            "event_id",
-            "team_number"
-          ]
+          "columns": ["event_id", "team_number"]
         }
       },
       "policies": {},
@@ -2470,12 +2304,8 @@
           "name": "team_match_event_id_event_id_fk",
           "tableFrom": "team_match",
           "tableTo": "event",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2483,12 +2313,8 @@
           "name": "team_match_match_id_match_id_fk",
           "tableFrom": "team_match",
           "tableTo": "match",
-          "columnsFrom": [
-            "match_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2496,12 +2322,8 @@
           "name": "team_match_team_number_team_team_number_fk",
           "tableFrom": "team_match",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2511,10 +2333,7 @@
         "uniq_team_per_match": {
           "name": "uniq_team_per_match",
           "nullsNotDistinct": false,
-          "columns": [
-            "match_id",
-            "team_number"
-          ]
+          "columns": ["match_id", "team_number"]
         }
       },
       "policies": {},
@@ -2578,9 +2397,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -2815,12 +2632,8 @@
           "name": "workability_form_event_id_event_id_fk",
           "tableFrom": "workability_form",
           "tableTo": "event",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2828,12 +2641,8 @@
           "name": "workability_form_match_id_match_id_fk",
           "tableFrom": "workability_form",
           "tableTo": "match",
-          "columnsFrom": [
-            "match_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2841,12 +2650,8 @@
           "name": "workability_form_team_number_team_team_number_fk",
           "tableFrom": "workability_form",
           "tableTo": "team",
-          "columnsFrom": [
-            "team_number"
-          ],
-          "columnsTo": [
-            "team_number"
-          ],
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2854,12 +2659,8 @@
           "name": "workability_form_scout_member_id_member_id_fk",
           "tableFrom": "workability_form",
           "tableTo": "member",
-          "columnsFrom": [
-            "scout_member_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["scout_member_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2869,12 +2670,7 @@
         "uniq_workability_submission": {
           "name": "uniq_workability_submission",
           "nullsNotDistinct": false,
-          "columns": [
-            "match_id",
-            "team_number",
-            "scout_member_id",
-            "role"
-          ]
+          "columns": ["match_id", "team_number", "scout_member_id", "role"]
         }
       },
       "policies": {},
@@ -2891,66 +2687,37 @@
     "public.alliance": {
       "name": "alliance",
       "schema": "public",
-      "values": [
-        "red",
-        "blue"
-      ]
+      "values": ["red", "blue"]
     },
     "public.climb_type": {
       "name": "climb_type",
       "schema": "public",
-      "values": [
-        "sides",
-        "center",
-        "left",
-        "right",
-        "any"
-      ]
+      "values": ["sides", "center", "left", "right", "any"]
     },
     "public.drivetrain": {
       "name": "drivetrain",
       "schema": "public",
-      "values": [
-        "tank",
-        "swerve",
-        "mecanum",
-        "other"
-      ]
+      "values": ["tank", "swerve", "mecanum", "other"]
     },
     "public.match_type": {
       "name": "match_type",
       "schema": "public",
-      "values": [
-        "qm",
-        "ef",
-        "qf",
-        "sf",
-        "f"
-      ]
+      "values": ["qm", "ef", "qf", "sf", "f"]
     },
     "public.phase": {
       "name": "phase",
       "schema": "public",
-      "values": [
-        "auto",
-        "teleop"
-      ]
+      "values": ["auto", "teleop"]
     },
     "public.shooter_type": {
       "name": "shooter_type",
       "schema": "public",
-      "values": [
-        "turret",
-        "fixed"
-      ]
+      "values": ["turret", "fixed"]
     },
     "public.workability_role": {
       "name": "workability_role",
       "schema": "public",
-      "values": [
-        "driver",
-        "human_player"
-      ]
+      "values": ["driver", "human_player"]
     }
   },
   "schemas": {},
