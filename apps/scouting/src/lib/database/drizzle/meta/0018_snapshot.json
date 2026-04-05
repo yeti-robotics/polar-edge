@@ -1,6 +1,6 @@
 {
-  "id": "df5125dd-6298-46df-a05d-378f7b4498f3",
-  "prevId": "2664f25f-24d0-4f87-8509-bbe652f7896a",
+  "id": "acedfc25-e587-477e-8a04-d9620b9d3ddb",
+  "prevId": "df5125dd-6298-46df-a05d-378f7b4498f3",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -547,7 +547,7 @@
           "tableTo": "match",
           "columnsFrom": ["match_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "drive_team_ranking_scout_member_id_member_id_fk": {
@@ -2464,6 +2464,217 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.workability_form": {
+      "name": "workability_form",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "match_id": {
+          "name": "match_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "team_number": {
+          "name": "team_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "scout_member_id": {
+          "name": "scout_member_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "workability_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rating": {
+          "name": "rating",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_workability_event_team": {
+          "name": "idx_workability_event_team",
+          "columns": [
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "team_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_workability_member": {
+          "name": "idx_workability_member",
+          "columns": [
+            {
+              "expression": "scout_member_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_workability_match_team": {
+          "name": "idx_workability_match_team",
+          "columns": [
+            {
+              "expression": "match_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "team_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_workability_event_team_role": {
+          "name": "idx_workability_event_team_role",
+          "columns": [
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "team_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "role",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "workability_form_event_id_event_id_fk": {
+          "name": "workability_form_event_id_event_id_fk",
+          "tableFrom": "workability_form",
+          "tableTo": "event",
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "workability_form_match_id_match_id_fk": {
+          "name": "workability_form_match_id_match_id_fk",
+          "tableFrom": "workability_form",
+          "tableTo": "match",
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "workability_form_team_number_team_team_number_fk": {
+          "name": "workability_form_team_number_team_team_number_fk",
+          "tableFrom": "workability_form",
+          "tableTo": "team",
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "workability_form_scout_member_id_member_id_fk": {
+          "name": "workability_form_scout_member_id_member_id_fk",
+          "tableFrom": "workability_form",
+          "tableTo": "member",
+          "columnsFrom": ["scout_member_id"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "uniq_workability_submission": {
+          "name": "uniq_workability_submission",
+          "nullsNotDistinct": false,
+          "columns": ["match_id", "team_number", "scout_member_id", "role"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "workability_rating_range": {
+          "name": "workability_rating_range",
+          "value": "\"workability_form\".\"rating\" between 1 and 5"
+        }
+      },
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -2496,6 +2707,11 @@
       "name": "shooter_type",
       "schema": "public",
       "values": ["turret", "fixed"]
+    },
+    "public.workability_role": {
+      "name": "workability_role",
+      "schema": "public",
+      "values": ["driver", "human_player"]
     }
   },
   "schemas": {},
@@ -2668,7 +2884,7 @@
           "notNull": true
         }
       },
-      "definition": "\n  with cycle_fuel as (\n    select\n      c.stand_form_id,\n      sum( (\n  case c.bucket\n    when 0 then 0.0\n    when 1 then 1.0\n    when 2 then 2.25\n    when 3 then 4.0\n    when 4 then 6.0\n    when 5 then 8.0\n    else 0.0\n  end\n) * greatest(coalesce(c.dump_duration, 0.0), 0.0) ) as fuel_active,\n      count(*) as cycles_count\n    from cycle c\n    group by c.stand_form_id\n  ),\n  climb_pts as (\n    select\n      cl.stand_form_id,\n      sum(\n        (case\n          when cl.climb_success = false then 0.0\n          when cl.climb_level = 0 then 0.0\n          when cl.climb_level = 1 and cl.climb_phase = 'auto' then 15.0\n          when cl.climb_level = 1 then 10.0\n          when cl.climb_level = 2 then 20.0\n          when cl.climb_level = 3 then 30.0\n          else 0.0\n        end)\n        +\n        (case\n          when cl.climb_success = false then 0.0\n          when cl.climb_duration <= 3.0 then 2.0\n          when cl.climb_duration <= 6.0 then 0.0\n          when cl.climb_duration >  6.0 then -2.0\n          else 0.0\n        end)\n      ) as total_climb_pts,\n      sum(case\n        when cl.climb_success = false then 0.0\n        when cl.climb_level = 0 then 0.0\n        when cl.climb_level = 1 and cl.climb_phase = 'auto' then 15.0\n        when cl.climb_level = 1 then 10.0\n        when cl.climb_level = 2 then 20.0\n        when cl.climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_total,\n      sum(case\n        when cl.climb_success = false or cl.climb_phase != 'auto' then 0.0\n        when cl.climb_level = 1 then 15.0\n        when cl.climb_level = 2 then 20.0\n        when cl.climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_auto,\n      sum(case\n        when cl.climb_success = false or cl.climb_phase != 'teleop' then 0.0\n        when cl.climb_level = 1 then 10.0\n        when cl.climb_level = 2 then 20.0\n        when cl.climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_teleop\n    from climb cl\n    group by cl.stand_form_id\n  )\n  select\n    sf.id as stand_form_id,\n    sf.team_match_id,\n\n    coalesce(cf.fuel_active, 0.0) as exp_fuel_active,\n\n    coalesce(cp.total_climb_pts, 0.0) as exp_tower,\n    coalesce(cp.total_climb_pts, 0.0) as clank_match,\n\n    coalesce(cp.pure_climb_total, 0.0) as pure_climb_total,\n    coalesce(cp.pure_climb_auto,  0.0) as pure_climb_auto,\n    coalesce(cp.pure_climb_teleop, 0.0) as pure_climb_teleop,\n\n    coalesce(cf.cycles_count, 0)::int as cycles_count\n  from stand_form sf\n  left join cycle_fuel cf on cf.stand_form_id = sf.id\n  left join climb_pts cp on cp.stand_form_id = sf.id\n  where sf.deleted_at is null\n",
+      "definition": "\n  with team_phase_duration as (\n    select\n      tm.event_id,\n      tm.team_number,\n      c.phase,\n      sum(greatest(coalesce(c.dump_duration, 0.0), 0.0)) as total_duration\n    from cycle c\n    join stand_form sf2 on sf2.id = c.stand_form_id\n    join team_match tm on tm.id = sf2.team_match_id\n    where sf2.deleted_at is null\n    group by tm.event_id, tm.team_number, c.phase\n  ),\n  cycle_fuel as (\n    select\n      c.stand_form_id,\n      sum(\n        case\n          when tpd.total_duration > 0 then\n            (case c.phase\n              when 'auto' then coalesce(copr.auto_fuel_count, 0.0)\n              when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0) + coalesce(copr.endgame_fuel_count, 0.0)\n              else 0.0\n            end)\n            / tpd.total_duration\n            * greatest(coalesce(c.dump_duration, 0.0), 0.0)\n          else 0.0\n        end\n      ) as fuel_active,\n      count(*) as cycles_count\n    from cycle c\n    join stand_form sf3 on sf3.id = c.stand_form_id\n    join team_match tm on tm.id = sf3.team_match_id\n    left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number\n    left join team_phase_duration tpd on tpd.event_id = tm.event_id and tpd.team_number = tm.team_number and tpd.phase = c.phase\n    where sf3.deleted_at is null\n    group by c.stand_form_id\n  ),\n  climb_pts as (\n    select\n      cl.stand_form_id,\n      sum(\n        (case\n          when cl.climb_success = false then 0.0\n          when cl.climb_level = 0 then 0.0\n          when cl.climb_level = 1 and cl.climb_phase = 'auto' then 15.0\n          when cl.climb_level = 1 then 10.0\n          when cl.climb_level = 2 then 20.0\n          when cl.climb_level = 3 then 30.0\n          else 0.0\n        end)\n        +\n        (case\n          when cl.climb_success = false then 0.0\n          when cl.climb_duration <= 3.0 then 2.0\n          when cl.climb_duration <= 6.0 then 0.0\n          when cl.climb_duration >  6.0 then -2.0\n          else 0.0\n        end)\n      ) as total_climb_pts,\n      sum(case\n        when cl.climb_success = false then 0.0\n        when cl.climb_level = 0 then 0.0\n        when cl.climb_level = 1 and cl.climb_phase = 'auto' then 15.0\n        when cl.climb_level = 1 then 10.0\n        when cl.climb_level = 2 then 20.0\n        when cl.climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_total,\n      sum(case\n        when cl.climb_success = false or cl.climb_phase != 'auto' then 0.0\n        when cl.climb_level = 1 then 15.0\n        when cl.climb_level = 2 then 20.0\n        when cl.climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_auto,\n      sum(case\n        when cl.climb_success = false or cl.climb_phase != 'teleop' then 0.0\n        when cl.climb_level = 1 then 10.0\n        when cl.climb_level = 2 then 20.0\n        when cl.climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_teleop\n    from climb cl\n    group by cl.stand_form_id\n  )\n  select\n    sf.id as stand_form_id,\n    sf.team_match_id,\n\n    coalesce(cf.fuel_active, 0.0) as exp_fuel_active,\n\n    coalesce(cp.total_climb_pts, 0.0) as exp_tower,\n    coalesce(cp.total_climb_pts, 0.0) as clank_match,\n\n    coalesce(cp.pure_climb_total, 0.0) as pure_climb_total,\n    coalesce(cp.pure_climb_auto,  0.0) as pure_climb_auto,\n    coalesce(cp.pure_climb_teleop, 0.0) as pure_climb_teleop,\n\n    coalesce(cf.cycles_count, 0)::int as cycles_count\n  from stand_form sf\n  left join cycle_fuel cf on cf.stand_form_id = sf.id\n  left join climb_pts cp on cp.stand_form_id = sf.id\n  where sf.deleted_at is null\n",
       "name": "v_stand_form_expected",
       "schema": "public",
       "isExisting": false,
