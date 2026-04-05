@@ -164,29 +164,30 @@ export function TeamsAtEventClient({
       columnHelper.accessor("avgTotalPoints", {
         header: "Avg Pts",
         meta: { align: "right" },
-        cell: ({ getValue }) => (
-          <span className="tabular-nums">
-            {getValue() !== undefined ? getValue()!.toFixed(1) : "—"}
-          </span>
-        ),
+        cell: ({ getValue }) => {
+          const value = getValue();
+          return <span className="tabular-nums">{value == null ? "—" : value.toFixed(1)}</span>;
+        },
       }),
       columnHelper.accessor("climbSuccessPct", {
         header: "Climb %",
         meta: { align: "right" },
-        cell: ({ getValue }) => (
-          <span className="tabular-nums">
-            {getValue() !== undefined ? `${Math.round(getValue()!)}%` : "—"}
-          </span>
-        ),
+        cell: ({ getValue }) => {
+          const value = getValue();
+          return (
+            <span className="tabular-nums">{value == null ? "—" : `${Math.round(value)}%`}</span>
+          );
+        },
       }),
       columnHelper.accessor("uptimePct", {
         header: "Uptime %",
         meta: { align: "right" },
-        cell: ({ getValue }) => (
-          <span className="tabular-nums">
-            {getValue() !== undefined ? `${Math.round(getValue()!)}%` : "—"}
-          </span>
-        ),
+        cell: ({ getValue }) => {
+          const value = getValue();
+          return (
+            <span className="tabular-nums">{value == null ? "—" : `${Math.round(value)}%`}</span>
+          );
+        },
       }),
       columnHelper.accessor("matchesScouted", {
         header: "Matches",
