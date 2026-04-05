@@ -1,7 +1,8 @@
 export { simulateDriveRankings } from "./drive-ranking-simulator";
 export type { GameConfig } from "./game-config";
 export { gameConfig } from "./game-config";
-export { simulateMatch, simulateTeamMatch } from "./match-simulator";
+export type { SimulatedEventCopr } from "./match-simulator";
+export { generateEventCoprs, simulateMatch, simulateTeamMatch } from "./match-simulator";
 export { simulatePitForm } from "./pit-simulator";
 export type { PlannedEvent } from "./schedule-builder";
 export { buildSchedule, planDistrict } from "./schedule-builder";

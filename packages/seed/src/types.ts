@@ -37,7 +37,6 @@ export type SimulatedTeamMatch = {
 export type SimulatedCycle = {
   phase: Phase;
   cycleNumber: number;
-  bucket: number;
   dumpDuration: number;
 };
 

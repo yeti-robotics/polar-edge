@@ -9,6 +9,14 @@ import type {
   TeamProfile,
 } from "./types";
 
+export type SimulatedEventCopr = {
+  teamNumber: number;
+  autoFuelCount: number;
+  teleopFuelCount: number;
+  endgameFuelCount: number;
+  totalFuelCount: number;
+};
+
 /** Pick from weighted options. Weights don't need to sum to 1. */
 function weightedPick<T>(options: T[], weights: readonly number[]): T {
   const total = weights.reduce((sum, w) => sum + w, 0);
@@ -39,24 +47,18 @@ function simulateCycles(profile: TeamProfile): SimulatedCycle[] {
   const rawCount = lerp(profile.skill, cfg.countRange) + gaussianRandom() * 0.8;
   const cycleCount = Math.max(1, Math.round(rawCount));
 
-  const tier = skillTier(profile.skill);
-  const bucketWeights = cfg.bucketWeights[tier];
-  const buckets = [0, 1, 2, 3, 4, 5];
-
   // Auto gets 1-2 cycles, rest are teleop
   const autoCycles = Math.min(cycleCount, Math.floor(Math.random() * (cfg.autoMaxCycles + 1)));
 
   const cycles: SimulatedCycle[] = [];
   for (let i = 0; i < cycleCount; i++) {
     const phase = i < autoCycles ? "auto" : "teleop";
-    const bucket = weightedPick(buckets, bucketWeights);
     const baseDuration = lerp(profile.skill, cfg.dumpDurationRange);
     const duration = Math.max(1.0, baseDuration + gaussianRandom() * 2.0);
 
     cycles.push({
       phase,
       cycleNumber: i + 1,
-      bucket,
       dumpDuration: Math.round(duration * 100) / 100,
     });
   }
@@ -107,15 +109,21 @@ function pickComment(profile: TeamProfile): string {
   return templates[Math.floor(Math.random() * templates.length)] ?? "";
 }
 
-function calculatePoints(cycles: SimulatedCycle[], climb: SimulatedClimb | null): number {
+function calculatePoints(
+  cycles: SimulatedCycle[],
+  climb: SimulatedClimb | null,
+  profile: TeamProfile
+): number {
+  // Fuel points derived from skill-based BPS × duration (mimics COPR estimation)
+  const bps = lerp(profile.skill, gameConfig.cycles.fuelRateRange);
   let points = 0;
   for (const c of cycles) {
-    points += gameConfig.bucketPointValues[c.bucket] ?? 0;
+    points += bps * c.dumpDuration;
   }
   if (climb?.climbSuccess) {
     points += gameConfig.climbPointValues[climb.climbLevel] ?? 0;
   }
-  return points;
+  return Math.round(points);
 }
 
 /**
@@ -128,7 +136,7 @@ export function simulateTeamMatch(profile: TeamProfile): SimulatedTeamMatch {
   const climb = simulateClimb(profile);
   const oofTimeSeconds = simulateOof(profile);
   const comments = pickComment(profile);
-  const points = calculatePoints(cycles, climb);
+  const points = calculatePoints(cycles, climb, profile);
 
   return {
     teamNumber: profile.teamNumber,
@@ -171,4 +179,59 @@ export function simulateMatch(
     redScore,
     blueScore,
   };
+}
+
+/**
+ * Generate COPR-like fuel counts for each team from simulated match results.
+ * Averages per-match fuel across all matches the team played at the event,
+ * mimicking TBA's OPR regression output.
+ */
+export function generateEventCoprs(
+  results: SimulatedMatchResult[],
+  profileMap: Map<number, TeamProfile>
+): SimulatedEventCopr[] {
+  const teamFuel = new Map<
+    number,
+    { autoTotal: number; teleopTotal: number; matchCount: number }
+  >();
+
+  for (const result of results) {
+    for (const teamMatch of [...result.redTeams, ...result.blueTeams]) {
+      const entry = teamFuel.get(teamMatch.teamNumber) ?? {
+        autoTotal: 0,
+        teleopTotal: 0,
+        matchCount: 0,
+      };
+
+      const profile = profileMap.get(teamMatch.teamNumber);
+      const bps = profile ? lerp(profile.skill, gameConfig.cycles.fuelRateRange) : 0;
+
+      for (const c of teamMatch.cycles) {
+        const fuel = bps * c.dumpDuration;
+        if (c.phase === "auto") entry.autoTotal += fuel;
+        else entry.teleopTotal += fuel;
+      }
+      entry.matchCount += 1;
+      teamFuel.set(teamMatch.teamNumber, entry);
+    }
+  }
+
+  const coprs: SimulatedEventCopr[] = [];
+  for (const [teamNumber, fuel] of teamFuel) {
+    const n = fuel.matchCount || 1;
+    const auto = fuel.autoTotal / n;
+    const teleop = fuel.teleopTotal / n;
+    // Endgame fuel is a small portion of teleop (simulates late-game scoring)
+    const endgame = teleop * 0.15;
+    const adjustedTeleop = teleop - endgame;
+    coprs.push({
+      teamNumber,
+      autoFuelCount: Math.round(auto * 100) / 100,
+      teleopFuelCount: Math.round(adjustedTeleop * 100) / 100,
+      endgameFuelCount: Math.round(endgame * 100) / 100,
+      totalFuelCount: Math.round((auto + teleop) * 100) / 100,
+    });
+  }
+
+  return coprs;
 }

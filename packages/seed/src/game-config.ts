@@ -40,8 +40,6 @@ export const gameConfig = {
   },
 
   // ── Scoring ────────────────────────────────────────────────────
-  /** Points awarded per bucket value (index = bucket). */
-  bucketPointValues: [0, 1, 2, 4, 6, 9],
   /** Points awarded per climb level (index = level). */
   climbPointValues: [0, 3, 6, 12],
 
@@ -51,17 +49,10 @@ export const gameConfig = {
     countRange: [1, 9] as [number, number],
     /** [slow, fast] dump duration in seconds. Inverted by skill. */
     dumpDurationRange: [35.0, 2.0] as [number, number],
+    /** [low, high] fuel scored per second of shooting. Interpolated by skill. */
+    fuelRateRange: [0.5, 8.0] as [number, number],
     /** Max cycles during auto phase. */
     autoMaxCycles: 2,
-    /**
-     * Bucket weights by skill tier [low, mid, high].
-     * Each is an array of weights for buckets 0-5.
-     */
-    bucketWeights: {
-      low: [0.35, 0.35, 0.2, 0.08, 0.02, 0.0],
-      mid: [0.1, 0.2, 0.3, 0.25, 0.1, 0.05],
-      high: [0.02, 0.05, 0.15, 0.3, 0.28, 0.2],
-    },
   },
 
   // ── Climb generation ───────────────────────────────────────────
