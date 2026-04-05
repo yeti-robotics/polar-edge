@@ -11,8 +11,10 @@ export function FormSidebar() {
           Pit Form
         </Link>
         <Link className="text-sm" href={routes.forms.stand}>
-          {/* It will eventually be the stand form page for now this is empty */}
           Stand Form
+        </Link>
+        <Link className="text-sm" href={routes.forms.workability}>
+          Workability Form
         </Link>
       </div>
     </aside>

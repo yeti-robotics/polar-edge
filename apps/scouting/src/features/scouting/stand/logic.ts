@@ -98,7 +98,6 @@ export async function submitStandForm(
           standFormId: standFormRecord.id,
           phase: c.phase,
           cycleNumber: c.cycleNumber,
-          bucket: c.bucket,
           dumpDuration: ((c.endedAt - c.startedAt) / 1000).toString(),
         }))
       );

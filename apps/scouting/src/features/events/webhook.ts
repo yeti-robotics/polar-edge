@@ -5,7 +5,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { event, match, team, teamMatch } from "@/lib/database/schema/tables";
+import { event, match, team, teamEventCopr, teamMatch } from "@/lib/database/schema/tables";
 import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
 import type { MatchScorePayload, ScheduleUpdatedPayload } from "./webhook-schemas";
 
@@ -65,8 +65,50 @@ export async function processMatchScore(
 
   await db.update(match).set({ redScore, blueScore }).where(eq(match.id, matchRow.id));
 
+  // Re-fetch COPRs — each new match result updates TBA's calculations
+  try {
+    const tba = getTBAClient();
+    const coprs = await tba.events.getCOPRs(eventKey);
+    if (coprs) {
+      const autoFuel = coprs["Hub Auto Fuel Count"];
+      const teleopFuel = coprs["Hub Teleop Fuel Count"];
+      const endgameFuel = coprs["Hub Endgame Fuel Count"];
+      const totalFuel = coprs["Hub Total Fuel Count"];
+
+      if (autoFuel && totalFuel) {
+        const coprRows = Object.keys(totalFuel).map((tbaKey) => ({
+          eventId: eventRow.id,
+          teamNumber: parseTbaTeamKey(tbaKey),
+          autoFuelCount: String(autoFuel[tbaKey] ?? 0),
+          teleopFuelCount: String(teleopFuel?.[tbaKey] ?? 0),
+          endgameFuelCount: String(endgameFuel?.[tbaKey] ?? 0),
+          totalFuelCount: String(totalFuel[tbaKey] ?? 0),
+        }));
+
+        if (coprRows.length > 0) {
+          await db
+            .insert(teamEventCopr)
+            .values(coprRows)
+            .onConflictDoUpdate({
+              target: [teamEventCopr.eventId, teamEventCopr.teamNumber],
+              set: {
+                autoFuelCount: sql`excluded.auto_fuel_count`,
+                teleopFuelCount: sql`excluded.teleop_fuel_count`,
+                endgameFuelCount: sql`excluded.endgame_fuel_count`,
+                totalFuelCount: sql`excluded.total_fuel_count`,
+                updatedAt: sql`now()`,
+              },
+            });
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("[tba-webhook] failed to refresh COPRs:", err);
+  }
+
   revalidateTag(cacheTags.matchScores(eventRow.id), "max");
   revalidateTag(cacheTags.teamMetrics(eventRow.id), "max");
+  revalidateTag(cacheTags.eventCoprs(eventRow.id), "max");
 
   return { updated: true };
 }

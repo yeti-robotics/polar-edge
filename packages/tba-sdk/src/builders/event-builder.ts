@@ -61,4 +61,12 @@ export class EventQueryBuilder {
     const events = eventsResource(this.fetcher);
     return events.getAwards(this.eventKey, options ?? this.options);
   }
+
+  /**
+   * Get Component OPRs for this event
+   */
+  async getCOPRs(options?: FetcherOptions) {
+    const events = eventsResource(this.fetcher);
+    return events.getCOPRs(this.eventKey, options ?? this.options);
+  }
 }

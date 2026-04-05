@@ -76,6 +76,12 @@ export const eventsResource = (fetcher: Fetcher) =>
       fetcher.get("/event/{event_key}/oprs", { event_key: eventKey }, options),
 
     /**
+     * Get event Component OPRs (COPRs)
+     */
+    getCOPRs: (eventKey: string, options?: FetcherOptions) =>
+      fetcher.get("/event/{event_key}/coprs", { event_key: eventKey }, options),
+
+    /**
      * Get event predictions
      */
     getPredictions: (eventKey: string, options?: FetcherOptions) =>

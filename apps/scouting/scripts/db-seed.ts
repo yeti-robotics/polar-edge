@@ -11,6 +11,7 @@ import type {
 import {
   buildSchedule,
   gameConfig,
+  generateEventCoprs,
   generateTeamProfiles,
   planDistrict,
   simulateDriveRankings,
@@ -389,7 +390,6 @@ async function main() {
       standFormId: string;
       phase: "auto" | "teleop";
       cycleNumber: number;
-      bucket: number;
       dumpDuration: string;
     }[] = [];
 
@@ -407,7 +407,6 @@ async function main() {
           standFormId: sfId,
           phase: c.phase,
           cycleNumber: c.cycleNumber,
-          bucket: c.bucket,
           dumpDuration: c.dumpDuration.toString(),
         });
       }
@@ -448,6 +447,23 @@ async function main() {
           rankingId: inserted.id,
           teamNumber,
           rank: i + 1,
+        }))
+      );
+    }
+
+    // Generate and insert COPR fuel counts for this event
+    const eventCoprs = generateEventCoprs(simResults, profileMap);
+    if (eventCoprs.length > 0) {
+      await batchInsert(
+        db,
+        schemaTables.teamEventCopr,
+        eventCoprs.map((c) => ({
+          eventId,
+          teamNumber: c.teamNumber,
+          autoFuelCount: c.autoFuelCount.toString(),
+          teleopFuelCount: c.teleopFuelCount.toString(),
+          endgameFuelCount: c.endgameFuelCount.toString(),
+          totalFuelCount: c.totalFuelCount.toString(),
         }))
       );
     }

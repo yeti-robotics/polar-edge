@@ -152,6 +152,7 @@ export async function submitDriveRanking(data: unknown) {
     });
 
     revalidateTag(cacheTags.driveRanking(activeMember.organizationId), "max");
+    revalidateTag(cacheTags.driveRanking(activeMember.organizationId, activeEvent.event.id), "max");
 
     return { success: true };
   } catch (error) {
