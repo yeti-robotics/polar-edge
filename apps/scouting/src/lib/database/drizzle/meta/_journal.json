@@ -141,6 +141,13 @@
       "when": 1775355435404,
       "tag": "0019_known_wallop",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1775361424947,
+      "tag": "0020_elite_thunderbird",
+      "breakpoints": true
     }
   ]
 }

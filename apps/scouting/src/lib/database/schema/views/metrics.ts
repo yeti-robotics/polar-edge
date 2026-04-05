@@ -15,30 +15,31 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
 
   cyclesCount: integer("cycles_count").notNull(),
 }).as(sql`
-  with team_phase_duration as (
+  with form_phase_duration as (
+    -- Total dump duration per stand form per phase (single match).
+    -- COPR fuel counts are per-match estimates, so we distribute them
+    -- across cycles within the same match proportionally by dump duration.
     select
-      tm.event_id,
-      tm.team_number,
+      c.stand_form_id,
       c.phase,
       sum(greatest(coalesce(c.dump_duration, 0.0), 0.0)) as total_duration
     from cycle c
     join stand_form sf2 on sf2.id = c.stand_form_id
-    join team_match tm on tm.id = sf2.team_match_id
     where sf2.deleted_at is null
-    group by tm.event_id, tm.team_number, c.phase
+    group by c.stand_form_id, c.phase
   ),
   cycle_fuel as (
     select
       c.stand_form_id,
       sum(
         case
-          when tpd.total_duration > 0 then
+          when fpd.total_duration > 0 then
             (case c.phase
               when 'auto' then coalesce(copr.auto_fuel_count, 0.0)
               when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0) + coalesce(copr.endgame_fuel_count, 0.0)
               else 0.0
             end)
-            / tpd.total_duration
+            / fpd.total_duration
             * greatest(coalesce(c.dump_duration, 0.0), 0.0)
           else 0.0
         end
@@ -48,7 +49,7 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
     join stand_form sf3 on sf3.id = c.stand_form_id
     join team_match tm on tm.id = sf3.team_match_id
     left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number
-    left join team_phase_duration tpd on tpd.event_id = tm.event_id and tpd.team_number = tm.team_number and tpd.phase = c.phase
+    left join form_phase_duration fpd on fpd.stand_form_id = c.stand_form_id and fpd.phase = c.phase
     where sf3.deleted_at is null
     group by c.stand_form_id
   ),

@@ -11,7 +11,7 @@ export const gameConfig = {
   // bulk of teams low-to-mid, thin right tail of elite teams.
   skillDistribution: {
     /** Rate parameter. Higher = more teams clustered at low skill. */
-    lambda: 3.0,
+    lambda: 2.0,
     /** Std dev for trait noise (driverSkill, reliability, climbAbility). */
     traitNoiseStdDev: 0.15,
   },
@@ -48,9 +48,9 @@ export const gameConfig = {
     /** [min, max] total cycles per match. Interpolated by skill. */
     countRange: [1, 9] as [number, number],
     /** [slow, fast] dump duration in seconds. Inverted by skill. */
-    dumpDurationRange: [35.0, 2.0] as [number, number],
+    dumpDurationRange: [8.0, 4.0] as [number, number],
     /** [low, high] fuel scored per second of shooting. Interpolated by skill. */
-    fuelRateRange: [0.5, 8.0] as [number, number],
+    fuelRateRange: [0.1, 8.0] as [number, number],
     /** Max cycles during auto phase. */
     autoMaxCycles: 2,
   },
