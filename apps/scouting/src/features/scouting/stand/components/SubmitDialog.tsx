@@ -30,6 +30,7 @@ export function SubmitDialog({ open, onClose }: { open: boolean; onClose: () => 
     try {
       const result = await submitStandForm({
         teamMatchId: formData.teamMatchId,
+        canShuttle: formData.canShuttle,
         comments: formData.comments,
         oofTimeSeconds: actionState.oofCumulativeSeconds,
         cycles: formData.completedCycles,
