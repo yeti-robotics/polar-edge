@@ -32,6 +32,7 @@ function getCompositeCompatibilityScore(
 export async function getEventWorkabilityMatchOptions(eventId: string) {
   "use cache";
   cacheLife("minutes");
+  cacheTag(cacheTags.eventTeams(eventId));
 
   const rows = await db
     .select({

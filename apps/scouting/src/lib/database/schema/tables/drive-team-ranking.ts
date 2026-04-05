@@ -15,7 +15,7 @@ export const driveTeamRanking = pgTable(
 
     matchId: uuid("match_id")
       .notNull()
-      .references(() => match.id),
+      .references(() => match.id, { onDelete: "cascade" }),
 
     alliance: allianceEnum("alliance").notNull(),
 
