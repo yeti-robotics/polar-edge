@@ -1,6 +1,9 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
+import { Checkbox } from "@repo/ui/components/checkbox";
+import { Field } from "@repo/ui/components/field";
+import { Label } from "@repo/ui/components/label";
 import { Textarea } from "@repo/ui/components/textarea";
 import { TypographyH4 } from "@repo/ui/components/typography";
 import { InfoIcon } from "lucide-react";
@@ -28,10 +31,25 @@ export function CommentsTab() {
               <li>Robot strengths and weaknesses</li>
               <li>Reliability and consistency of the robot</li>
               <li>If defense was successful or not</li>
+              <li>
+                Robot-Alliance Compatibility Ex: “How does this robot work with other robots?”
+              </li>
             </ul>
           </AlertDescription>
         </Alert>
-        <div className="flex-1 flex flex-col gap-1 min-h-0">
+        <Field orientation="horizontal" className="flex items-center gap-2">
+          <Checkbox
+            id="can_shuttle"
+            checked={state.canShuttle}
+            onCheckedChange={(checked) =>
+              dispatch({ type: "set_can_shuttle", payload: checked === true })
+            }
+          />
+          <Label htmlFor="can_shuttle" className="cursor-pointer">
+            Can Shuttle
+          </Label>
+        </Field>
+        <Field className="flex-1 flex flex-col gap-1 min-h-0">
           <Textarea
             id="comments"
             name="comments"
@@ -45,7 +63,7 @@ export function CommentsTab() {
           >
             {state.comments.trim().length} / {COMMENTS_MIN_LENGTH}
           </p>
-        </div>
+        </Field>
       </div>
     </div>
   );

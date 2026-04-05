@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { event, match, team, teamMatch } from "@/lib/database/schema/tables";
+import { event, match, team, teamEventCopr, teamMatch } from "@/lib/database/schema/tables";
 import { routes } from "@/lib/routes";
 import {
   getActiveEventForOrganization,
@@ -71,10 +71,11 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     }
 
     const tba = getTBAClient();
-    const [tbaEvent, tbaMatches, tbaTeams] = await Promise.all([
+    const [tbaEvent, tbaMatches, tbaTeams, tbaCoprs] = await Promise.all([
       tba.events.get(key),
       tba.matches.getEventMatches(key),
       tba.events.getTeamsSimple(key),
+      tba.events.getCOPRs(key).catch(() => null),
     ]);
 
     if (!tbaEvent) {
@@ -212,6 +213,46 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
           });
       }
 
+      // Upsert COPR fuel counts if available
+      if (tbaCoprs) {
+        const autoFuel = tbaCoprs["Hub Auto Fuel Count"];
+        const teleopFuel = tbaCoprs["Hub Teleop Fuel Count"];
+        const endgameFuel = tbaCoprs["Hub Endgame Fuel Count"];
+        const totalFuel = tbaCoprs["Hub Total Fuel Count"];
+
+        if (autoFuel && totalFuel) {
+          const coprRows = Object.keys(totalFuel)
+            .map((tbaKey) => {
+              const teamNumber = parseTbaTeamKey(tbaKey);
+              return {
+                eventId,
+                teamNumber,
+                autoFuelCount: String(autoFuel[tbaKey] ?? 0),
+                teleopFuelCount: String(teleopFuel?.[tbaKey] ?? 0),
+                endgameFuelCount: String(endgameFuel?.[tbaKey] ?? 0),
+                totalFuelCount: String(totalFuel[tbaKey] ?? 0),
+              };
+            })
+            .filter((r) => matchTeamNumbers.includes(r.teamNumber));
+
+          if (coprRows.length > 0) {
+            await tx
+              .insert(teamEventCopr)
+              .values(coprRows)
+              .onConflictDoUpdate({
+                target: [teamEventCopr.eventId, teamEventCopr.teamNumber],
+                set: {
+                  autoFuelCount: sql`excluded.auto_fuel_count`,
+                  teleopFuelCount: sql`excluded.teleop_fuel_count`,
+                  endgameFuelCount: sql`excluded.endgame_fuel_count`,
+                  totalFuelCount: sql`excluded.total_fuel_count`,
+                  updatedAt: sql`now()`,
+                },
+              });
+          }
+        }
+      }
+
       return {
         eventId,
         matchCount: qualifyingMatches.length,
@@ -222,6 +263,8 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     revalidatePath(routes.admin.event);
     revalidateTag(cacheTags.teamsList, "max");
     revalidateTag(cacheTags.eventTeams(eventId), "max");
+    revalidateTag(cacheTags.eventCoprs(eventId), "max");
+    revalidateTag(cacheTags.teamMetrics(eventId), "max");
     return {
       data: { success: true, eventId, matchCount, teamMatchCount },
       error: null,

@@ -13,8 +13,10 @@ import { cn } from "@repo/ui/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { startTransition, useOptimistic, useState } from "react";
+import type { WorkabilityNote } from "@/features/scouting/workability/types";
 import { routes } from "@/lib/routes";
 import { removeTeamFromPicklist, reorderPicklistTeam, togglePickedStatus } from "../actions";
+import { CompatibilityNotesDialog } from "./CompatibilityNotesDialog";
 import { NotesCell } from "./NotesCell";
 import { PickedCheckbox } from "./PickedCheckbox";
 import { RemoveTeamButton } from "./RemoveTeamButton";
@@ -30,6 +32,12 @@ interface Team {
   climbSuccessPct?: number;
   uptimePct?: number;
   matchesScouted?: number;
+  avgDriverWorkability: number | null;
+  avgHumanPlayerWorkability: number | null;
+  compositeCompatibilityScore: number | null;
+  submissionCount: number;
+  noteCount: number;
+  compatibilityNotes: WorkabilityNote[];
 }
 
 interface PicklistTeamsTableProps {
@@ -48,6 +56,11 @@ const optionalColumns = [
   { key: "climbSuccessPct", label: "Climb %" },
   { key: "uptimePct", label: "Uptime %" },
   { key: "matchesScouted", label: "Matches" },
+  { key: "compositeCompatibilityScore", label: "Compat" },
+  { key: "avgDriverWorkability", label: "Driver Fit" },
+  { key: "avgHumanPlayerWorkability", label: "HP Fit" },
+  { key: "submissionCount", label: "Compat Count" },
+  { key: "compatibilityNotes", label: "Compat Notes" },
   { key: "notes", label: "Notes" },
 ] as const;
 
@@ -59,6 +72,11 @@ const defaultVisibleColumns: Record<OptionalColumnKey, boolean> = {
   climbSuccessPct: true,
   uptimePct: true,
   matchesScouted: true,
+  compositeCompatibilityScore: true,
+  avgDriverWorkability: false,
+  avgHumanPlayerWorkability: false,
+  submissionCount: true,
+  compatibilityNotes: true,
   notes: true,
 };
 
@@ -199,6 +217,21 @@ export function PicklistTeamsTable({ picklistId, initialTeams }: PicklistTeamsTa
             {visibleColumns.matchesScouted ? (
               <TableHead className="w-24 text-right">Matches</TableHead>
             ) : null}
+            {visibleColumns.compositeCompatibilityScore ? (
+              <TableHead className="w-24 text-right">Compat</TableHead>
+            ) : null}
+            {visibleColumns.avgDriverWorkability ? (
+              <TableHead className="w-24 text-right">Driver Fit</TableHead>
+            ) : null}
+            {visibleColumns.avgHumanPlayerWorkability ? (
+              <TableHead className="w-24 text-right">HP Fit</TableHead>
+            ) : null}
+            {visibleColumns.submissionCount ? (
+              <TableHead className="w-28 text-right">Compat Count</TableHead>
+            ) : null}
+            {visibleColumns.compatibilityNotes ? (
+              <TableHead className="w-28 text-right">Compat Notes</TableHead>
+            ) : null}
             {visibleColumns.notes ? <TableHead className="w-32">Notes</TableHead> : null}
           </TableRow>
         </TableHeader>
@@ -259,6 +292,38 @@ export function PicklistTeamsTable({ picklistId, initialTeams }: PicklistTeamsTa
               {visibleColumns.matchesScouted ? (
                 <TableCell className="text-right tabular-nums">
                   {team.matchesScouted !== undefined ? team.matchesScouted : "—"}
+                </TableCell>
+              ) : null}
+              {visibleColumns.compositeCompatibilityScore ? (
+                <TableCell className="text-right tabular-nums font-medium">
+                  {team.compositeCompatibilityScore !== null
+                    ? team.compositeCompatibilityScore.toFixed(1)
+                    : "—"}
+                </TableCell>
+              ) : null}
+              {visibleColumns.avgDriverWorkability ? (
+                <TableCell className="text-right tabular-nums">
+                  {team.avgDriverWorkability !== null ? team.avgDriverWorkability.toFixed(1) : "—"}
+                </TableCell>
+              ) : null}
+              {visibleColumns.avgHumanPlayerWorkability ? (
+                <TableCell className="text-right tabular-nums">
+                  {team.avgHumanPlayerWorkability !== null
+                    ? team.avgHumanPlayerWorkability.toFixed(1)
+                    : "—"}
+                </TableCell>
+              ) : null}
+              {visibleColumns.submissionCount ? (
+                <TableCell className="text-right tabular-nums">
+                  {team.submissionCount > 0 ? team.submissionCount : "—"}
+                </TableCell>
+              ) : null}
+              {visibleColumns.compatibilityNotes ? (
+                <TableCell className="text-right">
+                  <CompatibilityNotesDialog
+                    notes={team.compatibilityNotes}
+                    noteCount={team.noteCount}
+                  />
                 </TableCell>
               ) : null}
               {visibleColumns.notes ? (

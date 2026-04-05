@@ -52,6 +52,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@faker-js/faker": "^10.3.0",
     "@repo/typescript-config": "workspace:*",
     "@repo/vitest-config": "workspace:*",
@@ -63,6 +66,7 @@
     "@vitest/coverage-v8": "catalog:",
     "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.10",
+    "jsdom": "^25.0.1",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.1",
     "tsx": "catalog:",

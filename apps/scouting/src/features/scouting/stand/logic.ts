@@ -82,6 +82,7 @@ export async function submitStandForm(
       .values({
         teamMatchId: data.teamMatchId,
         scoutMemberId: memberId,
+        canShuttle: data.canShuttle,
         comments: data.comments,
         oofTimeSeconds: data.oofTimeSeconds,
       })
@@ -97,7 +98,6 @@ export async function submitStandForm(
           standFormId: standFormRecord.id,
           phase: c.phase,
           cycleNumber: c.cycleNumber,
-          bucket: c.bucket,
           dumpDuration: ((c.endedAt - c.startedAt) / 1000).toString(),
         }))
       );

@@ -102,8 +102,9 @@ export function DriveRankingForm() {
           <form.Field name="matchNumber">
             {(field) => (
               <Field>
-                <FieldLabel>Match Number</FieldLabel>
+                <FieldLabel htmlFor={field.name}>Match Number</FieldLabel>
                 <Input
+                  id={field.name}
                   type="number"
                   inputMode="numeric"
                   placeholder="Enter match number"

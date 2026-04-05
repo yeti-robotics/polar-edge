@@ -26,6 +26,7 @@ type MockOutreachService = {
   getUserOutreach: MockedFunction<OutreachService["getUserOutreach"]>;
   getTotalTeamOutreachHours: MockedFunction<OutreachService["getTotalTeamOutreachHours"]>;
   getTopMembersByHours: MockedFunction<OutreachService["getTopMembersByHours"]>;
+  getUserRankAndHours: MockedFunction<OutreachService["getUserRankAndHours"]>;
 };
 
 // ─── Module factory ───────────────────────────────────────────────────────────
@@ -40,6 +41,7 @@ function makeModule() {
           getUserOutreach: vi.fn(),
           getTotalTeamOutreachHours: vi.fn(),
           getTopMembersByHours: vi.fn(),
+          getUserRankAndHours: vi.fn(),
         } satisfies MockOutreachService,
       },
     ],
@@ -253,6 +255,7 @@ describe("OutreachCommands", () => {
       const interaction = makeInteraction();
       service.getTopMembersByHours.mockReturnValue(errAsync(new Error("Sheet error")));
       service.getTotalTeamOutreachHours.mockReturnValue(okAsync(100));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: null, totalHours: 0 }));
 
       await commands.onOutreachLeaderboard([interaction] as never);
 
@@ -263,6 +266,7 @@ describe("OutreachCommands", () => {
       const interaction = makeInteraction();
       service.getTopMembersByHours.mockReturnValue(okAsync([]));
       service.getTotalTeamOutreachHours.mockReturnValue(okAsync(0));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: null, totalHours: 0 }));
 
       await commands.onOutreachLeaderboard([interaction] as never);
 
@@ -281,6 +285,7 @@ describe("OutreachCommands", () => {
         ])
       );
       service.getTotalTeamOutreachHours.mockReturnValue(okAsync(330));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: null, totalHours: 0 }));
 
       await commands.onOutreachLeaderboard([interaction] as never);
 
@@ -305,6 +310,7 @@ describe("OutreachCommands", () => {
         okAsync([{ userName: "Alice", totalHours: 100 }])
       );
       service.getTotalTeamOutreachHours.mockReturnValue(okAsync(250));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: null, totalHours: 0 }));
 
       await commands.onOutreachLeaderboard([interaction] as never);
 
@@ -319,6 +325,7 @@ describe("OutreachCommands", () => {
         okAsync([{ userName: "Alice", totalHours: 100 }])
       );
       service.getTotalTeamOutreachHours.mockReturnValue(errAsync(new Error("Sheet error")));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: null, totalHours: 0 }));
 
       await commands.onOutreachLeaderboard([interaction] as never);
 
@@ -333,6 +340,7 @@ describe("OutreachCommands", () => {
         okAsync([{ userName: "Alice", totalHours: 100 }])
       );
       service.getTotalTeamOutreachHours.mockReturnValue(okAsync(100));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: null, totalHours: 0 }));
 
       await commands.onOutreachLeaderboard([interaction] as never);
 
@@ -345,10 +353,88 @@ describe("OutreachCommands", () => {
       const interaction = makeInteraction();
       service.getTopMembersByHours.mockReturnValue(okAsync([]));
       service.getTotalTeamOutreachHours.mockReturnValue(okAsync(0));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: null, totalHours: 0 }));
 
       await commands.onOutreachLeaderboard([interaction] as never);
 
       expect(service.getTopMembersByHours).toHaveBeenCalledWith(5);
+    });
+
+    it("shows user rank with vertical ellipsis when user is rank 7 or higher", async () => {
+      const interaction = makeInteraction();
+      service.getTopMembersByHours.mockReturnValue(
+        okAsync([
+          { userName: "Alice", totalHours: 120 },
+          { userName: "Bob", totalHours: 90 },
+          { userName: "Carol", totalHours: 60 },
+          { userName: "Dave", totalHours: 40 },
+          { userName: "Eve", totalHours: 20 },
+        ])
+      );
+      service.getTotalTeamOutreachHours.mockReturnValue(okAsync(330));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: 34, totalHours: 5 }));
+
+      await commands.onOutreachLeaderboard([interaction] as never);
+
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("⋮"));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("34."));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("Test User"));
+    });
+
+    it("shows user rank directly after top 5 without ellipsis when user is rank 6", async () => {
+      const interaction = makeInteraction();
+      service.getTopMembersByHours.mockReturnValue(
+        okAsync([
+          { userName: "Alice", totalHours: 120 },
+          { userName: "Bob", totalHours: 90 },
+          { userName: "Carol", totalHours: 60 },
+          { userName: "Dave", totalHours: 40 },
+          { userName: "Eve", totalHours: 20 },
+        ])
+      );
+      service.getTotalTeamOutreachHours.mockReturnValue(okAsync(330));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: 6, totalHours: 10 }));
+
+      await commands.onOutreachLeaderboard([interaction] as never);
+
+      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("⋮"));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("6."));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("Test User"));
+    });
+
+    it("does not show user rank entry when user is in the top 5", async () => {
+      const interaction = makeInteraction();
+      service.getTopMembersByHours.mockReturnValue(
+        okAsync([
+          { userName: "Alice", totalHours: 120 },
+          { userName: "Bob", totalHours: 90 },
+          { userName: "Carol", totalHours: 60 },
+          { userName: "Dave", totalHours: 40 },
+          { userName: "Test User", totalHours: 20 },
+        ])
+      );
+      service.getTotalTeamOutreachHours.mockReturnValue(okAsync(330));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: 5, totalHours: 20 }));
+
+      await commands.onOutreachLeaderboard([interaction] as never);
+
+      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("⋮"));
+      const call = (interaction.reply as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as string;
+      expect(call.indexOf("Test User")).toBe(call.lastIndexOf("Test User"));
+    });
+
+    it("does not show user rank entry when user has no outreach data", async () => {
+      const interaction = makeInteraction();
+      service.getTopMembersByHours.mockReturnValue(
+        okAsync([{ userName: "Alice", totalHours: 100 }])
+      );
+      service.getTotalTeamOutreachHours.mockReturnValue(okAsync(100));
+      service.getUserRankAndHours.mockReturnValue(okAsync({ rank: null, totalHours: 0 }));
+
+      await commands.onOutreachLeaderboard([interaction] as never);
+
+      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("⋮"));
+      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("Test User"));
     });
   });
 });
