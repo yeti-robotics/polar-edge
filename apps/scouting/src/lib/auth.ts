@@ -6,7 +6,7 @@ import { createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
 import { and, eq, isNull } from "drizzle-orm";
-import { ac, admin, memberRole, owner } from "@/lib/access-control";
+import { ac, admin, memberRole, owner, scoutLead } from "@/lib/access-control";
 import { db } from "@/lib/database";
 import { member } from "@/lib/database/schema/tables/member";
 import { session } from "@/lib/database/schema/tables/session";
@@ -153,6 +153,7 @@ export const auth = betterAuth({
       ac,
       roles: {
         member: memberRole,
+        scout_lead: scoutLead,
         admin,
         owner,
       },

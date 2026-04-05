@@ -5,12 +5,12 @@ import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
-  cycle,
   event,
   member,
   pitForm,
   standForm,
   team,
+  teamEventCopr,
   teamMatch,
   vStandFormExpected,
 } from "@/lib/database/schema";
@@ -47,31 +47,37 @@ export async function getMainEventOverviewRow(
     cacheTag(cacheTags.teamMetrics(`${eventId}-${organizationId}`));
   }
 
-  const fuelPointsExpr = sql`
-    (case ${cycle.bucket}
-      when 0 then 0.0
-      when 1 then 1.0
-      when 2 then 2.25
-      when 3 then 4.0
-      when 4 then 6.0
-      when 5 then 8.0
-      else 0.0
-    end) * greatest(coalesce(${cycle.dumpDuration}, 0), 0)
-  `;
-  //started the query writing here (finally wrote them queries :)
+  // Use the view's total fuel and split by phase using COPR ratios.
+  // auto_fraction = copr.auto / (copr.auto + copr.teleop + copr.endgame)
   const standCyclePoints = db.$with("stand_cycle_points").as(
     db
       .select({
-        standFormId: cycle.standFormId,
+        standFormId: vStandFormExpected.standFormId,
         autoFuelPoints: sql<number>`
-          sum(case when ${cycle.phase} = 'auto' then ${fuelPointsExpr} else 0 end)
+          CASE WHEN coalesce(${teamEventCopr.totalFuelCount}, 0) > 0 THEN
+            ${vStandFormExpected.expFuelActive}::numeric
+            * coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric
+            / ${teamEventCopr.totalFuelCount}::numeric
+          ELSE 0 END
         `.as("auto_fuel_points"),
         teleopFuelPoints: sql<number>`
-          sum(case when ${cycle.phase} = 'teleop' then ${fuelPointsExpr} else 0 end)
+          CASE WHEN coalesce(${teamEventCopr.totalFuelCount}, 0) > 0 THEN
+            ${vStandFormExpected.expFuelActive}::numeric
+            * (coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${teamEventCopr.endgameFuelCount}, 0)::numeric)
+            / ${teamEventCopr.totalFuelCount}::numeric
+          ELSE 0 END
         `.as("teleop_fuel_points"),
       })
-      .from(cycle)
-      .groupBy(cycle.standFormId)
+      .from(vStandFormExpected)
+      .innerJoin(standForm, eq(standForm.id, vStandFormExpected.standFormId))
+      .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+      .leftJoin(
+        teamEventCopr,
+        and(
+          eq(teamEventCopr.eventId, teamMatch.eventId),
+          eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
+        )
+      )
   );
 
   const standPointsQuery = db

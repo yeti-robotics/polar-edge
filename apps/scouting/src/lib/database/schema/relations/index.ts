@@ -1,7 +1,10 @@
 import { relations } from "drizzle-orm";
 import { account } from "../tables/account";
+import { driveTeamRanking } from "../tables/drive-team-ranking";
+import { driveTeamRankingEntry } from "../tables/drive-team-ranking-entry";
 import { event } from "../tables/event";
 import { invitation } from "../tables/invitation";
+import { match } from "../tables/match";
 import { member } from "../tables/member";
 import { organization } from "../tables/organization";
 import { organizationEvent } from "../tables/organization-event";
@@ -13,7 +16,9 @@ import { pitForm } from "../tables/pit-form";
 import { pitPhoto } from "../tables/pit-photo";
 import { session } from "../tables/session";
 import { team } from "../tables/team";
+import { teamEventCopr } from "../tables/team-event-copr";
 import { user } from "../tables/user";
+import { workabilityForm } from "../tables/workability-form";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -130,6 +135,51 @@ export const picklistTeamRelations = relations(picklistTeam, ({ one }) => ({
   }),
   team: one(team, {
     fields: [picklistTeam.teamNumber],
+    references: [team.teamNumber],
+  }),
+}));
+
+export const driveTeamRankingRelations = relations(driveTeamRanking, ({ many }) => ({
+  entries: many(driveTeamRankingEntry),
+}));
+
+export const driveTeamRankingEntryRelations = relations(driveTeamRankingEntry, ({ one }) => ({
+  ranking: one(driveTeamRanking, {
+    fields: [driveTeamRankingEntry.rankingId],
+    references: [driveTeamRanking.id],
+  }),
+  team: one(team, {
+    fields: [driveTeamRankingEntry.teamNumber],
+    references: [team.teamNumber],
+  }),
+}));
+
+export const workabilityFormRelations = relations(workabilityForm, ({ one }) => ({
+  event: one(event, {
+    fields: [workabilityForm.eventId],
+    references: [event.id],
+  }),
+  match: one(match, {
+    fields: [workabilityForm.matchId],
+    references: [match.id],
+  }),
+  team: one(team, {
+    fields: [workabilityForm.teamNumber],
+    references: [team.teamNumber],
+  }),
+  scoutMember: one(member, {
+    fields: [workabilityForm.scoutMemberId],
+    references: [member.id],
+  }),
+}));
+
+export const teamEventCoprRelations = relations(teamEventCopr, ({ one }) => ({
+  event: one(event, {
+    fields: [teamEventCopr.eventId],
+    references: [event.id],
+  }),
+  team: one(team, {
+    fields: [teamEventCopr.teamNumber],
     references: [team.teamNumber],
   }),
 }));

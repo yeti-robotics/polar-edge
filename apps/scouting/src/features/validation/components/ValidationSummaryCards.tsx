@@ -13,11 +13,21 @@ function goblinColor(val: number) {
 }
 
 export function ValidationSummaryCards({ summary }: { summary: ValidationSummary }) {
-  const { playedMatchCount, avgAbsGoblin, totalSlots, scoutedSlots, singleScoutSlots } = summary;
+  const {
+    playedMatchCount,
+    avgAbsGoblin,
+    totalSlots,
+    scoutedSlots,
+    singleScoutSlots,
+    driveRankingTotal,
+    driveRankingCovered,
+  } = summary;
   const coveragePct = totalSlots > 0 ? Math.round((scoutedSlots / totalSlots) * 100) : 0;
+  const driveRankingPct =
+    driveRankingTotal > 0 ? Math.round((driveRankingCovered / driveRankingTotal) * 100) : 0;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -42,7 +52,9 @@ export function ValidationSummaryCards({ summary }: { summary: ValidationSummary
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Coverage</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Scout Coverage
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <span className={`text-3xl font-bold ${coverageColor(coveragePct)}`}>
@@ -62,6 +74,20 @@ export function ValidationSummaryCards({ summary }: { summary: ValidationSummary
           <span className={`text-3xl font-bold ${singleScoutSlots > 0 ? "text-warning" : ""}`}>
             {singleScoutSlots}
           </span>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Drive Rankings
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <span className={`text-3xl font-bold ${coverageColor(driveRankingPct)}`}>
+            {driveRankingCovered}/{driveRankingTotal}
+          </span>
+          <span className="ml-2 text-sm text-muted-foreground">({driveRankingPct}%)</span>
         </CardContent>
       </Card>
     </div>

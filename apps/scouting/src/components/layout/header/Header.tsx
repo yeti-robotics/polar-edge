@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +13,9 @@ import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
 import { routes } from "@/lib/routes";
+import { isScoutLeadOrAbove } from "@/lib/server/auth/require-member";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
+import { HeaderNav } from "./HeaderNav";
 import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
 import { ThemeToggle } from "./ThemeToggle";
@@ -27,6 +28,10 @@ const navItems = [
   {
     label: "Stand Form",
     href: routes.forms.stand,
+  },
+  {
+    label: "Workability",
+    href: routes.forms.workability,
   },
   {
     label: "Analysis",
@@ -72,39 +77,44 @@ export function Header() {
         </Suspense>
       </div>
       <nav className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-            href={item.href}
-          >
-            {item.label}
-          </Link>
-        ))}
-        <Suspense fallback={null}>
-          <LeaderboardNavItem />
+        <Suspense>
+          <HeaderNav items={navItems} />
         </Suspense>
-        <nav />
+
+        <Suspense fallback={null}>
+          <ConditionalNavItems />
+        </Suspense>
       </nav>
     </header>
   );
 }
 
-async function LeaderboardNavItem() {
+async function ConditionalNavItems() {
+  let activeMember = null;
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    activeMember = await auth.api.getActiveMember({ headers: await headers() });
     if (!activeMember) return null;
   } catch {
     return null;
   }
 
   return (
-    <Link
-      className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-      href={routes.leaderboard}
-    >
-      Leaderboard
-    </Link>
+    <>
+      {isScoutLeadOrAbove(activeMember.role) && (
+        <Link
+          className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+          href={routes.forms.driveRanking}
+        >
+          Drive Ranking
+        </Link>
+      )}
+      <Link
+        className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+        href={routes.leaderboard}
+      >
+        Leaderboard
+      </Link>
+    </>
   );
 }
 
@@ -134,7 +144,9 @@ async function UserAvatar() {
 
   let isAdminOrOwner = false;
   try {
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    const activeMember = await auth.api.getActiveMember({
+      headers: await headers(),
+    });
     isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
   } catch {
     // No active organization — still render the dropdown so the user can sign out
@@ -142,11 +154,18 @@ async function UserAvatar() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Avatar className="size-8 select-none">
-          <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? ""}></AvatarImage>
-          <AvatarFallback>{session.user.name?.charAt(0) ?? ""}</AvatarFallback>
-        </Avatar>
+      <DropdownMenuTrigger className="cursor-pointer rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        {session.user.image ? (
+          <img
+            src={session.user.image}
+            alt={session.user.name ?? ""}
+            className="size-8 rounded-full select-none object-cover"
+          />
+        ) : (
+          <span className="flex size-8 items-center justify-center rounded-full bg-muted select-none text-sm font-medium">
+            {session.user.name?.charAt(0) ?? ""}
+          </span>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end" className="min-w-36">
         <DropdownMenuGroup>

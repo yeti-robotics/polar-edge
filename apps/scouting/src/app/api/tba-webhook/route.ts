@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     case "verification": {
       const key = (payload as Record<string, unknown>)?.message_data;
-      console.info(`[tba-webhook] verification key: ${key}`);
+      console.info(`[tba-webhook] verification key: ${JSON.stringify(key)}`);
       return NextResponse.json({ ok: true });
     }
 
