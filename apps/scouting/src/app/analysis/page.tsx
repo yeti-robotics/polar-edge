@@ -1,10 +1,18 @@
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
+import {
+  TypographyH1,
+  TypographyH2,
+  TypographyMuted,
+  TypographyP,
+} from "@repo/ui/components/typography";
 import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
+import { headers } from "next/headers";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
+import { UserFormSubmissions } from "@/features/analysis/components/UserFormSubmissions";
 import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+import { auth } from "@/lib/auth";
 import { routes } from "@/lib/routes";
 
 const navCards = [
@@ -56,6 +64,29 @@ async function PitFormCountStat() {
   return <StatItem label="Pit Forms" value={count} />;
 }
 
+async function UserSubmissionsSection() {
+  const activeMember = await auth.api
+    .getActiveMember({ headers: await headers() })
+    .catch(() => null);
+
+  if (!activeMember) {
+    return (
+      <section className="rounded-xl border bg-muted/20 px-6 py-5">
+        <TypographyH2>Your Submissions</TypographyH2>
+        <TypographyP>Sign in to see the forms you have submitted.</TypographyP>
+      </section>
+    );
+  }
+
+  return (
+    <UserFormSubmissions
+      memberId={activeMember.id}
+      title="Your Submissions"
+      emptyLabel="No forms submitted yet."
+    />
+  );
+}
+
 export default function AnalysisPage() {
   return (
     <div className="space-y-8">
@@ -64,6 +95,16 @@ export default function AnalysisPage() {
         <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
       </div>
 
+      <Suspense
+        fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5 h-48 animate-pulse" />}
+      >
+        <UserSubmissionsSection />
+      </Suspense>
+
+      <div>
+        <TypographyH2>All Time</TypographyH2>
+        <TypographyP>Organization-wide stats across all events.</TypographyP>
+      </div>
       <div className="rounded-xl border bg-muted/20 grid grid-cols-1 max-md:divide-y md:grid-cols-3">
         <div className="px-6 py-5 md:border-r">
           <Suspense fallback={<StatItemSkeleton />}>
