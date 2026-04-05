@@ -8,27 +8,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@repo/ui/components/dialog";
-import { Label } from "@repo/ui/components/label";
-import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { CheckCircleIcon } from "lucide-react";
 import { useState } from "react";
 
 type EndShootDialogProps = {
-  onComplete: (bucket: number) => void;
+  onComplete: () => void;
   onOpen?: () => void;
   onCancel?: () => void;
   disabled?: boolean;
 };
 
 /**
- * Dialog to end a shooting cycle and select bucket (0-5).
- * Bucket labels match schema:
- * - 0: No shot (0 balls/sec)
- * - 1: Slow (0-1.5 balls/sec)
- * - 2: Medium-Slow (1.5-3 balls/sec)
- * - 3: Medium (3-5 balls/sec)
- * - 4: Fast (5-7 balls/sec)
- * - 5: Very Fast (7+ balls/sec)
+ * Dialog to confirm ending a shooting cycle.
+ * BPS is now derived from TBA Component OPRs instead of manual bucket selection.
  */
 export function EndShootDialog({
   onComplete,
@@ -37,10 +29,7 @@ export function EndShootDialog({
   disabled = false,
 }: EndShootDialogProps) {
   const [open, setOpen] = useState(false);
-  const [selectedBucket, setSelectedBucket] = useState<string>("");
 
-  // onOpenChange is only called by Radix for user interactions (ESC, backdrop),
-  // not for programmatic setOpen(false) calls.
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) onOpen?.();
     else onCancel?.();
@@ -48,16 +37,13 @@ export function EndShootDialog({
   };
 
   const handleConfirm = () => {
-    if (!selectedBucket) return;
-    onComplete(parseInt(selectedBucket, 10));
+    onComplete();
     setOpen(false);
-    setSelectedBucket("");
   };
 
   const handleCancel = () => {
     onCancel?.();
     setOpen(false);
-    setSelectedBucket("");
   };
 
   return (
@@ -72,52 +58,14 @@ export function EndShootDialog({
         <DialogHeader>
           <DialogTitle>End Shooting Cycle</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <Label htmlFor="bucket-select">Balls/Second Estimate</Label>
-          <RadioGroup id="bucket-select" value={selectedBucket} onValueChange={setSelectedBucket}>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="0" id="bucket-0" />
-              <Label htmlFor="bucket-0" className="cursor-pointer">
-                No shot (0 balls/sec)
-              </Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="1" id="bucket-1" />
-              <Label htmlFor="bucket-1" className="cursor-pointer">
-                Slow (0-1.5 balls/sec)
-              </Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="2" id="bucket-2" />
-              <Label htmlFor="bucket-2" className="cursor-pointer">
-                Medium-Slow (1.5-3 balls/sec)
-              </Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="3" id="bucket-3" />
-              <Label htmlFor="bucket-3" className="cursor-pointer">
-                Medium (3-5 balls/sec)
-              </Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="4" id="bucket-4" />
-              <Label htmlFor="bucket-4" className="cursor-pointer">
-                Fast (5-7 balls/sec)
-              </Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="5" id="bucket-5" />
-              <Label htmlFor="bucket-5" className="cursor-pointer">
-                Very Fast (7+ balls/sec)
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Confirm to end this shooting cycle. Duration will be recorded.
+        </p>
         <div className="flex justify-end gap-2 pt-4">
           <Button variant="secondary" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button variant="default" onClick={handleConfirm} disabled={!selectedBucket}>
+          <Button variant="default" onClick={handleConfirm}>
             Confirm
           </Button>
         </div>

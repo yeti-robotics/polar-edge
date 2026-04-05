@@ -8,11 +8,12 @@ import { z } from "zod";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
-  cycle,
   member,
   standForm,
+  teamEventCopr,
   teamMatch,
   user,
+  vStandFormExpected,
   vTeamGoblinMatch,
   vTeamMatchConsensus,
   vTeamRpMagicMatch,
@@ -61,34 +62,21 @@ export async function getTeamKeyMetrics(
     ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
     : eq(teamMatch.teamNumber, teamNumber);
 
-  const fuelPtsExpr = sql`case ${cycle.bucket}
-    when 0 then 0.0 when 1 then 1.0 when 2 then 2.25
-    when 3 then 4.0 when 4 then 6.0 when 5 then 8.0
-    else 0.0 end * greatest(coalesce(${cycle.dumpDuration}, 0), 0)`;
+  // Phase fuel = total_fuel × (copr_phase / copr_total) — uses the view's COPR-based fuel
+  // and splits it by phase using the COPR ratio
+  const autoFuelExpr = sql<number>`
+    CASE WHEN coalesce(${teamEventCopr.totalFuelCount}, 0)::numeric > 0 THEN
+      ${vStandFormExpected.expFuelActive}::numeric
+      * coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric
+      / ${teamEventCopr.totalFuelCount}::numeric
+    ELSE 0 END`;
 
-  const autoFuelCTE = db.$with("af").as(
-    db
-      .select({
-        standFormId: standForm.id,
-        pts: sql<number>`sum(${fuelPtsExpr})`.as("pts"),
-      })
-      .from(cycle)
-      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
-      .where(and(eq(cycle.phase, "auto"), isNull(standForm.deletedAt)))
-      .groupBy(standForm.id)
-  );
-
-  const teleopFuelCTE = db.$with("tf").as(
-    db
-      .select({
-        standFormId: standForm.id,
-        pts: sql<number>`sum(${fuelPtsExpr})`.as("pts"),
-      })
-      .from(cycle)
-      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
-      .where(and(eq(cycle.phase, "teleop"), isNull(standForm.deletedAt)))
-      .groupBy(standForm.id)
-  );
+  const teleopFuelExpr = sql<number>`
+    CASE WHEN coalesce(${teamEventCopr.totalFuelCount}, 0)::numeric > 0 THEN
+      ${vStandFormExpected.expFuelActive}::numeric
+      * (coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${teamEventCopr.endgameFuelCount}, 0)::numeric)
+      / ${teamEventCopr.totalFuelCount}::numeric
+    ELSE 0 END`;
 
   // Subquery: distinct teamMatchIds that have at least one stand form
   const sfExistsSub = db
@@ -109,10 +97,9 @@ export async function getTeamKeyMetrics(
   const [formStats, matchStats] = await Promise.all([
     // Per stand-form: auto pts, teleop pts, uptime, downtime
     db
-      .with(autoFuelCTE, teleopFuelCTE)
       .select({
-        avgAutoPoints: sql<number>`avg(coalesce(af.pts, 0))`,
-        avgTeleopPoints: sql<number>`avg(coalesce(tf.pts, 0))`,
+        avgAutoPoints: sql<number>`avg(coalesce(${autoFuelExpr}, 0))`,
+        avgTeleopPoints: sql<number>`avg(coalesce(${teleopFuelExpr}, 0))`,
         avgUptimePct: sql<number>`avg((150.0 - least(${standForm.oofTimeSeconds}, 150)) / 150.0 * 100)`,
         avgDowntimeSeconds: sql<number>`avg(${standForm.oofTimeSeconds}::numeric)`,
       })
@@ -121,8 +108,14 @@ export async function getTeamKeyMetrics(
         standForm,
         and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
       )
-      .leftJoin(autoFuelCTE, eq(autoFuelCTE.standFormId, standForm.id))
-      .leftJoin(teleopFuelCTE, eq(teleopFuelCTE.standFormId, standForm.id))
+      .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
+      .leftJoin(
+        teamEventCopr,
+        and(
+          eq(teamEventCopr.eventId, teamMatch.eventId),
+          eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
+        )
+      )
       .where(teamWhere),
 
     // Per match: climb pts, total scouted matches, broke count
@@ -211,61 +204,64 @@ export async function getTeamRadarData(
         )
       : undefined;
 
-  // CTE: Auto fuel points per stand form
-  const autoFuelCTE = db.$with("auto_fuel").as(
-    db
-      .select({
-        teamMatchId: standForm.teamMatchId,
-        pts: sql<number>`sum(case ${cycle.bucket}
-          when 0 then 0.0 when 1 then 1.0 when 2 then 2.25
-          when 3 then 4.0 when 4 then 6.0 when 5 then 8.0
-          else 0.0 end * greatest(coalesce(${cycle.dumpDuration}, 0), 0))`.as("pts"),
-      })
-      .from(cycle)
-      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
-      .where(and(eq(cycle.phase, "auto"), isNull(standForm.deletedAt)))
-      .groupBy(standForm.id, standForm.teamMatchId)
-  );
+  // Phase fuel using COPR ratio split (same approach as getTeamKeyMetrics)
+  const radarAutoFuelExpr = sql<number>`
+    CASE WHEN coalesce(${teamEventCopr.totalFuelCount}, 0)::numeric > 0 THEN
+      ${vStandFormExpected.expFuelActive}::numeric
+      * coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric
+      / ${teamEventCopr.totalFuelCount}::numeric
+    ELSE 0 END`;
 
-  // CTE: Teleop fuel points per stand form
-  const teleopFuelCTE = db.$with("teleop_fuel").as(
-    db
-      .select({
-        teamMatchId: standForm.teamMatchId,
-        pts: sql<number>`sum(case ${cycle.bucket}
-          when 0 then 0.0 when 1 then 1.0 when 2 then 2.25
-          when 3 then 4.0 when 4 then 6.0 when 5 then 8.0
-          else 0.0 end * greatest(coalesce(${cycle.dumpDuration}, 0), 0))`.as("pts"),
-      })
-      .from(cycle)
-      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
-      .where(and(eq(cycle.phase, "teleop"), isNull(standForm.deletedAt)))
-      .groupBy(standForm.id, standForm.teamMatchId)
-  );
+  const radarTeleopFuelExpr = sql<number>`
+    CASE WHEN coalesce(${teamEventCopr.totalFuelCount}, 0)::numeric > 0 THEN
+      ${vStandFormExpected.expFuelActive}::numeric
+      * (coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${teamEventCopr.endgameFuelCount}, 0)::numeric)
+      / ${teamEventCopr.totalFuelCount}::numeric
+    ELSE 0 END`;
 
   // Run all 4 queries in parallel
   const [autoData, teleopData, climbData, consistencyReliabilityData] = await Promise.all([
-    // Query 1: Auto scoring — avg auto cycle fuel points per stand form submission
+    // Query 1: Auto scoring — avg auto COPR-derived fuel per stand form
     db
-      .with(autoFuelCTE)
       .select({
         teamNumber: teamMatch.teamNumber,
-        avgPts: sql<number>`avg(coalesce(auto_fuel.pts, 0))`,
+        avgPts: sql<number>`avg(coalesce(${radarAutoFuelExpr}, 0))`,
       })
       .from(teamMatch)
-      .leftJoin(autoFuelCTE, eq(autoFuelCTE.teamMatchId, teamMatch.id))
+      .innerJoin(
+        standForm,
+        and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
+      )
+      .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
+      .leftJoin(
+        teamEventCopr,
+        and(
+          eq(teamEventCopr.eventId, teamMatch.eventId),
+          eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
+        )
+      )
       .where(scopeCondition)
       .groupBy(teamMatch.teamNumber),
 
-    // Query 2: Teleop scoring — avg teleop cycle fuel points per stand form submission
+    // Query 2: Teleop scoring — avg teleop COPR-derived fuel per stand form
     db
-      .with(teleopFuelCTE)
       .select({
         teamNumber: teamMatch.teamNumber,
-        avgPts: sql<number>`avg(coalesce(teleop_fuel.pts, 0))`,
+        avgPts: sql<number>`avg(coalesce(${radarTeleopFuelExpr}, 0))`,
       })
       .from(teamMatch)
-      .leftJoin(teleopFuelCTE, eq(teleopFuelCTE.teamMatchId, teamMatch.id))
+      .innerJoin(
+        standForm,
+        and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
+      )
+      .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
+      .leftJoin(
+        teamEventCopr,
+        and(
+          eq(teamEventCopr.eventId, teamMatch.eventId),
+          eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
+        )
+      )
       .where(scopeCondition)
       .groupBy(teamMatch.teamNumber),
 

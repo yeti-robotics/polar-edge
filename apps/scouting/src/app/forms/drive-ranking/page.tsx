@@ -11,7 +11,7 @@ async function DriveRankingContent() {
   const member = await requireScoutLeadMember();
   const activeEvent = await getActiveEventForOrganization(member.organizationId);
 
-  if (!activeEvent) {
+  if (!activeEvent?.event) {
     return <NoActiveEvent />;
   }
 

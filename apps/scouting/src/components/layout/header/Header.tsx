@@ -30,6 +30,10 @@ const navItems = [
     href: routes.forms.stand,
   },
   {
+    label: "Workability",
+    href: routes.forms.workability,
+  },
+  {
     label: "Analysis",
     href: routes.analysis.root,
   },

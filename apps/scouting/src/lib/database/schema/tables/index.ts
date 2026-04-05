@@ -19,6 +19,8 @@ export { pitPhoto } from "./pit-photo";
 export { session } from "./session";
 export { standForm } from "./stand-form";
 export { team } from "./team";
+export { teamEventCopr } from "./team-event-copr";
 export { teamMatch } from "./team-match";
 export { user } from "./user";
 export { verification } from "./verification";
+export { workabilityForm } from "./workability-form";
