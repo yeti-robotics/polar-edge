@@ -9,7 +9,8 @@ export const cacheTags = {
   teamMetrics: (eventId: string) => `team-metrics-${eventId}`,
   workabilityEvent: (eventId: string, organizationId: string) =>
     `workability-event-${eventId}-${organizationId}`,
-  memberWorkability: (eventId: string, memberId: string) => `member-workability-${eventId}-${memberId}`,
+  memberWorkability: (eventId: string, memberId: string) =>
+    `member-workability-${eventId}-${memberId}`,
   activeEvent: (organizationId: string) => `active-event-${organizationId}`,
   eventTeams: (eventId: string) => `event-teams-${eventId}`,
   matchScores: (eventId: string) => `match-scores-${eventId}`,

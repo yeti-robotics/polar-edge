@@ -1,6 +1,11 @@
 "use client";
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@repo/ui/components/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@repo/ui/components/accordion";
 import { Badge } from "@repo/ui/components/badge";
 import {
   Table,
@@ -11,9 +16,9 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 import Link from "next/link";
-import { routes } from "@/lib/routes";
 import type { WorkabilityNote } from "@/features/scouting/workability/types";
 import { formatWorkabilityScore, getCoverageLabel } from "@/features/scouting/workability/utils";
+import { routes } from "@/lib/routes";
 import { CompatibilityNotesDialog } from "./CompatibilityNotesDialog";
 
 interface CompatibleTeam {

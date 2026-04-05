@@ -3,6 +3,10 @@ import "server-only";
 import { and, count, eq, notInArray, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { getWorkabilitySummaryForEvent } from "@/features/scouting/workability/queries";
+import type {
+  TeamWorkabilitySummary,
+  WorkabilityNote,
+} from "@/features/scouting/workability/types";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
@@ -14,7 +18,6 @@ import {
   teamMatch,
   vTeamMatchConsensus,
 } from "@/lib/database/schema";
-import type { TeamWorkabilitySummary, WorkabilityNote } from "@/features/scouting/workability/types";
 
 /**
  * Get all picklists for a specific organization and event

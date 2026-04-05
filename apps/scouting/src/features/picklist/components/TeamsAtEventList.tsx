@@ -1,6 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { getWorkabilitySummaryForEvent } from "@/features/scouting/workability/queries";
-import { getCompatibilityMetricsForTeam, getTeamMetricsForEvent, getTeamsForEvent } from "../queries";
+import {
+  getCompatibilityMetricsForTeam,
+  getTeamMetricsForEvent,
+  getTeamsForEvent,
+} from "../queries";
 import { CompatibilitySection } from "./CompatibilitySection";
 import { TeamsAtEventClient } from "./TeamsAtEventClient";
 
