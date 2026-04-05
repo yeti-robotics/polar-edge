@@ -2,18 +2,12 @@ import { Badge } from "@repo/ui/components/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@repo/ui/components/table";
-import {
-  TypographyH1,
+  TypographyH2,
   TypographyH3,
   TypographyLabel,
+  TypographyLarge,
   TypographyMuted,
+  TypographySmall,
 } from "@repo/ui/components/typography";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -122,6 +116,15 @@ async function DriveRatingSection({
   );
 }
 
+function PitStatCard({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1 rounded-lg border bg-muted/20 px-4 py-3">
+      <TypographyLabel>{label}</TypographyLabel>
+      <TypographySmall className="font-semibold">{value}</TypographySmall>
+    </div>
+  );
+}
+
 async function PitDataSection({ teamNum }: { teamNum: number }) {
   const pitFormData = await db
     .select()
@@ -134,7 +137,7 @@ async function PitDataSection({ teamNum }: { teamNum: number }) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Pit Scouting Data</CardTitle>
+          <CardTitle>Robot Profile</CardTitle>
         </CardHeader>
         <CardContent>
           <TypographyMuted>No pit scouting data available</TypographyMuted>
@@ -143,38 +146,40 @@ async function PitDataSection({ teamNum }: { teamNum: number }) {
     );
   }
 
+  const capabilities = [
+    pitData.canTrench && "Trench",
+    pitData.canBump && "Bump",
+    pitData.canShuttle && "Shuttle",
+  ].filter(Boolean);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pit Scouting Data</CardTitle>
+        <CardTitle>Robot Profile</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Drivetrain</TableHead>
-              <TableHead>Weight</TableHead>
-              <TableHead>Capacity</TableHead>
-              <TableHead>Climb Type</TableHead>
-              <TableHead>Capabilities</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>{pitData.drivetrainType}</TableCell>
-              <TableCell>{pitData.weight} lbs</TableCell>
-              <TableCell>{pitData.capacity}</TableCell>
-              <TableCell>{pitData.climbType || "N/A"}</TableCell>
-              <TableCell>
-                <div className="flex gap-2 flex-wrap">
-                  {pitData.canTrench && <Badge>Trench</Badge>}
-                  {pitData.canBump && <Badge>Bump</Badge>}
-                  {pitData.canShuttle && <Badge>Shuttle</Badge>}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <PitStatCard label="Drivetrain" value={pitData.drivetrainType} />
+          <PitStatCard label="Weight" value={`${pitData.weight} lbs`} />
+          <PitStatCard label="Capacity" value={pitData.capacity} />
+          <PitStatCard label="Climb Type" value={pitData.climbType || "N/A"} />
+          <PitStatCard
+            label="Capabilities"
+            value={
+              capabilities.length > 0 ? (
+                <div className="flex gap-1.5 flex-wrap">
+                  {capabilities.map((cap) => (
+                    <Badge key={cap} variant="secondary" className="text-xs">
+                      {cap}
+                    </Badge>
+                  ))}
                 </div>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+              ) : (
+                <span className="text-muted-foreground">None</span>
+              )
+            }
+          />
+        </div>
       </CardContent>
     </Card>
   );
@@ -196,8 +201,13 @@ export default async function TeamPage({
   const teamResults = await db.select().from(teamTable).where(eq(teamTable.teamNumber, teamNum));
   if (!teamResults || teamResults.length === 0)
     return (
-      <div className="p-6">
-        <p className="font-mono text-4xl">Team {teamNumber} Not Found</p>
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <TypographyLarge className="text-6xl font-bold tabular-nums text-muted-foreground/30">
+            {teamNumber}
+          </TypographyLarge>
+          <TypographyMuted className="mt-2">Team not found</TypographyMuted>
+        </div>
       </div>
     );
 
@@ -256,51 +266,60 @@ export default async function TeamPage({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="pb-4 border-b">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <TypographyLabel className="mb-1">Team Analysis</TypographyLabel>
-            <TypographyH1>{teamRow.teamName}</TypographyH1>
-            <TypographyMuted className="mt-1">Team {teamRow.teamNumber}</TypographyMuted>
-            <SelectTeam />
+    <div className="space-y-6">
+      {/* ── Header ─────────────────────────────────────────────── */}
+      <div className="rounded-xl border bg-card p-5 space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="shrink-0 rounded-lg bg-primary/10 px-3 py-1.5 text-lg font-bold tabular-nums text-primary">
+              {teamRow.teamNumber}
+            </span>
+            <TypographyH2 className="truncate">{teamRow.teamName}</TypographyH2>
           </div>
-
-          <TeamScopeControls
-            hasOrg={organizationId !== null}
-            globalTeamEvents={globalTeamEvents}
-            orgTeamEvents={orgTeamEvents}
-          />
+          <div className="flex items-center gap-3 flex-wrap min-w-0">
+            <SelectTeam />
+            <TeamScopeControls
+              hasOrg={organizationId !== null}
+              globalTeamEvents={globalTeamEvents}
+              orgTeamEvents={orgTeamEvents}
+            />
+          </div>
         </div>
       </div>
 
-      <Suspense fallback={<Skeleton className="h-56 w-full" />}>
-        <TeamKeyMetricsSection {...scopeProps} />
-      </Suspense>
-
-      <Card className="gap-y-3">
+      {/* ── AI Summary ────────────────────────────────────────── */}
+      <Card className="gap-y-3 border-primary/20 bg-gradient-to-b from-primary/[0.03] to-transparent">
         <CardHeader>
           <div className="flex items-center gap-2">
             <AnimatedSparkles />
-            <TypographyH3>Scout Insights</TypographyH3>
+            <TypographyH3>AI Summary</TypographyH3>
           </div>
+          <TypographyMuted>AI-generated analysis based on scout observations</TypographyMuted>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <Suspense fallback={<AISummarySkeleton />}>
             <AISummarySection {...scopeProps} />
-          </Suspense>
-
-          <Suspense fallback={<Skeleton className="h-72 w-full rounded-lg" />}>
-            <TeamCommentsSection {...scopeProps} isOrgAdmin={isOrgAdmin} />
           </Suspense>
         </CardContent>
       </Card>
 
-      <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+      {/* ── Performance Metrics ────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-72 w-full rounded-lg" />}>
+        <TeamKeyMetricsSection {...scopeProps} />
+      </Suspense>
+
+      {/* ── Scout Comments ─────────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-48 w-full rounded-lg" />}>
+        <TeamCommentsSection {...scopeProps} isOrgAdmin={isOrgAdmin} />
+      </Suspense>
+
+      {/* ── Robot Profile ──────────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-32 w-full rounded-lg" />}>
         <PitDataSection teamNum={teamNum} />
       </Suspense>
 
-      <Suspense fallback={<Skeleton className="h-56 w-full" />}>
+      {/* ── Drive Rating ───────────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-56 w-full rounded-lg" />}>
         <DriveRatingSection
           teamNum={teamNum}
           organizationId={organizationId}
