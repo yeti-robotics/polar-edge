@@ -30,10 +30,6 @@ const navItems = [
     href: routes.forms.stand,
   },
   {
-    label: "Workability",
-    href: routes.forms.workability,
-  },
-  {
     label: "Analysis",
     href: routes.analysis.root,
   },
@@ -101,12 +97,20 @@ async function ConditionalNavItems() {
   return (
     <>
       {isScoutLeadOrAbove(activeMember.role) && (
-        <Link
-          className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-          href={routes.forms.driveRanking}
-        >
-          Drive Ranking
-        </Link>
+        <>
+          <Link
+            className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+            href={routes.forms.workability}
+          >
+            Workability
+          </Link>
+          <Link
+            className="hover:text-foreground text-muted-foreground whitespace-nowrap"
+            href={routes.forms.driveRanking}
+          >
+            Drive Ranking
+          </Link>
+        </>
       )}
       <Link
         className="hover:text-foreground text-muted-foreground whitespace-nowrap"

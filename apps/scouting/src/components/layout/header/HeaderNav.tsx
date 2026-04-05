@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@repo/ui/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -10,24 +11,19 @@ export function HeaderNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <div className="gap-6 text-sm inline-flex overflow-x-auto ml-6 no-scrollbar">
-      {items.map((item) => {
-        const isActive = pathname === item.href;
-
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={
-              isActive
-                ? "font-bold font-mono text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }
-          >
-            {item.label}
-          </Link>
-        );
-      })}
-    </div>
+    <>
+      {items.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={cn(
+            "whitespace-nowrap text-muted-foreground hover:text-foreground",
+            pathname === item.href && "text-foreground",
+          )}
+        >
+          {item.label}
+        </Link>
+      ))}
+    </>
   );
 }
