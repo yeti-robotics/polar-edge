@@ -21,7 +21,7 @@ function clamp(value: number, min: number, max: number): number {
  */
 function exponentialSkill(lambda: number): number {
   const u = Math.random();
-  return clamp(Math.pow(u, lambda), 0, 1);
+  return clamp(u ** lambda, 0, 1);
 }
 
 /**
