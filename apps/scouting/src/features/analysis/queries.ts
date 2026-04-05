@@ -2,10 +2,10 @@ import "server-only";
 
 import { and, countDistinct, eq, isNull, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
-import { UserFormCounts, UserFormSubmission } from "@/app/profile/types";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { match, pitForm, standForm, team, teamMatch } from "@/lib/database/schema/tables";
+import type { UserFormCounts, UserFormSubmission } from "./types";
 
 export async function getTeamCount(): Promise<number> {
   "use cache";

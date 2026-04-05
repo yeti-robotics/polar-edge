@@ -1,5 +1,3 @@
-//is this what you meant by putting in a types.ts in the folder
-
 export type UserFormCounts = {
   standCount: number;
   pitCount: number;

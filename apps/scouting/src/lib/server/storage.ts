@@ -40,15 +40,6 @@ function getClient(): S3Client {
 const UPLOAD_EXPIRATION_SECONDS = 600; // 10 minutes for upload
 const DOWNLOAD_EXPIRATION_SECONDS = 3600; // 1 hour for viewing
 
-// The monorepo may include slightly different @smithy types versions which
-// causes an incompatible client type to be reported when calling the presigner.
-// Cast the presigner to a minimal runtime-compatible signature using `unknown`.
-const presigner = getSignedUrl as unknown as (
-  c: unknown,
-  cmd: unknown,
-  opts: { expiresIn: number }
-) => Promise<string>;
-
 /**
  * Generate an S3 object key for a robot photo.
  * Pattern: {organizationId}/pit-photos/{teamNumber}/{timestamp}-{index}.{ext}
@@ -81,14 +72,7 @@ export async function createPresignedUploadUrl(
     ContentLength: maxSizeBytes, // Enforce maximum upload size at S3 level
   });
 
-  // `@aws-sdk` and `@smithy/types` may have minor version skew across packages in the
-  // monorepo (types only) which causes the compile-time client type to be incompatible.
-  // It's safe to ignore here because at runtime the S3Client instance and getSignedUrl
-  // work together. Silence the type-check for this call.
-  // Type mismatch can occur when multiple @smithy types versions are present
-  // in the monorepo. The runtime client and presigner are compatible; silence
-  // the type-check for this call.
-  const url = await presigner(client, command, {
+  const url = await getSignedUrl(client, command, {
     expiresIn: UPLOAD_EXPIRATION_SECONDS,
   });
 
@@ -104,8 +88,7 @@ export async function createPresignedDownloadUrl(objectKey: string): Promise<str
     Key: objectKey,
   });
 
-  // Reuse the same presigner cast to avoid cross-package smithy typing issues.
-  return presigner(client, command, {
+  return getSignedUrl(client, command, {
     expiresIn: DOWNLOAD_EXPIRATION_SECONDS,
   });
 }
