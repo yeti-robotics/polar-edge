@@ -8,7 +8,6 @@ import {
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { HomeIcon, ShieldCheckIcon, UserIcon } from "lucide-react";
 import { headers } from "next/headers";
-import Link from "next/link";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
@@ -116,32 +115,17 @@ async function ConditionalNavItems() {
     return null;
   }
 
-  return (
-    <>
-      {isScoutLeadOrAbove(activeMember.role) && (
-        <>
-          <Link
-            className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-            href={routes.forms.workability}
-          >
-            Workability
-          </Link>
-          <Link
-            className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-            href={routes.forms.driveRanking}
-          >
-            Drive Ranking
-          </Link>
-        </>
-      )}
-      <Link
-        className="hover:text-foreground text-muted-foreground whitespace-nowrap"
-        href={routes.leaderboard}
-      >
-        Leaderboard
-      </Link>
-    </>
-  );
+  const items = [
+    ...(isScoutLeadOrAbove(activeMember.role)
+      ? [
+          { label: "Workability", href: routes.forms.workability },
+          { label: "Drive Ranking", href: routes.forms.driveRanking },
+        ]
+      : []),
+    { label: "Leaderboard", href: routes.leaderboard },
+  ];
+
+  return <HeaderNav items={items} />;
 }
 
 async function OrganizationSelectorWrapper() {
