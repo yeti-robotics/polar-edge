@@ -90,7 +90,11 @@ export class OutreachCommands {
 
     const userEntry =
       nickname != null && userDataResult.isOk() && userDataResult.value.rank != null
-        ? { rank: userDataResult.value.rank, userName: nickname, totalHours: userDataResult.value.totalHours }
+        ? {
+            rank: userDataResult.value.rank,
+            userName: nickname,
+            totalHours: userDataResult.value.totalHours,
+          }
         : null;
 
     return interaction.reply(

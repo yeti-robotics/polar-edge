@@ -17,7 +17,7 @@ import type { Result } from "neverthrow";
 import { AppConfigService } from "src/config/config.service";
 import { getNickname } from "src/lib/utils/discord.utils";
 import { formatLeaderboard } from "src/lib/utils/leaderboard.utils";
-import { formatPercentage, getOrdinalSuffix } from "src/lib/utils/math.utils";
+import { formatPercentage } from "src/lib/utils/math.utils";
 import { AttendanceService } from "./attendance.service";
 
 class AttendanceSignInDto {
