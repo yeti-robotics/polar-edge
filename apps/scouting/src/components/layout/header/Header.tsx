@@ -16,6 +16,7 @@ import { routes } from "@/lib/routes";
 import { isScoutLeadOrAbove } from "@/lib/server/auth/require-member";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
 import { HeaderNav } from "./HeaderNav";
+import { LoginButton } from "./LoginButton";
 import { LogoutButton } from "./LogoutButton";
 import { OrganizationSelector } from "./OrganizationSelector";
 import { ThemeToggle } from "./ThemeToggle";
@@ -60,6 +61,28 @@ function UserAvatarFallback() {
 
 export function Header() {
   return (
+    <Suspense>
+      <HeaderContent />
+    </Suspense>
+  );
+}
+
+async function HeaderContent() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const isAuthenticated = !!session?.user;
+
+  if (!isAuthenticated) {
+    return (
+      <header className="sticky top-0 z-50 min-w-0 border-b bg-background flex items-center h-12">
+        <div className="flex items-center justify-between w-full px-6">
+          <span className="uppercase font-mono text-sm">Polar Edge</span>
+          <LoginButton />
+        </div>
+      </header>
+    );
+  }
+
+  return (
     <header className="sticky top-0 z-50 py-2 min-w-0 border-b bg-background h-(--header-height) flex flex-col justify-between">
       <div className="flex items-center justify-between w-full px-6">
         <div className="flex items-center gap-4">
@@ -76,7 +99,6 @@ export function Header() {
         <Suspense>
           <HeaderNav items={navItems} />
         </Suspense>
-
         <Suspense fallback={null}>
           <ConditionalNavItems />
         </Suspense>
@@ -173,7 +195,7 @@ async function UserAvatar() {
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end" className="min-w-36">
         <DropdownMenuGroup>
-          <DropdownMenuItemLink href={routes.home}>
+          <DropdownMenuItemLink href={routes.analysis.root}>
             <HomeIcon className="size-4 text-current" />
             <span>Home</span>
           </DropdownMenuItemLink>

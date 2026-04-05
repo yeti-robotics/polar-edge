@@ -26,11 +26,11 @@ export default async function ScoutCoveragePage({
     const activeMember = await auth.api.getActiveMember({ headers: await headers() });
     organizationId = activeMember?.organizationId ?? null;
   } catch {
-    redirect(routes.home);
+    redirect(routes.login);
   }
 
   if (!organizationId) {
-    redirect(routes.home);
+    redirect(routes.login);
   }
 
   const [events, activeOrgEvent] = await Promise.all([

@@ -8,7 +8,7 @@ import { routes } from "@/lib/routes";
 export default async function CreateAutoPathPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
-    redirect(routes.home);
+    redirect(routes.login);
   }
 
   const [teams] = await Promise.all([getTeams()]);

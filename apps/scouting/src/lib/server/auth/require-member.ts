@@ -17,9 +17,9 @@ export async function requireActiveMember() {
   try {
     member = await auth.api.getActiveMember({ headers: await headers() });
   } catch {
-    redirect(routes.home);
+    redirect(routes.login);
   }
-  if (!member) redirect(routes.home);
+  if (!member) redirect(routes.login);
   return member;
 }
 
@@ -29,7 +29,7 @@ export async function requireActiveMember() {
 export async function requireAdminMember() {
   const member = await requireActiveMember();
   if (member.role !== "admin" && member.role !== "owner") {
-    redirect(routes.home);
+    redirect(routes.login);
   }
   return member;
 }
@@ -42,7 +42,7 @@ const SCOUT_LEAD_ROLES = new Set(["scout_lead", "admin", "owner"]);
 export async function requireScoutLeadMember() {
   const member = await requireActiveMember();
   if (!SCOUT_LEAD_ROLES.has(member.role)) {
-    redirect(routes.home);
+    redirect(routes.login);
   }
   return member;
 }

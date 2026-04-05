@@ -12,7 +12,7 @@ async function signInPasskey() {
   await authClient.signIn.passkey({
     fetchOptions: {
       onSuccess(_context) {
-        window.location.href = routes.home;
+        window.location.href = routes.analysis.root;
       },
       onError(context) {
         console.error("Authentication failed:", context.error.message);
@@ -32,25 +32,25 @@ export function SignInForm({ redirectUrl }: SignInFormProps) {
     setHasPasskeySupport(typeof window !== "undefined" && "PublicKeyCredential" in window);
   }, [hasPasskeySupport]);
 
-  const callbackURL = redirectUrl ?? routes.home;
+  const callbackURL = redirectUrl ?? routes.analysis.root;
 
   return (
-    <div className="relative flex flex-col items-center justify-center my-4">
-      <Button onClick={() => signInDiscord(callbackURL)}>
-        <Discord /> Sign in With Discord
+    <div className="relative flex flex-col items-center justify-center gap-3">
+      <Button
+        className="w-full bg-[#5865F2] text-white hover:bg-[#4752C4]"
+        onClick={() => signInDiscord(callbackURL)}
+      >
+        <Discord /> Sign in with Discord
       </Button>
-      {true && (
+      {hasPasskeySupport && (
         <>
-          <span className="relative my-4 inline-flex items-center px-4">
-            <span className="absolute left-0 right-0 top-1/2 -translate-y-1/2 border-t border-foreground"></span>
-            <span className="relative bg-background px-2">or</span>
-          </span>
-          <Button
-            className="bg-foreground text-background hover:text-foreground"
-            onClick={signInPasskey}
-          >
-            {" "}
-            <KeyRound /> Sign in With Passkey
+          <div className="relative flex w-full items-center py-1">
+            <div className="flex-1 border-t border-border" />
+            <span className="px-3 text-xs text-muted-foreground">or</span>
+            <div className="flex-1 border-t border-border" />
+          </div>
+          <Button variant="outline" className="w-full" onClick={signInPasskey}>
+            <KeyRound /> Sign in with Passkey
           </Button>
         </>
       )}

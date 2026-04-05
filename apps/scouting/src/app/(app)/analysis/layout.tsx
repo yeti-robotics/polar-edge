@@ -34,6 +34,14 @@ async function buildEventsLink(): Promise<NavLink> {
 export default async function DataLayout({ children }: { children: React.ReactNode }) {
   const eventsLink = await buildEventsLink();
 
+  let isAuthenticated = false;
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    isAuthenticated = !!session?.user;
+  } catch {
+    // not signed in
+  }
+
   const analysisLinks: NavLink[] = [
     {
       href: routes.analysis.root,
@@ -56,7 +64,10 @@ export default async function DataLayout({ children }: { children: React.ReactNo
   ];
 
   return (
-    <div className="fixed inset-x-0 top-(--header-height) bottom-0 overflow-hidden">
+    <div
+      className="fixed inset-x-0 bottom-0 overflow-hidden"
+      style={{ top: isAuthenticated ? "5rem" : "3rem" }}
+    >
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] h-full">
         <aside className="h-full border-r hidden md:block overflow-y-auto">
           <NavSidebar title="Scouting Data" links={analysisLinks} />
