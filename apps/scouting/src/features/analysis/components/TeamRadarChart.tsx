@@ -12,26 +12,12 @@ import {
 
 export type RadarChartDataPoint = Record<string, string | number>;
 
-type StringKeyOf<T> = Extract<
-  {
-    [K in keyof T]: T[K] extends string ? K : never;
-  }[keyof T],
-  string
->;
-
-type NumberKeyOf<T> = Extract<
-  {
-    [K in keyof T]: T[K] extends number ? K : never;
-  }[keyof T],
-  string
->;
-
 export type RadarChartProps<T extends RadarChartDataPoint> = {
   data: T[];
   /** Key for axis labels (default: "subject") */
-  angleKey?: StringKeyOf<T>;
+  angleKey?: keyof T & string;
   /** Key for values (default: "value") */
-  valueKey?: NumberKeyOf<T>;
+  valueKey?: keyof T & string;
   /** Series label in legend (default: "Score") */
   name?: string;
   /** Min and max for radius axis (default: [0, 100]) */
@@ -48,8 +34,8 @@ export type RadarChartProps<T extends RadarChartDataPoint> = {
 
 export const RadarChart = <T extends RadarChartDataPoint>({
   data,
-  angleKey = "subject" as StringKeyOf<T>,
-  valueKey = "value" as NumberKeyOf<T>,
+  angleKey = "subject" as keyof T & string,
+  valueKey = "value" as keyof T & string,
   name = "Score",
   domain = [0, 100],
   color = "#8884d8",
