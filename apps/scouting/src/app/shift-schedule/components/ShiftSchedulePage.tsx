@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/card";
 import { TypographyMuted } from "@repo/ui/components/typography";
 import { useMemo } from "react";
 import {
@@ -47,12 +52,15 @@ export function ShiftSchedulePage({
         const startB = b.matchStart ?? 0;
         return startA - startB;
       }),
-    [initialEntries]
+    [initialEntries],
   );
 
-  const myEntries = sortedEntries.filter((entry) => entry.memberId === activeMemberId);
-  const scheduledScoutCount = new Set(sortedEntries.map((entry) => entry.memberId).filter(Boolean))
-    .size;
+  const myEntries = sortedEntries.filter(
+    (entry) => entry.memberId === activeMemberId,
+  );
+  const scheduledScoutCount = new Set(
+    sortedEntries.map((entry) => entry.memberId).filter(Boolean),
+  ).size;
 
   return (
     <div className="space-y-6">
@@ -60,7 +68,7 @@ export function ShiftSchedulePage({
         <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>Scouting Schedule</CardTitle>
-            <TypographyMuted>Assign pit scouts and stand scouts for {eventName}.</TypographyMuted>
+            <TypographyMuted>Assign scouts for {eventName}.</TypographyMuted>
           </div>
           {isAdmin ? (
             <AdminScheduleButton
@@ -70,11 +78,7 @@ export function ShiftSchedulePage({
             />
           ) : null}
         </CardHeader>
-        <CardContent>
-          <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-            Stand assignments use slot blocks like red1 or blue3 with match ranges grouped in 5s.
-          </div>
-        </CardContent>
+        <CardContent></CardContent>
       </Card>
 
       <ShiftScheduleSummary
@@ -85,7 +89,7 @@ export function ShiftSchedulePage({
 
       <AssignmentsList
         title="Your Schedule"
-        description="These are the assignments currently tied to your membership."
+        description="These are the assignments currently tied to your organization."
         entries={myEntries}
         emptyMessage="You do not have any assignments for the active event yet."
       />
