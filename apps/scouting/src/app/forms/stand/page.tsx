@@ -23,6 +23,7 @@ function StandFormSkeleton() {
 
 import { TypographyH1 } from "@repo/ui/components/typography";
 import { NoActiveEvent } from "@/components/NoActiveEvent";
+import { getEventTeams } from "@/features/scouting/pit/queries";
 import {
   StandFormNavigation,
   StandFormProgress,
@@ -30,12 +31,9 @@ import {
 import { StandFormProvider } from "@/features/scouting/stand/components/StandFormProvider";
 import { StandFormTabs } from "@/features/scouting/stand/components/StandFormTabs";
 import { UnsavedChangesWarning } from "@/features/scouting/stand/components/UnsavedChangesWarning";
-import { getEventTeams } from "@/features/scouting/pit/queries";
+import { getEventMatchNumbers } from "@/features/scouting/stand/queries";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { db } from "@/lib/database";
-import { match } from "@/lib/database/schema";
-import { asc, eq } from "drizzle-orm";
 
 async function StandFormContent() {
   const member = await requireActiveMember();
@@ -45,16 +43,10 @@ async function StandFormContent() {
     return <NoActiveEvent />;
   }
 
-  const [matchRows, teamOptions] = await Promise.all([
-    db
-      .selectDistinct({ matchNumber: match.matchNumber })
-      .from(match)
-      .where(eq(match.eventId, activeEvent.event.id))
-      .orderBy(asc(match.matchNumber)),
+  const [matchOptions, teamOptions] = await Promise.all([
+    getEventMatchNumbers(activeEvent.event.id),
     getEventTeams(activeEvent.event.id),
   ]);
-
-  const matchOptions = matchRows.map((row) => row.matchNumber);
 
   return (
     <StandFormProvider>

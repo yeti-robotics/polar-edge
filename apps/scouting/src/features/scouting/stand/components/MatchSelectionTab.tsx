@@ -40,10 +40,7 @@ export function MatchSelectionTab({
     setError(null);
 
     try {
-      const result = await lookupTeamMatch(
-        parseInt(matchNumber, 10),
-        parseInt(teamNumber, 10),
-      );
+      const result = await lookupTeamMatch(parseInt(matchNumber, 10), parseInt(teamNumber, 10));
 
       if (result.error) {
         setError(result.error);
@@ -71,10 +68,7 @@ export function MatchSelectionTab({
     <div className="space-y-4">
       <TypographyH4>Match Selection</TypographyH4>
       <div className="space-y-4">
-        <Select
-          value={matchNumber}
-          onValueChange={(val) => setMatchNumber(val)}
-        >
+        <Select value={matchNumber} onValueChange={(val) => setMatchNumber(val)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Match" />
           </SelectTrigger>
@@ -87,10 +81,7 @@ export function MatchSelectionTab({
           </SelectContent>
         </Select>
 
-        <Select
-          value={teamNumber}
-          onValueChange={(val) => setTeamNumber(val)}
-        >
+        <Select value={teamNumber} onValueChange={(val) => setTeamNumber(val)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Team" />
           </SelectTrigger>
@@ -114,9 +105,7 @@ export function MatchSelectionTab({
         {error && <p className="text-sm text-destructive">{error}</p>}
 
         {state.teamMatchId && (
-          <p className="text-sm text-green-600">
-            ✓ Match found (ID: {state.teamMatchId})
-          </p>
+          <p className="text-sm text-green-600">✓ Match found (ID: {state.teamMatchId})</p>
         )}
       </div>
     </div>
