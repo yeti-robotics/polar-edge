@@ -150,7 +150,7 @@ async function PitDataSection({ teamNum }: { teamNum: number }) {
     pitData.canTrench && "Trench",
     pitData.canBump && "Bump",
     pitData.canShuttle && "Shuttle",
-  ].filter(Boolean);
+  ].filter((c): c is string => Boolean(c));
 
   return (
     <Card>
