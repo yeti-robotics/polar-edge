@@ -49,6 +49,13 @@ const METRIC_ROWS: MetricRow[] = [
     higherIsBetter: true,
   },
   {
+    label: "Avg BPS",
+    unit: "balls/s",
+    getValue: (m) => m.avgBallsPerSecond,
+    formatValue: (v) => v.toFixed(2),
+    higherIsBetter: true,
+  },
+  {
     label: "Avg Climb",
     unit: "pts",
     getValue: (m) => m.avgClimbPoints,

@@ -21,6 +21,7 @@ import {
 export type TeamKeyMetrics = {
   avgAutoPoints: number;
   avgTeleopPoints: number;
+  avgBallsPerSecond: number;
   avgClimbPoints: number;
   avgAutoClimbPoints: number;
   avgTeleopClimbPoints: number;
@@ -65,6 +66,10 @@ export async function getTeamKeyMetrics(
     when 0 then 0.0 when 1 then 1.0 when 2 then 2.25
     when 3 then 4.0 when 4 then 6.0 when 5 then 8.0
     else 0.0 end * greatest(coalesce(${cycle.dumpDuration}, 0), 0)`;
+  const fuelRateExpr = sql`case ${cycle.bucket}
+    when 0 then 0.0 when 1 then 1.0 when 2 then 2.25
+    when 3 then 4.0 when 4 then 6.0 when 5 then 8.0
+    else 0.0 end`;
 
   const autoFuelCTE = db.$with("af").as(
     db
@@ -90,6 +95,24 @@ export async function getTeamKeyMetrics(
       .groupBy(standForm.id)
   );
 
+  const ballsPerSecondCTE = db.$with("bps").as(
+    db
+      .select({
+        standFormId: standForm.id,
+        ballsPerSecond: sql<number>`
+          coalesce(
+            sum(${fuelRateExpr} * greatest(coalesce(${cycle.dumpDuration}, 0), 0))
+            / nullif(sum(greatest(coalesce(${cycle.dumpDuration}, 0), 0)), 0),
+            0
+          )
+        `.as("balls_per_second"),
+      })
+      .from(cycle)
+      .innerJoin(standForm, eq(standForm.id, cycle.standFormId))
+      .where(isNull(standForm.deletedAt))
+      .groupBy(standForm.id)
+  );
+
   // Subquery: distinct teamMatchIds that have at least one stand form
   const sfExistsSub = db
     .select({ teamMatchId: standForm.teamMatchId })
@@ -109,10 +132,11 @@ export async function getTeamKeyMetrics(
   const [formStats, matchStats] = await Promise.all([
     // Per stand-form: auto pts, teleop pts, uptime, downtime
     db
-      .with(autoFuelCTE, teleopFuelCTE)
+      .with(autoFuelCTE, teleopFuelCTE, ballsPerSecondCTE)
       .select({
         avgAutoPoints: sql<number>`avg(coalesce(af.pts, 0))`,
         avgTeleopPoints: sql<number>`avg(coalesce(tf.pts, 0))`,
+        avgBallsPerSecond: sql<number>`avg(coalesce(bps.balls_per_second, 0))`,
         avgUptimePct: sql<number>`avg((150.0 - least(${standForm.oofTimeSeconds}, 150)) / 150.0 * 100)`,
         avgDowntimeSeconds: sql<number>`avg(${standForm.oofTimeSeconds}::numeric)`,
       })
@@ -123,6 +147,7 @@ export async function getTeamKeyMetrics(
       )
       .leftJoin(autoFuelCTE, eq(autoFuelCTE.standFormId, standForm.id))
       .leftJoin(teleopFuelCTE, eq(teleopFuelCTE.standFormId, standForm.id))
+      .leftJoin(ballsPerSecondCTE, eq(ballsPerSecondCTE.standFormId, standForm.id))
       .where(teamWhere),
 
     // Per match: climb pts, total scouted matches, broke count
@@ -166,6 +191,7 @@ export async function getTeamKeyMetrics(
   return {
     avgAutoPoints: Math.round(Number(f.avgAutoPoints) * 10) / 10,
     avgTeleopPoints: Math.round(Number(f.avgTeleopPoints) * 10) / 10,
+    avgBallsPerSecond: Math.round(Number(f.avgBallsPerSecond) * 100) / 100,
     avgClimbPoints: Math.round(Number(m.avgClimbPoints) * 10) / 10,
     avgAutoClimbPoints: Math.round(Number(m.avgAutoClimbPoints) * 10) / 10,
     avgTeleopClimbPoints: Math.round(Number(m.avgTeleopClimbPoints) * 10) / 10,

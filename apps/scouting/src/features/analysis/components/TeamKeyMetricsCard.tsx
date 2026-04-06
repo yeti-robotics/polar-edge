@@ -109,9 +109,10 @@ export function TeamKeyMetricsCard({ metrics }: { metrics: TeamKeyMetrics }) {
         <CardContent>
           <TabsContent value="overview" className="space-y-5">
             {/* Fuel scoring */}
-            <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4">
               <MetricTile label="Avg Auto" value={metrics.avgAutoPoints} unit="fuel" />
               <MetricTile label="Avg Teleop" value={metrics.avgTeleopPoints} unit="fuel" />
+              <MetricTile label="Avg BPS" value={metrics.avgBallsPerSecond} unit="balls/s" />
               <MetricTile label="Matches Scouted" value={metrics.totalMatchesScouted} />
             </div>
 
