@@ -1,5 +1,10 @@
 import { Badge } from "@repo/ui/components/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import {
   Table,
@@ -17,6 +22,7 @@ import {
 } from "@repo/ui/components/typography";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
+import Image from "next/image";
 import { Suspense } from "react";
 import {
   AISummaryContent,
@@ -38,10 +44,12 @@ import {
   event,
   member,
   pitForm,
+  pitPhoto,
   standForm,
   teamMatch,
   team as teamTable,
 } from "@/lib/database/schema";
+import { createPitPhotoViewToken } from "@/lib/server/pit-photo-token";
 
 type ScopeProps = {
   teamNum: number;
@@ -49,7 +57,11 @@ type ScopeProps = {
   effectiveEventId: string | null;
 };
 
-async function TeamKeyMetricsSection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
+async function TeamKeyMetricsSection({
+  teamNum,
+  effectiveOrgId,
+  effectiveEventId,
+}: ScopeProps) {
   const metrics = await getTeamKeyMetrics(teamNum, {
     organizationId: effectiveOrgId,
     eventId: effectiveEventId,
@@ -59,7 +71,11 @@ async function TeamKeyMetricsSection({ teamNum, effectiveOrgId, effectiveEventId
   return <TeamKeyMetricsCard metrics={metrics} />;
 }
 
-async function AISummarySection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
+async function AISummarySection({
+  teamNum,
+  effectiveOrgId,
+  effectiveEventId,
+}: ScopeProps) {
   const result = await getTeamCommentSummary(teamNum, {
     organizationId: effectiveOrgId,
     eventId: effectiveEventId,
@@ -148,6 +164,62 @@ async function PitDataSection({ teamNum }: { teamNum: number }) {
   );
 }
 
+async function PitPhotosSection({ teamNum }: { teamNum: number }) {
+  const photoRows = await db
+    .select({
+      id: pitPhoto.id,
+      storageKey: pitPhoto.storageKey,
+      index: pitPhoto.index,
+    })
+    .from(pitPhoto)
+    .innerJoin(pitForm, eq(pitForm.id, pitPhoto.pitFormId))
+    .where(eq(pitForm.teamNumber, teamNum))
+    .orderBy(desc(pitForm.createdAt), pitPhoto.index);
+
+  if (photoRows.length === 0) {
+    return null;
+  }
+
+  const photos = photoRows.map((photo) => {
+    const token = createPitPhotoViewToken(photo.storageKey);
+    const src = `/pit-photo?key=${encodeURIComponent(photo.storageKey)}&token=${encodeURIComponent(token)}`;
+
+    return {
+      id: photo.id,
+      src,
+      alt: `Team ${teamNum} pit photo ${photo.index + 1}`,
+    };
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Submitted Photos</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {photos.map((photo) => (
+            <div
+              key={photo.id}
+              className="overflow-hidden rounded-lg border bg-muted/20"
+            >
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default async function TeamPage({
   params,
   searchParams,
@@ -155,13 +227,14 @@ export default async function TeamPage({
   params: Promise<{ teamNumber: string }>;
   searchParams: Promise<{ orgScope?: string; eventId?: string }>;
 }) {
-  const [{ teamNumber }, { orgScope, eventId: eventIdParam }] = await Promise.all([
-    params,
-    searchParams,
-  ]);
+  const [{ teamNumber }, { orgScope, eventId: eventIdParam }] =
+    await Promise.all([params, searchParams]);
 
   const teamNum = parseInt(teamNumber, 10);
-  const teamResults = await db.select().from(teamTable).where(eq(teamTable.teamNumber, teamNum));
+  const teamResults = await db
+    .select()
+    .from(teamTable)
+    .where(eq(teamTable.teamNumber, teamNum));
   if (!teamResults || teamResults.length === 0)
     return (
       <div className="p-6">
@@ -179,7 +252,8 @@ export default async function TeamPage({
   }
 
   const organizationId = activeMember?.organizationId ?? null;
-  const isOrgAdmin = activeMember?.role === "admin" || activeMember?.role === "owner";
+  const isOrgAdmin =
+    activeMember?.role === "admin" || activeMember?.role === "owner";
 
   const effectiveEventId = eventIdParam ?? null;
   const useOrgScope = orgScope === "1" && organizationId !== null;
@@ -207,13 +281,26 @@ export default async function TeamPage({
           .innerJoin(event, eq(event.id, teamMatch.eventId))
           .innerJoin(
             standForm,
-            and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
+            and(
+              eq(standForm.teamMatchId, teamMatch.id),
+              isNull(standForm.deletedAt),
+            ),
           )
           .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-          .where(and(eq(teamMatch.teamNumber, teamNum), eq(member.organizationId, organizationId)))
+          .where(
+            and(
+              eq(teamMatch.teamNumber, teamNum),
+              eq(member.organizationId, organizationId),
+            ),
+          )
           .orderBy(desc(event.startDate))
       : Promise.resolve(
-          [] as { id: string; name: string; eventCode: string; startDate: Date | null }[]
+          [] as {
+            id: string;
+            name: string;
+            eventCode: string;
+            startDate: Date | null;
+          }[],
         ),
   ]);
 
@@ -230,7 +317,9 @@ export default async function TeamPage({
           <div>
             <TypographyLabel className="mb-1">Team Analysis</TypographyLabel>
             <TypographyH1>{teamRow.teamName}</TypographyH1>
-            <TypographyMuted className="mt-1">Team {teamRow.teamNumber}</TypographyMuted>
+            <TypographyMuted className="mt-1">
+              Team {teamRow.teamNumber}
+            </TypographyMuted>
             <SelectTeam />
           </div>
 
@@ -266,6 +355,10 @@ export default async function TeamPage({
 
       <Suspense fallback={<Skeleton className="h-40 w-full" />}>
         <PitDataSection teamNum={teamNum} />
+      </Suspense>
+
+      <Suspense fallback={<Skeleton className="h-56 w-full" />}>
+        <PitPhotosSection teamNum={teamNum} />
       </Suspense>
     </div>
   );
