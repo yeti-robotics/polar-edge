@@ -15,6 +15,7 @@ export { picklistTeam } from "./picklist-team";
 export { pitForm } from "./pit-form";
 export { pitPhoto } from "./pit-photo";
 export { session } from "./session";
+export { shiftSchedule } from "./shift-schedule";
 export { standForm } from "./stand-form";
 export { team } from "./team";
 export { teamMatch } from "./team-match";

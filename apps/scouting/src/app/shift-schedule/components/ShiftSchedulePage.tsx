@@ -1,0 +1,105 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
+import { TypographyMuted } from "@repo/ui/components/typography";
+import { useMemo } from "react";
+import {
+  type ShiftScheduleEntry,
+  type ShiftScheduleMatchBlock,
+} from "@/features/shift-schedule/types";
+import { AdminScheduleButton } from "./AdminScheduleButton";
+import { AssignmentsList } from "./AssignmentsList";
+import { ShiftScheduleSummary } from "./ShiftScheduleSummary";
+
+type OrganizationMemberOption = {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  role: string;
+};
+
+type Props = {
+  activeMemberId: string;
+  eventName: string;
+  initialEntries: ShiftScheduleEntry[];
+  isAdmin: boolean;
+  matchBlocks: ShiftScheduleMatchBlock[];
+  organizationMembers: OrganizationMemberOption[];
+};
+
+export function ShiftSchedulePage({
+  activeMemberId,
+  eventName,
+  initialEntries,
+  isAdmin,
+  matchBlocks,
+  organizationMembers,
+}: Props) {
+  const sortedEntries = useMemo(
+    () =>
+      [...initialEntries].sort((a, b) => {
+        if (a.assignmentType !== b.assignmentType) {
+          return a.assignmentType.localeCompare(b.assignmentType);
+        }
+
+        const startA = a.matchStart ?? 0;
+        const startB = b.matchStart ?? 0;
+        return startA - startB;
+      }),
+    [initialEntries]
+  );
+
+  const myEntries = sortedEntries.filter((entry) => entry.memberId === activeMemberId);
+  const scheduledScoutCount = new Set(sortedEntries.map((entry) => entry.memberId).filter(Boolean))
+    .size;
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle>Scouting Schedule</CardTitle>
+            <TypographyMuted>Assign pit scouts and stand scouts for {eventName}.</TypographyMuted>
+          </div>
+          {isAdmin ? (
+            <AdminScheduleButton
+              initialEntries={sortedEntries}
+              organizationMembers={organizationMembers}
+              matchBlocks={matchBlocks}
+            />
+          ) : null}
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
+            Stand assignments use slot blocks like red1 or blue3 with match ranges grouped in 5s.
+          </div>
+        </CardContent>
+      </Card>
+
+      <ShiftScheduleSummary
+        assignmentCount={sortedEntries.length}
+        scheduledScoutCount={scheduledScoutCount}
+        myAssignmentCount={myEntries.length}
+      />
+
+      <AssignmentsList
+        title="Your Schedule"
+        description="These are the assignments currently tied to your membership."
+        entries={myEntries}
+        emptyMessage="You do not have any assignments for the active event yet."
+      />
+
+      <AssignmentsList
+        title="Organization Schedule"
+        description="Everyone in the organization can use this view to see who is covering what."
+        entries={sortedEntries}
+        emptyMessage={
+          isAdmin
+            ? "No schedule has been published yet. Use Manage Schedule to add assignments."
+            : "No schedule has been published for the active event yet."
+        }
+      />
+    </div>
+  );
+}

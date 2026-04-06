@@ -3,46 +3,53 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/dialog";
+import type { ShiftScheduleEntry, ShiftScheduleMatchBlock } from "@/features/shift-schedule/types";
+import { ScheduleForm } from "./ScheduleForm";
 
-// ScheduleForm was removed or moved — provide a small local placeholder so
-// the dialog builds correctly. Replace this with the real form component
-// when the full implementation is restored.
-function ScheduleForm({ onSuccess }: { onSuccess?: () => void }) {
-  return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Schedule form placeholder.
-      </p>
-      <div className="flex justify-end">
-        <button
-          type="button"
-          className="rounded-md bg-primary px-3 py-1 text-sm font-medium text-white"
-          onClick={() => onSuccess?.()}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  );
-}
+type OrganizationMemberOption = {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  role: string;
+};
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialEntries: ShiftScheduleEntry[];
+  organizationMembers: OrganizationMemberOption[];
+  matchBlocks: ShiftScheduleMatchBlock[];
 };
 
-export function ScheduleDialog({ open, onOpenChange }: Props) {
+export function ScheduleDialog({
+  open,
+  onOpenChange,
+  initialEntries,
+  organizationMembers,
+  matchBlocks,
+}: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>Create Scouting Schedule</DialogTitle>
+          <DialogDescription>
+            Assign organization members to pit scouting or stand scouting blocks for the active
+            event.
+          </DialogDescription>
         </DialogHeader>
 
-        <ScheduleForm onSuccess={() => onOpenChange(false)} />
+        <ScheduleForm
+          onSuccess={() => onOpenChange(false)}
+          initialEntries={initialEntries}
+          organizationMembers={organizationMembers}
+          matchBlocks={matchBlocks}
+        />
       </DialogContent>
     </Dialog>
   );
