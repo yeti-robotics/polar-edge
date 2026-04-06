@@ -8,6 +8,9 @@ import { z } from "zod";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
+  cycle,
+  event,
+  match,
   member,
   pitForm,
   standForm,
@@ -171,6 +174,217 @@ export async function getTeamKeyMetrics(
     totalMatchesScouted: Number(m.totalMatchesScouted),
     brokeCount: Number(m.brokeCount),
   };
+}
+
+export type BpsEstimate = {
+  bps: number;
+  totalFuelPerMatch: number;
+  avgShootingTimePerMatch: number;
+};
+
+export async function getTeamBpsEstimate(
+  teamNumber: number,
+  opts: { organizationId?: string | null; eventId?: string | null }
+): Promise<BpsEstimate | null> {
+  const { organizationId, eventId } = opts;
+
+  const scopeCondition = eventId
+    ? eq(teamMatch.eventId, eventId)
+    : organizationId
+      ? exists(
+          db
+            .select({ one: sql<number>`1` })
+            .from(standForm)
+            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
+            .where(
+              and(
+                eq(standForm.teamMatchId, teamMatch.id),
+                isNull(standForm.deletedAt),
+                eq(member.organizationId, organizationId)
+              )
+            )
+        )
+      : undefined;
+
+  const teamWhere = scopeCondition
+    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
+    : eq(teamMatch.teamNumber, teamNumber);
+
+  // Step 1: Per stand_form total dump duration (one row per form)
+  // Alias teamMatchId/eventId explicitly to avoid column name collision (both tables have "id")
+  const perFormDuration = db
+    .select({
+      standFormId: standForm.id,
+      teamMatchId: sql<number>`${teamMatch.id}`.as("team_match_id"),
+      eventId: sql<string>`${teamMatch.eventId}`.as("evt_id"),
+      totalDumpDuration: sql<number>`sum(${cycle.dumpDuration}::numeric)`.as("total_dump_duration"),
+    })
+    .from(cycle)
+    .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .where(teamWhere)
+    .groupBy(standForm.id, teamMatch.id, teamMatch.eventId)
+    .as("per_form_dur");
+
+  // Step 2: Per team_match median across forms (consensus), then avg across matches
+  const perMatchConsensus = db
+    .select({
+      teamMatchId: perFormDuration.teamMatchId,
+      eventId: perFormDuration.eventId,
+      consensusDuration:
+        sql<number>`percentile_cont(0.5) within group (order by ${perFormDuration.totalDumpDuration})`.as(
+          "consensus_duration"
+        ),
+    })
+    .from(perFormDuration)
+    .groupBy(perFormDuration.teamMatchId, perFormDuration.eventId)
+    .as("per_match_consensus");
+
+  const rows = await db
+    .select({
+      avgDumpDurationPerMatch: sql<number>`avg(${perMatchConsensus.consensusDuration})`,
+      avgTotalFuelCount: sql<number>`avg(${teamEventCopr.totalFuelCount}::numeric)`,
+    })
+    .from(perMatchConsensus)
+    .leftJoin(
+      teamEventCopr,
+      and(
+        eq(teamEventCopr.eventId, perMatchConsensus.eventId),
+        eq(teamEventCopr.teamNumber, teamNumber)
+      )
+    );
+
+  const row = rows[0];
+  if (!row) return null;
+
+  const avgDuration = Number(row.avgDumpDurationPerMatch);
+  const avgFuel = Number(row.avgTotalFuelCount);
+
+  if (!avgDuration || avgDuration <= 0 || !avgFuel) return null;
+
+  return {
+    bps: Math.round((avgFuel / avgDuration) * 100) / 100,
+    totalFuelPerMatch: Math.round(avgFuel * 10) / 10,
+    avgShootingTimePerMatch: Math.round(avgDuration * 10) / 10,
+  };
+}
+
+export type CycleTimeseriesPoint = {
+  eventCode: string;
+  matchNumber: number;
+  matchType: string;
+  autoCycleCount: number;
+  teleopCycleCount: number;
+  autoShootingTime: number;
+  teleopShootingTime: number;
+  medianDumpDuration: number;
+};
+
+export async function getTeamCycleTimeseries(
+  teamNumber: number,
+  opts: { organizationId?: string | null; eventId?: string | null }
+): Promise<CycleTimeseriesPoint[]> {
+  const { organizationId, eventId } = opts;
+
+  const scopeCondition = eventId
+    ? eq(teamMatch.eventId, eventId)
+    : organizationId
+      ? exists(
+          db
+            .select({ one: sql<number>`1` })
+            .from(standForm)
+            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
+            .where(
+              and(
+                eq(standForm.teamMatchId, teamMatch.id),
+                isNull(standForm.deletedAt),
+                eq(member.organizationId, organizationId)
+              )
+            )
+        )
+      : undefined;
+
+  const teamWhere = scopeCondition
+    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
+    : eq(teamMatch.teamNumber, teamNumber);
+
+  // Step 1: Aggregate per stand_form (one row per form per match)
+  // Alias teamMatchId explicitly to avoid column name collision with standForm.id
+  const perForm = db
+    .select({
+      standFormId: standForm.id,
+      teamMatchId: sql<number>`${teamMatch.id}`.as("team_match_id"),
+      eventCode: event.eventCode,
+      eventStartDate: event.startDate,
+      matchNumber: match.matchNumber,
+      matchType: match.matchType,
+      autoCycleCount: sql<number>`count(*) filter (where ${cycle.phase} = 'auto')`.as(
+        "auto_cycle_count"
+      ),
+      teleopCycleCount: sql<number>`count(*) filter (where ${cycle.phase} = 'teleop')`.as(
+        "teleop_cycle_count"
+      ),
+      autoShootingTime:
+        sql<number>`coalesce(sum(${cycle.dumpDuration}::numeric) filter (where ${cycle.phase} = 'auto'), 0)`.as(
+          "auto_shooting_time"
+        ),
+      teleopShootingTime:
+        sql<number>`coalesce(sum(${cycle.dumpDuration}::numeric) filter (where ${cycle.phase} = 'teleop'), 0)`.as(
+          "teleop_shooting_time"
+        ),
+      medianDumpDuration:
+        sql<number>`percentile_cont(0.5) within group (order by ${cycle.dumpDuration}::numeric)`.as(
+          "median_dump_duration"
+        ),
+    })
+    .from(cycle)
+    .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .innerJoin(match, eq(match.id, teamMatch.matchId))
+    .innerJoin(event, eq(event.id, teamMatch.eventId))
+    .where(teamWhere)
+    .groupBy(
+      standForm.id,
+      teamMatch.id,
+      event.eventCode,
+      event.startDate,
+      match.matchNumber,
+      match.matchType
+    )
+    .as("per_form");
+
+  // Step 2: Consensus (median) across forms per team_match
+  const rows = await db
+    .select({
+      eventCode: perForm.eventCode,
+      matchNumber: perForm.matchNumber,
+      matchType: perForm.matchType,
+      autoCycleCount: sql<number>`percentile_cont(0.5) within group (order by ${perForm.autoCycleCount})`,
+      teleopCycleCount: sql<number>`percentile_cont(0.5) within group (order by ${perForm.teleopCycleCount})`,
+      autoShootingTime: sql<number>`percentile_cont(0.5) within group (order by ${perForm.autoShootingTime})`,
+      teleopShootingTime: sql<number>`percentile_cont(0.5) within group (order by ${perForm.teleopShootingTime})`,
+      medianDumpDuration: sql<number>`percentile_cont(0.5) within group (order by ${perForm.medianDumpDuration})`,
+    })
+    .from(perForm)
+    .groupBy(
+      perForm.teamMatchId,
+      perForm.eventCode,
+      perForm.eventStartDate,
+      perForm.matchNumber,
+      perForm.matchType
+    )
+    .orderBy(perForm.eventStartDate, perForm.matchNumber);
+
+  return rows.map((r) => ({
+    eventCode: r.eventCode,
+    matchNumber: r.matchNumber,
+    matchType: r.matchType,
+    autoCycleCount: Number(r.autoCycleCount),
+    teleopCycleCount: Number(r.teleopCycleCount),
+    autoShootingTime: Math.round(Number(r.autoShootingTime) * 100) / 100,
+    teleopShootingTime: Math.round(Number(r.teleopShootingTime) * 100) / 100,
+    medianDumpDuration: Math.round(Number(r.medianDumpDuration) * 100) / 100,
+  }));
 }
 
 export type RadarPoint = { subject: string; value: number };

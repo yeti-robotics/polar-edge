@@ -108,8 +108,6 @@ export async function submitStandForm(
         data.climbs.map((c) => ({
           standFormId: standFormRecord.id,
           climbPhase: c.phase,
-          climbLevel: c.climbLevel,
-          climbSuccess: c.climbSuccess,
           climbDuration: ((c.endedAt - c.startedAt) / 1000).toString(),
         }))
       );

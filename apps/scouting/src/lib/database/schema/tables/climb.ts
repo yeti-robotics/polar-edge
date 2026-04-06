@@ -1,4 +1,4 @@
-import { boolean, index, numeric, pgTable, smallint, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, numeric, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
 import { phaseEnum } from "../types/phase-enum";
 import { standForm } from "./stand-form";
 
@@ -10,9 +10,6 @@ export const climb = pgTable(
     standFormId: uuid("stand_form_id")
       .notNull()
       .references(() => standForm.id),
-
-    climbLevel: smallint("climb_level").notNull().default(0), // 0..3
-    climbSuccess: boolean("climb_success").notNull().default(false),
 
     climbDuration: numeric("climb_duration", { precision: 12, scale: 6 }).notNull(),
 

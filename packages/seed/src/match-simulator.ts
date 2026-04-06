@@ -2,6 +2,7 @@ import { gameConfig } from "./game-config";
 import { gaussianRandom } from "./team-model";
 import type {
   SimulatedClimb,
+  SimulatedClimbOutcome,
   SimulatedCycle,
   SimulatedMatch,
   SimulatedMatchResult,
@@ -66,7 +67,13 @@ function simulateCycles(profile: TeamProfile): SimulatedCycle[] {
   return cycles;
 }
 
-function simulateClimb(profile: TeamProfile): SimulatedClimb | null {
+/**
+ * Simulate a climb attempt (timing only) and the TBA outcome (level).
+ * Returns both the scout-observed timing and the authoritative TBA outcome.
+ */
+function simulateClimb(
+  profile: TeamProfile
+): { climb: SimulatedClimb; outcome: SimulatedClimbOutcome } | null {
   const cfg = gameConfig.climb;
 
   const attemptRate = cfg.attemptBaseRate + profile.skill * cfg.attemptSkillBonus;
@@ -85,10 +92,14 @@ function simulateClimb(profile: TeamProfile): SimulatedClimb | null {
   const phase = Math.random() < cfg.autoClimbRate ? "auto" : "teleop";
 
   return {
-    phase,
-    climbLevel,
-    climbSuccess,
-    climbDuration: Math.round(climbDuration * 100) / 100,
+    climb: {
+      phase,
+      climbDuration: Math.round(climbDuration * 100) / 100,
+    },
+    outcome: {
+      autoClimbLevel: phase === "auto" ? climbLevel : 0,
+      endgameClimbLevel: phase === "teleop" ? climbLevel : 0,
+    },
   };
 }
 
@@ -111,7 +122,7 @@ function pickComment(profile: TeamProfile): string {
 
 function calculatePoints(
   cycles: SimulatedCycle[],
-  climb: SimulatedClimb | null,
+  climbOutcome: SimulatedClimbOutcome,
   profile: TeamProfile
 ): number {
   // Fuel points derived from skill-based BPS × duration (mimics COPR estimation)
@@ -120,9 +131,8 @@ function calculatePoints(
   for (const c of cycles) {
     points += bps * c.dumpDuration;
   }
-  if (climb?.climbSuccess) {
-    points += gameConfig.climbPointValues[climb.climbLevel] ?? 0;
-  }
+  points += gameConfig.climbPointValues[climbOutcome.autoClimbLevel] ?? 0;
+  points += gameConfig.climbPointValues[climbOutcome.endgameClimbLevel] ?? 0;
   return Math.round(points);
 }
 
@@ -133,15 +143,20 @@ function calculatePoints(
  */
 export function simulateTeamMatch(profile: TeamProfile): SimulatedTeamMatch {
   const cycles = simulateCycles(profile);
-  const climb = simulateClimb(profile);
+  const climbResult = simulateClimb(profile);
   const oofTimeSeconds = simulateOof(profile);
   const comments = pickComment(profile);
-  const points = calculatePoints(cycles, climb, profile);
+  const climbOutcome: SimulatedClimbOutcome = climbResult?.outcome ?? {
+    autoClimbLevel: 0,
+    endgameClimbLevel: 0,
+  };
+  const points = calculatePoints(cycles, climbOutcome, profile);
 
   return {
     teamNumber: profile.teamNumber,
     cycles,
-    climb,
+    climb: climbResult?.climb ?? null,
+    climbOutcome,
     oofTimeSeconds,
     comments,
     points,

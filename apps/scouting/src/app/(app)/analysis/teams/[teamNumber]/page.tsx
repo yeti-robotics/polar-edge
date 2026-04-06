@@ -12,18 +12,23 @@ import {
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import { AdvancedMetricsCard } from "@/features/analysis/components/AdvancedMetricsCard";
 import {
   AISummaryContent,
   AISummarySkeleton,
 } from "@/features/analysis/components/AISummaryContent";
 import { AnimatedSparkles } from "@/features/analysis/components/AnimatedSparkles";
+import { ClimbMetricsCard } from "@/features/analysis/components/ClimbMetricsCard";
+import { FuelMetricsSection } from "@/features/analysis/components/FuelMetricsSection";
+import { ReliabilityMetricsCard } from "@/features/analysis/components/ReliabilityMetricsCard";
 import { TeamCommentSummaryCard } from "@/features/analysis/components/TeamCommentSummaryCard";
-import { TeamKeyMetricsCard } from "@/features/analysis/components/TeamKeyMetricsCard";
 import { TeamScopeControls } from "@/features/analysis/components/TeamScopeControls";
 import { SelectTeam } from "@/features/analysis/components/TeamSwitcher";
 import {
+  getTeamBpsEstimate,
   getTeamCommentSummary,
   getTeamComments,
+  getTeamCycleTimeseries,
   getTeamKeyMetrics,
 } from "@/features/analysis/team-queries";
 import { DriveRatingCard } from "@/features/scouting/drive-ranking/components/DriveRatingCard";
@@ -49,14 +54,51 @@ type ScopeProps = {
   effectiveEventId: string | null;
 };
 
-async function TeamKeyMetricsSection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
+async function FuelPerformanceSection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
+  const [metrics, bps, timeseries] = await Promise.all([
+    getTeamKeyMetrics(teamNum, {
+      organizationId: effectiveOrgId,
+      eventId: effectiveEventId,
+    }),
+    getTeamBpsEstimate(teamNum, {
+      organizationId: effectiveOrgId,
+      eventId: effectiveEventId,
+    }),
+    getTeamCycleTimeseries(teamNum, {
+      organizationId: effectiveOrgId,
+      eventId: effectiveEventId,
+    }),
+  ]);
+
+  if (!metrics) return null;
+  return <FuelMetricsSection metrics={metrics} bps={bps} timeseries={timeseries} />;
+}
+
+async function ReliabilitySection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
   const metrics = await getTeamKeyMetrics(teamNum, {
     organizationId: effectiveOrgId,
     eventId: effectiveEventId,
   });
-
   if (!metrics) return null;
-  return <TeamKeyMetricsCard metrics={metrics} />;
+  return <ReliabilityMetricsCard metrics={metrics} />;
+}
+
+async function AdvancedMetricsSection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
+  const metrics = await getTeamKeyMetrics(teamNum, {
+    organizationId: effectiveOrgId,
+    eventId: effectiveEventId,
+  });
+  if (!metrics) return null;
+  return <AdvancedMetricsCard metrics={metrics} />;
+}
+
+async function ClimbSection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
+  const metrics = await getTeamKeyMetrics(teamNum, {
+    organizationId: effectiveOrgId,
+    eventId: effectiveEventId,
+  });
+  if (!metrics) return null;
+  return <ClimbMetricsCard metrics={metrics} />;
 }
 
 async function AISummarySection({ teamNum, effectiveOrgId, effectiveEventId }: ScopeProps) {
@@ -303,9 +345,19 @@ export default async function TeamPage({
         </CardContent>
       </Card>
 
-      {/* ── Performance Metrics ────────────────────────────────── */}
-      <Suspense fallback={<Skeleton className="h-72 w-full rounded-lg" />}>
-        <TeamKeyMetricsSection {...scopeProps} />
+      {/* ── Fuel Performance ──────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-96 w-full rounded-lg" />}>
+        <FuelPerformanceSection {...scopeProps} />
+      </Suspense>
+
+      {/* ── Reliability ───────────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-32 w-full rounded-lg" />}>
+        <ReliabilitySection {...scopeProps} />
+      </Suspense>
+
+      {/* ── Advanced Metrics ──────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-48 w-full rounded-lg" />}>
+        <AdvancedMetricsSection {...scopeProps} />
       </Suspense>
 
       {/* ── Scout Comments ─────────────────────────────────────── */}
@@ -316,6 +368,11 @@ export default async function TeamPage({
       {/* ── Robot Profile ──────────────────────────────────────── */}
       <Suspense fallback={<Skeleton className="h-32 w-full rounded-lg" />}>
         <PitDataSection teamNum={teamNum} />
+      </Suspense>
+
+      {/* ── Climb Performance ─────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-32 w-full rounded-lg" />}>
+        <ClimbSection {...scopeProps} />
       </Suspense>
 
       {/* ── Drive Rating ───────────────────────────────────────── */}

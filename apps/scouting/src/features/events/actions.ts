@@ -6,7 +6,14 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { event, match, team, teamEventCopr, teamMatch } from "@/lib/database/schema/tables";
+import {
+  event,
+  match,
+  tbaMatchBreakdown,
+  team,
+  teamEventCopr,
+  teamMatch,
+} from "@/lib/database/schema/tables";
 import { routes } from "@/lib/routes";
 import {
   getActiveEventForOrganization,
@@ -213,6 +220,47 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
           });
       }
 
+      // Upsert TBA score breakdown climb data
+      const breakdownRows = extractClimbBreakdowns(qualifyingMatches, matchIdByKey);
+      if (breakdownRows.length > 0) {
+        // Need teamMatch IDs to FK into tba_match_breakdown
+        const tmRows = await tx
+          .select({
+            id: teamMatch.id,
+            matchId: teamMatch.matchId,
+            teamNumber: teamMatch.teamNumber,
+          })
+          .from(teamMatch)
+          .where(eq(teamMatch.eventId, eventId));
+        const tmIdByKey = new Map(tmRows.map((r) => [`${r.matchId}:${r.teamNumber}`, r.id]));
+
+        const breakdownValues = breakdownRows
+          .map((r) => {
+            const tmId = tmIdByKey.get(`${r.matchId}:${r.teamNumber}`);
+            if (!tmId) return null;
+            return {
+              teamMatchId: tmId,
+              autoClimbLevel: r.autoClimbLevel,
+              endgameClimbLevel: r.endgameClimbLevel,
+            };
+          })
+          .filter((r) => r != null);
+
+        if (breakdownValues.length > 0) {
+          await tx
+            .insert(tbaMatchBreakdown)
+            .values(breakdownValues)
+            .onConflictDoUpdate({
+              target: tbaMatchBreakdown.teamMatchId,
+              set: {
+                autoClimbLevel: sql`excluded.auto_climb_level`,
+                endgameClimbLevel: sql`excluded.endgame_climb_level`,
+                updatedAt: sql`now()`,
+              },
+            });
+        }
+      }
+
       // Upsert COPR fuel counts if available
       if (tbaCoprs) {
         const autoFuel = tbaCoprs["Hub Auto Fuel Count"];
@@ -275,6 +323,74 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
       error: error instanceof Error ? error.message : "Failed to sync event from TBA",
     };
   }
+}
+
+// --- TBA score breakdown helpers ---
+
+type TowerRobot2026 = "Level1" | "Level2" | "Level3" | "None";
+
+type ScoreBreakdown2026Alliance = {
+  autoTowerRobot1: TowerRobot2026;
+  autoTowerRobot2: TowerRobot2026;
+  autoTowerRobot3: TowerRobot2026;
+  endGameTowerRobot1: TowerRobot2026;
+  endGameTowerRobot2: TowerRobot2026;
+  endGameTowerRobot3: TowerRobot2026;
+};
+
+function parseTowerLevel(value: TowerRobot2026): number {
+  const map: Record<TowerRobot2026, number> = { Level1: 1, Level2: 2, Level3: 3, None: 0 };
+  return map[value] ?? 0;
+}
+
+type ClimbBreakdownRow = {
+  matchId: string;
+  teamNumber: number;
+  autoClimbLevel: number;
+  endgameClimbLevel: number;
+};
+
+function extractClimbBreakdowns(
+  matches: Array<{
+    match_number: number;
+    year: number;
+    score_breakdown: unknown;
+    alliances: { red: { team_keys: string[] }; blue: { team_keys: string[] } };
+  }>,
+  matchIdByKey: Map<string, string>
+): ClimbBreakdownRow[] {
+  const rows: ClimbBreakdownRow[] = [];
+
+  for (const m of matches) {
+    if (m.year !== 2026 || !m.score_breakdown) continue;
+    const matchId = matchIdByKey.get(`${m.match_number}:qm`);
+    if (!matchId) continue;
+
+    const breakdown = m.score_breakdown as {
+      red: ScoreBreakdown2026Alliance;
+      blue: ScoreBreakdown2026Alliance;
+    };
+
+    for (const alliance of ["red", "blue"] as const) {
+      const allianceBreakdown = breakdown[alliance];
+      const teamKeys = m.alliances[alliance].team_keys;
+
+      for (let i = 0; i < 3; i++) {
+        const teamKey = teamKeys[i];
+        if (!teamKey) continue;
+        const pos = (i + 1) as 1 | 2 | 3;
+
+        rows.push({
+          matchId,
+          teamNumber: parseTbaTeamKey(teamKey),
+          autoClimbLevel: parseTowerLevel(allianceBreakdown[`autoTowerRobot${pos}`]),
+          endgameClimbLevel: parseTowerLevel(allianceBreakdown[`endGameTowerRobot${pos}`]),
+        });
+      }
+    }
+  }
+
+  return rows;
 }
 
 export async function enrichTeamNamesAction(organizationId: string) {

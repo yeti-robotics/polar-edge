@@ -1,12 +1,10 @@
 "use client";
 
 import { Button } from "@repo/ui/components/button";
-import { XIcon } from "lucide-react";
-import { useState } from "react";
+import { CheckCircleIcon, XIcon } from "lucide-react";
 import { useActionState } from "../contexts/ActionStateContext";
 import { useElapsedTime } from "../hooks/useElapsedTime";
 import { useStandFormActions } from "../hooks/useStandFormActions";
-import { EndShootDialog } from "./EndShootDialog";
 
 /**
  * Active shooting layout with large timer and end/cancel buttons.
@@ -15,18 +13,7 @@ import { EndShootDialog } from "./EndShootDialog";
 export function ShootingActiveLayout() {
   const { state: actionState } = useActionState();
   const { cancelAction, completeShootingCycle } = useStandFormActions();
-  const [dialogOpenedAt, setDialogOpenedAt] = useState<number | null>(null);
-  const elapsedSeconds = useElapsedTime(
-    actionState.activeAction?.startedAt ?? null,
-    dialogOpenedAt
-  );
-
-  const handleDialogOpen = () => setDialogOpenedAt(Date.now());
-  const handleDialogCancel = () => setDialogOpenedAt(null);
-  const handleComplete = () => {
-    completeShootingCycle(dialogOpenedAt ?? undefined);
-    setDialogOpenedAt(null);
-  };
+  const elapsedSeconds = useElapsedTime(actionState.activeAction?.startedAt ?? null);
 
   return (
     <div className="flex flex-col items-center gap-4 py-4 min-h-[280px]">
@@ -39,11 +26,10 @@ export function ShootingActiveLayout() {
           <XIcon className="mr-2 h-4 w-4" />
           Cancel
         </Button>
-        <EndShootDialog
-          onComplete={handleComplete}
-          onOpen={handleDialogOpen}
-          onCancel={handleDialogCancel}
-        />
+        <Button variant="default" className="h-full" onClick={() => completeShootingCycle()}>
+          <CheckCircleIcon className="mr-2 h-5 w-5" />
+          End Shoot
+        </Button>
       </div>
     </div>
   );

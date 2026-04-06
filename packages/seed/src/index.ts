@@ -12,6 +12,7 @@ export type {
   MatchType,
   Phase,
   SimulatedClimb,
+  SimulatedClimbOutcome,
   SimulatedCycle,
   SimulatedDriveRanking,
   SimulatedEvent,

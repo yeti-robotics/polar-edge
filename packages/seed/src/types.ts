@@ -27,7 +27,10 @@ export type SimulatedMatch = {
 export type SimulatedTeamMatch = {
   teamNumber: number;
   cycles: SimulatedCycle[];
+  /** Scout-observed climb timing (duration only). */
   climb: SimulatedClimb | null;
+  /** TBA-sourced climb outcome (level achieved). */
+  climbOutcome: SimulatedClimbOutcome;
   oofTimeSeconds: number;
   comments: string;
   /** Points scored by this team (sum of cycle + climb points). */
@@ -42,9 +45,13 @@ export type SimulatedCycle = {
 
 export type SimulatedClimb = {
   phase: Phase;
-  climbLevel: number;
-  climbSuccess: boolean;
   climbDuration: number;
+};
+
+/** TBA-sourced climb outcome for a team in a match. */
+export type SimulatedClimbOutcome = {
+  autoClimbLevel: number; // 0=None, 1=L1, 2=L2, 3=L3
+  endgameClimbLevel: number; // 0=None, 1=L1, 2=L2, 3=L3
 };
 
 /** A fully simulated match with derived scores. */

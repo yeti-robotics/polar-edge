@@ -15,8 +15,10 @@ import { picklistTeam } from "../tables/picklist-team";
 import { pitForm } from "../tables/pit-form";
 import { pitPhoto } from "../tables/pit-photo";
 import { session } from "../tables/session";
+import { tbaMatchBreakdown } from "../tables/tba-match-breakdown";
 import { team } from "../tables/team";
 import { teamEventCopr } from "../tables/team-event-copr";
+import { teamMatch } from "../tables/team-match";
 import { user } from "../tables/user";
 import { workabilityForm } from "../tables/workability-form";
 
@@ -170,6 +172,13 @@ export const workabilityFormRelations = relations(workabilityForm, ({ one }) => 
   scoutMember: one(member, {
     fields: [workabilityForm.scoutMemberId],
     references: [member.id],
+  }),
+}));
+
+export const tbaMatchBreakdownRelations = relations(tbaMatchBreakdown, ({ one }) => ({
+  teamMatch: one(teamMatch, {
+    fields: [tbaMatchBreakdown.teamMatchId],
+    references: [teamMatch.id],
   }),
 }));
 

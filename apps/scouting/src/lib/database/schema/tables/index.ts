@@ -18,6 +18,7 @@ export { pitForm } from "./pit-form";
 export { pitPhoto } from "./pit-photo";
 export { session } from "./session";
 export { standForm } from "./stand-form";
+export { tbaMatchBreakdown } from "./tba-match-breakdown";
 export { team } from "./team";
 export { teamEventCopr } from "./team-event-copr";
 export { teamMatch } from "./team-match";

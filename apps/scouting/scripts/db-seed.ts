@@ -385,7 +385,7 @@ async function main() {
       }
     }
 
-    // Insert cycles + climbs
+    // Insert cycles + climbs (timing only — no level/success)
     const cycleInserts: {
       standFormId: string;
       phase: "auto" | "teleop";
@@ -395,8 +395,6 @@ async function main() {
 
     const climbInserts: {
       standFormId: string;
-      climbLevel: number;
-      climbSuccess: boolean;
       climbDuration: string;
       climbPhase: "auto" | "teleop";
     }[] = [];
@@ -414,8 +412,6 @@ async function main() {
       if (obs.simData.climb) {
         climbInserts.push({
           standFormId: sfId,
-          climbLevel: obs.simData.climb.climbLevel,
-          climbSuccess: obs.simData.climb.climbSuccess,
           climbDuration: obs.simData.climb.climbDuration.toString(),
           climbPhase: obs.simData.climb.phase,
         });
@@ -424,6 +420,34 @@ async function main() {
 
     await batchInsert(db, schemaTables.cycle, cycleInserts);
     await batchInsert(db, schemaTables.climb, climbInserts);
+
+    // Insert TBA match breakdown (climb outcomes) — one per team-match
+    // Use the first scout's observation for the "TBA" outcome (since TBA is authoritative)
+    const breakdownInserts: {
+      teamMatchId: number;
+      autoClimbLevel: number;
+      endgameClimbLevel: number;
+    }[] = [];
+    const seenTeamMatchIds = new Set<number>();
+
+    for (const result of simResults) {
+      const matchId = matchIdByNumber.get(result.matchNumber);
+      if (!matchId) continue;
+
+      for (const teamResult of [...result.redTeams, ...result.blueTeams]) {
+        const tmId = tmIdMap.get(`${matchId}-${teamResult.teamNumber}`);
+        if (!tmId || seenTeamMatchIds.has(tmId)) continue;
+        seenTeamMatchIds.add(tmId);
+
+        breakdownInserts.push({
+          teamMatchId: tmId,
+          autoClimbLevel: teamResult.climbOutcome.autoClimbLevel,
+          endgameClimbLevel: teamResult.climbOutcome.endgameClimbLevel,
+        });
+      }
+    }
+
+    await batchInsert(db, schemaTables.tbaMatchBreakdown, breakdownInserts);
 
     // Insert drive rankings
     for (const ranking of simDriveRankings) {
