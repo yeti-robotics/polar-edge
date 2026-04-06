@@ -29,7 +29,13 @@ import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { Slider } from "@repo/ui/components/slider";
 import { toast } from "@repo/ui/components/sonner";
 import { Textarea } from "@repo/ui/components/textarea";
-import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
+import {
+  initialFormState,
+  mergeForm,
+  useForm,
+  useStore,
+  useTransform,
+} from "@tanstack/react-form-nextjs";
 import { startTransition, useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { submitWorkabilityForm } from "../actions";
 import {
@@ -124,11 +130,18 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
     [matchOptions]
   );
 
-  const formValues = (form.state.values ??
-    WORKABILITY_FORM_DEFAULT_VALUES) as WorkabilityFormValues;
-  const selectedMatchNumber = formValues.matchNumber;
-  const selectedTeamNumber = formValues.teamNumber;
-  const selectedRole = formValues.role;
+  const selectedMatchNumber = useStore(form.store, (state) => {
+    const matchNumber = state.values.matchNumber;
+    return typeof matchNumber === "number" ? matchNumber : Number(matchNumber ?? 0) || 0;
+  });
+  const selectedTeamNumber = useStore(form.store, (state) => {
+    const teamNumber = state.values.teamNumber;
+    return typeof teamNumber === "number" ? teamNumber : Number(teamNumber ?? 0) || 0;
+  });
+  const selectedRole = useStore(form.store, (state) => {
+    const role = state.values.role;
+    return typeof role === "string" ? (role as WorkabilityRole) : WORKABILITY_FORM_DEFAULT_VALUES.role;
+  });
   const selectedMatch = matchOptionMap.get(selectedMatchNumber) ?? null;
   const matchTeams = selectedMatch?.teams ?? [];
 
