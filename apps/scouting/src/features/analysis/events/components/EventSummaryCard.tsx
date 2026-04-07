@@ -26,8 +26,8 @@ export function EventSummaryCard({ rows }: { rows: TeamEventOverviewRow[] }) {
       .filter((r) => r.matchesScouted > 0)
       .sort((a, b) => b.avgTotalPoints - a.avgTotalPoints)[0] ?? null;
 
-  const topFive = [...rows].sort((a, b) => b.overallScore - a.overallScore).slice(0, 5);
-  const maxScore = topFive[0]?.overallScore ?? 1;
+  const topFive = [...rows].sort((a, b) => b.avgTotalPoints - a.avgTotalPoints).slice(0, 5);
+  const maxScore = topFive[0]?.avgTotalPoints ?? 1;
 
   return (
     <Card>
@@ -77,15 +77,15 @@ export function EventSummaryCard({ rows }: { rows: TeamEventOverviewRow[] }) {
         </div>
 
         <div className="rounded-md border p-3">
-          <p className="mb-3 text-sm font-medium">Top 5 teams (overall score)</p>
+          <p className="mb-3 text-sm font-medium">Top 5 teams (avg total points)</p>
           <div className="space-y-2">
             {topFive.map((row) => {
-              const widthPct = Math.max((row.overallScore / maxScore) * 100, 4);
+              const widthPct = Math.max((row.avgTotalPoints / maxScore) * 100, 4);
               return (
                 <div key={row.teamNumber}>
                   <div className="mb-1 flex items-center justify-between text-xs">
                     <span className="font-mono">#{row.teamNumber}</span>
-                    <span className="tabular-nums">{row.overallScore.toFixed(1)}</span>
+                    <span className="tabular-nums">{row.avgTotalPoints.toFixed(1)}</span>
                   </div>
                   <div className="h-2 rounded bg-muted">
                     <div className="h-2 rounded bg-primary" style={{ width: `${widthPct}%` }} />
