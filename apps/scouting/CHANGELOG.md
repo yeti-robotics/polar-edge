@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.18.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.2...scouting-v2026.18.3) (2026-04-07)
+
+
+### Bug Fixes
+
+* **scouting:** use coprs directly in event view ([910a028](https://github.com/yeti-robotics/polar-edge/commit/910a028685246bdb578b7203b9159196823c2286))
+
 ## [2026.18.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.1...scouting-v2026.18.2) (2026-04-07)
 
 
