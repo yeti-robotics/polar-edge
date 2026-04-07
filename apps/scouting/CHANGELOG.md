@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.18.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.0...scouting-v2026.18.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* **scouting:** use direct copr values ([cecc840](https://github.com/yeti-robotics/polar-edge/commit/cecc84046395ee7d0133064456f42dd7ab007118))
+
 ## [2026.18.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.17.0...scouting-v2026.18.0) (2026-04-06)
 
 
