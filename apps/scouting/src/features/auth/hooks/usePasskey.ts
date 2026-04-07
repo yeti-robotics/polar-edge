@@ -5,10 +5,7 @@ import { authClient } from "@/lib/auth-client";
 type StateFunction<T> = (prevState: T) => T;
 
 type ExtractSuccessData<R> = R extends { error: null; data: infer D } ? D : never;
-type PasskeyResult = {
-  error: { message?: string } | null;
-  data: unknown;
-};
+type PasskeyResult = { error: { message?: string | unknown } | null; data: unknown };
 
 export function usePasskey() {
   const [passkeys, setPasskeys] = useState([] as Passkey[]);
