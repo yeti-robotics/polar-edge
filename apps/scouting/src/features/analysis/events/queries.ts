@@ -186,14 +186,7 @@ export async function getMainEventOverviewRow(
   );
 
   const rawRows = await db
-    .with(
-      standPoints,
-      teamMatchConsensusPoints,
-      teamMetrics,
-      teamUptime,
-      latestPit,
-      baseTeams
-    )
+    .with(standPoints, teamMatchConsensusPoints, teamMetrics, teamUptime, latestPit, baseTeams)
     .select({
       teamNumber: baseTeams.teamNumber,
       teamName: baseTeams.teamName,
