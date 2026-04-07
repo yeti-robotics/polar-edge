@@ -36,7 +36,7 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
           when fpd.total_duration > 0 then
             (case c.phase
               when 'auto' then coalesce(copr.auto_fuel_count, 0.0)
-              when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0) + coalesce(copr.endgame_fuel_count, 0.0)
+              when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0)
               else 0.0
             end)
             / fpd.total_duration

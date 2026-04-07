@@ -63,7 +63,7 @@ export async function getMainEventOverviewRow(
         teleopFuelPoints: sql<number>`
           CASE WHEN coalesce(${teamEventCopr.totalFuelCount}, 0) > 0 THEN
             ${vStandFormExpected.expFuelActive}::numeric
-            * (coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${teamEventCopr.endgameFuelCount}, 0)::numeric)
+            * coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric
             / ${teamEventCopr.totalFuelCount}::numeric
           ELSE 0 END
         `.as("teleop_fuel_points"),

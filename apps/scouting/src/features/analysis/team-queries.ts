@@ -92,7 +92,7 @@ export async function getTeamKeyMetrics(
     db
       .select({
         avgAutoPoints: sql<number>`avg(${teamEventCopr.autoFuelCount}::numeric)`,
-        avgTeleopPoints: sql<number>`avg(${teamEventCopr.teleopFuelCount}::numeric + ${teamEventCopr.endgameFuelCount}::numeric)`,
+        avgTeleopPoints: sql<number>`avg(${teamEventCopr.teleopFuelCount}::numeric)`,
       })
       .from(teamEventCopr)
       .where(
