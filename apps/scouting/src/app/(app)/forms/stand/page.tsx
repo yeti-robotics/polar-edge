@@ -23,6 +23,7 @@ function StandFormSkeleton() {
 
 import { TypographyH1 } from "@repo/ui/components/typography";
 import { NoActiveEvent } from "@/components/NoActiveEvent";
+import { MatchTimerCountdown } from "@/features/scouting/stand/components/MatchTimerCountdown";
 import {
   StandFormNavigation,
   StandFormProgress,
@@ -44,8 +45,9 @@ async function StandFormContent() {
   return (
     <StandFormProvider>
       <UnsavedChangesWarning />
-      <div className="mb-4">
+      <div className="mb-4 space-y-2">
         <StandFormProgress />
+        <MatchTimerCountdown />
       </div>
 
       <Card>
