@@ -6,7 +6,7 @@ type StateFunction<T> = (prevState: T) => T;
 
 type ExtractSuccessData<R> = R extends { error: null; data: infer D } ? D : never;
 type PasskeyResult = {
-  error: { message?: unknown } | null;
+  error: { message?: string } | null;
   data: unknown;
 };
 

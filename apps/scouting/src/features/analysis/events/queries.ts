@@ -5,12 +5,12 @@ import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
-  cycle,
   event,
   member,
   pitForm,
   standForm,
   team,
+  teamEventCopr,
   teamMatch,
   vStandFormExpected,
 } from "@/lib/database/schema";
@@ -47,52 +47,33 @@ export async function getMainEventOverviewRow(
     cacheTag(cacheTags.teamMetrics(`${eventId}-${organizationId}`));
   }
 
-  const fuelPointsExpr = sql`
-    (case ${cycle.bucket}
-      when 0 then 0.0
-      when 1 then 1.0
-      when 2 then 2.25
-      when 3 then 4.0
-      when 4 then 6.0
-      when 5 then 8.0
-      else 0.0
-    end) * greatest(coalesce(${cycle.dumpDuration}, 0), 0)
-  `;
-  //started the query writing here (finally wrote them queries :)
-  const standCyclePoints = db.$with("stand_cycle_points").as(
-    db
-      .select({
-        standFormId: cycle.standFormId,
-        autoFuelPoints: sql<number>`
-          sum(case when ${cycle.phase} = 'auto' then ${fuelPointsExpr} else 0 end)
-        `.as("auto_fuel_points"),
-        teleopFuelPoints: sql<number>`
-          sum(case when ${cycle.phase} = 'teleop' then ${fuelPointsExpr} else 0 end)
-        `.as("teleop_fuel_points"),
-      })
-      .from(cycle)
-      .groupBy(cycle.standFormId)
-  );
-
+  // Per-team COPR fuel (single event, so just read directly from the table)
   const standPointsQuery = db
     .select({
       teamMatchId: standForm.teamMatchId,
       autoPoints: sql<number>`
-        coalesce(${standCyclePoints.autoFuelPoints}, 0) + coalesce(${vStandFormExpected.pureClimbAuto}, 0)
+        coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.pureClimbAuto}, 0)
       `.as("auto_points"),
       teleopPoints: sql<number>`
-        coalesce(${standCyclePoints.teleopFuelPoints}, 0) + coalesce(${vStandFormExpected.pureClimbTeleop}, 0)
+        coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.pureClimbTeleop}, 0)
       `.as("teleop_points"),
       climbPoints: sql<number>`
         coalesce(${vStandFormExpected.pureClimbTotal}, 0)
       `.as("climb_points"),
       totalPoints: sql<number>`
-        coalesce(${vStandFormExpected.expFuelActive}, 0) + coalesce(${vStandFormExpected.expTower}, 0)
+        coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric + coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.expTower}, 0)
       `.as("total_points"),
     })
     .from(standForm)
     .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
-    .leftJoin(standCyclePoints, eq(standCyclePoints.standFormId, standForm.id));
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .leftJoin(
+      teamEventCopr,
+      and(
+        eq(teamEventCopr.eventId, teamMatch.eventId),
+        eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
+      )
+    );
 
   const standPoints = db
     .$with("stand_points")
@@ -205,15 +186,7 @@ export async function getMainEventOverviewRow(
   );
 
   const rawRows = await db
-    .with(
-      standCyclePoints,
-      standPoints,
-      teamMatchConsensusPoints,
-      teamMetrics,
-      teamUptime,
-      latestPit,
-      baseTeams
-    )
+    .with(standPoints, teamMatchConsensusPoints, teamMetrics, teamUptime, latestPit, baseTeams)
     .select({
       teamNumber: baseTeams.teamNumber,
       teamName: baseTeams.teamName,
@@ -251,39 +224,5 @@ export async function getMainEventOverviewRow(
     climbType: row.climbType ?? null,
   }));
 
-  if (rows.length === 0) return [];
-
-  const maximumPossibleAuto = Math.max(...rows.map((r) => r.avgAutoPoints), 0.001);
-  const maximumPossibleTeleop = Math.max(...rows.map((r) => r.avgTeleopPoints), 0.001);
-  const maximumPossibleClimb = Math.max(...rows.map((r) => r.avgClimbPoints), 0.001);
-  const maximumPossibleMatches = Math.max(...rows.map((r) => r.matchesScouted), 1);
-
-  const withScore = rows.map((row) => {
-    const autoNormal = row.avgAutoPoints / maximumPossibleAuto;
-    const teleopNormal = row.avgTeleopPoints / maximumPossibleTeleop;
-    const climbNormal = row.avgClimbPoints / maximumPossibleClimb;
-    const uptimeNormal = row.uptimePct / 100;
-    const sampleNormal = row.matchesScouted / maximumPossibleMatches;
-
-    const overallScore =
-      (autoNormal * 0.22 +
-        teleopNormal * 0.33 +
-        climbNormal * 0.2 +
-        uptimeNormal * 0.2 +
-        sampleNormal * 0.05) *
-      100;
-
-    return {
-      ...row,
-      overallScore: round1(overallScore),
-    };
-  });
-
-  const ranked = [...withScore].sort((a, b) => b.overallScore - a.overallScore);
-  const rankByTeam = new Map(ranked.map((row, index) => [row.teamNumber, index + 1]));
-
-  return withScore.map((row) => ({
-    ...row,
-    overallRank: rankByTeam.get(row.teamNumber) ?? withScore.length,
-  }));
+  return rows;
 }

@@ -11,6 +11,7 @@ export type FormDataState = {
   teamMatchId: number | null;
   matchNumber: number | null;
   teamNumber: number | null;
+  canShuttle: boolean;
   comments: string;
 };
 
@@ -19,6 +20,7 @@ export type FormDataAction =
       type: "set_team_match_id";
       payload: { teamMatchId: number; matchNumber: number; teamNumber: number };
     }
+  | { type: "set_can_shuttle"; payload: boolean }
   | { type: "set_comments"; payload: string }
   | { type: "add_cycle"; payload: CompletedCycle }
   | { type: "add_climb"; payload: CompletedClimb }
@@ -42,6 +44,12 @@ function formDataReducer(state: FormDataState, action: FormDataAction): FormData
         comments: action.payload,
       };
 
+    case "set_can_shuttle":
+      return {
+        ...state,
+        canShuttle: action.payload,
+      };
+
     case "add_cycle":
       return {
         ...state,
@@ -61,6 +69,7 @@ function formDataReducer(state: FormDataState, action: FormDataAction): FormData
         teamMatchId: null,
         matchNumber: null,
         teamNumber: null,
+        canShuttle: false,
         comments: "",
       };
 
@@ -87,6 +96,7 @@ export function FormDataProvider({ children }: { children: React.ReactNode }) {
     teamMatchId: null,
     matchNumber: null,
     teamNumber: null,
+    canShuttle: false,
     comments: "",
   });
 

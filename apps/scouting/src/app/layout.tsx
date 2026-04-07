@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@repo/ui/components/sonner";
-import { Header } from "@/components/layout/header/Header";
-import { OfflineStatusBar } from "@/components/offline/OfflineStatusBar";
-import { OfflineToastListener } from "@/components/offline/OfflineToastListener";
 import { ThemeProvider } from "@/components/theme";
-import { QueueCountProvider } from "@/lib/offline/queue-count-context";
 
 const libreFranklin = Libre_Franklin({
   subsets: ["latin"],
@@ -23,8 +19,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // note that suppressHydrationWarning must be added b/c of next-themes
-  // see: https://github.com/pacocoursey/next-themes
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -36,13 +30,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <QueueCountProvider>
-            <Header />
-            <OfflineStatusBar />
-            <OfflineToastListener />
-            {children}
-            <Toaster />
-          </QueueCountProvider>
+          {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

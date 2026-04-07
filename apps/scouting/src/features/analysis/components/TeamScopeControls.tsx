@@ -50,7 +50,7 @@ export function TeamScopeControls({ hasOrg, globalTeamEvents, orgTeamEvents }: P
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 min-w-0">
       {hasOrg && (
         <div className="flex items-center gap-2">
           <Label htmlFor="org-scope" className="text-sm text-muted-foreground">
@@ -69,7 +69,7 @@ export function TeamScopeControls({ hasOrg, globalTeamEvents, orgTeamEvents }: P
         value={eventId || "__all__"}
         onValueChange={handleEventChange}
       >
-        <SelectTrigger size="sm" className="w-48">
+        <SelectTrigger size="sm" className="w-full min-w-0 sm:w-48">
           <SelectValue placeholder={teamEvents.length === 0 ? "No events" : "All events"} />
         </SelectTrigger>
         <SelectContent>

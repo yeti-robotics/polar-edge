@@ -315,7 +315,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       type="number"
                       id="capacity"
                       name={field.name}
-                      value={field.state.value === 0 ? "" : field.state.value}
+                      value={field.state.value === 0 ? "" : String(field.state.value)}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
                         field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
@@ -341,7 +341,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       type="number"
                       id="weight"
                       name={field.name}
-                      value={field.state.value === 0 ? "" : field.state.value}
+                      value={field.state.value === 0 ? "" : String(field.state.value)}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
                         field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))

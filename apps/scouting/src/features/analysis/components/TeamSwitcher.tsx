@@ -35,7 +35,7 @@ export function SelectTeam() {
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="mt-3">
+        <Button variant="outline" size="sm">
           <ArrowLeftRight /> Switch Team
         </Button>
       </PopoverTrigger>

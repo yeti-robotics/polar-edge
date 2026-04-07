@@ -19,15 +19,12 @@ export type CompletedCycle = {
   cycleNumber: number;
   startedAt: number;
   endedAt: number;
-  bucket: number; // 0-5 per schema
 };
 
 export type CompletedClimb = {
   phase: Phase;
   startedAt: number;
   endedAt: number;
-  climbLevel: number; // 0=none, 1=L1, 2=L2, 3=L3
-  climbSuccess: boolean;
 };
 
 // ===== ZOD SCHEMAS =====
@@ -38,7 +35,6 @@ export const CycleSchema = z
     cycleNumber: z.number().int().positive(),
     startedAt: z.number(),
     endedAt: z.number(),
-    bucket: z.number().int().min(0).max(5),
   })
   .refine((data) => data.endedAt > data.startedAt, {
     message: "End time must be after start time",
@@ -49,8 +45,6 @@ export const ClimbSchema = z
     phase: z.enum(["auto", "teleop"]),
     startedAt: z.number(),
     endedAt: z.number(),
-    climbLevel: z.number().int().min(0).max(3),
-    climbSuccess: z.boolean(),
   })
   .refine((data) => data.endedAt > data.startedAt, {
     message: "End time must be after start time",
@@ -60,6 +54,7 @@ export const COMMENTS_MIN_LENGTH = 32;
 
 export const StandFormSchema = z.object({
   teamMatchId: z.number().positive(),
+  canShuttle: z.boolean(),
   comments: z
     .string()
     .min(COMMENTS_MIN_LENGTH, `Comments must be at least ${COMMENTS_MIN_LENGTH} characters`),
