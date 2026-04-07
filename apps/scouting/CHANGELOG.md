@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.19.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.3...scouting-v2026.19.0) (2026-04-07)
+
+
+### Features
+
+* **scouting:** add match timer with auto phase transitions to stand form ([8361d3b](https://github.com/yeti-robotics/polar-edge/commit/8361d3b49ffbbc286968109ec60feee9cda1b55d))
+
 ## [2026.18.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.2...scouting-v2026.18.3) (2026-04-07)
 
 
