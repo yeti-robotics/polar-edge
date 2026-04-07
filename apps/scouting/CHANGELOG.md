@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.18.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.1...scouting-v2026.18.2) (2026-04-07)
+
+
+### Bug Fixes
+
+* **scouting:** refine fuel point calculations by removing endgame contributions ([a90541a](https://github.com/yeti-robotics/polar-edge/commit/a90541ad899204aadfe0ebcb5ae33641000d2a32))
+
 ## [2026.18.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.0...scouting-v2026.18.1) (2026-04-07)
 
 
