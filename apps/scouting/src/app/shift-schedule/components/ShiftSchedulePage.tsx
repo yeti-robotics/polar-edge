@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { TypographyMuted } from "@repo/ui/components/typography";
 import { useMemo } from "react";
 import {
@@ -52,15 +47,12 @@ export function ShiftSchedulePage({
         const startB = b.matchStart ?? 0;
         return startA - startB;
       }),
-    [initialEntries],
+    [initialEntries]
   );
 
-  const myEntries = sortedEntries.filter(
-    (entry) => entry.memberId === activeMemberId,
-  );
-  const scheduledScoutCount = new Set(
-    sortedEntries.map((entry) => entry.memberId).filter(Boolean),
-  ).size;
+  const myEntries = sortedEntries.filter((entry) => entry.memberId === activeMemberId);
+  const scheduledScoutCount = new Set(sortedEntries.map((entry) => entry.memberId).filter(Boolean))
+    .size;
 
   return (
     <div className="space-y-6">
