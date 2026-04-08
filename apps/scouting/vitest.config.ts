@@ -10,6 +10,7 @@ export default mergeConfig(baseConfig, {
       // Use node for server actions and utilities
       ["**/*.test.ts", "node"],
     ],
+    setupFiles: ["./src/test/setup.ts"],
   },
   resolve: {
     alias: {

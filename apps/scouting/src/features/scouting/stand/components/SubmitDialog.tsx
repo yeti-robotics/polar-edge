@@ -8,12 +8,14 @@ import { useState } from "react";
 import { submitStandForm } from "../actions";
 import { useActionState } from "../contexts/ActionStateContext";
 import { useFormData } from "../contexts/FormDataContext";
+import { useMatchTimer } from "../contexts/MatchTimerContext";
 import { useNavigation } from "../contexts/NavigationContext";
 
 export function SubmitDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { state: formData, dispatch: dispatchFormData } = useFormData();
   const { state: actionState, dispatch: dispatchActionState } = useActionState();
   const { dispatch: dispatchNavigation } = useNavigation();
+  const { dispatch: dispatchTimer } = useMatchTimer();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +32,7 @@ export function SubmitDialog({ open, onClose }: { open: boolean; onClose: () => 
     try {
       const result = await submitStandForm({
         teamMatchId: formData.teamMatchId,
+        canShuttle: formData.canShuttle,
         comments: formData.comments,
         oofTimeSeconds: actionState.oofCumulativeSeconds,
         cycles: formData.completedCycles,
@@ -44,6 +47,7 @@ export function SubmitDialog({ open, onClose }: { open: boolean; onClose: () => 
         dispatchFormData({ type: "reset" });
         dispatchActionState({ type: "reset" });
         dispatchNavigation({ type: "reset" });
+        dispatchTimer({ type: "reset" });
         onClose();
         router.refresh();
       }

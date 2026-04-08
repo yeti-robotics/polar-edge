@@ -187,6 +187,57 @@ export async function getScoutCoverage(
   }));
 }
 
+// ── Drive Ranking Coverage ───────────────────────────────────────────────────
+
+export type DriveRankingCoverageRow = {
+  matchNumber: number;
+  alliance: string;
+  hasRanking: boolean;
+};
+
+/**
+ * Per-match, per-alliance drive ranking coverage for qual matches at an event,
+ * scoped to this org. Drive rankings are only collected for qualification matches.
+ */
+export async function getDriveRankingCoverage(
+  eventId: string,
+  organizationId: string
+): Promise<DriveRankingCoverageRow[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(cacheTags.driveRanking(organizationId, eventId));
+  cacheTag(cacheTags.eventTeams(eventId));
+
+  const rows = await db.execute(sql`
+    WITH match_alliances AS (
+      SELECT DISTINCT
+        m.id AS match_id,
+        m.match_number,
+        tm.alliance
+      FROM match m
+      JOIN team_match tm ON tm.match_id = m.id
+      WHERE m.event_id = ${eventId}
+        AND m.match_type = 'qm'
+    )
+    SELECT
+      ma.match_number,
+      ma.alliance,
+      CASE WHEN dr.id IS NOT NULL THEN true ELSE false END AS has_ranking
+    FROM match_alliances ma
+    LEFT JOIN drive_team_ranking dr
+      ON dr.match_id = ma.match_id
+      AND dr.alliance = ma.alliance
+      AND dr.organization_id = ${organizationId}
+    ORDER BY ma.match_number, ma.alliance
+  `);
+
+  return (rows.rows as Array<Record<string, unknown>>).map((r) => ({
+    matchNumber: Number(r.match_number),
+    alliance: r.alliance as string,
+    hasRanking: Boolean(r.has_ranking),
+  }));
+}
+
 // ── Flagged Forms ────────────────────────────────────────────────────────────
 
 export type FlaggedFormRow = {
@@ -276,6 +327,8 @@ export type ValidationSummary = {
   totalSlots: number;
   scoutedSlots: number;
   singleScoutSlots: number;
+  driveRankingTotal: number;
+  driveRankingCovered: number;
 };
 
 /**
@@ -292,8 +345,9 @@ export async function getValidationSummary(
   cacheTag(cacheTags.matchScores(eventId));
   cacheTag(cacheTags.teamMetrics(eventId));
   cacheTag(cacheTags.eventTeams(eventId));
+  cacheTag(cacheTags.driveRanking(organizationId, eventId));
 
-  const [playedCountResult, matchScores, coverage] = await Promise.all([
+  const [playedCountResult, matchScores, coverage, driveRankingCoverage] = await Promise.all([
     // Simple count of all TBA-scored matches (independent of coverage)
     db
       .select({ count: sql<number>`count(*)::int` })
@@ -303,6 +357,7 @@ export async function getValidationSummary(
       ),
     getValidationMatchScores(eventId, organizationId),
     getScoutCoverage(eventId, organizationId),
+    getDriveRankingCoverage(eventId, organizationId),
   ]);
 
   const playedMatchCount = playedCountResult[0]?.count ?? 0;
@@ -317,5 +372,7 @@ export async function getValidationSummary(
     totalSlots: coverage.length,
     scoutedSlots: coverage.filter((s) => s.scoutCount >= 1).length,
     singleScoutSlots: coverage.filter((s) => s.scoutCount === 1).length,
+    driveRankingTotal: driveRankingCoverage.length,
+    driveRankingCovered: driveRankingCoverage.filter((r) => r.hasRanking).length,
   };
 }

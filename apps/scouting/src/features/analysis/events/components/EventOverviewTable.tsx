@@ -81,18 +81,6 @@ const columns = [
     meta: { align: "right" },
     enableGlobalFilter: false,
   }),
-  columnHelper.accessor("overallRank", {
-    id: "overallRank",
-    header: "Overall Rank",
-    sortDescFirst: false,
-    cell: ({ row }) => (
-      <span className="tabular-nums">
-        #{row.original.overallRank} ({row.original.overallScore.toFixed(1)})
-      </span>
-    ),
-    meta: { align: "right" },
-    enableGlobalFilter: false,
-  }),
 ];
 
 function SortingButton({ header }: { header: Header<TeamEventOverviewRow, unknown> }) {

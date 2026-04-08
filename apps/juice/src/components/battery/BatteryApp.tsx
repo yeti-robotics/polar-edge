@@ -4,6 +4,7 @@ import { mergeData } from "@/services/analysis/merge";
 import { parseDSFile } from "@/services/analysis/parse-voltage";
 import type { MergedData } from "@/services/analysis/types";
 import { parseCANJSON } from "@/services/can/parser";
+import { JuiceNav } from "../JuiceNav";
 import { BatteryAnalysis } from "./BatteryAnalysis";
 import { BatteryLanding } from "./BatteryLanding";
 
@@ -78,6 +79,7 @@ export function BatteryApp() {
 
   return (
     <>
+      <JuiceNav active="analyzer" />
       <BatteryLanding
         dsFile={dsFile}
         canFile={canFile}

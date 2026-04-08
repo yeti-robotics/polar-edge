@@ -7,6 +7,7 @@ import { defaultStatements } from "better-auth/plugins/organization/access";
 export const statement = {
   ...defaultStatements,
   event: ["sync", "activate"],
+  driveRanking: ["create", "update", "delete"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -19,6 +20,18 @@ export const memberRole = ac.newRole({
   team: [],
   ac: ["read"],
   event: [],
+  driveRanking: [],
+});
+
+/** Scouting Lead: can submit drive team rankings, no org management */
+export const scoutLead = ac.newRole({
+  organization: [],
+  member: [],
+  invitation: [],
+  team: [],
+  ac: ["read"],
+  event: [],
+  driveRanking: ["create", "update", "delete"],
 });
 
 /** Admin: can manage members, invitations, org settings, and events */
@@ -29,6 +42,7 @@ export const admin = ac.newRole({
   team: ["create", "update", "delete"],
   ac: ["create", "read", "update", "delete"],
   event: ["sync", "activate"],
+  driveRanking: ["create", "update", "delete"],
 });
 
 /** Owner: same as admin plus org deletion */
@@ -39,4 +53,5 @@ export const owner = ac.newRole({
   team: ["create", "update", "delete"],
   ac: ["create", "read", "update", "delete"],
   event: ["sync", "activate"],
+  driveRanking: ["create", "update", "delete"],
 });

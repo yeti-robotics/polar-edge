@@ -1439,6 +1439,13 @@ export interface components {
       key: string;
       /** @description Year this district participated. */
       year: number;
+      /** @description The number of teams advancing to DCMP and CMP from this district, as specified in the FIRST manual. */
+      official_advancement_counts: {
+        /** @description Number of teams advancing to the District Championship. */
+        dcmp: number;
+        /** @description Number of teams advancing to the Championship. */
+        cmp: number;
+      };
     };
     DistrictInsightRegionData: {
       /** @description Map of year to number of active teams */
@@ -1555,9 +1562,9 @@ export interface components {
         /** @description Match level, qm/ef/qf/sf/f. */
         level: components["schemas"]["Comp_Level"];
         /** @description W-L-T record for the alliance, may be null. */
-        record: components["schemas"]["WLT_Record"];
+        record: components["schemas"]["WLT_Record"] | null;
         /** @description W-L-T record for the alliance at the current level, may be null. */
-        current_level_record: components["schemas"]["WLT_Record"];
+        current_level_record: components["schemas"]["WLT_Record"] | null;
         /**
          * @description Status of the alliance.
          * @enum {string}
@@ -1617,7 +1624,7 @@ export interface components {
       event_code: string;
       /** @description Event Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/event_type.py#L8 */
       event_type: number;
-      district: components["schemas"]["District"];
+      district: components["schemas"]["District"] | null;
       /** @description City, town, village, etc. the event is located in. */
       city: string | null;
       /** @description State or Province the event is located in. */
@@ -2118,7 +2125,7 @@ export interface components {
         extra_stats: number[];
         /** @description Additional year-specific information. See parent `sort_order_info` for details. */
         sort_orders: number[];
-        record: components["schemas"]["WLT_Record"];
+        record: components["schemas"]["WLT_Record"] | null;
         /** @description The team's rank at the event as provided by FIRST. */
         rank: number;
         /** @description Number of times disqualified. */
@@ -2152,7 +2159,7 @@ export interface components {
       event_code: string;
       /** @description Event Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/main/src/backend/common/consts/event_type.py#L8 */
       event_type: number;
-      district: components["schemas"]["District"];
+      district: components["schemas"]["District"] | null;
       /** @description City, town, village, etc. the event is located in. */
       city: string | null;
       /** @description State or Province the event is located in. */
@@ -2240,19 +2247,19 @@ export interface components {
        */
       post_result_time: number | null;
       /** @description Score breakdown for auto, teleop, etc. points. Varies from year to year. May be null. */
-      score_breakdown: (Record<string, never> | null) &
-        (
-          | components["schemas"]["Match_Score_Breakdown_2015"]
-          | components["schemas"]["Match_Score_Breakdown_2016"]
-          | components["schemas"]["Match_Score_Breakdown_2017"]
-          | components["schemas"]["Match_Score_Breakdown_2018"]
-          | components["schemas"]["Match_Score_Breakdown_2019"]
-          | components["schemas"]["Match_Score_Breakdown_2020"]
-          | components["schemas"]["Match_Score_Breakdown_2022"]
-          | components["schemas"]["Match_Score_Breakdown_2023"]
-          | components["schemas"]["Match_Score_Breakdown_2024"]
-          | components["schemas"]["Match_Score_Breakdown_2025"]
-        );
+      score_breakdown:
+        | components["schemas"]["Match_Score_Breakdown_2015"]
+        | components["schemas"]["Match_Score_Breakdown_2016"]
+        | components["schemas"]["Match_Score_Breakdown_2017"]
+        | components["schemas"]["Match_Score_Breakdown_2018"]
+        | components["schemas"]["Match_Score_Breakdown_2019"]
+        | components["schemas"]["Match_Score_Breakdown_2020"]
+        | components["schemas"]["Match_Score_Breakdown_2022"]
+        | components["schemas"]["Match_Score_Breakdown_2023"]
+        | components["schemas"]["Match_Score_Breakdown_2024"]
+        | components["schemas"]["Match_Score_Breakdown_2025"]
+        | components["schemas"]["Match_Score_Breakdown_2026"]
+        | null;
       /** @description Array of video objects associated with this match. */
       videos: {
         /** @description Can be one of 'youtube' or 'tba' */
@@ -3130,9 +3137,9 @@ export interface components {
       motto: string | null;
     };
     Team_Event_Status: {
-      qual?: components["schemas"]["Team_Event_Status_rank"];
-      alliance?: components["schemas"]["Team_Event_Status_alliance"];
-      playoff?: components["schemas"]["Team_Event_Status_playoff"];
+      qual?: components["schemas"]["Team_Event_Status_rank"] | null;
+      alliance?: components["schemas"]["Team_Event_Status_alliance"] | null;
+      playoff?: components["schemas"]["Team_Event_Status_playoff"] | null;
       /** @description An HTML formatted string suitable for display to the user containing the team's alliance pick status. */
       alliance_status_str?: string;
       /** @description An HTML formatter string suitable for display to the user containing the team's playoff status. */
@@ -3143,6 +3150,8 @@ export interface components {
       next_match_key?: string | null;
       /** @description TBA match key for the last match the team played in at this event, or null. */
       last_match_key?: string | null;
+      /** @description The pit location for the team at this event, or null if not available. */
+      pit_location?: string | null;
     };
     Team_Event_Status_alliance: {
       /** @description Alliance name, may be null. */
@@ -3163,8 +3172,8 @@ export interface components {
     /** @description Playoff status for this team, may be null if the team did not make playoffs, or playoffs have not begun. */
     Team_Event_Status_playoff: null | {
       level?: components["schemas"]["Comp_Level"];
-      current_level_record?: components["schemas"]["WLT_Record"];
-      record?: components["schemas"]["WLT_Record"];
+      current_level_record?: components["schemas"]["WLT_Record"] | null;
+      record?: components["schemas"]["WLT_Record"] | null;
       /**
        * @description Current competition status for the playoffs.
        * @enum {string}
@@ -3189,7 +3198,7 @@ export interface components {
         qual_average?: number | null;
         /** @description Ordered list of values used to determine the rank. See the `sort_order_info` property for the name of each value. */
         sort_orders?: number[] | null;
-        record?: components["schemas"]["WLT_Record"];
+        record?: components["schemas"]["WLT_Record"] | null;
         /** @description Relative rank of this team. */
         rank?: number | null;
         /** @description Number of matches the team was disqualified for. */
@@ -3271,6 +3280,15 @@ export interface components {
       date?: string | null;
       /** @description File identification as may be required for some types. May be null. */
       file?: string | null;
+      /**
+       * @description The online status of the webcast, fetched from the streaming provider's API. May be null if not available.
+       * @enum {string|null}
+       */
+      status?: "unknown" | "online" | "offline" | null;
+      /** @description The title of the stream from the streaming provider. May be null. */
+      stream_title?: string | null;
+      /** @description The current viewer count from the streaming provider. May be null. */
+      viewer_count?: number | null;
     };
     Zebra: {
       /** @description TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may be appended to the competition level if more than one match in required per set. */
@@ -3842,7 +3860,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Event_District_Points"];
+          "application/json": components["schemas"]["Event_District_Points"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -3941,7 +3959,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Event_COPRs"];
+          "application/json": components["schemas"]["Event_COPRs"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -3974,7 +3992,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Event_District_Points"];
+          "application/json": components["schemas"]["Event_District_Points"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -4007,7 +4025,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Event_Insights"];
+          "application/json": components["schemas"]["Event_Insights"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -4172,7 +4190,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Event_OPRs"];
+          "application/json": components["schemas"]["Event_OPRs"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -4205,7 +4223,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Event_Predictions"];
+          "application/json": components["schemas"]["Event_Predictions"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -4238,7 +4256,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Event_Ranking"];
+          "application/json": components["schemas"]["Event_Ranking"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -4271,7 +4289,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Event_District_Points"];
+          "application/json": components["schemas"]["Event_District_Points"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -4470,7 +4488,7 @@ export interface operations {
         };
         content: {
           "application/json": {
-            [key: string]: components["schemas"]["Team_Event_Status"];
+            [key: string]: components["schemas"]["Team_Event_Status"] | null;
           };
         };
       };
@@ -5205,7 +5223,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Team_Event_Status"];
+          "application/json": components["schemas"]["Team_Event_Status"] | null;
         };
       };
       304: components["responses"]["NotModified"];
@@ -5445,7 +5463,7 @@ export interface operations {
         };
         content: {
           "application/json": {
-            [key: string]: components["schemas"]["Team_Event_Status"];
+            [key: string]: components["schemas"]["Team_Event_Status"] | null;
           };
         };
       };
