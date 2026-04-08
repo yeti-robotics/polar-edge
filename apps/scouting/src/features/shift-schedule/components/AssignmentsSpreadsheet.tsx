@@ -127,7 +127,7 @@ export function AssignmentsSpreadsheet({
         ) : (
           <div className="overflow-x-auto rounded-xl border border-border bg-white">
             <div
-              className="grid min-w-[720px] bg-white text-sm"
+              className="grid min-w-180 bg-white text-sm"
               style={{
                 gridTemplateColumns: `minmax(220px, 1.4fr) repeat(${blocks.length}, minmax(140px, 1fr))`,
               }}
