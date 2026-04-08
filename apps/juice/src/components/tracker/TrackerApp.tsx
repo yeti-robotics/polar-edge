@@ -107,7 +107,7 @@ export function TrackerApp() {
       {/* Content */}
       <div className="mx-auto max-w-5xl px-4 py-6">
         <Tabs defaultValue="dashboard">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <TabsList>
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="fleet">Fleet</TabsTrigger>
