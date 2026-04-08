@@ -113,13 +113,7 @@ async function HeaderContent() {
 async function ConditionalNavItems() {
   let activeMember = null;
   try {
-<<<<<<< HEAD
-    const activeMember = await auth.api.getActiveMember({
-      headers: await headers(),
-    });
-=======
     activeMember = await auth.api.getActiveMember({ headers: await headers() });
->>>>>>> ca64f9b58416ac931615efec8654dbf8e75aa4a0
     if (!activeMember) return null;
   } catch {
     return null;

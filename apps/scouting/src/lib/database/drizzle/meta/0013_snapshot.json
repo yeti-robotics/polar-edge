@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
-  "id": "1042320a-4ab0-4e40-bafe-78dec3c51a2b",
-=======
   "id": "2664f25f-24d0-4f87-8509-bbe652f7896a",
->>>>>>> ca64f9b58416ac931615efec8654dbf8e75aa4a0
   "prevId": "1bb1ae52-fb03-4afd-9bc5-9326ac595421",
   "version": "7",
   "dialect": "postgresql",
@@ -437,8 +433,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-<<<<<<< HEAD
-=======
     "public.drive_team_ranking": {
       "name": "drive_team_ranking",
       "schema": "",
@@ -646,7 +640,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
->>>>>>> ca64f9b58416ac931615efec8654dbf8e75aa4a0
     "public.event": {
       "name": "event",
       "schema": "",
@@ -1921,133 +1914,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-<<<<<<< HEAD
-    "public.shift_schedule": {
-      "name": "shift_schedule",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "organization_id": {
-          "name": "organization_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "event_id": {
-          "name": "event_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "schedule_data": {
-          "name": "schedule_data",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'{\"entries\":[]}'::jsonb"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "shift_schedule_org_event_uidx": {
-          "name": "shift_schedule_org_event_uidx",
-          "columns": [
-            {
-              "expression": "organization_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "event_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "shift_schedule_org_idx": {
-          "name": "shift_schedule_org_idx",
-          "columns": [
-            {
-              "expression": "organization_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "shift_schedule_event_idx": {
-          "name": "shift_schedule_event_idx",
-          "columns": [
-            {
-              "expression": "event_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "shift_schedule_organization_id_organization_id_fk": {
-          "name": "shift_schedule_organization_id_organization_id_fk",
-          "tableFrom": "shift_schedule",
-          "tableTo": "organization",
-          "columnsFrom": ["organization_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "shift_schedule_event_id_event_id_fk": {
-          "name": "shift_schedule_event_id_event_id_fk",
-          "tableFrom": "shift_schedule",
-          "tableTo": "event",
-          "columnsFrom": ["event_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-=======
->>>>>>> ca64f9b58416ac931615efec8654dbf8e75aa4a0
     "public.stand_form": {
       "name": "stand_form",
       "schema": "",

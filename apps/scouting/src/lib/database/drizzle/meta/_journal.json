@@ -96,10 +96,6 @@
     {
       "idx": 13,
       "version": "7",
-<<<<<<< HEAD
-      "when": 1775604124467,
-      "tag": "0013_lively_the_fury",
-=======
       "when": 1774981873284,
       "tag": "0013_green_exodus",
       "breakpoints": true
@@ -158,7 +154,13 @@
       "version": "7",
       "when": 1775518361004,
       "tag": "0021_lean_green_goblin",
->>>>>>> ca64f9b58416ac931615efec8654dbf8e75aa4a0
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1775604124467,
+      "tag": "0013_lively_the_fury",
       "breakpoints": true
     }
   ]
