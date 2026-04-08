@@ -1,8 +1,8 @@
 "use client";
 
-import { Fragment } from "react";
 import { Card, CardContent } from "@repo/ui/components/card";
 import { TypographyMuted } from "@repo/ui/components/typography";
+import { Fragment } from "react";
 import {
   formatStandStationLabel,
   getStandStationBadgeClass,
@@ -117,7 +117,9 @@ export function AssignmentsSpreadsheet({ title, description, entries, emptyMessa
           <div className="overflow-x-auto rounded-xl border border-red-200">
             <div
               className="grid min-w-[720px] text-sm"
-              style={{ gridTemplateColumns: `minmax(220px, 1.4fr) repeat(${blocks.length}, minmax(140px, 1fr))` }}
+              style={{
+                gridTemplateColumns: `minmax(220px, 1.4fr) repeat(${blocks.length}, minmax(140px, 1fr))`,
+              }}
             >
               <div className="border-b border-r border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-900">
                 Scout
@@ -138,7 +140,9 @@ export function AssignmentsSpreadsheet({ title, description, entries, emptyMessa
                     className="border-b border-r border-red-100 bg-white px-4 py-3"
                   >
                     <p className="font-medium">{row.name}</p>
-                    <p className="text-xs text-muted-foreground">{row.email ?? "No email on file"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {row.email ?? "No email on file"}
+                    </p>
                   </div>
                   {blocks.map((block) => (
                     <div

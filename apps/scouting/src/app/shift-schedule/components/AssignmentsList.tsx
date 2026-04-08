@@ -5,8 +5,8 @@ import { Card, CardContent } from "@repo/ui/components/card";
 import { TypographyMuted } from "@repo/ui/components/typography";
 import {
   formatAssignmentTypeLabel,
-  getStandStationBadgeClass,
   formatStandStationLabel,
+  getStandStationBadgeClass,
   type ShiftScheduleEntry,
 } from "@/features/shift-schedule/types";
 
