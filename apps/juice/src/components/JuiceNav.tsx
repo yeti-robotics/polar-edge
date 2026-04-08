@@ -3,16 +3,16 @@ interface JuiceNavProps {
 }
 
 const links = [
-  { href: "/polar-edge/juice/", label: "Home", key: "home" },
-  { href: "/polar-edge/juice/analyzer", label: "Analyzer", key: "analyzer" },
-  { href: "/polar-edge/juice/tracker", label: "Tracker", key: "tracker" },
+  { href: "/", label: "Home", key: "home" },
+  { href: "/analyzer", label: "Analyzer", key: "analyzer" },
+  { href: "/tracker", label: "Tracker", key: "tracker" },
 ] as const;
 
 export function JuiceNav({ active }: JuiceNavProps) {
   return (
     <div className="sticky top-0 z-50 flex items-center gap-4 border-b border-border bg-background/95 px-5 py-2.5 backdrop-blur-sm">
       <a
-        href="/polar-edge/juice/"
+        href="/"
         className="shrink-0 font-mono text-sm font-bold uppercase tracking-widest text-primary"
       >
         JUICE
