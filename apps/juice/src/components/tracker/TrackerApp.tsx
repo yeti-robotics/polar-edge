@@ -79,7 +79,6 @@ export function TrackerApp() {
     await refresh();
   };
 
-
   const handleDeleteBattery = async (id: string) => {
     await dbDeleteBattery(id);
     await refresh();

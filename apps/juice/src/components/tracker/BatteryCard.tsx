@@ -40,12 +40,7 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export function BatteryCard({
-  battery,
-  onCheckOut,
-  onCheckIn,
-  onDelete,
-}: BatteryCardProps) {
+export function BatteryCard({ battery, onCheckOut, onCheckIn, onDelete }: BatteryCardProps) {
   const [checkInOpen, setCheckInOpen] = useState(false);
 
   return (
