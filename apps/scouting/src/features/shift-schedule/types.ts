@@ -29,6 +29,12 @@ export type ShiftScheduleMatchBlock = {
   label: string;
 };
 
+export type ShiftScheduleMemberOption = {
+  id: string;
+  name: string;
+  email: string;
+};
+
 export function normalizeShiftScheduleEntries(payload: unknown): ShiftScheduleEntry[] {
   const parsed = z.array(ShiftScheduleEntrySchema).safeParse(payload);
   if (!parsed.success) {
@@ -50,6 +56,8 @@ export function buildStandMatchBlocks(matchNumbers: number[]): ShiftScheduleMatc
   const sorted = [...new Set(matchNumbers)].sort((a, b) => a - b);
   const blocks: ShiftScheduleMatchBlock[] = [];
 
+  // Five-match windows keep coverage planning readable without overwhelming admins
+  // with one column per match in the schedule matrix.
   for (let index = 0; index < sorted.length; index += 5) {
     const chunk = sorted.slice(index, index + 5);
     if (chunk.length === 0) continue;

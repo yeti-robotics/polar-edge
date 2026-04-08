@@ -41,9 +41,8 @@ export const routes = {
     stand: "/forms/stand",
   },
 
-  // Shift Sheduule
-
-  scoutingschedule: {
+  // Shift Schedule
+  shiftSchedule: {
     root: "/shift-schedule",
   },
 

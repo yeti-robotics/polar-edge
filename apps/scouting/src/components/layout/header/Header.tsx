@@ -38,7 +38,7 @@ const navItems = [
   },
   {
     label: "Scouting Schedule",
-    href: routes.scoutingschedule.root,
+    href: routes.shiftSchedule.root,
   },
 ];
 

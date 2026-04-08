@@ -222,6 +222,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     revalidatePath(routes.admin.event);
     revalidateTag(cacheTags.teamsList, "max");
     revalidateTag(cacheTags.eventTeams(eventId), "max");
+    revalidateTag(cacheTags.eventMatchNumbers(eventId), "max");
     return {
       data: { success: true, eventId, matchCount, teamMatchCount },
       error: null,

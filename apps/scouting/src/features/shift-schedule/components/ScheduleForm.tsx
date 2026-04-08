@@ -13,26 +13,19 @@ import {
 import { toast } from "@repo/ui/components/sonner";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { updateShiftScheduleAction } from "@/features/shift-schedule/actions";
 import {
   type ShiftScheduleEntry,
   type ShiftScheduleMatchBlock,
+  type ShiftScheduleMemberOption,
   STAND_STATIONS,
 } from "@/features/shift-schedule/types";
-
-type OrganizationMemberOption = {
-  id: string;
-  name: string;
-  email: string;
-  image: string | null;
-  role: string;
-};
 
 type Props = {
   onSuccess: () => void;
   initialEntries: ShiftScheduleEntry[];
-  organizationMembers: OrganizationMemberOption[];
+  organizationMembers: ShiftScheduleMemberOption[];
   matchBlocks: ShiftScheduleMatchBlock[];
 };
 
@@ -61,7 +54,6 @@ export function ScheduleForm({
   matchBlocks,
 }: Props) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [isSaving, setIsSaving] = useState(false);
   const [entries, setEntries] = useState<ShiftScheduleEntry[]>(
     initialEntries.length ? initialEntries : [createEntry()]
@@ -121,7 +113,7 @@ export function ScheduleForm({
       }
 
       toast.success("Scouting schedule saved.");
-      startTransition(() => router.refresh());
+      router.refresh();
       onSuccess();
     } finally {
       setIsSaving(false);
@@ -137,7 +129,7 @@ export function ScheduleForm({
             Every assignment is a stand form slot tied to a match block.
           </p>
         </div>
-        <Button type="button" variant="outline" onClick={addEntry} disabled={isSaving || isPending}>
+        <Button type="button" variant="outline" onClick={addEntry} disabled={isSaving}>
           <PlusIcon className="size-4" />
           Add Assignment
         </Button>
@@ -161,7 +153,7 @@ export function ScheduleForm({
                 variant="ghost"
                 size="icon"
                 onClick={() => removeEntry(entry.id)}
-                disabled={isSaving || isPending}
+                disabled={isSaving}
               >
                 <Trash2Icon className="size-4" />
               </Button>
@@ -173,7 +165,7 @@ export function ScheduleForm({
                 <Select
                   value={entry.memberId ?? ""}
                   onValueChange={(value) => handleMemberChange(entry.id, value)}
-                  disabled={isSaving || isPending}
+                  disabled={isSaving}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a team member" />
@@ -197,7 +189,7 @@ export function ScheduleForm({
                       standStation: value as ShiftScheduleEntry["standStation"],
                     })
                   }
-                  disabled={isSaving || isPending}
+                  disabled={isSaving}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue />
@@ -221,7 +213,7 @@ export function ScheduleForm({
                       : undefined
                   }
                   onValueChange={(value) => handleMatchBlockChange(entry.id, value)}
-                  disabled={isSaving || isPending || matchBlocks.length === 0}
+                  disabled={isSaving || matchBlocks.length === 0}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a 5-match block" />
@@ -244,8 +236,8 @@ export function ScheduleForm({
       </div>
 
       <div className="flex justify-end">
-        <Button type="button" onClick={handleSubmit} disabled={isSaving || isPending}>
-          {isSaving || isPending ? "Saving..." : "Save Schedule"}
+        <Button type="button" onClick={handleSubmit} disabled={isSaving}>
+          {isSaving ? "Saving..." : "Save Schedule"}
         </Button>
       </div>
     </div>

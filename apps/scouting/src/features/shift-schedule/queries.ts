@@ -1,12 +1,18 @@
 import "server-only";
 
 import { and, asc, eq } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/lib/database";
 import { match, shiftSchedule } from "@/lib/database/schema";
+import { cacheTags } from "@/lib/cache";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { normalizeShiftScheduleEntries, type ShiftScheduleEntry } from "./types";
 
 export async function getShiftScheduleForActiveEvent(organizationId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(cacheTags.shiftSchedule(organizationId));
+
   const activeEvent = await getActiveEventForOrganization(organizationId);
 
   if (!activeEvent?.event) {
@@ -16,6 +22,8 @@ export async function getShiftScheduleForActiveEvent(organizationId: string) {
       matchNumbers: [] as number[],
     };
   }
+
+  cacheTag(cacheTags.eventMatchNumbers(activeEvent.event.id));
 
   const [scheduleRows, matchRows] = await Promise.all([
     db

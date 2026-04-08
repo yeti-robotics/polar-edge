@@ -1,12 +1,12 @@
 "use server";
 
 import { inArray } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { member, shiftSchedule } from "@/lib/database/schema";
-import { routes } from "@/lib/routes";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import {
   normalizeShiftScheduleEntries,
@@ -105,8 +105,7 @@ export async function updateShiftScheduleAction(
         },
       });
 
-    revalidatePath(routes.scoutingschedule.root);
-    revalidatePath(routes.admin.root);
+    revalidateTag(cacheTags.shiftSchedule(activeMember.organizationId), "max");
 
     return { data: { success: true }, error: null };
   } catch (error) {

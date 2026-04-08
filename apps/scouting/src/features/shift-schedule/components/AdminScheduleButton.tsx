@@ -2,21 +2,22 @@
 
 import { Button } from "@repo/ui/components/button";
 import { PenSquareIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useState } from "react";
-import type { ShiftScheduleEntry, ShiftScheduleMatchBlock } from "@/features/shift-schedule/types";
-import { ScheduleDialog } from "./ScheduleDialog";
+import type {
+  ShiftScheduleEntry,
+  ShiftScheduleMatchBlock,
+  ShiftScheduleMemberOption,
+} from "@/features/shift-schedule/types";
 
-type OrganizationMemberOption = {
-  id: string;
-  name: string;
-  email: string;
-  image: string | null;
-  role: string;
-};
+const ScheduleDialog = dynamic(
+  () => import("./ScheduleDialog").then((module) => module.ScheduleDialog),
+  { ssr: false }
+);
 
 type Props = {
   initialEntries: ShiftScheduleEntry[];
-  organizationMembers: OrganizationMemberOption[];
+  organizationMembers: ShiftScheduleMemberOption[];
   matchBlocks: ShiftScheduleMatchBlock[];
 };
 

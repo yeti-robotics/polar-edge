@@ -1,55 +1,29 @@
-"use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
+import { Card, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { TypographyMuted } from "@repo/ui/components/typography";
-import { useMemo } from "react";
-import {
-  type ShiftScheduleEntry,
-  type ShiftScheduleMatchBlock,
-} from "@/features/shift-schedule/types";
-import { AdminScheduleButton } from "./AdminScheduleButton";
+import type { ReactNode } from "react";
+import { type ShiftScheduleEntry } from "@/features/shift-schedule/types";
 import { AssignmentsList } from "./AssignmentsList";
 import { AssignmentsSpreadsheet } from "./AssignmentsSpreadsheet";
 import { ShiftScheduleSummary } from "./ShiftScheduleSummary";
 
-type OrganizationMemberOption = {
-  id: string;
-  name: string;
-  email: string;
-  image: string | null;
-  role: string;
-};
-
 type Props = {
   activeMemberId: string;
+  adminAction?: ReactNode;
   eventName: string;
   initialEntries: ShiftScheduleEntry[];
-  isAdmin: boolean;
-  matchBlocks: ShiftScheduleMatchBlock[];
-  organizationMembers: OrganizationMemberOption[];
 };
 
-export function ShiftSchedulePage({
-  activeMemberId,
-  eventName,
-  initialEntries,
-  isAdmin,
-  matchBlocks,
-  organizationMembers,
-}: Props) {
-  const sortedEntries = useMemo(
-    () =>
-      [...initialEntries].sort((a, b) => {
-        const startA = a.matchStart ?? 0;
-        const startB = b.matchStart ?? 0;
-        if (startA !== startB) {
-          return startA - startB;
-        }
+export function ShiftSchedulePage({ activeMemberId, adminAction, eventName, initialEntries }: Props) {
+  const isAdminView = adminAction != null;
+  const sortedEntries = [...initialEntries].sort((a, b) => {
+    const startA = a.matchStart ?? 0;
+    const startB = b.matchStart ?? 0;
+    if (startA !== startB) {
+      return startA - startB;
+    }
 
-        return (a.name || "").localeCompare(b.name || "");
-      }),
-    [initialEntries]
-  );
+    return (a.name || "").localeCompare(b.name || "");
+  });
 
   const myEntries = sortedEntries.filter((entry) => entry.memberId === activeMemberId);
   const scheduledScoutCount = new Set(sortedEntries.map((entry) => entry.memberId).filter(Boolean))
@@ -63,15 +37,8 @@ export function ShiftSchedulePage({
             <CardTitle>Scouting Schedule</CardTitle>
             <TypographyMuted>Assign scouts for {eventName}.</TypographyMuted>
           </div>
-          {isAdmin ? (
-            <AdminScheduleButton
-              initialEntries={sortedEntries}
-              organizationMembers={organizationMembers}
-              matchBlocks={matchBlocks}
-            />
-          ) : null}
+          {adminAction}
         </CardHeader>
-        <CardContent></CardContent>
       </Card>
 
       <ShiftScheduleSummary
@@ -87,7 +54,7 @@ export function ShiftSchedulePage({
         emptyMessage="You do not have any assignments for the active event yet."
       />
 
-      {isAdmin ? (
+      {isAdminView ? (
         <AssignmentsSpreadsheet
           title="Organization Schedule"
           description="Spreadsheet view of scouts by match block so admins can see coverage at a glance."

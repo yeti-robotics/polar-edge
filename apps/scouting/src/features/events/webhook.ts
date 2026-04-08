@@ -186,6 +186,7 @@ export async function processScheduleUpdated(
   });
 
   revalidateTag(cacheTags.eventTeams(eventRow.id), "max");
+  revalidateTag(cacheTags.eventMatchNumbers(eventRow.id), "max");
   revalidateTag(cacheTags.teamMetrics(eventRow.id), "max");
   revalidateTag(cacheTags.matchScores(eventRow.id), "max");
 

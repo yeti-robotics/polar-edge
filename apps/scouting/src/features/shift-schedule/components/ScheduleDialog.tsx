@@ -7,22 +7,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/dialog";
-import type { ShiftScheduleEntry, ShiftScheduleMatchBlock } from "@/features/shift-schedule/types";
+import type {
+  ShiftScheduleEntry,
+  ShiftScheduleMatchBlock,
+  ShiftScheduleMemberOption,
+} from "@/features/shift-schedule/types";
 import { ScheduleForm } from "./ScheduleForm";
-
-type OrganizationMemberOption = {
-  id: string;
-  name: string;
-  email: string;
-  image: string | null;
-  role: string;
-};
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialEntries: ShiftScheduleEntry[];
-  organizationMembers: OrganizationMemberOption[];
+  organizationMembers: ShiftScheduleMemberOption[];
   matchBlocks: ShiftScheduleMatchBlock[];
 };
 
