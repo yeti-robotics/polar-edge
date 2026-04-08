@@ -13,6 +13,7 @@ import type {
   ShiftScheduleMemberOption,
 } from "@/features/shift-schedule/types";
 import { ScheduleForm } from "./ScheduleForm";
+import { ShiftScheduleSummary } from "./ShiftScheduleSummary";
 
 type Props = {
   open: boolean;
@@ -29,14 +30,30 @@ export function ScheduleDialog({
   organizationMembers,
   matchBlocks,
 }: Props) {
+  const scheduledScoutCount = new Set(
+    initialEntries.map((entry) => entry.memberId).filter(Boolean),
+  ).size;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>Create Scouting Schedule</DialogTitle>
-          <DialogDescription>
-            Assign organization members to stand scouting blocks for the active event.
-          </DialogDescription>
+        <DialogHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1">
+            <DialogTitle>Scouting Schedule</DialogTitle>
+            <DialogDescription>
+              Assign organization members to stand scouting.
+            </DialogDescription>
+          </div>
+          <ShiftScheduleSummary
+            assignmentCount={initialEntries.length}
+            scheduledScoutCount={scheduledScoutCount}
+            myAssignmentCount={initialEntries.length}
+            items={[
+              { label: "Assignments", value: initialEntries.length },
+              { label: "Scheduled Scouts", value: scheduledScoutCount },
+            ]}
+            variant="compact"
+          />
         </DialogHeader>
 
         <ScheduleForm

@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { type ShiftScheduleEntry } from "@/features/shift-schedule/types";
 import { AssignmentsList } from "./AssignmentsList";
 import { AssignmentsSpreadsheet } from "./AssignmentsSpreadsheet";
-import { ShiftScheduleSummary } from "./ShiftScheduleSummary";
 
 type Props = {
   activeMemberId: string;
@@ -19,7 +18,6 @@ export function ShiftSchedulePage({
   eventName,
   initialEntries,
 }: Props) {
-  const isAdminView = adminAction != null;
   const sortedEntries = [...initialEntries].sort((a, b) => {
     const startA = a.matchStart ?? 0;
     const startB = b.matchStart ?? 0;
@@ -30,10 +28,9 @@ export function ShiftSchedulePage({
     return (a.name || "").localeCompare(b.name || "");
   });
 
-  const myEntries = sortedEntries.filter((entry) => entry.memberId === activeMemberId);
-  const scheduledScoutCount = new Set(sortedEntries.map((entry) => entry.memberId).filter(Boolean))
-    .size;
-
+  const myEntries = sortedEntries.filter(
+    (entry) => entry.memberId === activeMemberId,
+  );
   return (
     <div className="space-y-6">
       <Card>
@@ -46,12 +43,6 @@ export function ShiftSchedulePage({
         </CardHeader>
       </Card>
 
-      <ShiftScheduleSummary
-        assignmentCount={sortedEntries.length}
-        scheduledScoutCount={scheduledScoutCount}
-        myAssignmentCount={myEntries.length}
-      />
-
       <AssignmentsList
         title="Your Schedule"
         description="These are the assignments currently tied to your organization."
@@ -59,21 +50,12 @@ export function ShiftSchedulePage({
         emptyMessage="You do not have any assignments for the active event yet."
       />
 
-      {isAdminView ? (
-        <AssignmentsSpreadsheet
-          title="Organization Schedule"
-          description="Spreadsheet view of scouts by match block so admins can see coverage at a glance."
-          entries={sortedEntries}
-          emptyMessage="No schedule has been published yet. Use Manage Schedule to add assignments."
-        />
-      ) : (
-        <AssignmentsList
-          title="Organization Schedule"
-          description="Everyone in the organization can use this view to see who is covering what."
-          entries={sortedEntries}
-          emptyMessage="No schedule has been published for the active event yet."
-        />
-      )}
+      <AssignmentsSpreadsheet
+        title="Organization Schedule"
+        description="Spreadsheet view of scouts by match block so everyone can see coverage at a glance."
+        entries={sortedEntries}
+        emptyMessage="No schedule has been published for the active event yet."
+      />
     </div>
   );
 }

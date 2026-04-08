@@ -74,12 +74,18 @@ function buildRows(entries: ShiftScheduleEntry[]) {
     })
     .sort((a, b) => a.start - b.start);
 
-  const rows = [...memberMap.values()].sort((a, b) => a.name.localeCompare(b.name));
+  const rows = [...memberMap.values()].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
 
   return { blocks, rows };
 }
 
-function AssignmentCell({ entries }: { entries: ShiftScheduleEntry[] | undefined }) {
+function AssignmentCell({
+  entries,
+}: {
+  entries: ShiftScheduleEntry[] | undefined;
+}) {
   if (!entries || entries.length === 0) {
     return <span className="text-xs text-muted-foreground">-</span>;
   }
@@ -98,7 +104,12 @@ function AssignmentCell({ entries }: { entries: ShiftScheduleEntry[] | undefined
   );
 }
 
-export function AssignmentsSpreadsheet({ title, description, entries, emptyMessage }: Props) {
+export function AssignmentsSpreadsheet({
+  title,
+  description,
+  entries,
+  emptyMessage,
+}: Props) {
   const { blocks, rows } = buildRows(entries);
 
   return (
@@ -114,20 +125,20 @@ export function AssignmentsSpreadsheet({ title, description, entries, emptyMessa
             {emptyMessage}
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-red-200">
+          <div className="overflow-x-auto rounded-xl border border-border bg-white">
             <div
-              className="grid min-w-[720px] text-sm"
+              className="grid min-w-[720px] bg-white text-sm"
               style={{
                 gridTemplateColumns: `minmax(220px, 1.4fr) repeat(${blocks.length}, minmax(140px, 1fr))`,
               }}
             >
-              <div className="border-b border-r border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-900">
+              <div className="border-b border-r border-slate-300 bg-slate-100 px-4 py-3 font-semibold tracking-tight text-slate-900">
                 Scout
               </div>
               {blocks.map((block) => (
                 <div
                   key={block.key}
-                  className="border-b border-r border-red-200 bg-red-50 px-4 py-3 text-center font-semibold text-red-900 last:border-r-0"
+                  className="border-b border-r border-slate-300 bg-slate-100 px-4 py-3 text-center font-semibold tracking-tight text-slate-900 last:border-r-0"
                 >
                   {block.label}
                 </div>
@@ -137,7 +148,7 @@ export function AssignmentsSpreadsheet({ title, description, entries, emptyMessa
                 <Fragment key={row.memberId}>
                   <div
                     key={`${row.memberId}-member`}
-                    className="border-b border-r border-red-100 bg-white px-4 py-3"
+                    className="border-b border-r border-border/70 bg-white px-4 py-3"
                   >
                     <p className="font-medium">{row.name}</p>
                     <p className="text-xs text-muted-foreground">
@@ -147,9 +158,11 @@ export function AssignmentsSpreadsheet({ title, description, entries, emptyMessa
                   {blocks.map((block) => (
                     <div
                       key={`${row.memberId}-${block.key}`}
-                      className="border-b border-r border-red-100 bg-white px-4 py-3 last:border-r-0"
+                      className="border-b border-r border-border/70 bg-white px-4 py-3 last:border-r-0"
                     >
-                      <AssignmentCell entries={row.assignmentsByBlock.get(block.key)} />
+                      <AssignmentCell
+                        entries={row.assignmentsByBlock.get(block.key)}
+                      />
                     </div>
                   ))}
                 </Fragment>
