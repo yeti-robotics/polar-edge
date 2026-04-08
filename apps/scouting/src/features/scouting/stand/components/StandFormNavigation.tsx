@@ -4,6 +4,7 @@ import { Button } from "@repo/ui/components/button";
 import { useState } from "react";
 import { useActionState } from "../contexts/ActionStateContext";
 import { useFormData } from "../contexts/FormDataContext";
+import { useMatchTimer } from "../contexts/MatchTimerContext";
 import { useNavigation } from "../contexts/NavigationContext";
 import { useStandFormActions } from "../hooks/useStandFormActions";
 import { COMMENTS_MIN_LENGTH, STAGES } from "../types";
@@ -13,6 +14,7 @@ export function StandFormNavigation() {
   const { state, dispatch } = useNavigation();
   const { state: formData } = useFormData();
   const { state: actionState } = useActionState();
+  const { dispatch: dispatchTimer } = useMatchTimer();
   const { prepareForPhaseTransition } = useStandFormActions();
   const [submitOpen, setSubmitOpen] = useState(false);
 
@@ -62,6 +64,10 @@ export function StandFormNavigation() {
     if (isOnComments) {
       setSubmitOpen(true);
       return;
+    }
+    // Start the match timer when leaving match selection
+    if (isOnMatchSelection) {
+      dispatchTimer({ type: "start_match" });
     }
     // When transitioning from auto to teleop, prepare for phase transition
     if (isOnAutonomous) {
@@ -124,7 +130,7 @@ export function StandFormNavigation() {
           disabled={isNextDisabled}
           title={progressionBlock || undefined}
         >
-          {isOnComments ? "Submit" : "Next"}
+          {isOnComments ? "Submit" : isOnMatchSelection ? "Start Match" : "Next"}
         </Button>
       </div>
 

@@ -9,6 +9,4 @@ export interface TeamEventOverviewRow {
   matchesScouted: number;
   drivetrainType: string | null;
   climbType: string | null;
-  overallScore: number;
-  overallRank: number;
 }

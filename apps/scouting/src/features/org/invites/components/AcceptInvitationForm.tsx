@@ -33,7 +33,7 @@ export function AcceptInvitationForm({
       if (!session?.data?.user) {
         // Redirect to sign in, then back to this page
         const currentUrl = window.location.href;
-        router.push(`${routes.home}?redirect=${encodeURIComponent(currentUrl)}`);
+        router.push(`${routes.login}?redirect=${encodeURIComponent(currentUrl)}`);
         return;
       }
 
@@ -50,7 +50,7 @@ export function AcceptInvitationForm({
       setSuccess(true);
       // Redirect to home page after a brief delay
       setTimeout(() => {
-        router.push(routes.home);
+        router.push(routes.analysis.root);
         router.refresh();
       }, 1500);
     } catch (_err) {

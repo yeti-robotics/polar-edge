@@ -37,7 +37,7 @@ export function AcceptInviteLinkForm({
         // Set cookie before redirecting so OAuth callback knows about the invite
         await setPendingInviteCookie(token);
         const currentUrl = window.location.href;
-        router.push(`${routes.home}?redirect=${encodeURIComponent(currentUrl)}`);
+        router.push(`${routes.login}?redirect=${encodeURIComponent(currentUrl)}`);
         return;
       }
 
@@ -55,7 +55,7 @@ export function AcceptInviteLinkForm({
       await authClient.organization.setActive({ organizationId });
       setTimeout(() => {
         router.refresh();
-        router.push(routes.home);
+        router.push(routes.analysis.root);
       }, 1500);
     } catch (_err) {
       setError("An unexpected error occurred. Please try again.");

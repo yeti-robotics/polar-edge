@@ -3,6 +3,12 @@ interface LeaderboardEntry {
   totalHours: number;
 }
 
+interface UserRankEntry {
+  rank: number;
+  userName: string;
+  totalHours: number;
+}
+
 const RANK_PREFIXES: Record<number, string> = {
   1: ":first_place_medal:",
   2: ":second_place_medal:",
@@ -15,12 +21,14 @@ const RANK_PREFIXES: Record<number, string> = {
  * @param header - The header line (e.g., ":clock: **Attendance Leaderboard** :clock:")
  * @param entries - The leaderboard entries, already sorted by rank
  * @param footer - The footer line (e.g., "*Updated in real-time from attendance records*")
+ * @param userEntry - Optional user rank entry to append below the top entries when the user is not in the top list
  * @returns The formatted leaderboard string
  */
 export function formatLeaderboard(
   header: string,
   entries: LeaderboardEntry[],
-  footer: string
+  footer: string,
+  userEntry?: UserRankEntry | null
 ): string {
   let result = `${header}\n\n`;
 
@@ -28,6 +36,14 @@ export function formatLeaderboard(
     const prefix = RANK_PREFIXES[index + 1] ?? `${index + 1}.`;
     result += `${prefix} **${entry.userName}** - ${entry.totalHours} hours\n`;
   });
+
+  if (userEntry != null && userEntry.rank > entries.length) {
+    if (userEntry.rank === entries.length + 1) {
+      result += `${userEntry.rank}. **${userEntry.userName}** - ${userEntry.totalHours} hours\n`;
+    } else {
+      result += `⋮\n⋮\n⋮\n${userEntry.rank}. **${userEntry.userName}** - ${userEntry.totalHours} hours\n`;
+    }
+  }
 
   result += `\n${footer}`;
   return result;

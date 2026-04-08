@@ -352,6 +352,37 @@ describe("eventsResource", () => {
     });
   });
 
+  describe("getCOPRs()", () => {
+    it("should call fetcher.get with correct path and params", async () => {
+      const eventKey = "2024casj";
+      const mockCOPRs = { "Hub Total Fuel Count": { frc254: 85.5 } };
+      (fetcher.get as Mock).mockResolvedValue(mockCOPRs);
+
+      const result = await events.getCOPRs(eventKey);
+
+      expect(fetcher.get).toHaveBeenCalledWith(
+        "/event/{event_key}/coprs",
+        { event_key: eventKey },
+        undefined
+      );
+      expect(result).toEqual(mockCOPRs);
+    });
+
+    it("should pass options to fetcher.get", async () => {
+      const eventKey = "2024casj";
+      const options = { skipCache: true };
+      (fetcher.get as Mock).mockResolvedValue({});
+
+      await events.getCOPRs(eventKey, options);
+
+      expect(fetcher.get).toHaveBeenCalledWith(
+        "/event/{event_key}/coprs",
+        { event_key: eventKey },
+        options
+      );
+    });
+  });
+
   describe("getPredictions()", () => {
     it("should call fetcher.get with correct path and params", async () => {
       const eventKey = "2024casj";

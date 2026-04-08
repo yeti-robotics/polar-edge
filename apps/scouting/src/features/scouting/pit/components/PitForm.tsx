@@ -26,7 +26,13 @@ import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/re
 import { startTransition, useActionState, useCallback, useEffect, useRef } from "react";
 import { submitPitForm } from "../actions";
 import { usePhotoUpload } from "../hooks/use-photo-upload";
-import { CLIMB_TYPE_OPTIONS, DRIVETRAIN_OPTIONS, FormSchema, formOpts } from "../types";
+import {
+  CLIMB_TYPE_OPTIONS,
+  DRIVETRAIN_OPTIONS,
+  FormSchema,
+  formOpts,
+  SHOOTER_OPTIONS,
+} from "../types";
 import {
   PhotoCompressionProgress,
   PhotoUploadError,
@@ -115,6 +121,8 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
         formData.append("capacity", String(values.capacity));
         formData.append("weight", String(values.weight));
         formData.append("climbType", values.climbType);
+        formData.append("shooterType", values.shooterType);
+        formData.append("canShootWhileMoving", values.canShootWhileMoving ? "on" : "off");
 
         if (photoKeys && photoKeys.length > 0) {
           formData.append("photoKeys", JSON.stringify(photoKeys));
@@ -307,7 +315,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       type="number"
                       id="capacity"
                       name={field.name}
-                      value={field.state.value === 0 ? "" : field.state.value}
+                      value={field.state.value === 0 ? "" : String(field.state.value)}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
                         field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
@@ -333,7 +341,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       type="number"
                       id="weight"
                       name={field.name}
-                      value={field.state.value === 0 ? "" : field.state.value}
+                      value={field.state.value === 0 ? "" : String(field.state.value)}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
                         field.handleChange(e.target.value === "" ? 0 : Number(e.target.value))
@@ -393,6 +401,87 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                   </RadioGroup>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </div>
+              );
+            }}
+          </form.Field>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Shooter</CardTitle>
+          <CardDescription>Select the shooter type if the robot has one.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3.5">
+          <form.Field name="shooterType">
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+              const hasShooterType =
+                typeof field.state.value === "string" && field.state.value.length > 0;
+
+              return (
+                <Field className="space-y-3.5">
+                  <div>
+                    <RadioGroup
+                      id={field.name}
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                      aria-label="Shooter Type"
+                      value={typeof field.state.value === "string" ? field.state.value : ""}
+                      onValueChange={(v) =>
+                        field.handleChange(v as (typeof SHOOTER_OPTIONS)[number])
+                      }
+                      className="flex flex-wrap gap-2.5"
+                    >
+                      {SHOOTER_OPTIONS.map((type) => (
+                        <div key={type}>
+                          <RadioGroupItem
+                            id={`shooter-${type}`}
+                            value={type}
+                            className="peer sr-only"
+                          />
+                          <Label
+                            htmlFor={`shooter-${type}`}
+                            className="cursor-pointer select-none rounded-lg border border-border bg-muted/50 px-[18px] py-3 text-sm whitespace-nowrap transition-colors hover:bg-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 peer-data-[state=checked]:text-primary peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:border-ring"
+                          >
+                            {type === "fixed" ? "Fixed Shooter" : "Turret Shooter"}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </div>
+
+                  <form.Field name="canShootWhileMoving">
+                    {(checkboxField) => {
+                      const isCheckboxInvalid =
+                        checkboxField.state.meta.isTouched && !checkboxField.state.meta.isValid;
+
+                      return (
+                        <div>
+                          <Label htmlFor="can_shoot_while_moving">
+                            <Checkbox
+                              id="can_shoot_while_moving"
+                              name={checkboxField.name}
+                              checked={checkboxField.state.value ?? false}
+                              disabled={!hasShooterType}
+                              onBlur={checkboxField.handleBlur}
+                              onCheckedChange={(checked) =>
+                                checkboxField.handleChange(checked === true)
+                              }
+                              aria-invalid={isCheckboxInvalid}
+                            />
+                            Can shoot while moving
+                          </Label>
+                          {isCheckboxInvalid && (
+                            <FieldError errors={checkboxField.state.meta.errors} />
+                          )}
+                        </div>
+                      );
+                    }}
+                  </form.Field>
+                </Field>
               );
             }}
           </form.Field>

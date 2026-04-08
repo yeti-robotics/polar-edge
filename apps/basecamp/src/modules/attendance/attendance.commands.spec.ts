@@ -578,19 +578,6 @@ describe("AttendanceCommands", () => {
     it("replies with error when getUserHours returns err", async () => {
       const interaction = makeInteraction();
       service.getUserHours.mockReturnValue(errAsync(new Error("sheet error")));
-      service.getUserRank.mockReturnValue(okAsync(1));
-
-      await commands.onAttendance([interaction] as never);
-
-      expect(interaction.reply).toHaveBeenCalledWith(
-        "There was an error getting your attendance. Please let a mentor know."
-      );
-    });
-
-    it("replies with error when getUserRank returns err", async () => {
-      const interaction = makeInteraction();
-      service.getUserHours.mockReturnValue(okAsync(10));
-      service.getUserRank.mockReturnValue(errAsync(new Error("sheet error")));
 
       await commands.onAttendance([interaction] as never);
 
@@ -603,14 +590,12 @@ describe("AttendanceCommands", () => {
       const interaction = makeInteraction();
       // totalPossibleHours = 100 (mocked), 85% threshold = 85h
       service.getUserHours.mockReturnValue(okAsync(90));
-      service.getUserRank.mockReturnValue(okAsync(1));
 
       await commands.onAttendance([interaction] as never);
 
       expect(interaction.reply).toHaveBeenCalledWith(
         expect.stringContaining("above the minimum hours for leadership")
       );
-      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("1st overall"));
       expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining(":tada:"));
     });
 
@@ -618,46 +603,31 @@ describe("AttendanceCommands", () => {
       const interaction = makeInteraction();
       // 75-84h out of 100 = above member, below leadership
       service.getUserHours.mockReturnValue(okAsync(80));
-      service.getUserRank.mockReturnValue(okAsync(2));
 
       await commands.onAttendance([interaction] as never);
 
       expect(interaction.reply).toHaveBeenCalledWith(
         expect.stringContaining("above the minimum hours for members")
       );
-      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("2nd overall"));
     });
 
     it("shows behind-goal message when below member threshold (75%)", async () => {
       const interaction = makeInteraction();
       // 50h out of 100 = below 75% threshold
       service.getUserHours.mockReturnValue(okAsync(50));
-      service.getUserRank.mockReturnValue(okAsync(5));
 
       await commands.onAttendance([interaction] as never);
 
       expect(interaction.reply).toHaveBeenCalledWith(
         expect.stringContaining("behind the minimum hours goal")
       );
-      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("5th overall"));
       expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining(":rocket:"));
-    });
-
-    it("omits rank string when rank is null", async () => {
-      const interaction = makeInteraction();
-      service.getUserHours.mockReturnValue(okAsync(50));
-      service.getUserRank.mockReturnValue(okAsync(null));
-
-      await commands.onAttendance([interaction] as never);
-
-      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("ranked"));
     });
 
     it("shows 0% when total possible hours is 0", async () => {
       const interaction = makeInteraction();
       service.getTotalPossibleHoursToDate.mockReturnValue(0);
       service.getUserHours.mockReturnValue(okAsync(0));
-      service.getUserRank.mockReturnValue(okAsync(null));
 
       await commands.onAttendance([interaction] as never);
 
@@ -672,6 +642,8 @@ describe("AttendanceCommands", () => {
     it("replies with 'no attendance data' when repository fails", async () => {
       const interaction = makeInteraction();
       service.getTopMembersByHours.mockReturnValue(errAsync(new Error("sheet error")));
+      service.getUserRank.mockReturnValue(okAsync(null));
+      service.getUserHours.mockReturnValue(okAsync(0));
 
       await commands.onAttendanceLeaderboard([interaction] as never);
 
@@ -681,6 +653,8 @@ describe("AttendanceCommands", () => {
     it("replies with 'no attendance data' when list is empty", async () => {
       const interaction = makeInteraction();
       service.getTopMembersByHours.mockReturnValue(okAsync([]));
+      service.getUserRank.mockReturnValue(okAsync(null));
+      service.getUserHours.mockReturnValue(okAsync(0));
 
       await commands.onAttendanceLeaderboard([interaction] as never);
 
@@ -698,6 +672,8 @@ describe("AttendanceCommands", () => {
           { userName: "Eve", totalHours: 10 },
         ])
       );
+      service.getUserRank.mockReturnValue(okAsync(null));
+      service.getUserHours.mockReturnValue(okAsync(0));
 
       await commands.onAttendanceLeaderboard([interaction] as never);
 
@@ -722,6 +698,8 @@ describe("AttendanceCommands", () => {
     it("shows leaderboard with a single entry", async () => {
       const interaction = makeInteraction();
       service.getTopMembersByHours.mockReturnValue(okAsync([{ userName: "Solo", totalHours: 99 }]));
+      service.getUserRank.mockReturnValue(okAsync(null));
+      service.getUserHours.mockReturnValue(okAsync(0));
 
       await commands.onAttendanceLeaderboard([interaction] as never);
 
@@ -735,10 +713,94 @@ describe("AttendanceCommands", () => {
     it("calls getTopMembersByHours with limit 5", async () => {
       const interaction = makeInteraction();
       service.getTopMembersByHours.mockReturnValue(okAsync([]));
+      service.getUserRank.mockReturnValue(okAsync(null));
+      service.getUserHours.mockReturnValue(okAsync(0));
 
       await commands.onAttendanceLeaderboard([interaction] as never);
 
       expect(service.getTopMembersByHours).toHaveBeenCalledWith(5);
+    });
+
+    it("shows user rank with vertical ellipsis when user is rank 7 or higher", async () => {
+      const interaction = makeInteraction();
+      service.getTopMembersByHours.mockReturnValue(
+        okAsync([
+          { userName: "Alice", totalHours: 50 },
+          { userName: "Bob", totalHours: 40 },
+          { userName: "Carol", totalHours: 30 },
+          { userName: "Dave", totalHours: 20 },
+          { userName: "Eve", totalHours: 10 },
+        ])
+      );
+      service.getUserRank.mockReturnValue(okAsync(34));
+      service.getUserHours.mockReturnValue(okAsync(2));
+
+      await commands.onAttendanceLeaderboard([interaction] as never);
+
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("⋮"));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("34."));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("Test User"));
+    });
+
+    it("shows user rank directly after top 5 without ellipsis when user is rank 6", async () => {
+      const interaction = makeInteraction();
+      service.getTopMembersByHours.mockReturnValue(
+        okAsync([
+          { userName: "Alice", totalHours: 50 },
+          { userName: "Bob", totalHours: 40 },
+          { userName: "Carol", totalHours: 30 },
+          { userName: "Dave", totalHours: 20 },
+          { userName: "Eve", totalHours: 10 },
+        ])
+      );
+      service.getUserRank.mockReturnValue(okAsync(6));
+      service.getUserHours.mockReturnValue(okAsync(5));
+
+      await commands.onAttendanceLeaderboard([interaction] as never);
+
+      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("⋮"));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("6."));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("Test User"));
+    });
+
+    it("does not show user rank entry when user is in the top 5", async () => {
+      const interaction = makeInteraction();
+      service.getTopMembersByHours.mockReturnValue(
+        okAsync([
+          { userName: "Alice", totalHours: 50 },
+          { userName: "Bob", totalHours: 40 },
+          { userName: "Carol", totalHours: 30 },
+          { userName: "Dave", totalHours: 20 },
+          { userName: "Test User", totalHours: 10 },
+        ])
+      );
+      service.getUserRank.mockReturnValue(okAsync(5));
+      service.getUserHours.mockReturnValue(okAsync(10));
+
+      await commands.onAttendanceLeaderboard([interaction] as never);
+
+      // The user appears in the leaderboard already; no extra line with ellipsis
+      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("⋮"));
+      // Should not appear twice
+      const call = (interaction.reply as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as string;
+      expect(call.indexOf("Test User")).toBe(call.lastIndexOf("Test User"));
+    });
+
+    it("does not show user rank entry when user has no attendance data", async () => {
+      const interaction = makeInteraction();
+      service.getTopMembersByHours.mockReturnValue(
+        okAsync([
+          { userName: "Alice", totalHours: 50 },
+          { userName: "Bob", totalHours: 40 },
+        ])
+      );
+      service.getUserRank.mockReturnValue(okAsync(null));
+      service.getUserHours.mockReturnValue(okAsync(0));
+
+      await commands.onAttendanceLeaderboard([interaction] as never);
+
+      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("⋮"));
+      expect(interaction.reply).not.toHaveBeenCalledWith(expect.stringContaining("Test User"));
     });
   });
 });

@@ -34,4 +34,22 @@ export class OutreachService {
         .slice(0, limit);
     });
   }
+
+  getUserRankAndHours(
+    userName: string
+  ): ResultAsync<{ rank: number | null; totalHours: number }, Error> {
+    return this.repository.findAll().map((outreachData) => {
+      const userHoursMap = new Map<string, number>();
+      for (const entry of outreachData) {
+        userHoursMap.set(entry.userName, (userHoursMap.get(entry.userName) ?? 0) + entry.hours);
+      }
+      const userHoursRaw = userHoursMap.get(userName);
+      if (userHoursRaw == null) return { rank: null, totalHours: 0 };
+      const totalHours = roundToTenth(userHoursRaw);
+      const distinctHigher = new Set(
+        Array.from(userHoursMap.values()).filter((h) => h > userHoursRaw)
+      );
+      return { rank: distinctHigher.size + 1, totalHours };
+    });
+  }
 }

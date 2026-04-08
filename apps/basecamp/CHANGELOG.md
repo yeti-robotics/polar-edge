@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.3.2...basecamp-v1.4.0) (2026-04-06)
+
+
+### Features
+
+* **basecamp:** Refactor leaderboard to show user rank outside top 5 ([#469](https://github.com/yeti-robotics/polar-edge/issues/469)) ([d6ea46f](https://github.com/yeti-robotics/polar-edge/commit/d6ea46f74b87d01120c8ef5acbfe1ad491227b90))
+
+## [1.3.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.3.1...basecamp-v1.3.2) (2026-03-25)
+
+
+### Bug Fixes
+
+* add competiion exclusion ([77f5b5d](https://github.com/yeti-robotics/polar-edge/commit/77f5b5d53edfea64d6549782f0374ae0c1cb92ad))
+
 ## [1.3.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.3.0...basecamp-v1.3.1) (2026-03-10)
 
 

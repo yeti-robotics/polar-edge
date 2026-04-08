@@ -66,7 +66,7 @@ export async function submitStandForm(
   }
 
   const validTeamMatch = await db
-    .select({ id: teamMatch.id })
+    .select({ id: teamMatch.id, teamNumber: teamMatch.teamNumber })
     .from(teamMatch)
     .innerJoin(match, eq(teamMatch.matchId, match.id))
     .where(and(eq(teamMatch.id, data.teamMatchId), eq(match.eventId, activeEvent.event.id)))
@@ -82,6 +82,7 @@ export async function submitStandForm(
       .values({
         teamMatchId: data.teamMatchId,
         scoutMemberId: memberId,
+        canShuttle: data.canShuttle,
         comments: data.comments,
         oofTimeSeconds: data.oofTimeSeconds,
       })
@@ -97,7 +98,6 @@ export async function submitStandForm(
           standFormId: standFormRecord.id,
           phase: c.phase,
           cycleNumber: c.cycleNumber,
-          bucket: c.bucket,
           dumpDuration: ((c.endedAt - c.startedAt) / 1000).toString(),
         }))
       );
@@ -108,13 +108,15 @@ export async function submitStandForm(
         data.climbs.map((c) => ({
           standFormId: standFormRecord.id,
           climbPhase: c.phase,
-          climbLevel: c.climbLevel,
-          climbSuccess: c.climbSuccess,
           climbDuration: ((c.endedAt - c.startedAt) / 1000).toString(),
         }))
       );
     }
   });
 
-  return { success: true, eventId: activeEvent.event.id };
+  return {
+    success: true,
+    eventId: activeEvent.event.id,
+    teamNumber: validTeamMatch[0]?.teamNumber,
+  };
 }
