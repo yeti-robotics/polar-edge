@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@repo/ui/components/select";
 import { toast } from "@repo/ui/components/sonner";
-import { Textarea } from "@repo/ui/components/textarea";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -47,7 +46,6 @@ function createEntry(): ShiftScheduleEntry {
     standStation: "red1",
     matchStart: null,
     matchEnd: null,
-    notes: null,
   };
 }
 
@@ -98,17 +96,6 @@ export function ScheduleForm({
     });
   }
 
-  function handleTypeChange(entryId: string, assignmentType: ShiftScheduleEntry["assignmentType"]) {
-    const currentEntry = entries.find((entry) => entry.id === entryId);
-
-    updateEntry(entryId, {
-      assignmentType,
-      standStation: assignmentType === "stand" ? "red1" : null,
-      matchStart: assignmentType === "stand" ? (currentEntry?.matchStart ?? null) : null,
-      matchEnd: assignmentType === "stand" ? (currentEntry?.matchEnd ?? null) : null,
-    });
-  }
-
   function handleMatchBlockChange(entryId: string, value: string) {
     const [start, end] = value.split(":").map(Number);
     updateEntry(entryId, { matchStart: start, matchEnd: end });
@@ -117,13 +104,10 @@ export function ScheduleForm({
   async function handleSubmit() {
     if (
       entries.some(
-        (entry) =>
-          !entry.memberId ||
-          (entry.assignmentType === "stand" &&
-            (!entry.standStation || !entry.matchStart || !entry.matchEnd))
+        (entry) => !entry.memberId || !entry.standStation || !entry.matchStart || !entry.matchEnd
       )
     ) {
-      toast.error("Each assignment needs a member, and stand assignments need a slot and block.");
+      toast.error("Each assignment needs a member, stand slot, and match block.");
       return;
     }
 
@@ -150,7 +134,7 @@ export function ScheduleForm({
         <div>
           <p className="text-sm font-medium">Assignments</p>
           <p className="text-sm text-muted-foreground">
-            Stand assignments use slot plus match block. Pit assignments stay simple.
+            Every assignment is a stand form slot tied to a match block.
           </p>
         </div>
         <Button type="button" variant="outline" onClick={addEntry} disabled={isSaving || isPending}>
@@ -161,12 +145,15 @@ export function ScheduleForm({
 
       <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
         {entries.map((entry, index) => (
-          <div key={entry.id} className="space-y-4 rounded-xl border p-4">
+          <div
+            key={entry.id}
+            className="space-y-4 rounded-xl border border-red-200 bg-red-50/40 p-4"
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <p className="font-medium">{entry.name || `Assignment ${index + 1}`}</p>
-                <Badge variant="secondary">
-                  {entry.assignmentType === "stand" ? "Stand" : "Pit"}
+                <Badge className="border-red-300 bg-red-100 text-red-800 hover:bg-red-100">
+                  Stand Form
                 </Badge>
               </div>
               <Button
@@ -180,7 +167,7 @@ export function ScheduleForm({
               </Button>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <Label>Assignee</Label>
                 <Select
@@ -202,11 +189,13 @@ export function ScheduleForm({
               </div>
 
               <div className="space-y-2">
-                <Label>Assignment Type</Label>
+                <Label>Stand Slot</Label>
                 <Select
-                  value={entry.assignmentType}
+                  value={entry.standStation ?? "red1"}
                   onValueChange={(value) =>
-                    handleTypeChange(entry.id, value as ShiftScheduleEntry["assignmentType"])
+                    updateEntry(entry.id, {
+                      standStation: value as ShiftScheduleEntry["standStation"],
+                    })
                   }
                   disabled={isSaving || isPending}
                 >
@@ -214,79 +203,40 @@ export function ScheduleForm({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="stand">Stand Form</SelectItem>
-                    <SelectItem value="pit">Pit Form</SelectItem>
+                    {STAND_STATIONS.map((station) => (
+                      <SelectItem key={station} value={station}>
+                        {formatStation(station)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {entry.assignmentType === "stand" ? (
-                <>
-                  <div className="space-y-2">
-                    <Label>Stand Slot</Label>
-                    <Select
-                      value={entry.standStation ?? "red1"}
-                      onValueChange={(value) =>
-                        updateEntry(entry.id, {
-                          standStation: value as ShiftScheduleEntry["standStation"],
-                        })
-                      }
-                      disabled={isSaving || isPending}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {STAND_STATIONS.map((station) => (
-                          <SelectItem key={station} value={station}>
-                            {formatStation(station)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Match Block</Label>
-                    <Select
-                      value={
-                        entry.matchStart && entry.matchEnd
-                          ? `${entry.matchStart}:${entry.matchEnd}`
-                          : undefined
-                      }
-                      onValueChange={(value) => handleMatchBlockChange(entry.id, value)}
-                      disabled={isSaving || isPending || matchBlocks.length === 0}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a 5-match block" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {matchBlocks.map((block) => (
-                          <SelectItem
-                            key={`${block.start}-${block.end}`}
-                            value={`${block.start}:${block.end}`}
-                          >
-                            {block.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </>
-              ) : null}
-
-              <div className={entry.assignmentType === "stand" ? "md:col-span-2" : undefined}>
-                <div className="space-y-2">
-                  <Label htmlFor={`notes-${entry.id}`}>Notes</Label>
-                  <Textarea
-                    id={`notes-${entry.id}`}
-                    value={entry.notes ?? ""}
-                    onChange={(event) => updateEntry(entry.id, { notes: event.target.value })}
-                    placeholder="Optional reminders, backup coverage, or scouting notes"
-                    disabled={isSaving || isPending}
-                    className="min-h-24"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label>Match Block</Label>
+                <Select
+                  value={
+                    entry.matchStart && entry.matchEnd
+                      ? `${entry.matchStart}:${entry.matchEnd}`
+                      : undefined
+                  }
+                  onValueChange={(value) => handleMatchBlockChange(entry.id, value)}
+                  disabled={isSaving || isPending || matchBlocks.length === 0}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a 5-match block" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {matchBlocks.map((block) => (
+                      <SelectItem
+                        key={`${block.start}-${block.end}`}
+                        value={`${block.start}:${block.end}`}
+                      >
+                        {block.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>

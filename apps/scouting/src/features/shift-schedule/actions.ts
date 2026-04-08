@@ -58,21 +58,17 @@ export async function updateShiftScheduleAction(
       memberId: entry.memberId ?? null,
       email: entry.email?.trim() || null,
       name: entry.name.trim(),
-      notes: entry.notes?.trim() || null,
+      assignmentType: "stand" as const,
     }));
 
     if (entries.some((entry) => !entry.memberId || !entry.name)) {
       return { data: null, error: "Each schedule assignment needs an assignee" };
     }
 
-    if (
-      entries.some((entry) =>
-        entry.assignmentType === "stand" ? !isStandEntryValid(entry) : !!entry.standStation
-      )
-    ) {
+    if (entries.some((entry) => !isStandEntryValid(entry))) {
       return {
         data: null,
-        error: "Stand assignments need a slot and match range, and pit assignments should not.",
+        error: "Each stand assignment needs a slot and match range.",
       };
     }
 

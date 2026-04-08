@@ -5,6 +5,7 @@ import { Card, CardContent } from "@repo/ui/components/card";
 import { TypographyMuted } from "@repo/ui/components/typography";
 import {
   formatAssignmentTypeLabel,
+  getStandStationBadgeClass,
   formatStandStationLabel,
   type ShiftScheduleEntry,
 } from "@/features/shift-schedule/types";
@@ -26,18 +27,14 @@ function AssignmentCard({ entry }: { entry: ShiftScheduleEntry }) {
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline">{formatAssignmentTypeLabel(entry.assignmentType)}</Badge>
-          {entry.assignmentType === "stand" ? (
-            <>
-              <Badge>{formatStandStationLabel(entry.standStation)}</Badge>
-              <Badge variant="secondary">
-                QM {entry.matchStart}-{entry.matchEnd}
-              </Badge>
-            </>
-          ) : null}
+          <Badge className={getStandStationBadgeClass(entry.standStation)}>
+            {formatStandStationLabel(entry.standStation)}
+          </Badge>
+          <Badge variant="secondary">
+            QM {entry.matchStart}-{entry.matchEnd}
+          </Badge>
         </div>
       </div>
-
-      {entry.notes ? <p className="mt-3 text-muted-foreground">{entry.notes}</p> : null}
     </div>
   );
 }

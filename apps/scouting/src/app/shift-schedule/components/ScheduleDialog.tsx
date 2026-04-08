@@ -39,8 +39,7 @@ export function ScheduleDialog({
         <DialogHeader>
           <DialogTitle>Create Scouting Schedule</DialogTitle>
           <DialogDescription>
-            Assign organization members to pit scouting or stand scouting blocks for the active
-            event.
+            Assign organization members to stand scouting blocks for the active event.
           </DialogDescription>
         </DialogHeader>
 

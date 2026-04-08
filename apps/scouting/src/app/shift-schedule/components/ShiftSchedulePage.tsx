@@ -9,6 +9,7 @@ import {
 } from "@/features/shift-schedule/types";
 import { AdminScheduleButton } from "./AdminScheduleButton";
 import { AssignmentsList } from "./AssignmentsList";
+import { AssignmentsSpreadsheet } from "./AssignmentsSpreadsheet";
 import { ShiftScheduleSummary } from "./ShiftScheduleSummary";
 
 type OrganizationMemberOption = {
@@ -39,13 +40,13 @@ export function ShiftSchedulePage({
   const sortedEntries = useMemo(
     () =>
       [...initialEntries].sort((a, b) => {
-        if (a.assignmentType !== b.assignmentType) {
-          return a.assignmentType.localeCompare(b.assignmentType);
-        }
-
         const startA = a.matchStart ?? 0;
         const startB = b.matchStart ?? 0;
-        return startA - startB;
+        if (startA !== startB) {
+          return startA - startB;
+        }
+
+        return (a.name || "").localeCompare(b.name || "");
       }),
     [initialEntries]
   );
@@ -86,16 +87,21 @@ export function ShiftSchedulePage({
         emptyMessage="You do not have any assignments for the active event yet."
       />
 
-      <AssignmentsList
-        title="Organization Schedule"
-        description="Everyone in the organization can use this view to see who is covering what."
-        entries={sortedEntries}
-        emptyMessage={
-          isAdmin
-            ? "No schedule has been published yet. Use Manage Schedule to add assignments."
-            : "No schedule has been published for the active event yet."
-        }
-      />
+      {isAdmin ? (
+        <AssignmentsSpreadsheet
+          title="Organization Schedule"
+          description="Spreadsheet view of scouts by match block so admins can see coverage at a glance."
+          entries={sortedEntries}
+          emptyMessage="No schedule has been published yet. Use Manage Schedule to add assignments."
+        />
+      ) : (
+        <AssignmentsList
+          title="Organization Schedule"
+          description="Everyone in the organization can use this view to see who is covering what."
+          entries={sortedEntries}
+          emptyMessage="No schedule has been published for the active event yet."
+        />
+      )}
     </div>
   );
 }
