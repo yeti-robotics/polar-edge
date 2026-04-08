@@ -2,9 +2,9 @@ import "server-only";
 
 import { and, asc, eq } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { match, shiftSchedule } from "@/lib/database/schema";
-import { cacheTags } from "@/lib/cache";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { normalizeShiftScheduleEntries, type ShiftScheduleEntry } from "./types";
 

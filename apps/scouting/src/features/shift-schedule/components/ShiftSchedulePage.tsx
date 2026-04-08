@@ -13,7 +13,12 @@ type Props = {
   initialEntries: ShiftScheduleEntry[];
 };
 
-export function ShiftSchedulePage({ activeMemberId, adminAction, eventName, initialEntries }: Props) {
+export function ShiftSchedulePage({
+  activeMemberId,
+  adminAction,
+  eventName,
+  initialEntries,
+}: Props) {
   const isAdminView = adminAction != null;
   const sortedEntries = [...initialEntries].sort((a, b) => {
     const startA = a.matchStart ?? 0;
