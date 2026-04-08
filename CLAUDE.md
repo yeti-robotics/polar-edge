@@ -303,7 +303,7 @@ PR titles must follow [Conventional Commits](https://www.conventionalcommits.org
 - `docs` - Documentation (no version bump)
 
 **Scopes:**
-- `scouting`, `basecamp`, `basecamp-fe` - Apps
+- `scouting`, `basecamp`, `basecamp-fe`, `juice` - Apps
 - `ui`, `tba-sdk`, `ai`, `twofa` - Packages
 - `deps` - Dependency updates
 
