@@ -22,11 +22,20 @@ import type { FleetBattery } from "@/services/tracker/types";
 
 interface CheckOutDialogProps {
   availableBatteries: FleetBattery[];
-  onCheckOut: (batteryId: string, batteryName: string, kw700: number | null, voltage: number | null) => Promise<void>;
+  onCheckOut: (
+    batteryId: string,
+    batteryName: string,
+    kw700: number | null,
+    voltage: number | null
+  ) => Promise<void>;
   preselectedId?: string;
 }
 
-export function CheckOutDialog({ availableBatteries, onCheckOut, preselectedId }: CheckOutDialogProps) {
+export function CheckOutDialog({
+  availableBatteries,
+  onCheckOut,
+  preselectedId,
+}: CheckOutDialogProps) {
   const [open, setOpen] = useState(false);
   const [batteryId, setBatteryId] = useState(preselectedId ?? "");
   const [kw700, setKw700] = useState("");

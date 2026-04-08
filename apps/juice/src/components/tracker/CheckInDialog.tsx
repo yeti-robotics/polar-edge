@@ -14,8 +14,16 @@ import { useState } from "react";
 import type { SessionPerformance } from "@/services/tracker/types";
 
 const PERFORMANCE_OPTIONS: { value: SessionPerformance; label: string; color: string }[] = [
-  { value: "excellent", label: "Excellent", color: "border-emerald-500 bg-emerald-500/10 text-emerald-500" },
-  { value: "good", label: "Good", color: "border-emerald-500/50 bg-emerald-500/5 text-emerald-400" },
+  {
+    value: "excellent",
+    label: "Excellent",
+    color: "border-emerald-500 bg-emerald-500/10 text-emerald-500",
+  },
+  {
+    value: "good",
+    label: "Good",
+    color: "border-emerald-500/50 bg-emerald-500/5 text-emerald-400",
+  },
   { value: "ok", label: "OK", color: "border-amber-500 bg-amber-500/10 text-amber-500" },
   { value: "poor", label: "Poor", color: "border-red-500 bg-red-500/10 text-red-500" },
 ];
@@ -34,7 +42,13 @@ interface CheckInDialogProps {
   ) => Promise<void>;
 }
 
-export function CheckInDialog({ sessionId, batteryName, open, onOpenChange, onCheckIn }: CheckInDialogProps) {
+export function CheckInDialog({
+  sessionId,
+  batteryName,
+  open,
+  onOpenChange,
+  onCheckIn,
+}: CheckInDialogProps) {
   const [performance, setPerformance] = useState<SessionPerformance | null>(null);
   const [hadBrownout, setHadBrownout] = useState<boolean | null>(null);
   const [brownoutTiming, setBrownoutTiming] = useState("");

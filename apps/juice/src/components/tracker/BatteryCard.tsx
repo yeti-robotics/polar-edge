@@ -6,7 +6,12 @@ import { CheckInDialog } from "./CheckInDialog";
 
 interface BatteryCardProps {
   battery: FleetBattery;
-  onCheckOut: (batteryId: string, batteryName: string, kw700: number | null, voltage: number | null) => Promise<void>;
+  onCheckOut: (
+    batteryId: string,
+    batteryName: string,
+    kw700: number | null,
+    voltage: number | null
+  ) => Promise<void>;
   onCheckIn: (
     sessionId: string,
     performance: SessionPerformance,
@@ -14,7 +19,6 @@ interface BatteryCardProps {
     brownoutTiming: string | null,
     notes: string
   ) => Promise<void>;
-  onRetire: (id: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }
 
@@ -36,18 +40,20 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export function BatteryCard({ battery, onCheckOut, onCheckIn, onRetire, onDelete }: BatteryCardProps) {
+export function BatteryCard({
+  battery,
+  onCheckOut,
+  onCheckIn,
+  onDelete,
+}: BatteryCardProps) {
   const [checkInOpen, setCheckInOpen] = useState(false);
 
   return (
     <div
       className={`rounded-lg border bg-card p-4 ${
-        battery.isInUse
-          ? "border-blue-500/30"
-          : "border-border"
+        battery.isInUse ? "border-blue-500/30" : "border-border"
       }`}
     >
-
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
         <h3 className="text-lg font-semibold">{battery.name}</h3>

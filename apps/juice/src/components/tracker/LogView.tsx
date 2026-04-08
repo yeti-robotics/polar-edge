@@ -8,8 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import type { BatterySession } from "@/services/tracker/types";
 import { exportSessionsCsv } from "@/services/tracker/csv";
+import type { BatterySession } from "@/services/tracker/types";
 
 interface LogViewProps {
   sessions: BatterySession[];
@@ -139,7 +139,10 @@ export function LogView({ sessions, onDelete }: LogViewProps) {
               {formatDateTime(s.checkedOutAt)}
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <MobileLogStat label="KW700" value={s.kw700MOhms !== null ? `${s.kw700MOhms} mΩ` : "—"} />
+              <MobileLogStat
+                label="KW700"
+                value={s.kw700MOhms !== null ? `${s.kw700MOhms} mΩ` : "—"}
+              />
               <MobileLogStat label="Voltage" value={s.voltage !== null ? `${s.voltage} V` : "—"} />
               <div className="rounded-md bg-muted/50 px-2 py-1.5">
                 <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">

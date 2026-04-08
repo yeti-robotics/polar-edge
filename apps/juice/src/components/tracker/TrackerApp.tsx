@@ -6,7 +6,6 @@ import {
   addBattery as dbAddBattery,
   deleteBattery as dbDeleteBattery,
   deleteSession as dbDeleteSession,
-  retireBattery as dbRetireBattery,
   getActiveSessions,
   getCompletedSessions,
   getDashboardStats,
@@ -21,13 +20,17 @@ import type {
 import { JuiceNav } from "../JuiceNav";
 import { AddBatteryDialog } from "./AddBatteryDialog";
 import { BatteryCard } from "./BatteryCard";
-import { CheckInDialog } from "./CheckInDialog";
 import { CheckOutDialog } from "./CheckOutDialog";
 import { DashboardView } from "./DashboardView";
 import { LogView } from "./LogView";
 
 export function TrackerApp() {
-  const [stats, setStats] = useState<DashboardStats>({ total: 0, available: 0, inUse: 0, brownouts: 0 });
+  const [stats, setStats] = useState<DashboardStats>({
+    total: 0,
+    available: 0,
+    inUse: 0,
+    brownouts: 0,
+  });
   const [fleet, setFleet] = useState<FleetBattery[]>([]);
   const [activeSessions, setActiveSessions] = useState<BatterySession[]>([]);
   const [completedSessions, setCompletedSessions] = useState<BatterySession[]>([]);
@@ -55,7 +58,12 @@ export function TrackerApp() {
     await refresh();
   };
 
-  const handleCheckOut = async (batteryId: string, batteryName: string, kw700: number | null, voltage: number | null) => {
+  const handleCheckOut = async (
+    batteryId: string,
+    batteryName: string,
+    kw700: number | null,
+    voltage: number | null
+  ) => {
     await checkOutBattery(batteryId, batteryName, kw700, voltage);
     await refresh();
   };
@@ -71,10 +79,6 @@ export function TrackerApp() {
     await refresh();
   };
 
-  const handleRetire = async (id: string) => {
-    await dbRetireBattery(id);
-    await refresh();
-  };
 
   const handleDeleteBattery = async (id: string) => {
     await dbDeleteBattery(id);
@@ -112,10 +116,7 @@ export function TrackerApp() {
             </TabsList>
 
             <div className="flex gap-2">
-              <CheckOutDialog
-                availableBatteries={availableBatteries}
-                onCheckOut={handleCheckOut}
-              />
+              <CheckOutDialog availableBatteries={availableBatteries} onCheckOut={handleCheckOut} />
               <AddBatteryDialog onAdd={handleAddBattery} existingNames={existingNames} />
             </div>
           </div>
@@ -144,7 +145,6 @@ export function TrackerApp() {
                     battery={b}
                     onCheckOut={handleCheckOut}
                     onCheckIn={handleCheckIn}
-                    onRetire={handleRetire}
                     onDelete={handleDeleteBattery}
                   />
                 ))

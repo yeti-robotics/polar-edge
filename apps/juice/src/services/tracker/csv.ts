@@ -4,7 +4,17 @@ export function exportSessionsCsv(sessions: BatterySession[]): void {
   if (!sessions.length) return;
 
   const rows = [
-    ["Battery", "Checkout Time", "Checkin Time", "KW700 (mOhm)", "Voltage (V)", "Performance", "Brownout", "Brownout Time", "Notes"],
+    [
+      "Battery",
+      "Checkout Time",
+      "Checkin Time",
+      "KW700 (mOhm)",
+      "Voltage (V)",
+      "Performance",
+      "Brownout",
+      "Brownout Time",
+      "Notes",
+    ],
     ...sessions.map((s) => [
       s.batteryName,
       s.checkedOutAt,

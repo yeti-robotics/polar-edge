@@ -1,4 +1,4 @@
-import { openDB, type DBSchema, type IDBPDatabase } from "idb";
+import { type DBSchema, type IDBPDatabase, openDB } from "idb";
 import type {
   Battery,
   BatterySession,
@@ -140,8 +140,8 @@ export async function getActiveSessions(): Promise<BatterySession[]> {
 export async function getCompletedSessions(): Promise<BatterySession[]> {
   const sessions = await getAllSessions();
   return sessions
-    .filter((s) => s.checkedInAt !== null)
-    .sort((a, b) => new Date(b.checkedInAt!).getTime() - new Date(a.checkedInAt!).getTime());
+    .filter((s): s is BatterySession & { checkedInAt: string } => s.checkedInAt !== null)
+    .sort((a, b) => new Date(b.checkedInAt).getTime() - new Date(a.checkedInAt).getTime());
 }
 
 // ── Derived Data ───────────────────────────────────────────────────────────
@@ -172,10 +172,12 @@ export async function getFleetBatteries(): Promise<FleetBattery[]> {
     .filter((b) => !b.retired)
     .map((b) => {
       const batterySessions = sessions.filter((s) => s.batteryId === b.id);
-      const completed = batterySessions.filter((s) => s.checkedInAt !== null);
+      const completed = batterySessions.filter(
+        (s): s is BatterySession & { checkedInAt: string } => s.checkedInAt !== null
+      );
       const activeSession = batterySessions.find((s) => s.checkedInAt === null);
       const lastCompleted = completed.sort(
-        (a, b) => new Date(b.checkedInAt!).getTime() - new Date(a.checkedInAt!).getTime()
+        (a, b) => new Date(b.checkedInAt).getTime() - new Date(a.checkedInAt).getTime()
       )[0];
 
       return {
