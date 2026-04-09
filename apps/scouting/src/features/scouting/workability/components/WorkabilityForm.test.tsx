@@ -69,11 +69,7 @@ vi.mock("@repo/ui/components/combobox", () => ({
 
     return <div>{children}</div>;
   },
-  ComboboxInput: ({
-    disabled,
-    placeholder,
-    ...props
-  }: InputHTMLAttributes<HTMLInputElement>) => {
+  ComboboxInput: ({ disabled, placeholder, ...props }: InputHTMLAttributes<HTMLInputElement>) => {
     const context = useContext(ComboboxContext);
     const displayValue = context?.value
       ? (context.itemToStringLabel?.(context.value) ?? context.value)
@@ -98,11 +94,7 @@ vi.mock("@repo/ui/components/combobox", () => ({
       </button>
     );
   },
-  ComboboxList: ({
-    children,
-  }: {
-    children: ((item: any) => ReactNode) | ReactNode;
-  }) => {
+  ComboboxList: ({ children }: { children: ((item: unknown) => ReactNode) | ReactNode }) => {
     const context = useContext(ComboboxContext);
 
     if (typeof children !== "function") {
@@ -135,7 +127,7 @@ describe("WorkabilityForm", () => {
     vi.clearAllMocks();
   });
 
-  describe("attack coverage", () => {
+  describe("team dropdown", () => {
     it("selected match does not leave the dependent team picker stuck in its disabled pre-match state", async () => {
       render(<WorkabilityForm matchOptions={matchOptions} initialSubmissions={[]} />);
       const user = userEvent.setup();
@@ -159,7 +151,7 @@ describe("WorkabilityForm", () => {
     });
   });
 
-  describe("gap-closing coverage", () => {
+  describe("saved submission hydration", () => {
     it("team selection hydrates the saved notes for that exact match-team-role combination", async () => {
       render(
         <WorkabilityForm

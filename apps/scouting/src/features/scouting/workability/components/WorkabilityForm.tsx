@@ -130,18 +130,12 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
     [matchOptions]
   );
 
-  const selectedMatchNumber = useStore(form.store, (state) => {
-    const matchNumber = state.values.matchNumber;
-    return typeof matchNumber === "number" ? matchNumber : Number(matchNumber ?? 0) || 0;
-  });
-  const selectedTeamNumber = useStore(form.store, (state) => {
-    const teamNumber = state.values.teamNumber;
-    return typeof teamNumber === "number" ? teamNumber : Number(teamNumber ?? 0) || 0;
-  });
-  const selectedRole = useStore(form.store, (state) => {
-    const role = state.values.role;
-    return typeof role === "string" ? (role as WorkabilityRole) : WORKABILITY_FORM_DEFAULT_VALUES.role;
-  });
+  const selectedMatchNumber = useStore(form.store, (state) => state.values.matchNumber ?? 0);
+  const selectedTeamNumber = useStore(form.store, (state) => state.values.teamNumber ?? 0);
+  const selectedRole = useStore(
+    form.store,
+    (state) => state.values.role ?? WORKABILITY_FORM_DEFAULT_VALUES.role
+  );
   const selectedMatch = matchOptionMap.get(selectedMatchNumber) ?? null;
   const matchTeams = selectedMatch?.teams ?? [];
 
