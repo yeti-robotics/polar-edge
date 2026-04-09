@@ -37,6 +37,8 @@ import {
   getDriveRatingHistory,
   getDriveTeamRatings,
 } from "@/features/scouting/drive-ranking/queries";
+import { TeamWorkabilityCard } from "@/features/scouting/workability/components/TeamWorkabilityCard";
+import { getTeamWorkabilitySummary } from "@/features/scouting/workability/queries";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/database";
 import {
@@ -156,6 +158,21 @@ async function DriveRatingSection({
       <DriveRatingHistoryChart history={history} />
     </div>
   );
+}
+
+async function WorkabilitySection({
+  teamNum,
+  organizationId,
+  effectiveEventId,
+}: {
+  teamNum: number;
+  organizationId: string | null;
+  effectiveEventId: string | null;
+}) {
+  if (!organizationId) return null;
+
+  const summary = await getTeamWorkabilitySummary(teamNum, organizationId, effectiveEventId);
+  return <TeamWorkabilityCard summary={summary} />;
 }
 
 function PitStatCard({ label, value }: { label: string; value: React.ReactNode }) {
@@ -378,6 +395,15 @@ export default async function TeamPage({
       {/* ── Drive Rating ───────────────────────────────────────── */}
       <Suspense fallback={<Skeleton className="h-56 w-full rounded-lg" />}>
         <DriveRatingSection
+          teamNum={teamNum}
+          organizationId={organizationId}
+          effectiveEventId={effectiveEventId}
+        />
+      </Suspense>
+
+      {/* ── Workability ────────────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-32 w-full rounded-lg" />}>
+        <WorkabilitySection
           teamNum={teamNum}
           organizationId={organizationId}
           effectiveEventId={effectiveEventId}
