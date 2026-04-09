@@ -18,6 +18,7 @@ import {
   simulateMatch,
   simulatePitForm,
   simulateTeamMatch,
+  simulateWorkabilityForm,
 } from "@repo/seed";
 import dotenv from "dotenv";
 import { reset } from "drizzle-seed";
@@ -214,6 +215,7 @@ async function main() {
   let totalCycles = 0;
   let totalClimbs = 0;
   let totalDriveRankings = 0;
+  let totalWorkabilityForms = 0;
 
   for (const planned of plannedEvents) {
     const eventId = eventIdByCode.get(planned.eventCode);
@@ -475,6 +477,58 @@ async function main() {
       );
     }
 
+    // Insert workability forms — simulated driver and human-player ratings per team-match
+    const workabilityInserts: {
+      eventId: string;
+      matchId: string;
+      teamNumber: number;
+      scoutMemberId: string;
+      role: "driver" | "human_player";
+      rating: number;
+      notes: string;
+    }[] = [];
+
+    const { driverCoverageRate, hpCoverageRate } = gameConfig.workability;
+
+    for (const result of simResults) {
+      const matchId = matchIdByNumber.get(result.matchNumber);
+      if (!matchId) continue;
+
+      for (const teamResult of [...result.redTeams, ...result.blueTeams]) {
+        const profile = profileMap.get(teamResult.teamNumber);
+        if (!profile) continue;
+
+        if (Math.random() < driverCoverageRate) {
+          const sim = simulateWorkabilityForm(teamResult.teamNumber, profile, "driver");
+          workabilityInserts.push({
+            eventId,
+            matchId,
+            teamNumber: sim.teamNumber,
+            scoutMemberId: randomMemberId(),
+            role: sim.role,
+            rating: sim.rating,
+            notes: sim.notes,
+          });
+        }
+
+        if (Math.random() < hpCoverageRate) {
+          const sim = simulateWorkabilityForm(teamResult.teamNumber, profile, "human_player");
+          workabilityInserts.push({
+            eventId,
+            matchId,
+            teamNumber: sim.teamNumber,
+            scoutMemberId: randomMemberId(),
+            role: sim.role,
+            rating: sim.rating,
+            notes: sim.notes,
+          });
+        }
+      }
+    }
+
+    await batchInsert(db, schemaTables.workabilityForm, workabilityInserts);
+    totalWorkabilityForms += workabilityInserts.length;
+
     // Generate and insert COPR fuel counts for this event
     const eventCoprs = generateEventCoprs(simResults, profileMap);
     if (eventCoprs.length > 0) {
@@ -538,6 +592,7 @@ async function main() {
   console.log(`  Cycles: ${totalCycles}`);
   console.log(`  Climbs: ${totalClimbs}`);
   console.log(`  Drive rankings: ${totalDriveRankings}`);
+  console.log(`  Workability forms: ${totalWorkabilityForms}`);
   console.log(`  Pit forms: ${pitForms.length}`);
   console.log(`\n  Org: "Seed Organization" (slug: seed-org)`);
   console.log(`  Owner: seed@polar-edge.dev`);
