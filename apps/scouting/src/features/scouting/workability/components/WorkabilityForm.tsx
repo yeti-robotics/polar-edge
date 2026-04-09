@@ -29,7 +29,13 @@ import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { Slider } from "@repo/ui/components/slider";
 import { toast } from "@repo/ui/components/sonner";
 import { Textarea } from "@repo/ui/components/textarea";
-import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
+import {
+  initialFormState,
+  mergeForm,
+  useForm,
+  useStore,
+  useTransform,
+} from "@tanstack/react-form-nextjs";
 import { startTransition, useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { submitWorkabilityForm } from "../actions";
 import {
@@ -124,37 +130,28 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
     [matchOptions]
   );
 
-  const formValues = (form.state.values ??
-    WORKABILITY_FORM_DEFAULT_VALUES) as WorkabilityFormValues;
-  const selectedMatchNumber = formValues.matchNumber;
-  const selectedTeamNumber = formValues.teamNumber;
-  const selectedRole = formValues.role;
+  const selectedMatchNumber = useStore(
+    form.store,
+    (state) => Number(state.values.matchNumber) || 0
+  );
+  const selectedTeamNumber = useStore(form.store, (state) => Number(state.values.teamNumber) || 0);
+  const selectedRole = useStore(form.store, (state) =>
+    WORKABILITY_ROLE_OPTIONS.includes(state.values.role)
+      ? state.values.role
+      : WORKABILITY_FORM_DEFAULT_VALUES.role
+  );
   const selectedMatch = matchOptionMap.get(selectedMatchNumber) ?? null;
   const matchTeams = selectedMatch?.teams ?? [];
 
-  useEffect(() => {
-    if (selectedTeamNumber === 0) {
-      return;
-    }
-
-    const teamExistsInMatch = matchTeams.some((team) => team.teamNumber === selectedTeamNumber);
-    if (!teamExistsInMatch) {
-      form.setFieldValue("teamNumber", 0);
-    }
-  }, [form, matchTeams, selectedTeamNumber]);
-
-  useEffect(() => {
+  function hydrateFromSelection(matchNumber: number, teamNumber: number, role: WorkabilityRole) {
     const selectionKey =
-      selectedMatchNumber > 0 && selectedTeamNumber > 0
-        ? getSubmissionKey(selectedMatchNumber, selectedTeamNumber, selectedRole)
-        : null;
+      matchNumber > 0 && teamNumber > 0 ? getSubmissionKey(matchNumber, teamNumber, role) : null;
 
-    if (selectionKey === hydratedSelectionRef.current) {
-      return;
-    }
+    if (selectionKey === hydratedSelectionRef.current) return;
+
+    hydratedSelectionRef.current = selectionKey;
 
     if (!selectionKey) {
-      hydratedSelectionRef.current = null;
       form.setFieldValue("rating", WORKABILITY_RATING_DEFAULT);
       form.setFieldValue("notes", "");
       return;
@@ -168,8 +165,7 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
         : WORKABILITY_RATING_DEFAULT
     );
     form.setFieldValue("notes", existingSubmission?.notes ?? "");
-    hydratedSelectionRef.current = selectionKey;
-  }, [form, selectedMatchNumber, selectedRole, selectedTeamNumber, submissionMap]);
+  }
 
   useEffect(() => {
     if (
@@ -272,8 +268,10 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
                         : ""
                     }
                     onValueChange={(value) => {
-                      field.handleChange(value ? Number(value) : 0);
+                      const newMatchNumber = value ? Number(value) : 0;
+                      field.handleChange(newMatchNumber);
                       form.setFieldValue("teamNumber", 0);
+                      hydrateFromSelection(newMatchNumber, 0, selectedRole);
                     }}
                     items={matchOptions}
                     itemToStringLabel={(value) => {
@@ -334,7 +332,9 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
                         : ""
                     }
                     onValueChange={(value) => {
-                      field.handleChange(value ? Number(value) : 0);
+                      const newTeamNumber = value ? Number(value) : 0;
+                      field.handleChange(newTeamNumber);
+                      hydrateFromSelection(selectedMatchNumber, newTeamNumber, selectedRole);
                     }}
                     items={matchTeams}
                     itemToStringLabel={(value) => {
@@ -387,7 +387,13 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
                   <FieldTitle>Scouting Perspective</FieldTitle>
                   <RadioGroup
                     value={fieldValue}
-                    onValueChange={(value) => field.handleChange(value as WorkabilityRole)}
+                    onValueChange={(value) => {
+                      const newRole =
+                        WORKABILITY_ROLE_OPTIONS.find((r) => r === value) ??
+                        WORKABILITY_FORM_DEFAULT_VALUES.role;
+                      field.handleChange(newRole);
+                      hydrateFromSelection(selectedMatchNumber, selectedTeamNumber, newRole);
+                    }}
                     className="grid gap-3 sm:grid-cols-2"
                   >
                     {WORKABILITY_ROLE_OPTIONS.map((role) => (
