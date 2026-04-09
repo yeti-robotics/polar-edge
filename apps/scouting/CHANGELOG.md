@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026.20.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.19.0...scouting-v2026.20.0) (2026-04-09)
+
+
+### Features
+
+* **scouting:** show workability data on team analysis page ([#523](https://github.com/yeti-robotics/polar-edge/issues/523)) ([6d96ac7](https://github.com/yeti-robotics/polar-edge/commit/6d96ac7b66f6700d0db734f45c20ebe39bf1aff8))
+
+
+### Bug Fixes
+
+* **scouting:** workability form team select dropdown ([#513](https://github.com/yeti-robotics/polar-edge/issues/513)) ([74f7993](https://github.com/yeti-robotics/polar-edge/commit/74f7993285599810d6c34a011c3be4ff24f37638))
+
 ## [2026.19.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.3...scouting-v2026.19.0) (2026-04-07)
 
 
