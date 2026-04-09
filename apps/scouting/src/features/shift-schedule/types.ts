@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-const LEGACY_SHIFT_ASSIGNMENT_TYPES = ["stand", "pit"] as const;
 export const STAND_STATIONS = ["red1", "red2", "red3", "blue1", "blue2", "blue3"] as const;
 
-const ShiftAssignmentTypeSchema = z.enum(LEGACY_SHIFT_ASSIGNMENT_TYPES);
 export const StandStationSchema = z.enum(STAND_STATIONS);
 
 export const ShiftScheduleEntrySchema = z.object({
@@ -11,7 +9,7 @@ export const ShiftScheduleEntrySchema = z.object({
   memberId: z.string().nullable(),
   name: z.string(),
   email: z.string().nullable(),
-  assignmentType: ShiftAssignmentTypeSchema.optional(),
+  assignmentType: z.literal("stand").optional(),
   standStation: StandStationSchema.nullable(),
   matchStart: z.number().int().nullable(),
   matchEnd: z.number().int().nullable(),

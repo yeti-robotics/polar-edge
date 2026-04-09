@@ -39,11 +39,12 @@ export async function getShiftScheduleForActiveEvent(organizationId: string) {
     db
       .selectDistinct({ matchNumber: match.matchNumber })
       .from(match)
-      .where(eq(match.eventId, activeEvent.event.id))
+      .where(and(eq(match.eventId, activeEvent.event.id), eq(match.matchType, "qm")))
       .orderBy(asc(match.matchNumber)),
   ]);
-
-  const scheduleData = scheduleRows[0]?.scheduleData as { entries?: unknown } | undefined;
+  const raw = scheduleRows[0]?.scheduleData;
+  const scheduleData =
+    typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : undefined;
 
   return {
     activeEvent: activeEvent.event,

@@ -45,13 +45,7 @@ export function ScheduleDialog({
             </DialogDescription>
           </div>
           <ShiftScheduleSummary
-            assignmentCount={initialEntries.length}
             scheduledScoutCount={scheduledScoutCount}
-            myAssignmentCount={initialEntries.length}
-            items={[
-              { label: "Assignments", value: initialEntries.length },
-              { label: "Scheduled Scouts", value: scheduledScoutCount },
-            ]}
             variant="compact"
           />
         </DialogHeader>

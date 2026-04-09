@@ -212,7 +212,7 @@ export function ScheduleForm({
               </div>
 
               <div className="space-y-2">
-                <Label> Matches</Label>
+                <Label>Matches</Label>
                 <Select
                   value={
                     entry.matchStart && entry.matchEnd

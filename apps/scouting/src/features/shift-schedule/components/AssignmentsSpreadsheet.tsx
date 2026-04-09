@@ -125,20 +125,20 @@ export function AssignmentsSpreadsheet({
             {emptyMessage}
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-white">
+          <div className="overflow-x-auto rounded-xl border border-border bg-background">
             <div
-              className="grid min-w-180 bg-white text-sm"
+              className="grid min-w-180 bg-background text-sm"
               style={{
                 gridTemplateColumns: `minmax(220px, 1.4fr) repeat(${blocks.length}, minmax(140px, 1fr))`,
               }}
             >
-              <div className="border-b border-r border-slate-300 bg-slate-100 px-4 py-3 font-semibold tracking-tight text-slate-900">
+              <div className="border-b border-r border-border bg-muted px-4 py-3 font-semibold tracking-tight text-foreground">
                 Scout
               </div>
               {blocks.map((block) => (
                 <div
                   key={block.key}
-                  className="border-b border-r border-slate-300 bg-slate-100 px-4 py-3 text-center font-semibold tracking-tight text-slate-900 last:border-r-0"
+                  className="border-b border-r border-border bg-muted px-4 py-3 text-center font-semibold tracking-tight text-foreground last:border-r-0"
                 >
                   {block.label}
                 </div>
@@ -148,7 +148,7 @@ export function AssignmentsSpreadsheet({
                 <Fragment key={row.memberId}>
                   <div
                     key={`${row.memberId}-member`}
-                    className="border-b border-r border-border/70 bg-white px-4 py-3"
+                    className="border-b border-r border-border/70 bg-background px-4 py-3"
                   >
                     <p className="font-medium">{row.name}</p>
                     <p className="text-xs text-muted-foreground">
@@ -158,7 +158,7 @@ export function AssignmentsSpreadsheet({
                   {blocks.map((block) => (
                     <div
                       key={`${row.memberId}-${block.key}`}
-                      className="border-b border-r border-border/70 bg-white px-4 py-3 last:border-r-0"
+                      className="border-b border-r border-border/70 bg-background px-4 py-3 last:border-r-0"
                     >
                       <AssignmentCell
                         entries={row.assignmentsByBlock.get(block.key)}
