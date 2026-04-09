@@ -12,7 +12,6 @@ import type {
   WorkabilityNote,
 } from "./types";
 
-
 const round1 = (value: number) => Math.round(value * 10) / 10;
 
 function getCompositeCompatibilityScore(

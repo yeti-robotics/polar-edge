@@ -20,6 +20,8 @@ export type {
   SimulatedMatchResult,
   SimulatedPitForm,
   SimulatedTeamMatch,
+  SimulatedWorkabilityForm,
   SimulationResult,
   TeamProfile,
 } from "./types";
+export { simulateWorkabilityForm } from "./workability-simulator";

@@ -72,6 +72,14 @@ export type SimulatedDriveRanking = {
   rankedTeams: number[];
 };
 
+/** A single workability rating for a team in a match. */
+export type SimulatedWorkabilityForm = {
+  teamNumber: number;
+  role: "driver" | "human_player";
+  rating: number;
+  notes: string;
+};
+
 /** Pit form data for one team. */
 export type SimulatedPitForm = {
   teamNumber: number;

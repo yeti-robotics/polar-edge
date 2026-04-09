@@ -112,6 +112,18 @@ export const gameConfig = {
     noise: 0.15,
   },
 
+  // ── Workability ────────────────────────────────────────────────
+  workability: {
+    /** Fraction of team-matches that get a driver workability rating. */
+    driverCoverageRate: 0.55,
+    /** Fraction of team-matches that get a human player workability rating. */
+    hpCoverageRate: 0.4,
+    /** Fraction of workability submissions that include a written note. */
+    noteRate: 0.3,
+    /** Gaussian noise std dev added to skill-derived rating (in 1–5 scale units). */
+    ratingNoise: 0.8,
+  },
+
   // ── Comments ───────────────────────────────────────────────────
   comments: {
     low: [
