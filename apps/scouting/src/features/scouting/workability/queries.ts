@@ -12,6 +12,7 @@ import type {
   WorkabilityNote,
 } from "./types";
 
+
 const round1 = (value: number) => Math.round(value * 10) / 10;
 
 function getCompositeCompatibilityScore(
@@ -204,4 +205,85 @@ export async function getWorkabilitySummaryForEvent(eventId: string, organizatio
       ];
     })
   );
+}
+
+export async function getTeamWorkabilitySummary(
+  teamNumber: number,
+  organizationId: string,
+  eventId?: string | null
+): Promise<TeamWorkabilitySummary | null> {
+  "use cache";
+  cacheLife("minutes");
+  if (eventId) {
+    cacheTag(cacheTags.workabilityEvent(eventId, organizationId));
+  }
+
+  const baseWhere = and(
+    eq(workabilityForm.teamNumber, teamNumber),
+    eq(member.organizationId, organizationId),
+    isNotNull(workabilityForm.matchId),
+    ...(eventId ? [eq(workabilityForm.eventId, eventId)] : [])
+  );
+
+  const [aggregateRows, noteRows] = await Promise.all([
+    db
+      .select({
+        avgDriverWorkability: sql<number | null>`
+          avg(case when ${workabilityForm.role} = 'driver' then ${workabilityForm.rating} end)
+        `.as("avg_driver_workability"),
+        avgHumanPlayerWorkability: sql<number | null>`
+          avg(case when ${workabilityForm.role} = 'human_player' then ${workabilityForm.rating} end)
+        `.as("avg_human_player_workability"),
+        submissionCount: count(workabilityForm.id),
+        noteCount: sql<number>`
+          sum(case when length(trim(${workabilityForm.notes})) > 0 then 1 else 0 end)::int
+        `.as("note_count"),
+      })
+      .from(workabilityForm)
+      .innerJoin(member, eq(member.id, workabilityForm.scoutMemberId))
+      .where(baseWhere),
+
+    db
+      .select({
+        matchNumber: match.matchNumber,
+        role: workabilityForm.role,
+        note: workabilityForm.notes,
+        authorName: user.name,
+        updatedAt: workabilityForm.updatedAt,
+      })
+      .from(workabilityForm)
+      .innerJoin(match, eq(match.id, workabilityForm.matchId))
+      .innerJoin(member, eq(member.id, workabilityForm.scoutMemberId))
+      .innerJoin(user, eq(user.id, member.userId))
+      .where(and(baseWhere, sql`length(trim(${workabilityForm.notes})) > 0`))
+      .orderBy(desc(workabilityForm.updatedAt))
+      .limit(6),
+  ]);
+
+  const agg = aggregateRows[0];
+  if (!agg || Number(agg.submissionCount) === 0) return null;
+
+  const avgDriverWorkability =
+    agg.avgDriverWorkability === null ? null : round1(Number(agg.avgDriverWorkability));
+  const avgHumanPlayerWorkability =
+    agg.avgHumanPlayerWorkability === null ? null : round1(Number(agg.avgHumanPlayerWorkability));
+
+  return {
+    teamNumber,
+    avgDriverWorkability,
+    avgHumanPlayerWorkability,
+    compositeCompatibilityScore: getCompositeCompatibilityScore(
+      avgDriverWorkability,
+      avgHumanPlayerWorkability
+    ),
+    submissionCount: Number(agg.submissionCount),
+    noteCount: Number(agg.noteCount),
+    notes: noteRows.map((row) => ({
+      matchNumber: row.matchNumber,
+      role: row.role,
+      note: row.note,
+      authorName: row.authorName ?? null,
+      updatedAt: row.updatedAt.toISOString(),
+    })),
+  };
 }
