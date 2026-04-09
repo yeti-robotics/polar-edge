@@ -28,9 +28,7 @@ export function ShiftSchedulePage({
     return (a.name || "").localeCompare(b.name || "");
   });
 
-  const myEntries = sortedEntries.filter(
-    (entry) => entry.memberId === activeMemberId,
-  );
+  const myEntries = sortedEntries.filter((entry) => entry.memberId === activeMemberId);
   return (
     <div className="space-y-6">
       <Card>

@@ -5,10 +5,7 @@ type Props = {
   variant?: "default" | "compact";
 };
 
-export function ShiftScheduleSummary({
-  scheduledScoutCount,
-  variant = "default",
-}: Props) {
+export function ShiftScheduleSummary({ scheduledScoutCount, variant = "default" }: Props) {
   if (variant === "compact") {
     return (
       <div className="flex flex-wrap justify-end gap-2">

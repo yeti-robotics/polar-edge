@@ -30,9 +30,8 @@ export function ScheduleDialog({
   organizationMembers,
   matchBlocks,
 }: Props) {
-  const scheduledScoutCount = new Set(
-    initialEntries.map((entry) => entry.memberId).filter(Boolean),
-  ).size;
+  const scheduledScoutCount = new Set(initialEntries.map((entry) => entry.memberId).filter(Boolean))
+    .size;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -40,14 +39,9 @@ export function ScheduleDialog({
         <DialogHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <DialogTitle>Scouting Schedule</DialogTitle>
-            <DialogDescription>
-              Assign organization members to stand scouting.
-            </DialogDescription>
+            <DialogDescription>Assign organization members to stand scouting.</DialogDescription>
           </div>
-          <ShiftScheduleSummary
-            scheduledScoutCount={scheduledScoutCount}
-            variant="compact"
-          />
+          <ShiftScheduleSummary scheduledScoutCount={scheduledScoutCount} variant="compact" />
         </DialogHeader>
 
         <ScheduleForm

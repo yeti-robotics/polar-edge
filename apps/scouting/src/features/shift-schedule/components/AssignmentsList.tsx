@@ -23,14 +23,10 @@ function AssignmentCard({ entry }: { entry: ShiftScheduleEntry }) {
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="font-medium">{entry.name || "Unassigned"}</p>
-          <p className="text-muted-foreground">
-            {entry.email ?? "No email on file"}
-          </p>
+          <p className="text-muted-foreground">{entry.email ?? "No email on file"}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge variant="outline">
-            {formatAssignmentTypeLabel(entry.assignmentType)}
-          </Badge>
+          <Badge variant="outline">{formatAssignmentTypeLabel(entry.assignmentType)}</Badge>
           <Badge className={getStandStationBadgeClass(entry.standStation)}>
             {formatStandStationLabel(entry.standStation)}
           </Badge>
@@ -43,12 +39,7 @@ function AssignmentCard({ entry }: { entry: ShiftScheduleEntry }) {
   );
 }
 
-export function AssignmentsList({
-  title,
-  description,
-  entries,
-  emptyMessage,
-}: Props) {
+export function AssignmentsList({ title, description, entries, emptyMessage }: Props) {
   return (
     <Card>
       <CardContent className="space-y-4 py-6">

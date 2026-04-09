@@ -89,9 +89,7 @@ async function HeaderContent() {
     <header className="sticky top-0 z-50 py-2 min-w-0 border-b bg-background h-(--header-height) flex flex-col justify-between">
       <div className="flex items-center justify-between w-full px-6">
         <div className="flex items-center gap-4">
-          <span className="hidden md:block uppercase font-mono text-sm">
-            Polar Edge
-          </span>
+          <span className="hidden md:block uppercase font-mono text-sm">Polar Edge</span>
           <Suspense fallback={<OrganizationSelectorFallback />}>
             <OrganizationSelectorWrapper />
           </Suspense>
@@ -163,8 +161,7 @@ async function UserAvatar() {
     const activeMember = await auth.api.getActiveMember({
       headers: await headers(),
     });
-    isAdminOrOwner =
-      activeMember?.role === "admin" || activeMember?.role === "owner";
+    isAdminOrOwner = activeMember?.role === "admin" || activeMember?.role === "owner";
   } catch {
     // No active organization — still render the dropdown so the user can sign out
   }

@@ -74,18 +74,12 @@ function buildRows(entries: ShiftScheduleEntry[]) {
     })
     .sort((a, b) => a.start - b.start);
 
-  const rows = [...memberMap.values()].sort((a, b) =>
-    a.name.localeCompare(b.name),
-  );
+  const rows = [...memberMap.values()].sort((a, b) => a.name.localeCompare(b.name));
 
   return { blocks, rows };
 }
 
-function AssignmentCell({
-  entries,
-}: {
-  entries: ShiftScheduleEntry[] | undefined;
-}) {
+function AssignmentCell({ entries }: { entries: ShiftScheduleEntry[] | undefined }) {
   if (!entries || entries.length === 0) {
     return <span className="text-xs text-muted-foreground">-</span>;
   }
@@ -104,12 +98,7 @@ function AssignmentCell({
   );
 }
 
-export function AssignmentsSpreadsheet({
-  title,
-  description,
-  entries,
-  emptyMessage,
-}: Props) {
+export function AssignmentsSpreadsheet({ title, description, entries, emptyMessage }: Props) {
   const { blocks, rows } = buildRows(entries);
 
   return (
@@ -160,9 +149,7 @@ export function AssignmentsSpreadsheet({
                       key={`${row.memberId}-${block.key}`}
                       className="border-b border-r border-border/70 bg-background px-4 py-3 last:border-r-0"
                     >
-                      <AssignmentCell
-                        entries={row.assignmentsByBlock.get(block.key)}
-                      />
+                      <AssignmentCell entries={row.assignmentsByBlock.get(block.key)} />
                     </div>
                   ))}
                 </Fragment>
