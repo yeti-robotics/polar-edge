@@ -1,4 +1,4 @@
-CREATE TABLE "shift_schedule" (
+CREATE TABLE IF NOT EXISTS "shift_schedule" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"organization_id" text NOT NULL,
 	"event_id" uuid NOT NULL,
@@ -7,13 +7,23 @@ CREATE TABLE "shift_schedule" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-DROP VIEW "public"."v_stand_form_expected";--> statement-breakpoint
-ALTER TABLE "shift_schedule" ADD CONSTRAINT "shift_schedule_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "shift_schedule" ADD CONSTRAINT "shift_schedule_event_id_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."event"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE UNIQUE INDEX "shift_schedule_org_event_uidx" ON "shift_schedule" USING btree ("organization_id","event_id");--> statement-breakpoint
-CREATE INDEX "shift_schedule_org_idx" ON "shift_schedule" USING btree ("organization_id");--> statement-breakpoint
-CREATE INDEX "shift_schedule_event_idx" ON "shift_schedule" USING btree ("event_id");--> statement-breakpoint
-CREATE VIEW "public"."v_stand_form_expected" AS (
+SELECT 1;--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "shift_schedule" ADD CONSTRAINT "shift_schedule_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "shift_schedule" ADD CONSTRAINT "shift_schedule_event_id_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."event"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "shift_schedule_org_event_uidx" ON "shift_schedule" USING btree ("organization_id","event_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "shift_schedule_org_idx" ON "shift_schedule" USING btree ("organization_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "shift_schedule_event_idx" ON "shift_schedule" USING btree ("event_id");--> statement-breakpoint
+CREATE OR REPLACE VIEW "public"."v_stand_form_expected" AS (
   with form_phase_duration as (
     -- Total dump duration per stand form per phase (single match).
     -- COPR fuel counts are per-match estimates, so we distribute them

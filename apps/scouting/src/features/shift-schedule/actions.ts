@@ -29,12 +29,13 @@ export async function updateShiftScheduleAction(
   payload: unknown
 ): Promise<UpdateShiftScheduleState> {
   try {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const h = await headers();
+    const session = await auth.api.getSession({ headers: h });
     if (!session?.user) {
       return { data: null, error: "Unauthorized" };
     }
 
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+    const activeMember = await auth.api.getActiveMember({ headers: h });
     if (!activeMember) {
       return { data: null, error: "No active organization" };
     }

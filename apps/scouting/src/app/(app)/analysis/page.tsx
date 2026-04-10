@@ -4,40 +4,23 @@ import {
   TypographyMuted,
   TypographyP,
 } from "@repo/ui/components/typography";
-import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
+import {
+  GitGraphIcon,
+  ShieldCheckIcon,
+  TableIcon,
+  UsersIcon,
+} from "lucide-react";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { NavCardGrid } from "@/components/nav-card-grid";
 import { StatItem, StatItemSkeleton } from "@/components/stat-item";
-
-// Temporary placeholder for UserFormSubmissions. The original component
-// appears to have been moved or removed; provide a minimal inline
-// implementation so the analysis page compiles. Replace with the real
-// implementation when available.
-function UserFormSubmissions({
-  memberId,
-  title,
-  emptyLabel,
-}: {
-  memberId?: string;
-  title?: string;
-  emptyLabel?: string;
-}) {
-  return (
-    <section className="rounded-xl border bg-muted/20 px-6 py-5">
-      <TypographyH2>{title ?? "Your Submissions"}</TypographyH2>
-      {memberId && (
-        <TypographyP className="mt-2 text-xs text-muted-foreground">Member: {memberId}</TypographyP>
-      )}
-      <TypographyP className="mt-2 text-sm text-muted-foreground">
-        {emptyLabel ?? "No forms submitted yet."}
-      </TypographyP>
-    </section>
-  );
-}
-
-import { getPitFormCount, getStandFormCount, getTeamCount } from "@/features/analysis/queries";
+import { UserFormSubmissions } from "@/features/analysis/components/UserFormSubmissions";
+import {
+  getPitFormCount,
+  getStandFormCount,
+  getTeamCount,
+} from "@/features/analysis/queries";
 import { auth } from "@/lib/auth";
 import { routes } from "@/lib/routes";
 
@@ -46,13 +29,15 @@ const navCards = [
     href: routes.analysis.teams,
     icon: UsersIcon,
     title: "Teams",
-    description: "Browse all scouted teams and view detailed per-team breakdowns.",
+    description:
+      "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
     href: routes.analysis.comparison,
     icon: GitGraphIcon,
     title: "Comparison",
-    description: "Compare multiple teams side-by-side across key performance metrics.",
+    description:
+      "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
     href: routes.analysis.scoutCoverage,
@@ -118,11 +103,15 @@ export default function AnalysisPage() {
     <div className="space-y-8">
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted>Match and team data collected across all events.</TypographyMuted>
+        <TypographyMuted>
+          Match and team data collected across all events.
+        </TypographyMuted>
       </div>
 
       <Suspense
-        fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5 h-48 animate-pulse" />}
+        fallback={
+          <div className="rounded-xl border bg-muted/20 px-6 py-5 h-48 animate-pulse" />
+        }
       >
         <UserSubmissionsSection />
       </Suspense>
@@ -149,7 +138,6 @@ export default function AnalysisPage() {
         </div>
       </div>
       <NavCardGrid items={navCards} />
-      <TypographyH1> c</TypographyH1>
     </div>
   );
 }

@@ -12,7 +12,7 @@ import {
 import { toast } from "@repo/ui/components/sonner";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { updateShiftScheduleAction } from "@/features/shift-schedule/actions";
 import {
   type ShiftScheduleEntry,
@@ -57,10 +57,6 @@ export function ScheduleForm({
   const [entries, setEntries] = useState<ShiftScheduleEntry[]>(
     initialEntries.length ? initialEntries : [createEntry()]
   );
-
-  useEffect(() => {
-    setEntries(initialEntries.length ? initialEntries : [createEntry()]);
-  }, [initialEntries]);
 
   function updateEntry(entryId: string, updates: Partial<ShiftScheduleEntry>) {
     setEntries((current) =>
