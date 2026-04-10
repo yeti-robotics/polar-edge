@@ -3,7 +3,7 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { db, pool } from "@/lib/database";
 
 const migrationsFolder = path.join(process.cwd(), "./src/lib/database/drizzle");
-const migrationLockKey = [2026, 20] as const;
+const migrationLockKey = [2026, 20];
 
 const client = await pool.connect();
 
