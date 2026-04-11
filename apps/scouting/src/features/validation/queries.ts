@@ -397,17 +397,19 @@ export async function getDuplicateGroups(
   const groupMap = new Map<string, DuplicateGroup>();
   for (const row of rows) {
     const key = `${row.teamMatchId}:${row.scoutMemberId}`;
-    if (!groupMap.has(key)) {
-      groupMap.set(key, {
+    let group = groupMap.get(key);
+    if (!group) {
+      group = {
         teamMatchId: row.teamMatchId,
         scoutMemberId: row.scoutMemberId ?? "",
         scoutName: row.scoutName ?? null,
         teamNumber: row.teamNumber,
         matchNumber: row.matchNumber,
         forms: [],
-      });
+      };
+      groupMap.set(key, group);
     }
-    groupMap.get(key)!.forms.push({
+    group.forms.push({
       formId: row.formId,
       cycleCount: row.cycleCount ?? 0,
       climbCount: row.climbCount ?? 0,

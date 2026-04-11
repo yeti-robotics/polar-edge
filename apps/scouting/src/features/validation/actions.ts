@@ -41,7 +41,9 @@ export async function resolveDuplicatesAction(
   keepFormId: string,
   deleteFormIds: string[]
 ): Promise<{ error?: string }> {
-  if (deleteFormIds.length === 0) return {};
+  // Strip the kept form from the delete list in case the caller passes it by mistake.
+  const idsToDelete = deleteFormIds.filter((id) => id !== keepFormId);
+  if (idsToDelete.length === 0) return {};
 
   const activeMember = await requireAdminMember();
   const { organizationId } = activeMember;
@@ -57,16 +59,16 @@ export async function resolveDuplicatesAction(
       member,
       and(eq(member.id, standForm.scoutMemberId), eq(member.organizationId, organizationId))
     )
-    .where(inArray(standForm.id, deleteFormIds));
+    .where(inArray(standForm.id, idsToDelete));
 
-  if (formsToDelete.length !== deleteFormIds.length) {
+  if (formsToDelete.length !== idsToDelete.length) {
     return { error: "One or more forms not found or unauthorized" };
   }
 
   await db
     .update(standForm)
     .set({ deletedAt: new Date() })
-    .where(inArray(standForm.id, deleteFormIds));
+    .where(inArray(standForm.id, idsToDelete));
 
   const eventId = activeEvent.eventId;
   revalidateTag(cacheTags.teamMetrics(eventId), "max");

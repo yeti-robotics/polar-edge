@@ -50,7 +50,9 @@ function DuplicateGroupCard({ group }: { group: DuplicateGroup }) {
           <span className="text-muted-foreground">—</span>
           <span className="font-mono">Team {group.teamNumber}</span>
           <span className="text-muted-foreground">—</span>
-          <span>{group.scoutName ?? <span className="text-muted-foreground">Unknown scout</span>}</span>
+          <span>
+            {group.scoutName ?? <span className="text-muted-foreground">Unknown scout</span>}
+          </span>
         </div>
         <Badge variant="destructive">{group.forms.length} duplicates</Badge>
       </div>
@@ -99,7 +101,8 @@ function DuplicateGroupCard({ group }: { group: DuplicateGroup }) {
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" size="sm" disabled={pending}>
-              Resolve — delete {group.forms.length - 1} duplicate{group.forms.length - 1 !== 1 ? "s" : ""}
+              Resolve — delete {group.forms.length - 1} duplicate
+              {group.forms.length - 1 !== 1 ? "s" : ""}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
@@ -135,10 +138,7 @@ export function DuplicateFormsSection({ groups }: { groups: DuplicateGroup[] }) 
       </CardHeader>
       <CardContent className="space-y-4">
         {groups.map((group) => (
-          <DuplicateGroupCard
-            key={`${group.teamMatchId}-${group.scoutMemberId}`}
-            group={group}
-          />
+          <DuplicateGroupCard key={`${group.teamMatchId}-${group.scoutMemberId}`} group={group} />
         ))}
       </CardContent>
     </Card>
