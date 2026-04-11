@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/database";
 import { climb, cycle, match, standForm, teamMatch } from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
@@ -74,6 +74,22 @@ export async function submitStandForm(
 
   if (validTeamMatch.length === 0) {
     return { error: "Invalid match for current event" };
+  }
+
+  const existing = await db
+    .select({ id: standForm.id })
+    .from(standForm)
+    .where(
+      and(
+        eq(standForm.teamMatchId, data.teamMatchId),
+        eq(standForm.scoutMemberId, memberId),
+        isNull(standForm.deletedAt)
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    return { error: "You have already submitted a form for this match and team" };
   }
 
   await db.transaction(async (tx) => {

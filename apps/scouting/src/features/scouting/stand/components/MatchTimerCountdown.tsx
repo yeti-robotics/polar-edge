@@ -21,19 +21,21 @@ import { useStandFormActions } from "../hooks/useStandFormActions";
 export function MatchTimerCountdown() {
   const { state: timerState, dispatch: dispatchTimer } = useMatchTimer();
   const { state: navState, dispatch: dispatchNav } = useNavigation();
-  const { state: actionState } = useActionState();
+  const { state: actionState, dispatch: dispatchActionState } = useActionState();
   const { prepareForPhaseTransition } = useStandFormActions();
   const [, setTick] = useState(0);
 
   const { matchStartedAt, autoTransitionComplete, teleopTransitionComplete } = timerState;
   const { currentStage } = navState;
-  const { activeAction } = actionState;
+  const { activeAction, isOofed } = actionState;
 
   // Refs for interval callback — avoids stale closures
   const currentStageRef = useRef(currentStage);
   currentStageRef.current = currentStage;
   const activeActionRef = useRef(activeAction);
   activeActionRef.current = activeAction;
+  const isOofedRef = useRef(isOofed);
+  isOofedRef.current = isOofed;
   const autoTransitionCompleteRef = useRef(autoTransitionComplete);
   autoTransitionCompleteRef.current = autoTransitionComplete;
   const teleopTransitionCompleteRef = useRef(teleopTransitionComplete);
@@ -44,6 +46,8 @@ export function MatchTimerCountdown() {
   dispatchNavRef.current = dispatchNav;
   const dispatchTimerRef = useRef(dispatchTimer);
   dispatchTimerRef.current = dispatchTimer;
+  const dispatchActionStateRef = useRef(dispatchActionState);
+  dispatchActionStateRef.current = dispatchActionState;
 
   // Display tick — 1 Hz
   useEffect(() => {
@@ -79,6 +83,11 @@ export function MatchTimerCountdown() {
         elapsed >= MATCH_DURATION_SECONDS &&
         !action
       ) {
+        // End oof if it's still running so the final segment is captured before
+        // we leave the phase where the oof UI is visible.
+        if (isOofedRef.current) {
+          dispatchActionStateRef.current({ type: "oof_end" });
+        }
         dispatchNavRef.current({ type: "set_stage", payload: "comments" });
         dispatchTimerRef.current({ type: "complete_teleop_transition" });
       }

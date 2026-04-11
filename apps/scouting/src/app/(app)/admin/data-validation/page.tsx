@@ -5,6 +5,7 @@ import { CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { DriveRankingCoverageGrid } from "@/features/validation/components/DriveRankingCoverageGrid";
+import { DuplicateFormsSection } from "@/features/validation/components/DuplicateFormsSection";
 import { EventSwitcher } from "@/features/validation/components/EventSwitcher";
 import { FlaggedFormsTable } from "@/features/validation/components/FlaggedFormsTable";
 import { ScoreReconciliationTable } from "@/features/validation/components/ScoreReconciliationTable";
@@ -12,6 +13,7 @@ import { ScoutCoverageGrid } from "@/features/validation/components/ScoutCoverag
 import { ValidationSummaryCards } from "@/features/validation/components/ValidationSummaryCards";
 import {
   getDriveRankingCoverage,
+  getDuplicateGroups,
   getFlaggedForms,
   getScoutCoverage,
   getValidationMatchScores,
@@ -75,6 +77,12 @@ async function FlaggedSection({ eventId, organizationId }: SectionProps) {
   const forms = await getFlaggedForms(eventId, organizationId);
   if (forms.length === 0) return null;
   return <FlaggedFormsTable forms={forms} />;
+}
+
+async function DuplicatesSection({ eventId, organizationId }: SectionProps) {
+  const groups = await getDuplicateGroups(eventId, organizationId);
+  if (groups.length === 0) return null;
+  return <DuplicateFormsSection groups={groups} />;
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -148,6 +156,9 @@ export default async function DataValidationPage({
           </Suspense>
           <Suspense fallback={<CardSkeleton className="h-48" />}>
             <DriveRankingCoverageSection eventId={validEvent.id} organizationId={organizationId} />
+          </Suspense>
+          <Suspense>
+            <DuplicatesSection eventId={validEvent.id} organizationId={organizationId} />
           </Suspense>
           <Suspense>
             <FlaggedSection eventId={validEvent.id} organizationId={organizationId} />

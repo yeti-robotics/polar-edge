@@ -20,59 +20,13 @@ export function StandFormNavigation() {
 
   const isOnComments = state.currentStage === "comments";
   const isOnMatchSelection = state.currentStage === "match_selection";
-  const isOnAutonomous = state.currentStage === "autonomous";
   const isOnTeleop = state.currentStage === "teleop";
 
   // Check if there's an active action (timer running)
   const hasActiveAction = actionState.activeAction !== null;
 
-  // Determine if we can progress forward (Next button)
-  const getProgressionBlock = () => {
-    // Block 1: Active action (shooting/climbing timer) - blocks ALL transitions
-    if (hasActiveAction) {
-      return "Complete the current action before proceeding";
-    }
-
-    // Block 2: Oof state - special rules for forward progression
-    if (actionState.isOofed) {
-      // From auto: allow forward to teleop
-      if (isOnAutonomous) {
-        return null; // Allow auto → teleop
-      }
-      // From anywhere else (including teleop): block forward progression
-      return "Cannot progress forward while oofed (end oof time first)";
-    }
-
-    // Block 3: Match selection requires teamMatchId
-    if (isOnMatchSelection && formData.teamMatchId === null) {
-      return "Select a match to continue";
-    }
-
-    // Block 4: Comments required before submit
-    if (isOnComments && formData.comments.trim().length < COMMENTS_MIN_LENGTH) {
-      return `Comments must be at least ${COMMENTS_MIN_LENGTH} characters`;
-    }
-
-    // No blocks - can progress
-    return null;
-  };
-
-  const progressionBlock = getProgressionBlock();
-  const isNextDisabled = progressionBlock !== null;
-
-  const handleNext = () => {
-    if (isOnComments) {
-      setSubmitOpen(true);
-      return;
-    }
-    // Start the match timer when leaving match selection
-    if (isOnMatchSelection) {
-      dispatchTimer({ type: "start_match" });
-    }
-    // When transitioning from auto to teleop, prepare for phase transition
-    if (isOnAutonomous) {
-      prepareForPhaseTransition();
-    }
+  const handleStartMatch = () => {
+    dispatchTimer({ type: "start_match" });
     dispatch({ type: "increment_stage" });
   };
 
@@ -112,6 +66,9 @@ export function StandFormNavigation() {
   const backButtonBlock = getBackButtonBlock();
   const isBackDisabled = backButtonBlock !== null;
 
+  const isSubmitDisabled = formData.comments.trim().length < COMMENTS_MIN_LENGTH;
+  const isStartDisabled = formData.teamMatchId === null;
+
   return (
     <>
       <div className="flex w-full justify-between">
@@ -124,14 +81,32 @@ export function StandFormNavigation() {
         >
           Back
         </Button>
-        <Button
-          type="button"
-          onClick={handleNext}
-          disabled={isNextDisabled}
-          title={progressionBlock || undefined}
-        >
-          {isOnComments ? "Submit" : isOnMatchSelection ? "Start Match" : "Next"}
-        </Button>
+
+        {isOnMatchSelection && (
+          <Button
+            type="button"
+            onClick={handleStartMatch}
+            disabled={isStartDisabled}
+            title={isStartDisabled ? "Select a match to continue" : undefined}
+          >
+            Start Match
+          </Button>
+        )}
+
+        {isOnComments && (
+          <Button
+            type="button"
+            onClick={() => setSubmitOpen(true)}
+            disabled={isSubmitDisabled}
+            title={
+              isSubmitDisabled
+                ? `Comments must be at least ${COMMENTS_MIN_LENGTH} characters`
+                : undefined
+            }
+          >
+            Submit
+          </Button>
+        )}
       </div>
 
       <SubmitDialog open={submitOpen} onClose={() => setSubmitOpen(false)} />

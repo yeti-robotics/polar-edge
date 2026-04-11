@@ -319,6 +319,107 @@ export async function getFlaggedForms(
   }));
 }
 
+// ── Duplicate Forms ──────────────────────────────────────────────────────────
+
+export type DuplicateFormEntry = {
+  formId: string;
+  cycleCount: number;
+  climbCount: number;
+  commentsLength: number;
+  oofTimeSeconds: number;
+  createdAt: Date;
+};
+
+export type DuplicateGroup = {
+  teamMatchId: number;
+  scoutMemberId: string;
+  scoutName: string | null;
+  teamNumber: number;
+  matchNumber: number;
+  forms: DuplicateFormEntry[];
+};
+
+/**
+ * Groups of stand forms sharing the same (teamMatchId, scoutMemberId) pair,
+ * scoped to this org's members and the given event.
+ */
+export async function getDuplicateGroups(
+  eventId: string,
+  organizationId: string
+): Promise<DuplicateGroup[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(cacheTags.teamMetrics(eventId));
+
+  const cycleCount = sql<number>`count(DISTINCT ${cycle.id})::int`;
+  const climbCount = sql<number>`count(DISTINCT ${climb.id})::int`;
+
+  // Get all active forms for this event+org, with their aggregate counts
+  const rows = await db
+    .select({
+      formId: standForm.id,
+      teamMatchId: standForm.teamMatchId,
+      scoutMemberId: standForm.scoutMemberId,
+      scoutName: user.name,
+      teamNumber: teamMatch.teamNumber,
+      matchNumber: match.matchNumber,
+      oofTimeSeconds: standForm.oofTimeSeconds,
+      comments: standForm.comments,
+      createdAt: standForm.createdAt,
+      cycleCount,
+      climbCount,
+    })
+    .from(standForm)
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .innerJoin(match, eq(match.id, teamMatch.matchId))
+    .innerJoin(
+      member,
+      and(eq(member.id, standForm.scoutMemberId), eq(member.organizationId, organizationId))
+    )
+    .leftJoin(user, eq(user.id, member.userId))
+    .leftJoin(cycle, eq(cycle.standFormId, standForm.id))
+    .leftJoin(climb, eq(climb.standFormId, standForm.id))
+    .where(and(eq(teamMatch.eventId, eventId), isNull(standForm.deletedAt)))
+    .groupBy(
+      standForm.id,
+      standForm.teamMatchId,
+      standForm.scoutMemberId,
+      user.name,
+      teamMatch.teamNumber,
+      match.matchNumber,
+      standForm.oofTimeSeconds,
+      standForm.comments,
+      standForm.createdAt
+    )
+    .orderBy(match.matchNumber, standForm.createdAt);
+
+  // Group by (teamMatchId, scoutMemberId) and keep only groups with >1 form
+  const groupMap = new Map<string, DuplicateGroup>();
+  for (const row of rows) {
+    const key = `${row.teamMatchId}:${row.scoutMemberId}`;
+    if (!groupMap.has(key)) {
+      groupMap.set(key, {
+        teamMatchId: row.teamMatchId,
+        scoutMemberId: row.scoutMemberId ?? "",
+        scoutName: row.scoutName ?? null,
+        teamNumber: row.teamNumber,
+        matchNumber: row.matchNumber,
+        forms: [],
+      });
+    }
+    groupMap.get(key)!.forms.push({
+      formId: row.formId,
+      cycleCount: row.cycleCount ?? 0,
+      climbCount: row.climbCount ?? 0,
+      commentsLength: (row.comments ?? "").length,
+      oofTimeSeconds: row.oofTimeSeconds ?? 0,
+      createdAt: row.createdAt,
+    });
+  }
+
+  return Array.from(groupMap.values()).filter((g) => g.forms.length > 1);
+}
+
 // ── Summary ──────────────────────────────────────────────────────────────────
 
 export type ValidationSummary = {
