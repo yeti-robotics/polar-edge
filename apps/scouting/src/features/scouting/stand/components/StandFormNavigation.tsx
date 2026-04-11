@@ -2,86 +2,32 @@
 
 import { Button } from "@repo/ui/components/button";
 import { useState } from "react";
-import { useActionState } from "../contexts/ActionStateContext";
 import { useFormData } from "../contexts/FormDataContext";
 import { useMatchTimer } from "../contexts/MatchTimerContext";
 import { useNavigation } from "../contexts/NavigationContext";
-import { useStandFormActions } from "../hooks/useStandFormActions";
 import { COMMENTS_MIN_LENGTH, STAGES } from "../types";
 import { SubmitDialog } from "./SubmitDialog";
 
 export function StandFormNavigation() {
   const { state, dispatch } = useNavigation();
   const { state: formData } = useFormData();
-  const { state: actionState } = useActionState();
   const { dispatch: dispatchTimer } = useMatchTimer();
-  const { prepareForPhaseTransition } = useStandFormActions();
   const [submitOpen, setSubmitOpen] = useState(false);
 
   const isOnComments = state.currentStage === "comments";
   const isOnMatchSelection = state.currentStage === "match_selection";
-  const isOnTeleop = state.currentStage === "teleop";
-
-  // Check if there's an active action (timer running)
-  const hasActiveAction = actionState.activeAction !== null;
 
   const handleStartMatch = () => {
     dispatchTimer({ type: "start_match" });
     dispatch({ type: "increment_stage" });
   };
 
-  const handleBack = () => {
-    // When transitioning from teleop back to auto, prepare for phase transition
-    if (isOnTeleop) {
-      prepareForPhaseTransition();
-    }
-    dispatch({ type: "decrement_stage" });
-  };
-
-  // Determine if back button should be disabled
-  const getBackButtonBlock = () => {
-    // Always block back from match selection
-    if (isOnMatchSelection) {
-      return "Cannot go back from match selection";
-    }
-
-    // Block if there's an active action
-    if (hasActiveAction) {
-      return "Complete the current action before going back";
-    }
-
-    // Block if oofed - special rules for backward progression
-    if (actionState.isOofed) {
-      // From teleop: allow back to auto
-      if (isOnTeleop) {
-        return null; // Allow teleop → auto
-      }
-      // From anywhere else (including auto): block backward progression
-      return "Cannot go back while oofed (end oof time first)";
-    }
-
-    return null;
-  };
-
-  const backButtonBlock = getBackButtonBlock();
-  const isBackDisabled = backButtonBlock !== null;
-
   const isSubmitDisabled = formData.comments.trim().length < COMMENTS_MIN_LENGTH;
   const isStartDisabled = formData.teamMatchId === null;
 
   return (
     <>
-      <div className="flex w-full justify-between">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={handleBack}
-          disabled={isBackDisabled}
-          title={backButtonBlock || undefined}
-        >
-          Back
-        </Button>
-
+      <div className="flex w-full justify-end">
         {isOnMatchSelection && (
           <Button
             type="button"
