@@ -1,5 +1,19 @@
 # Changelog
 
+## [2026.20.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.20.1...scouting-v2026.20.2) (2026-04-11)
+
+
+### Bug Fixes
+
+* **scouting:** remove back button from stand form navigation ([2e647be](https://github.com/yeti-robotics/polar-edge/commit/2e647beb6d391e2302f71cd4e4740992a1490ae3))
+
+## [2026.20.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.20.0...scouting-v2026.20.1) (2026-04-11)
+
+
+### Bug Fixes
+
+* **scouting:** states day 1 fixes ([#526](https://github.com/yeti-robotics/polar-edge/issues/526)) ([b20f6a5](https://github.com/yeti-robotics/polar-edge/commit/b20f6a578a85ecb7906f8264aa7f403f0b5eb6df))
+
 ## [2026.20.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.19.0...scouting-v2026.20.0) (2026-04-09)
 
 

@@ -10,6 +10,7 @@ export const cacheTags = {
   teamMetrics: (eventId: string) => `team-metrics-${eventId}`,
   workabilityEvent: (eventId: string, organizationId: string) =>
     `workability-event-${eventId}-${organizationId}`,
+  workabilityOrg: (organizationId: string) => `workability-org-${organizationId}`,
   memberWorkability: (eventId: string, memberId: string) =>
     `member-workability-${eventId}-${memberId}`,
   activeEvent: (organizationId: string) => `active-event-${organizationId}`,
