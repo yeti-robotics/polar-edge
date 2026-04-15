@@ -43,10 +43,14 @@ function UserFormSubmissions({
         {emptyLabel ?? "No forms submitted yet."}
       </TypographyP>
       { isAdmin && (
-        <TypographyP className="mt-2 text-sm text-muted-foreground">
-          Admin
+        <div>
+          <TypographyP>
+            Admin Perms
+          </TypographyP>
+        </div>
 
-        </TypographyP>
+
+
       )}
     </section>
   );
@@ -130,7 +134,7 @@ async function UserSubmissionsSection() {
 
   return (
     <UserFormSubmissions
-    isAdmin={activeMember?.role === "admin" || activeMember?.role === "owner"}
+      isAdmin={activeMember?.role === "admin" || activeMember?.role === "owner"}
       memberId={activeMember.id}
       title="Your Submissions"
       emptyLabel="No forms submitted yet."
