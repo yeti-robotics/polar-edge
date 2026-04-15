@@ -24,10 +24,12 @@ function UserFormSubmissions({
   memberId,
   title,
   emptyLabel,
+  isAdmin
 }: {
   memberId?: string;
   title?: string;
   emptyLabel?: string;
+  isAdmin?: boolean;
 }) {
   return (
     <section className="rounded-xl border bg-muted/20 px-6 py-5">
@@ -40,6 +42,12 @@ function UserFormSubmissions({
       <TypographyP className="mt-2 text-sm text-muted-foreground">
         {emptyLabel ?? "No forms submitted yet."}
       </TypographyP>
+      { isAdmin && (
+        <TypographyP className="mt-2 text-sm text-muted-foreground">
+          Admin
+
+        </TypographyP>
+      )}
     </section>
   );
 }
@@ -105,7 +113,7 @@ async function PitFormCountStat() {
 
 async function UserSubmissionsSection() {
   let activeMember = null;
-  try {
+  try { 
     activeMember = await auth.api.getActiveMember({ headers: await headers() });
   } catch {
     activeMember = null;
@@ -122,6 +130,7 @@ async function UserSubmissionsSection() {
 
   return (
     <UserFormSubmissions
+    isAdmin={activeMember?.role === "admin" || activeMember?.role === "owner"}
       memberId={activeMember.id}
       title="Your Submissions"
       emptyLabel="No forms submitted yet."
@@ -135,8 +144,7 @@ export default function AnalysisPage() {
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
         <TypographyMuted>
-          {" "}
-          Match and team data collected across all events.{" "}
+          Match and team data collected across all events
         </TypographyMuted>
       </div>
 
