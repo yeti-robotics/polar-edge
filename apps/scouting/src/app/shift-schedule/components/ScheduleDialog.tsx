@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/ui/components/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@repo/ui/components/dialog";
 
 // ScheduleForm was removed or moved — provide a small local placeholder so
 // the dialog builds correctly. Replace this with the real form component
@@ -13,9 +8,7 @@ import {
 function ScheduleForm({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Schedule form placeholder.
-      </p>
+      <p className="text-sm text-muted-foreground">Schedule form placeholder.</p>
       <div className="flex justify-end">
         <button
           type="button"
