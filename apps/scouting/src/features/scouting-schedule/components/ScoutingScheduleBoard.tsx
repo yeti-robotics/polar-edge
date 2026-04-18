@@ -694,6 +694,10 @@ export function ScoutingScheduleBoard({ data, canEdit }: ScoutingScheduleBoardPr
   const visibleInfoSections = schedule.infoSections.filter((section) => section.items.length > 0);
 
   function handleSeatAssignment(target: PickerTarget, memberId: string | null) {
+    if (target.kind !== "seat" || target.teamMatchId == null || target.slotIndex == null) {
+      return;
+    }
+
     void assignMember(target.teamMatchId, target.slotIndex, memberId);
   }
 
