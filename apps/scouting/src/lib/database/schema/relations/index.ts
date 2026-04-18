@@ -14,6 +14,8 @@ import { picklist } from "../tables/picklist";
 import { picklistTeam } from "../tables/picklist-team";
 import { pitForm } from "../tables/pit-form";
 import { pitPhoto } from "../tables/pit-photo";
+import { scoutingSchedule } from "../tables/scouting-schedule";
+import { scoutingScheduleAssignment } from "../tables/scouting-schedule-assignment";
 import { session } from "../tables/session";
 import { tbaMatchBreakdown } from "../tables/tba-match-breakdown";
 import { team } from "../tables/team";
@@ -50,9 +52,10 @@ export const organizationRelations = relations(organization, ({ many }) => ({
   inviteLinks: many(organizationInviteLink),
   organizationEvents: many(organizationEvent),
   picklists: many(picklist),
+  scoutingSchedules: many(scoutingSchedule),
 }));
 
-export const memberRelations = relations(member, ({ one }) => ({
+export const memberRelations = relations(member, ({ one, many }) => ({
   organization: one(organization, {
     fields: [member.organizationId],
     references: [organization.id],
@@ -61,6 +64,8 @@ export const memberRelations = relations(member, ({ one }) => ({
     fields: [member.userId],
     references: [user.id],
   }),
+  createdScoutingSchedules: many(scoutingSchedule),
+  scoutingScheduleAssignments: many(scoutingScheduleAssignment),
 }));
 
 export const invitationRelations = relations(invitation, ({ one }) => ({
@@ -140,6 +145,40 @@ export const picklistTeamRelations = relations(picklistTeam, ({ one }) => ({
     references: [team.teamNumber],
   }),
 }));
+
+export const scoutingScheduleRelations = relations(scoutingSchedule, ({ one, many }) => ({
+  organization: one(organization, {
+    fields: [scoutingSchedule.organizationId],
+    references: [organization.id],
+  }),
+  event: one(event, {
+    fields: [scoutingSchedule.eventId],
+    references: [event.id],
+  }),
+  createdByMember: one(member, {
+    fields: [scoutingSchedule.createdByMemberId],
+    references: [member.id],
+  }),
+  assignments: many(scoutingScheduleAssignment),
+}));
+
+export const scoutingScheduleAssignmentRelations = relations(
+  scoutingScheduleAssignment,
+  ({ one }) => ({
+    schedule: one(scoutingSchedule, {
+      fields: [scoutingScheduleAssignment.scheduleId],
+      references: [scoutingSchedule.id],
+    }),
+    teamMatch: one(teamMatch, {
+      fields: [scoutingScheduleAssignment.teamMatchId],
+      references: [teamMatch.id],
+    }),
+    member: one(member, {
+      fields: [scoutingScheduleAssignment.memberId],
+      references: [member.id],
+    }),
+  })
+);
 
 export const driveTeamRankingRelations = relations(driveTeamRanking, ({ many }) => ({
   entries: many(driveTeamRankingEntry),

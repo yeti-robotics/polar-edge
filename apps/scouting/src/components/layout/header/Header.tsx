@@ -37,6 +37,10 @@ const navItems = [
     label: "Picklist",
     href: routes.picklist.root,
   },
+  {
+    label: "Scouting Schedule",
+    href: routes.scoutingSchedule.root,
+  },
 ];
 
 function OrganizationSelectorFallback() {

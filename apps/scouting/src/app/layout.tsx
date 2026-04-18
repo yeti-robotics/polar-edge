@@ -22,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${libreFranklin.variable} bg-background dark:prose-invert min-h-screen font-sans overscroll-none`}
       >
         <ThemeProvider

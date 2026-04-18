@@ -50,6 +50,12 @@ export const routes = {
     detail: (id: string) => `/picklist/${id}` as const,
   },
 
+  // Scouting Schedule
+  scoutingSchedule: {
+    root: "/scouting-schedule",
+    detail: (id: string) => `/scouting-schedule/${id}` as const,
+  },
+
   // Other
   leaderboard: "/leaderboard",
   profile: "/profile",

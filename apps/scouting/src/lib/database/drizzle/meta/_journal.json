@@ -162,6 +162,13 @@
       "when": 1744329600000,
       "tag": "0022_stand_form_unique_active",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1776470400000,
+      "tag": "0023_wild_captain_cross",
+      "breakpoints": true
     }
   ]
 }

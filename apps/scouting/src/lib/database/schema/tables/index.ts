@@ -17,6 +17,8 @@ export { picklistTeam } from "./picklist-team";
 export { pitForm } from "./pit-form";
 export { pitPhoto } from "./pit-photo";
 export { session } from "./session";
+export { scoutingSchedule } from "./scouting-schedule";
+export { scoutingScheduleAssignment } from "./scouting-schedule-assignment";
 export { standForm } from "./stand-form";
 export { tbaMatchBreakdown } from "./tba-match-breakdown";
 export { team } from "./team";
