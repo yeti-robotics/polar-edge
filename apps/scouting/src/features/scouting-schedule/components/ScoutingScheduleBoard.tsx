@@ -304,7 +304,7 @@ function AssignmentSeat({
           size="icon-xs"
           className="absolute top-2 right-2"
           disabled={isPending}
-          onClick={() => onClear({ teamMatchId, slotIndex })}
+          onClick={() => onClear({ kind: "seat", teamMatchId, slotIndex })}
         >
           <XIcon className="size-3" />
         </Button>
