@@ -38,6 +38,7 @@ export const routes = {
 
   // Forms
   forms: {
+    root: "/forms",
     pit: "/forms/pit",
     stand: "/forms/stand",
     driveRanking: "/forms/drive-ranking",

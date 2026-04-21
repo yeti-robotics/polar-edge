@@ -12,7 +12,6 @@ import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { isSuperAdmin } from "@/lib/permissions";
 import { routes } from "@/lib/routes";
-import { isScoutLeadOrAbove } from "@/lib/server/auth/require-member";
 import { DropdownMenuItemLink } from "./DropdownMenuItemLink";
 import { HeaderNav } from "./HeaderNav";
 import { LoginButton } from "./LoginButton";
@@ -22,12 +21,8 @@ import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
   {
-    label: "Pit Form",
-    href: routes.forms.pit,
-  },
-  {
-    label: "Stand Form",
-    href: routes.forms.stand,
+    label: "Forms",
+    href: routes.forms.root,
   },
   {
     label: "Analysis",
@@ -115,15 +110,7 @@ async function ConditionalNavItems() {
     return null;
   }
 
-  const items = [
-    ...(isScoutLeadOrAbove(activeMember.role)
-      ? [
-          { label: "Workability", href: routes.forms.workability },
-          { label: "Drive Ranking", href: routes.forms.driveRanking },
-        ]
-      : []),
-    { label: "Leaderboard", href: routes.leaderboard },
-  ];
+  const items = [{ label: "Leaderboard", href: routes.leaderboard }];
 
   return <HeaderNav items={items} />;
 }
