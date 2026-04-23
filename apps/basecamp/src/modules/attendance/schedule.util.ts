@@ -98,6 +98,9 @@ function getNoMeetingDateStrings(seasonYear: number): Set<string> {
     [seasonYear + 1, 4, 2],
     [seasonYear + 1, 4, 3],
     [seasonYear + 1, 4, 4],
+    [seasonYear + 1, 4, 23],
+    [seasonYear + 1, 4, 24],
+    [seasonYear + 1, 4, 25]
   ];
   return new Set(dates.map(([y, mo, d]) => `${y}-${pad2(mo)}-${pad2(d)}`));
 }
