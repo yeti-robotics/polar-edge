@@ -12,7 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.1.7",
+    "@astrojs/cloudflare": "^13.1.10",
     "@astrojs/react": "^5.0.2",
     "@repo/ui": "workspace:*",
     "@types/react": "catalog:",
