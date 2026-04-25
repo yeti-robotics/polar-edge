@@ -12,12 +12,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.1.7",
+    "@astrojs/cloudflare": "^13.2.1",
     "@astrojs/react": "^5.0.2",
     "@repo/ui": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "astro": "^6.1.1",
+    "astro": "^6.1.9",
     "idb": "^8.0.3",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",
     "chart.js": "^4.5.1",
-    "react-chartjs-2": "^5.3.1"
+    "react-chartjs-2": "^5.3.1",
+    "wrangler": "^4.85.0"
   }
 }
