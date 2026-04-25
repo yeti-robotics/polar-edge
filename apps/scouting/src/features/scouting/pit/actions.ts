@@ -29,10 +29,12 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       };
     }
 
-    const validated = await serverValidate(formData, {
-      numbers: ["teamNumber", "capacity", "weight"],
-      booleans: ["canTrench", "canBump", "canShuttle", "canShootWhileMoving"],
-    });
+    const validated = FormSchema.parse(
+      await serverValidate(formData, {
+        numbers: ["teamNumber", "capacity", "weight"],
+        booleans: ["canTrench", "canBump", "canShuttle", "canShootWhileMoving"],
+      })
+    );
 
     // Parse and validate photo keys
     const photoKeysJson = formData.get("photoKeys");

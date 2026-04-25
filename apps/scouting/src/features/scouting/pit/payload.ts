@@ -7,7 +7,7 @@ export function buildPitFormInsertData(
 ): typeof pitForm.$inferInsert {
   return {
     teamNumber: validated.teamNumber,
-    drivetrainType: validated.drivetrainType === "" ? "other" : validated.drivetrainType,
+    drivetrainType: validated.drivetrainType,
     drivetrainOther: validated.drivetrainType === "other" ? validated.drivetrainOther : "",
     archetype: validated.archetype,
     canTrench: validated.canTrench ?? false,
@@ -15,12 +15,7 @@ export function buildPitFormInsertData(
     canShuttle: validated.canShuttle ?? false,
     capacity: validated.capacity,
     weight: validated.weight,
-    climbType:
-      validated.climbType === "none"
-        ? null
-        : validated.climbType === ""
-          ? null
-          : validated.climbType,
+    climbType: validated.climbType === "none" ? null : validated.climbType,
     shooterType: validated.shooterType === "" ? null : validated.shooterType,
     canShootWhileMoving: validated.canShootWhileMoving ?? false,
     comments: validated.comments,
