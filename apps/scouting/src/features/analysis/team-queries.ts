@@ -5,6 +5,7 @@ import { generateText } from "ai";
 import { and, desc, eq, exists, inArray, isNull, ne, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { z } from "zod";
+import { formatPitDrivetrain } from "@/features/scouting/pit/types";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
@@ -450,7 +451,12 @@ export async function getTeamCommentSummary(
   const [allComments, metrics, pitData] = await Promise.all([
     getTeamComments(teamNumber, opts),
     getTeamKeyMetrics(teamNumber, opts),
-    db.select().from(pitForm).where(eq(pitForm.teamNumber, teamNumber)).limit(1),
+    db
+      .select()
+      .from(pitForm)
+      .where(eq(pitForm.teamNumber, teamNumber))
+      .orderBy(desc(pitForm.createdAt))
+      .limit(1),
   ]);
   if (allComments.length === 0) return null;
 
@@ -478,11 +484,13 @@ Matches with downtime (robot broke/disabled): ${metrics.brokeCount} out of ${met
         .join(", ") || "None";
     pitBlock = `
 <pit_data>
-Drivetrain: ${pit.drivetrainType}
+Drivetrain: ${formatPitDrivetrain(pit.drivetrainType, pit.drivetrainOther)}
+Archetype: ${pit.archetype || "N/A"}
 Weight: ${pit.weight} lbs
 Capacity: ${pit.capacity}
 Climb Type: ${pit.climbType || "N/A"}
 Capabilities: ${caps}
+Pit Notes: ${pit.comments || "N/A"}
 </pit_data>`;
   }
 

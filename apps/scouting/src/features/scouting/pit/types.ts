@@ -4,6 +4,27 @@ import * as z from "zod";
 export const DRIVETRAIN_OPTIONS = ["tank", "swerve", "mecanum", "other"] as const;
 export const CLIMB_TYPE_OPTIONS = ["sides", "center", "left", "right", "any", "none"] as const;
 export const SHOOTER_OPTIONS = ["turret", "fixed"] as const;
+export const DRIVETRAIN_OTHER_MAX_LENGTH = 80;
+export const ARCHETYPE_MAX_LENGTH = 120;
+export const PIT_COMMENTS_MAX_LENGTH = 2000;
+
+const DRIVETRAIN_LABELS: Record<(typeof DRIVETRAIN_OPTIONS)[number], string> = {
+  tank: "Tank Drive",
+  swerve: "Swerve Drive",
+  mecanum: "Mecanum Drive",
+  other: "Other",
+};
+
+export function formatPitDrivetrain(
+  drivetrainType: string,
+  drivetrainOther?: string | null
+): string {
+  if (drivetrainType === "other") {
+    return drivetrainOther?.trim() || DRIVETRAIN_LABELS.other;
+  }
+
+  return DRIVETRAIN_LABELS[drivetrainType as keyof typeof DRIVETRAIN_LABELS] ?? drivetrainType;
+}
 
 export const FormSchema = z
   .object({
@@ -13,6 +34,17 @@ export const FormSchema = z
       .refine((val): val is (typeof DRIVETRAIN_OPTIONS)[number] => val !== "", {
         message: "Drivetrain type is required",
       }),
+    drivetrainOther: z
+      .string()
+      .trim()
+      .max(
+        DRIVETRAIN_OTHER_MAX_LENGTH,
+        `Custom drivetrain type cannot exceed ${DRIVETRAIN_OTHER_MAX_LENGTH} characters`
+      ),
+    archetype: z
+      .string()
+      .trim()
+      .max(ARCHETYPE_MAX_LENGTH, `Archetype cannot exceed ${ARCHETYPE_MAX_LENGTH} characters`),
     canTrench: z.boolean().optional(),
     canBump: z.boolean().optional(),
     canShuttle: z.boolean().optional(),
@@ -29,8 +61,20 @@ export const FormSchema = z
       }),
     shooterType: z.union([z.enum(SHOOTER_OPTIONS), z.literal("")]),
     canShootWhileMoving: z.boolean().optional(),
+    comments: z
+      .string()
+      .trim()
+      .max(PIT_COMMENTS_MAX_LENGTH, `Comments cannot exceed ${PIT_COMMENTS_MAX_LENGTH} characters`),
   })
   .superRefine((values, ctx) => {
+    if (values.drivetrainType === "other" && values.drivetrainOther === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["drivetrainOther"],
+        message: "Describe the drivetrain type when selecting other",
+      });
+    }
+
     if (values.canShootWhileMoving && values.shooterType === "") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -43,6 +87,8 @@ export const FormSchema = z
 const defaultValues: z.input<typeof FormSchema> = {
   teamNumber: 0,
   drivetrainType: "",
+  drivetrainOther: "",
+  archetype: "",
   canTrench: false,
   canBump: false,
   canShuttle: false,
@@ -51,8 +97,11 @@ const defaultValues: z.input<typeof FormSchema> = {
   climbType: "",
   shooterType: "",
   canShootWhileMoving: false,
+  comments: "",
 };
 
 export const formOpts = formOptions({
   defaultValues,
 });
+
+export type PitFormValues = z.output<typeof FormSchema>;

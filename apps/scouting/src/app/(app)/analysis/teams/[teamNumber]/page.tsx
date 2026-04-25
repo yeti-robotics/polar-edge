@@ -37,6 +37,7 @@ import {
   getDriveRatingHistory,
   getDriveTeamRatings,
 } from "@/features/scouting/drive-ranking/queries";
+import { formatPitDrivetrain } from "@/features/scouting/pit/types";
 import { TeamWorkabilityCard } from "@/features/scouting/workability/components/TeamWorkabilityCard";
 import { getTeamWorkabilitySummary } from "@/features/scouting/workability/queries";
 import { auth } from "@/lib/auth";
@@ -189,6 +190,7 @@ async function PitDataSection({ teamNum }: { teamNum: number }) {
     .select()
     .from(pitForm)
     .where(eq(pitForm.teamNumber, teamNum))
+    .orderBy(desc(pitForm.createdAt))
     .limit(1);
   const pitData = pitFormData[0];
 
@@ -216,9 +218,13 @@ async function PitDataSection({ teamNum }: { teamNum: number }) {
       <CardHeader>
         <CardTitle>Robot Profile</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          <PitStatCard label="Drivetrain" value={pitData.drivetrainType} />
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <PitStatCard
+            label="Drivetrain"
+            value={formatPitDrivetrain(pitData.drivetrainType, pitData.drivetrainOther)}
+          />
+          {pitData.archetype && <PitStatCard label="Archetype" value={pitData.archetype} />}
           <PitStatCard label="Weight" value={`${pitData.weight} lbs`} />
           <PitStatCard label="Capacity" value={pitData.capacity} />
           <PitStatCard label="Climb Type" value={pitData.climbType || "N/A"} />
@@ -239,6 +245,14 @@ async function PitDataSection({ teamNum }: { teamNum: number }) {
             }
           />
         </div>
+        {pitData.comments && (
+          <div className="space-y-1.5 rounded-lg border bg-muted/10 px-4 py-3">
+            <TypographyLabel>Pit Notes</TypographyLabel>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground">
+              {pitData.comments}
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

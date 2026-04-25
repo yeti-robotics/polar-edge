@@ -25,6 +25,8 @@ export const pitForm = pgTable(
       .references(() => team.teamNumber),
 
     drivetrainType: drivetrainEnum("drivetrain").notNull(),
+    drivetrainOther: text("drivetrain_other").notNull().default(""),
+    archetype: text("archetype").notNull().default(""),
 
     canTrench: boolean("can_trench").notNull().default(false),
     canBump: boolean("can_bump").notNull().default(false),
@@ -36,6 +38,7 @@ export const pitForm = pgTable(
     climbType: climbTypeEnum("climb_type"),
     shooterType: shooterTypeEnum("shooter_type"),
     canShootWhileMoving: boolean("can_shoot_while_moving").notNull().default(false),
+    comments: text("comments").notNull().default(""),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })

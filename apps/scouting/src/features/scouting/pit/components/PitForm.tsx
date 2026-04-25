@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
 import { Button } from "@repo/ui/components/button";
 import {
   Card,
@@ -22,15 +23,20 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import { toast } from "@repo/ui/components/sonner";
+import { Textarea } from "@repo/ui/components/textarea";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
+import { InfoIcon } from "lucide-react";
 import { startTransition, useActionState, useCallback, useEffect, useRef } from "react";
 import { submitPitForm } from "../actions";
 import { usePhotoUpload } from "../hooks/use-photo-upload";
 import {
+  ARCHETYPE_MAX_LENGTH,
   CLIMB_TYPE_OPTIONS,
   DRIVETRAIN_OPTIONS,
+  DRIVETRAIN_OTHER_MAX_LENGTH,
   FormSchema,
   formOpts,
+  PIT_COMMENTS_MAX_LENGTH,
   SHOOTER_OPTIONS,
 } from "../types";
 import {
@@ -115,6 +121,8 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
 
         formData.append("teamNumber", String(values.teamNumber));
         formData.append("drivetrainType", values.drivetrainType);
+        formData.append("drivetrainOther", values.drivetrainOther);
+        formData.append("archetype", values.archetype);
         formData.append("canTrench", values.canTrench ? "on" : "off");
         formData.append("canBump", values.canBump ? "on" : "off");
         formData.append("canShuttle", values.canShuttle ? "on" : "off");
@@ -123,6 +131,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
         formData.append("climbType", values.climbType);
         formData.append("shooterType", values.shooterType);
         formData.append("canShootWhileMoving", values.canShootWhileMoving ? "on" : "off");
+        formData.append("comments", values.comments);
 
         if (photoKeys && photoKeys.length > 0) {
           formData.append("photoKeys", JSON.stringify(photoKeys));
@@ -223,38 +232,101 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
           <form.Field name="drivetrainType">
             {(field) => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+              const isOtherSelected = field.state.value === "other";
+
               return (
-                <div>
-                  <RadioGroup
-                    id={field.name}
+                <Field className="space-y-3.5">
+                  <div>
+                    <RadioGroup
+                      id={field.name}
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                      aria-label="Drivetrain Type"
+                      value={typeof field.state.value === "string" ? field.state.value : ""}
+                      onValueChange={(v) =>
+                        field.handleChange(v as (typeof DRIVETRAIN_OPTIONS)[number])
+                      }
+                      className="flex flex-wrap gap-2.5"
+                    >
+                      {DRIVETRAIN_OPTIONS.map((type) => (
+                        <div key={type}>
+                          <RadioGroupItem
+                            id={`drivetrain-${type}`}
+                            value={type}
+                            className="peer sr-only"
+                          />
+                          <Label
+                            htmlFor={`drivetrain-${type}`}
+                            className="cursor-pointer select-none rounded-lg border border-border bg-muted/50 px-[18px] py-3 text-sm whitespace-nowrap transition-colors hover:bg-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 peer-data-[state=checked]:text-primary peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:border-ring"
+                          >
+                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </div>
+
+                  <form.Field name="drivetrainOther">
+                    {(otherField) => {
+                      const isOtherInvalid =
+                        otherField.state.meta.isTouched && !otherField.state.meta.isValid;
+
+                      if (!isOtherSelected) return null;
+
+                      return (
+                        <Field>
+                          <FieldLabel htmlFor="drivetrain_other">Custom drivetrain type</FieldLabel>
+                          <Input
+                            id="drivetrain_other"
+                            name={otherField.name}
+                            value={otherField.state.value}
+                            onBlur={otherField.handleBlur}
+                            onChange={(e) => otherField.handleChange(e.target.value)}
+                            placeholder="e.g. butterfly drive"
+                            maxLength={DRIVETRAIN_OTHER_MAX_LENGTH}
+                            aria-invalid={isOtherInvalid}
+                          />
+                          {isOtherInvalid && <FieldError errors={otherField.state.meta.errors} />}
+                        </Field>
+                      );
+                    }}
+                  </form.Field>
+                </Field>
+              );
+            }}
+          </form.Field>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Archetype</CardTitle>
+          <CardDescription>
+            Add a custom archetype if this robot fits a style or role that is not already covered.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form.Field name="archetype">
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+              return (
+                <Field>
+                  <FieldLabel htmlFor="archetype">Robot archetype</FieldLabel>
+                  <Input
+                    id="archetype"
                     name={field.name}
+                    value={field.state.value}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="e.g. support cycler with source-side auto"
+                    maxLength={ARCHETYPE_MAX_LENGTH}
                     aria-invalid={isInvalid}
-                    aria-label="Drivetrain Type"
-                    value={typeof field.state.value === "string" ? field.state.value : ""}
-                    onValueChange={(v) =>
-                      field.handleChange(v as (typeof DRIVETRAIN_OPTIONS)[number])
-                    }
-                    className="flex flex-wrap gap-2.5"
-                  >
-                    {DRIVETRAIN_OPTIONS.map((type) => (
-                      <div key={type}>
-                        <RadioGroupItem
-                          id={`drivetrain-${type}`}
-                          value={type}
-                          className="peer sr-only"
-                        />
-                        <Label
-                          htmlFor={`drivetrain-${type}`}
-                          className="cursor-pointer select-none rounded-lg border border-border bg-muted/50 px-[18px] py-3 text-sm whitespace-nowrap transition-colors hover:bg-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 peer-data-[state=checked]:text-primary peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:border-ring"
-                        >
-                          {type.charAt(0).toUpperCase() + type.slice(1)}
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
+                  />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </div>
+                </Field>
               );
             }}
           </form.Field>
@@ -481,6 +553,56 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       );
                     }}
                   </form.Field>
+                </Field>
+              );
+            }}
+          </form.Field>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Comments</CardTitle>
+          <CardDescription>
+            Add extra context like auto paths, specific robot notes, quirks, and anything else the
+            next scout should know.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Alert>
+            <AlertTitle className="flex items-center gap-2">
+              <InfoIcon className="size-4" />
+              What should I write here?
+            </AlertTitle>
+            <AlertDescription>
+              Helpful notes include auto paths, intake or shooter quirks, repair concerns, driver
+              preferences, or anything unusual that does not fit the structured fields above.
+            </AlertDescription>
+          </Alert>
+
+          <form.Field name="comments">
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+              const commentLength = field.state.value.trim().length;
+
+              return (
+                <Field className="gap-1">
+                  <FieldLabel htmlFor="comments">Additional information</FieldLabel>
+                  <Textarea
+                    id="comments"
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Enter notes about auto paths, robot behavior, special setup details, or anything else worth knowing."
+                    className="min-h-32 resize-y"
+                    maxLength={PIT_COMMENTS_MAX_LENGTH}
+                    aria-invalid={isInvalid}
+                  />
+                  <p className="text-xs text-right tabular-nums text-muted-foreground">
+                    {commentLength} / {PIT_COMMENTS_MAX_LENGTH}
+                  </p>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
             }}

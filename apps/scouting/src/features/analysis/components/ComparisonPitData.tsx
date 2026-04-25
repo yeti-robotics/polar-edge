@@ -2,7 +2,8 @@ import "server-only";
 
 import { Badge } from "@repo/ui/components/badge";
 import { Card, CardContent, CardHeader } from "@repo/ui/components/card";
-import { inArray } from "drizzle-orm";
+import { desc, inArray } from "drizzle-orm";
+import { formatPitDrivetrain } from "@/features/scouting/pit/types";
 import { db } from "@/lib/database";
 import { pitForm } from "@/lib/database/schema";
 
@@ -35,7 +36,11 @@ function PitCard({
           <p className="text-sm text-muted-foreground/60 py-4 text-center">No pit data scouted</p>
         ) : (
           <div className="space-y-3">
-            <Row label="Drivetrain" value={formatDrivetrain(data.drivetrainType)} />
+            <Row
+              label="Drivetrain"
+              value={formatPitDrivetrain(data.drivetrainType, data.drivetrainOther)}
+            />
+            {data.archetype && <Row label="Archetype" value={data.archetype} />}
             <Row label="Weight" value={data.weight ? `${data.weight} lbs` : "—"} />
             <Row label="Capacity" value={data.capacity ? `${data.capacity}` : "—"} />
             {data.climbType && <Row label="Climb Type" value={formatClimbType(data.climbType)} />}
@@ -88,17 +93,6 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-function formatDrivetrain(type: string): string {
-  const map: Record<string, string> = {
-    tank: "Tank Drive",
-    swerve: "Swerve Drive",
-    mecanum: "Mecanum Drive",
-    west_coast: "West Coast",
-    other: "Other",
-  };
-  return map[type] ?? type;
-}
-
 function formatClimbType(type: string): string {
   const map: Record<string, string> = {
     none: "None",
@@ -118,9 +112,19 @@ function formatShooterType(type: NonNullable<(typeof pitForm.$inferSelect)["shoo
 }
 
 export async function ComparisonPitData({ teamNumbers, teamNames }: Props) {
-  const pitRows = await db.select().from(pitForm).where(inArray(pitForm.teamNumber, teamNumbers));
+  const pitRows = await db
+    .select()
+    .from(pitForm)
+    .where(inArray(pitForm.teamNumber, teamNumbers))
+    .orderBy(desc(pitForm.createdAt));
 
-  const pitByTeam = new Map(pitRows.map((r) => [r.teamNumber, r]));
+  const pitByTeam = new Map<number, typeof pitForm.$inferSelect>();
+
+  for (const row of pitRows) {
+    if (!pitByTeam.has(row.teamNumber)) {
+      pitByTeam.set(row.teamNumber, row);
+    }
+  }
 
   // Only show if at least one team has pit data
   const hasAnyData = teamNumbers.some((n) => pitByTeam.has(n));

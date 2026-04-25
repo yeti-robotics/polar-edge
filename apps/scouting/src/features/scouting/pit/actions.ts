@@ -10,6 +10,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { insertPitForm } from "./logic";
+import { buildPitFormInsertData } from "./payload";
 import { FormSchema, formOpts } from "./types";
 
 const serverValidate = createServerValidate({
@@ -64,27 +65,7 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       }
     }
 
-    await insertPitForm(
-      {
-        teamNumber: Number(validated.teamNumber),
-        drivetrainType: validated.drivetrainType === "" ? "other" : validated.drivetrainType,
-        canTrench: validated.canTrench ?? false,
-        canBump: validated.canBump ?? false,
-        canShuttle: validated.canShuttle ?? false,
-        capacity: validated.capacity,
-        weight: validated.weight,
-        climbType:
-          validated.climbType === "none"
-            ? null
-            : validated.climbType === ""
-              ? null
-              : validated.climbType,
-        shooterType: validated.shooterType === "" ? null : validated.shooterType,
-        canShootWhileMoving: validated.canShootWhileMoving ?? false,
-        scoutMemberId: activeMember.id,
-      },
-      photoKeys
-    );
+    await insertPitForm(buildPitFormInsertData(validated, activeMember.id), photoKeys);
 
     revalidateTag(cacheTags.leaderboardPit(activeMember.organizationId), "max");
     revalidateTag(cacheTags.analysisPitFormCount, "max");
