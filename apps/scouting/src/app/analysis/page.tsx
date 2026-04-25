@@ -1,6 +1,4 @@
-import {
-  Badge,
-} from "@repo/ui/components/badge";
+import { Badge } from "@repo/ui/components/badge";
 import {
   TypographyH1,
   TypographyH2,
@@ -91,12 +89,12 @@ async function UserSubmissionsSection() {
       <section className="rounded-xl border bg-muted/20 px-4 py-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="space-y-1">
-            <h2 className="text-sm font-semibold tracking-tight">
+            <TypographyH2 className="text-sm font-semibold tracking-tight">
               Recent submissions
-            </h2>
-            <p className="text-sm text-muted-foreground">
+            </TypographyH2>
+            <TypographyP className="text-sm text-muted-foreground">
               Sign in to see your latest stand and pit forms.
-            </p>
+            </TypographyP>
           </div>
           <Badge variant="outline">Signed out</Badge>
         </div>
