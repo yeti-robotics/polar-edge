@@ -4,7 +4,12 @@ import {
   TypographyMuted,
   TypographyP,
 } from "@repo/ui/components/typography";
-import { GitGraphIcon, ShieldCheckIcon, TableIcon, UsersIcon } from "lucide-react";
+import {
+  GitGraphIcon,
+  ShieldCheckIcon,
+  TableIcon,
+  UsersIcon,
+} from "lucide-react";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import { Suspense } from "react";
@@ -30,7 +35,9 @@ function UserFormSubmissions({
     <section className="rounded-xl border bg-muted/20 px-6 py-5">
       <TypographyH2>{title ?? "Your Submissions"}</TypographyH2>
       {memberId && (
-        <TypographyP className="mt-2 text-xs text-muted-foreground">Member: {memberId}</TypographyP>
+        <TypographyP className="mt-2 text-xs text-muted-foreground">
+          Member: {memberId}
+        </TypographyP>
       )}
       <TypographyP className="mt-2 text-sm text-muted-foreground">
         {emptyLabel ?? "No forms submitted yet."}
@@ -59,13 +66,15 @@ const navCards = [
     href: routes.analysis.teams,
     icon: UsersIcon,
     title: "Teams",
-    description: "Browse all scouted teams and view detailed per-team breakdowns.",
+    description:
+      "Browse all scouted teams and view detailed per-team breakdowns.",
   },
   {
     href: routes.analysis.comparison,
     icon: GitGraphIcon,
     title: "Comparison",
-    description: "Compare multiple teams side-by-side across key performance metrics.",
+    description:
+      "Compare multiple teams side-by-side across key performance metrics.",
   },
   {
     href: routes.analysis.scoutCoverage,
@@ -120,17 +129,15 @@ async function UserSubmissionsSection() {
     );
   }
 
-  const isAdmin = activeMember?.role === "admin" || activeMember?.role === "owner";
+  const isAdmin =
+    activeMember?.role === "admin" || activeMember?.role === "owner";
 
   if (isAdmin) {
     // Admins see all submissions for their organization
     const forms = await getAllFormSubmissions(activeMember.organizationId);
     return (
       <section className="rounded-xl border bg-muted/20 px-6 py-5">
-        <TypographyH2>All Submissions (Admin)</TypographyH2>
-        <TypographyP className="mt-2 text-sm text-muted-foreground">
-          Review and manage all forms submitted by members of your organization.
-        </TypographyP>
+        <TypographyH2>All Submissions</TypographyH2>
         <div className="mt-4">
           <AdminFormList forms={forms} />
         </div>
@@ -153,10 +160,14 @@ export default function AnalysisPage() {
     <div className="space-y-8">
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted>Match and team data collected across all events</TypographyMuted>
+        <TypographyMuted>
+          Match and team data collected across all events
+        </TypographyMuted>
       </div>
 
-      <Suspense fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5" />}>
+      <Suspense
+        fallback={<div className="rounded-xl border bg-muted/20 px-6 py-5" />}
+      >
         <UserSubmissionsSection />
       </Suspense>
 
