@@ -51,6 +51,7 @@ catalogs:
 
 overrides:
   '@hono/node-server@<1.19.10': '>=1.19.10'
+  effect@<3.20.0: '>=3.20.0'
   esbuild@<=0.24.2: '>=0.25.0'
   hono@<4.11.10: '>=4.11.10'
   hono@<4.11.7: '>=4.11.7'
@@ -5686,8 +5687,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  effect@3.18.4:
-    resolution: {integrity: sha512-b1LXQJLe9D11wfnOKAk3PKxuqYshQ0Heez+y5pnkd3jLj1yx9QhM72zZ9uUrOQyNvrs2GZZd/3maL0ZV18YuDA==}
+  effect@3.21.2:
+    resolution: {integrity: sha512-rXd2FGDM8KdjSIrc+mqEELo7ScW7xTVxEf1iInmPSpIde9/nyGuFM710cjTo7/EreGXiUX2MOonPpprbz2XHCg==}
 
   electron-to-chromium@1.5.307:
     resolution: {integrity: sha512-5z3uFKBWjiNR44nFcYdkcXjKMbg5KXNdciu7mhTPo9tB7NbqSNP2sSnGR+fqknZSCwKkBN+oxiiajWs4dT6ORg==}
@@ -10940,7 +10941,7 @@ snapshots:
     dependencies:
       c12: 3.1.0
       deepmerge-ts: 7.1.5
-      effect: 3.18.4
+      effect: 3.21.2
       empathic: 2.0.0
     transitivePeerDependencies:
       - magicast
@@ -14113,7 +14114,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  effect@3.18.4:
+  effect@3.21.2:
     dependencies:
       '@standard-schema/spec': 1.1.0
       fast-check: 3.23.2
