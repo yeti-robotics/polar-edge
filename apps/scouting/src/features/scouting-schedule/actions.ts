@@ -13,10 +13,7 @@ import {
   teamMatch,
 } from "@/lib/database/schema";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
-import {
-  buildDefaultScheduleInfoSections,
-  buildDefaultShiftSections,
-} from "./logic";
+import { buildDefaultScheduleInfoSections, buildDefaultShiftSections } from "./logic";
 import {
   CreateScoutingScheduleSchema,
   UpdateScoutingScheduleAssignmentSchema,
@@ -144,7 +141,10 @@ export async function updateScoutingScheduleDetails(input: unknown) {
         );
 
       if (matchingMembers.length !== coordinatorIds.length) {
-        return { data: null, error: "One or more shift coordinators are no longer in the organization." };
+        return {
+          data: null,
+          error: "One or more shift coordinators are no longer in the organization.",
+        };
       }
     }
 

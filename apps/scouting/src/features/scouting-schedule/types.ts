@@ -1,7 +1,7 @@
 import * as z from "zod";
 
-export type { ScoutingScheduleInfoItem } from "@/lib/database/schema/tables/scouting-schedule";
 export type {
+  ScoutingScheduleInfoItem,
   ScoutingScheduleInfoSection,
   ScoutingScheduleShiftSection,
 } from "@/lib/database/schema/tables/scouting-schedule";

@@ -48,32 +48,20 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/tabs";
 import { TypographyH1 } from "@repo/ui/components/typography";
 import { cn } from "@repo/ui/lib/utils";
-import {
-  ArrowLeftIcon,
-  PencilLineIcon,
-  PlusIcon,
-  SaveIcon,
-  Trash2Icon,
-} from "lucide-react";
+import { ArrowLeftIcon, PencilLineIcon, PlusIcon, SaveIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { routes } from "@/lib/routes";
+import { updateScoutingScheduleAssignment, updateScoutingScheduleDetails } from "../actions";
+import type { ScoutingScheduleBoardMatch } from "../logic";
 import {
   buildDefaultShiftSections,
   createScheduleNodeId,
   formatScheduleDateRange,
   groupMatchesByShifts,
 } from "../logic";
-import type { ScoutingScheduleBoardMatch } from "../logic";
-import type {
-  ScoutingScheduleDetailData,
-  ScoutingScheduleMember,
-} from "../queries";
-import { updateScoutingScheduleAssignment, updateScoutingScheduleDetails } from "../actions";
-import type {
-  ScoutingScheduleInfoSection,
-  ScoutingScheduleShiftSection,
-} from "../types";
+import type { ScoutingScheduleDetailData, ScoutingScheduleMember } from "../queries";
+import type { ScoutingScheduleInfoSection, ScoutingScheduleShiftSection } from "../types";
 import { RosterSidebar, ShiftGroup } from "./ScoutingScheduleBoardSections";
 
 interface ScoutingScheduleBoardProps {
@@ -122,18 +110,6 @@ function snapshotScheduleDetails(schedule: {
     infoSections: schedule.infoSections,
     shiftSections: schedule.shiftSections,
   });
-}
-
-function formatShiftRange(shift: { startMatch: number | null; endMatch: number | null }) {
-  if (shift.startMatch == null || shift.endMatch == null) {
-    return "No match range";
-  }
-
-  if (shift.startMatch === shift.endMatch) {
-    return `Match ${shift.startMatch}`;
-  }
-
-  return `Matches ${shift.startMatch}-${shift.endMatch}`;
 }
 
 function ScheduleMemberAvatar({
@@ -189,7 +165,9 @@ function ScheduleInfoPreview({ sections }: { sections: ScoutingScheduleInfoSecti
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-48 bg-secondary/50 font-semibold">{section.dateLabel}</TableHead>
+                  <TableHead className="w-48 bg-secondary/50 font-semibold">
+                    {section.dateLabel}
+                  </TableHead>
                   {section.items.map((item) => (
                     <TableHead key={item.id} className="bg-secondary/50 text-center font-semibold">
                       {item.label}
@@ -375,7 +353,9 @@ export function ScoutingScheduleBoard({ data, canEdit }: ScoutingScheduleBoardPr
   ) {
     setSchedule((current) => ({
       ...current,
-      shiftSections: current.shiftSections.map((shift) => (shift.id === shiftId ? updater(shift) : shift)),
+      shiftSections: current.shiftSections.map((shift) =>
+        shift.id === shiftId ? updater(shift) : shift
+      ),
     }));
   }
 
@@ -505,10 +485,17 @@ export function ScoutingScheduleBoard({ data, canEdit }: ScoutingScheduleBoardPr
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline" onClick={handleCancelDetails} disabled={isSavingDetails}>
+                  <Button
+                    variant="outline"
+                    onClick={handleCancelDetails}
+                    disabled={isSavingDetails}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={handleSaveDetails} disabled={isSavingDetails || !detailsAreDirty}>
+                  <Button
+                    onClick={handleSaveDetails}
+                    disabled={isSavingDetails || !detailsAreDirty}
+                  >
                     <SaveIcon className="size-4" />
                     {isSavingDetails ? "Saving..." : "Save changes"}
                   </Button>
@@ -524,8 +511,8 @@ export function ScoutingScheduleBoard({ data, canEdit }: ScoutingScheduleBoardPr
           <CardHeader>
             <CardTitle>Schedule setup</CardTitle>
             <CardDescription>
-              Edit the event timeline and match-set structure here while keeping the assignment board
-              wide and sheet-like.
+              Edit the event timeline and match-set structure here while keeping the assignment
+              board wide and sheet-like.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -574,11 +561,15 @@ export function ScoutingScheduleBoard({ data, canEdit }: ScoutingScheduleBoardPr
 
                 <div className="grid gap-3 md:grid-cols-3">
                   <div className="rounded-xl border px-4 py-3">
-                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Event</p>
+                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                      Event
+                    </p>
                     <p className="mt-2 font-medium">{data.schedule.event.name}</p>
                   </div>
                   <div className="rounded-xl border px-4 py-3">
-                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Dates</p>
+                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                      Dates
+                    </p>
                     <p className="mt-2 font-medium">
                       {formatScheduleDateRange(
                         data.schedule.event.startDate,
@@ -698,13 +689,13 @@ export function ScoutingScheduleBoard({ data, canEdit }: ScoutingScheduleBoardPr
               </TabsContent>
 
               <TabsContent value="match-sets" className="space-y-4 pt-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-semibold">Match sets</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Group matches the same way the sheet does, with one event coordinator per set.
-                          </p>
-                        </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold">Match sets</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Group matches the same way the sheet does, with one event coordinator per set.
+                    </p>
+                  </div>
                   <Button variant="outline" size="sm" onClick={addShiftSection}>
                     <PlusIcon className="size-4" />
                     Add set
@@ -824,12 +815,7 @@ export function ScoutingScheduleBoard({ data, canEdit }: ScoutingScheduleBoardPr
       )}
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <div
-          className={cn(
-            "grid gap-6",
-            "xl:grid-cols-[248px_minmax(0,1fr)]"
-          )}
-        >
+        <div className={cn("grid gap-6", "xl:grid-cols-[248px_minmax(0,1fr)]")}>
           <RosterSidebar
             canEdit={canEdit}
             filteredMembers={filteredMembers}
@@ -890,7 +876,11 @@ export function ScoutingScheduleBoard({ data, canEdit }: ScoutingScheduleBoardPr
                     return;
                   }
 
-                  if (pickerTarget.kind === "seat" && pickerTarget.teamMatchId && pickerTarget.slotIndex) {
+                  if (
+                    pickerTarget.kind === "seat" &&
+                    pickerTarget.teamMatchId &&
+                    pickerTarget.slotIndex
+                  ) {
                     assignMember(pickerTarget.teamMatchId, pickerTarget.slotIndex, member.id);
                   }
                 }}

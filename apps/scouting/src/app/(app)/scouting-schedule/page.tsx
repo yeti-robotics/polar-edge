@@ -10,7 +10,10 @@ import { formatScheduleDateRange } from "@/features/scouting-schedule/logic";
 import { getScoutingSchedulesForOrganization } from "@/features/scouting-schedule/queries";
 import { routes } from "@/lib/routes";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
-import { getActiveEventForOrganization, listOrganizationEvents } from "@/lib/server/organization/active-event";
+import {
+  getActiveEventForOrganization,
+  listOrganizationEvents,
+} from "@/lib/server/organization/active-event";
 
 function LoadingSchedules() {
   return (
@@ -82,9 +85,7 @@ async function ScoutingScheduleContent() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <TypographyH4>Open schedules</TypographyH4>
-            <TypographyMuted>
-              Current schedules your scouts can open and reference.
-            </TypographyMuted>
+            <TypographyMuted>Current schedules your scouts can open and reference.</TypographyMuted>
           </div>
           {createButton}
         </div>

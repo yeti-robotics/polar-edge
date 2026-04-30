@@ -97,7 +97,11 @@ export async function getScoutingSchedulesForOrganization(
       event.startDate,
       event.endDate
     )
-    .orderBy(desc(scoutingSchedule.isOpen), desc(event.startDate), desc(scoutingSchedule.createdAt));
+    .orderBy(
+      desc(scoutingSchedule.isOpen),
+      desc(event.startDate),
+      desc(scoutingSchedule.createdAt)
+    );
 
   return rows.map((row) => ({
     ...row,

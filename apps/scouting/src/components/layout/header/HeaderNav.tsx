@@ -18,7 +18,7 @@ export function HeaderNav({ items }: { items: NavItem[] }) {
           href={item.href}
           className={cn(
             "whitespace-nowrap text-muted-foreground hover:text-foreground",
-            (pathname === item.href || pathname.startsWith(item.href + "/")) && "text-foreground"
+            (pathname === item.href || pathname.startsWith(`${item.href}/`)) && "text-foreground"
           )}
         >
           {item.label}

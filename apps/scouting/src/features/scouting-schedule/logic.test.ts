@@ -48,7 +48,10 @@ describe("scouting schedule logic", () => {
     expect(groups).toHaveLength(2);
     expect(groups[0]).toMatchObject({
       id: "shift-a",
-      matches: [{ matchNumber: 1, teams: [] }, { matchNumber: 2, teams: [] }],
+      matches: [
+        { matchNumber: 1, teams: [] },
+        { matchNumber: 2, teams: [] },
+      ],
     });
     expect(groups[1]).toMatchObject({
       id: "ungrouped",

@@ -23,7 +23,7 @@ import { toast } from "@repo/ui/components/sonner";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useActionState, useEffect, useRef, useState } from "react";
 import { routes } from "@/lib/routes";
-import { createScoutingScheduleAction, type CreateScoutingScheduleState } from "../actions";
+import { type CreateScoutingScheduleState, createScoutingScheduleAction } from "../actions";
 
 interface EventOption {
   id: string;
@@ -159,7 +159,10 @@ export function CreateScoutingScheduleDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending || !selectedEventId || name.trim().length === 0}>
+            <Button
+              type="submit"
+              disabled={isPending || !selectedEventId || name.trim().length === 0}
+            >
               {isPending ? "Creating..." : "Create schedule"}
             </Button>
           </DialogFooter>

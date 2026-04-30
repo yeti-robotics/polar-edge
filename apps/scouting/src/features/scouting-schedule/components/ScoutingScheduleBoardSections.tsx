@@ -5,7 +5,13 @@ import { CSS } from "@dnd-kit/utilities";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/card";
 import { Input } from "@repo/ui/components/input";
 import { ScrollArea } from "@repo/ui/components/scroll-area";
 import {
@@ -292,8 +298,9 @@ function findTeamSlot(
   position: 1 | 2 | 3
 ) {
   return (
-    matchEntry.teams.find((teamSlot) => teamSlot.alliance === alliance && teamSlot.position === position) ??
-    null
+    matchEntry.teams.find(
+      (teamSlot) => teamSlot.alliance === alliance && teamSlot.position === position
+    ) ?? null
   );
 }
 
@@ -317,7 +324,9 @@ function TeamAssignmentCell({
   }
 
   const teamNumberClasses =
-    teamSlot.alliance === "red" ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
+    teamSlot.alliance === "red"
+      ? "text-red-600 dark:text-red-400"
+      : "text-blue-600 dark:text-blue-400";
 
   return (
     <div className="space-y-2">
@@ -331,7 +340,7 @@ function TeamAssignmentCell({
       <div className="space-y-1">
         {teamSlot.assignments.map((assignment) => {
           const assignedMember = assignment.memberId
-            ? memberMap.get(assignment.memberId) ?? null
+            ? (memberMap.get(assignment.memberId) ?? null)
             : null;
           const seatKey = `${teamSlot.teamMatchId}:${assignment.slotIndex}`;
 
@@ -381,7 +390,7 @@ export function ShiftGroup({
                     shiftId={group.id}
                     coordinator={
                       group.coordinatorMemberId
-                        ? memberMap.get(group.coordinatorMemberId) ?? null
+                        ? (memberMap.get(group.coordinatorMemberId) ?? null)
                         : null
                     }
                     canEdit={canEdit}
