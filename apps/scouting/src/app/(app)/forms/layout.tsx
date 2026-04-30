@@ -6,6 +6,7 @@ import {
   ThumbsUpIcon,
 } from "lucide-react";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { type NavLink, NavSidebar } from "@/components/NavSidebar";
 import { SidebarSheet } from "@/components/SidebarSheet";
 import { auth } from "@/lib/auth";
@@ -15,17 +16,26 @@ import { isScoutLeadOrAbove } from "@/lib/server/auth/require-member";
 export default async function FormsLayout({ children }: { children: React.ReactNode }) {
   let isAuthenticated = false;
   let isScoutLead = false;
+  const headerList = await headers();
 
   try {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await auth.api.getSession({ headers: headerList });
     isAuthenticated = !!session?.user;
+  } catch {
+    redirect(routes.login);
+  }
 
-    const activeMember = await auth.api.getActiveMember({ headers: await headers() });
+  if (!isAuthenticated) {
+    redirect(routes.login);
+  }
+
+  try {
+    const activeMember = await auth.api.getActiveMember({ headers: headerList });
     if (activeMember) {
       isScoutLead = isScoutLeadOrAbove(activeMember.role);
     }
   } catch {
-    // not signed in
+    redirect(routes.login);
   }
 
   const formsLinks: NavLink[] = [
@@ -62,10 +72,7 @@ export default async function FormsLayout({ children }: { children: React.ReactN
   ];
 
   return (
-    <div
-      className="fixed inset-x-0 bottom-0 overflow-hidden"
-      style={{ top: isAuthenticated ? "5rem" : "3rem" }}
-    >
+    <div className="fixed inset-x-0 top-(--header-height) bottom-0 overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] h-full">
         <aside className="h-full border-r hidden md:block overflow-y-auto">
           <NavSidebar title="Forms" links={formsLinks} />
