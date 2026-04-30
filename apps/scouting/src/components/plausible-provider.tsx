@@ -3,12 +3,13 @@
 import { init } from "@plausible-analytics/tracker";
 import { useEffect } from "react";
 
+let initialized = false;
+
 export function PlausibleProvider() {
   useEffect(() => {
-    try {
+    if (!initialized) {
+      initialized = true;
       init({ domain: "scout.yetirobotics.org" });
-    } catch {
-      // init() throws if called more than once; React StrictMode double-invokes effects in dev
     }
   }, []);
 

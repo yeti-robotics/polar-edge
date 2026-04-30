@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@repo/ui/components/sonner";
-import { ThemeProvider } from "@/components/theme";
 import { PlausibleProvider } from "@/components/plausible-provider";
+import { ThemeProvider } from "@/components/theme";
 
 const libreFranklin = Libre_Franklin({
   subsets: ["latin"],
