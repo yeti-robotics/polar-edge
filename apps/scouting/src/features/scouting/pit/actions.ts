@@ -11,7 +11,7 @@ import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { insertPitForm } from "./logic";
 import { buildPitFormInsertData } from "./payload";
-import { FormSchema, formOpts } from "./types";
+import { FormSchema, formOpts, type PitFormValues } from "./types";
 
 const serverValidate = createServerValidate({
   ...formOpts,
@@ -29,12 +29,10 @@ export async function submitPitForm(_prevState: unknown, formData: FormData) {
       };
     }
 
-    const validated = FormSchema.parse(
-      await serverValidate(formData, {
-        numbers: ["teamNumber", "capacity", "weight"],
-        booleans: ["canTrench", "canBump", "canShuttle", "canShootWhileMoving"],
-      })
-    );
+    const validated = (await serverValidate(formData, {
+      numbers: ["teamNumber", "capacity", "weight"],
+      booleans: ["canTrench", "canBump", "canShuttle", "canShootWhileMoving"],
+    })) as PitFormValues;
 
     // Parse and validate photo keys
     const photoKeysJson = formData.get("photoKeys");

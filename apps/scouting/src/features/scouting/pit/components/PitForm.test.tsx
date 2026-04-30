@@ -193,7 +193,7 @@ describe("PitForm", () => {
   });
 
   describe("attack coverage", () => {
-    it("other drivetrain detail field stays hidden until Other is selected", async () => {
+    it("other drivetrain is a discrete option without a freeform detail field", async () => {
       render(<PitForm teams={teams} />);
       const user = userEvent.setup();
 
@@ -201,19 +201,15 @@ describe("PitForm", () => {
 
       await user.click(screen.getByLabelText("Other"));
 
-      expect(screen.getByLabelText("Custom drivetrain type")).toBeInTheDocument();
-
-      await user.click(screen.getByLabelText("Tank"));
-
       expect(screen.queryByLabelText("Custom drivetrain type")).not.toBeInTheDocument();
     });
   });
 
   describe("gap-closing coverage", () => {
-    it("freeform archetype and comments fields remain available for robot-specific notes", () => {
+    it("archetype select and comments fields remain available for robot-specific notes", () => {
       render(<PitForm teams={teams} />);
 
-      expect(screen.getByLabelText("Robot archetype")).toBeInTheDocument();
+      expect(screen.getByRole("combobox", { name: "Robot archetype" })).toBeInTheDocument();
       expect(screen.getByLabelText("Additional information")).toBeInTheDocument();
       expect(screen.getByText("What should I write here?")).toBeInTheDocument();
     });

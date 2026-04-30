@@ -23,7 +23,7 @@ function makePitFormInput(overrides: Partial<PitFormValues> = {}) {
 
 describe("Pit form payload", () => {
   describe("attack coverage", () => {
-    it("other drivetrain can slip through without a description", () => {
+    it("other drivetrain is stored as a discrete option without custom text", () => {
       const result = FormSchema.safeParse(
         makePitFormInput({
           drivetrainType: "other",
@@ -31,8 +31,13 @@ describe("Pit form payload", () => {
         })
       );
 
-      expect(result.success).toBe(false);
-      expect(result.error?.issues.some((issue) => issue.path[0] === "drivetrainOther")).toBe(true);
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+
+      const payload = buildPitFormInsertData(result.data, "member-1");
+
+      expect(payload.drivetrainType).toBe("other");
+      expect(payload.drivetrainOther).toBe("");
     });
 
     it("stale custom drivetrain text can be saved against a standard drivetrain", () => {
@@ -52,14 +57,14 @@ describe("Pit form payload", () => {
     it("custom notes can reach storage padded with whitespace instead of the scout's intended text", () => {
       const validated = FormSchema.parse(
         makePitFormInput({
-          archetype: "  source-side support cycler  ",
+          archetype: "cycler",
           comments: "  starts near source and runs a curved auto path  ",
         })
       );
 
       const payload = buildPitFormInsertData(validated, "member-1");
 
-      expect(payload.archetype).toBe("source-side support cycler");
+      expect(payload.archetype).toBe("cycler");
       expect(payload.comments).toBe("starts near source and runs a curved auto path");
     });
   });

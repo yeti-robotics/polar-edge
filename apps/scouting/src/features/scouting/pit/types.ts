@@ -4,8 +4,14 @@ import * as z from "zod";
 export const DRIVETRAIN_OPTIONS = ["tank", "swerve", "mecanum", "other"] as const;
 export const CLIMB_TYPE_OPTIONS = ["sides", "center", "left", "right", "any", "none"] as const;
 export const SHOOTER_OPTIONS = ["turret", "fixed"] as const;
-export const DRIVETRAIN_OTHER_MAX_LENGTH = 80;
-export const ARCHETYPE_MAX_LENGTH = 120;
+export const ARCHETYPE_OPTIONS = [
+  "defense",
+  "feeder",
+  "cycler",
+  "shooter",
+  "climber",
+  "support",
+] as const;
 export const PIT_COMMENTS_MAX_LENGTH = 2000;
 
 const DRIVETRAIN_LABELS: Record<(typeof DRIVETRAIN_OPTIONS)[number], string> = {
@@ -34,17 +40,8 @@ export const FormSchema = z
       .refine((val): val is (typeof DRIVETRAIN_OPTIONS)[number] => val !== "", {
         message: "Drivetrain type is required",
       }),
-    drivetrainOther: z
-      .string()
-      .trim()
-      .max(
-        DRIVETRAIN_OTHER_MAX_LENGTH,
-        `Custom drivetrain type cannot exceed ${DRIVETRAIN_OTHER_MAX_LENGTH} characters`
-      ),
-    archetype: z
-      .string()
-      .trim()
-      .max(ARCHETYPE_MAX_LENGTH, `Archetype cannot exceed ${ARCHETYPE_MAX_LENGTH} characters`),
+    drivetrainOther: z.string().trim(),
+    archetype: z.union([z.enum(ARCHETYPE_OPTIONS), z.literal("")]),
     canTrench: z.boolean().optional(),
     canBump: z.boolean().optional(),
     canShuttle: z.boolean().optional(),
@@ -67,14 +64,6 @@ export const FormSchema = z
       .max(PIT_COMMENTS_MAX_LENGTH, `Comments cannot exceed ${PIT_COMMENTS_MAX_LENGTH} characters`),
   })
   .superRefine((values, ctx) => {
-    if (values.drivetrainType === "other" && values.drivetrainOther === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["drivetrainOther"],
-        message: "Describe the drivetrain type when selecting other",
-      });
-    }
-
     if (values.canShootWhileMoving && values.shooterType === "") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

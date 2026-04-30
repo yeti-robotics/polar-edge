@@ -22,6 +22,13 @@ import { Field, FieldError, FieldLabel } from "@repo/ui/components/field";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui/components/select";
 import { toast } from "@repo/ui/components/sonner";
 import { Textarea } from "@repo/ui/components/textarea";
 import { initialFormState, mergeForm, useForm, useTransform } from "@tanstack/react-form-nextjs";
@@ -30,10 +37,9 @@ import { startTransition, useActionState, useCallback, useEffect, useRef } from 
 import { submitPitForm } from "../actions";
 import { usePhotoUpload } from "../hooks/use-photo-upload";
 import {
-  ARCHETYPE_MAX_LENGTH,
+  ARCHETYPE_OPTIONS,
   CLIMB_TYPE_OPTIONS,
   DRIVETRAIN_OPTIONS,
-  DRIVETRAIN_OTHER_MAX_LENGTH,
   FormSchema,
   formOpts,
   PIT_COMMENTS_MAX_LENGTH,
@@ -52,6 +58,19 @@ const DRIVING_ABILITIES = [
   { name: "canBump", id: "can_bump", label: "Can Bump" },
   { name: "canShuttle", id: "can_shuttle", label: "Can Shuttle" },
 ] as const;
+
+const ARCHETYPE_LABELS: Record<(typeof ARCHETYPE_OPTIONS)[number], string> = {
+  defense: "Defense",
+  feeder: "Feeder",
+  cycler: "Cycler",
+  shooter: "Shooter",
+  climber: "Climber",
+  support: "Support",
+};
+
+function formatOptionLabel(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
 
 export function PitForm({ teams }: { teams: { teamNumber: number; teamName: string }[] }) {
   const [state, action, isPending] = useActionState(submitPitForm, initialFormState);
@@ -121,7 +140,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
 
         formData.append("teamNumber", String(values.teamNumber));
         formData.append("drivetrainType", values.drivetrainType);
-        formData.append("drivetrainOther", values.drivetrainOther);
+        formData.append("drivetrainOther", "");
         formData.append("archetype", values.archetype);
         formData.append("canTrench", values.canTrench ? "on" : "off");
         formData.append("canBump", values.canBump ? "on" : "off");
@@ -232,10 +251,9 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
           <form.Field name="drivetrainType">
             {(field) => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              const isOtherSelected = field.state.value === "other";
 
               return (
-                <Field className="space-y-3.5">
+                <Field>
                   <div>
                     <RadioGroup
                       id={field.name}
@@ -250,49 +268,19 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                       className="flex flex-wrap gap-2.5"
                     >
                       {DRIVETRAIN_OPTIONS.map((type) => (
-                        <div key={type}>
-                          <RadioGroupItem
-                            id={`drivetrain-${type}`}
-                            value={type}
-                            className="peer sr-only"
-                          />
-                          <Label
-                            htmlFor={`drivetrain-${type}`}
-                            className="cursor-pointer select-none rounded-lg border border-border bg-muted/50 px-[18px] py-3 text-sm whitespace-nowrap transition-colors hover:bg-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 peer-data-[state=checked]:text-primary peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:border-ring"
-                          >
-                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                        <div
+                          key={type}
+                          className="flex items-center gap-2 rounded-md border px-3 py-2"
+                        >
+                          <RadioGroupItem id={`drivetrain-${type}`} value={type} />
+                          <Label htmlFor={`drivetrain-${type}`} className="cursor-pointer">
+                            {formatOptionLabel(type)}
                           </Label>
                         </div>
                       ))}
                     </RadioGroup>
                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </div>
-
-                  <form.Field name="drivetrainOther">
-                    {(otherField) => {
-                      const isOtherInvalid =
-                        otherField.state.meta.isTouched && !otherField.state.meta.isValid;
-
-                      if (!isOtherSelected) return null;
-
-                      return (
-                        <Field>
-                          <FieldLabel htmlFor="drivetrain_other">Custom drivetrain type</FieldLabel>
-                          <Input
-                            id="drivetrain_other"
-                            name={otherField.name}
-                            value={otherField.state.value}
-                            onBlur={otherField.handleBlur}
-                            onChange={(e) => otherField.handleChange(e.target.value)}
-                            placeholder="e.g. butterfly drive"
-                            maxLength={DRIVETRAIN_OTHER_MAX_LENGTH}
-                            aria-invalid={isOtherInvalid}
-                          />
-                          {isOtherInvalid && <FieldError errors={otherField.state.meta.errors} />}
-                        </Field>
-                      );
-                    }}
-                  </form.Field>
                 </Field>
               );
             }}
@@ -304,7 +292,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
         <CardHeader>
           <CardTitle>Archetype</CardTitle>
           <CardDescription>
-            Add a custom archetype if this robot fits a style or role that is not already covered.
+            Select the strategy archetype that best describes this robot.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -315,16 +303,28 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
               return (
                 <Field>
                   <FieldLabel htmlFor="archetype">Robot archetype</FieldLabel>
-                  <Input
-                    id="archetype"
+                  <Select
                     name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="e.g. support cycler with source-side auto"
-                    maxLength={ARCHETYPE_MAX_LENGTH}
-                    aria-invalid={isInvalid}
-                  />
+                    value={field.state.value || undefined}
+                    onValueChange={(value) =>
+                      field.handleChange(value as (typeof ARCHETYPE_OPTIONS)[number])
+                    }
+                  >
+                    <SelectTrigger
+                      id="archetype"
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                    >
+                      <SelectValue placeholder="Select an archetype" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ARCHETYPE_OPTIONS.map((archetype) => (
+                        <SelectItem key={archetype} value={archetype}>
+                          {ARCHETYPE_LABELS[archetype]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
@@ -599,9 +599,16 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                     maxLength={PIT_COMMENTS_MAX_LENGTH}
                     aria-invalid={isInvalid}
                   />
-                  <p className="text-xs text-right tabular-nums text-muted-foreground">
-                    {commentLength} / {PIT_COMMENTS_MAX_LENGTH}
-                  </p>
+                  <output
+                    id="comments-counter"
+                    htmlFor="comments"
+                    aria-live="polite"
+                    className="text-xs text-right tabular-nums text-muted-foreground"
+                  >
+                    <span aria-hidden="true">
+                      {commentLength} / {PIT_COMMENTS_MAX_LENGTH}
+                    </span>
+                  </output>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );

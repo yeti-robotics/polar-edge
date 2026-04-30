@@ -8,7 +8,7 @@ export function buildPitFormInsertData(
   return {
     teamNumber: validated.teamNumber,
     drivetrainType: validated.drivetrainType,
-    drivetrainOther: validated.drivetrainType === "other" ? validated.drivetrainOther : "",
+    drivetrainOther: "",
     archetype: validated.archetype,
     canTrench: validated.canTrench ?? false,
     canBump: validated.canBump ?? false,
