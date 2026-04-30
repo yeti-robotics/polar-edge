@@ -1,6 +1,8 @@
 import "server-only";
 
 import { and, desc, eq, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
   event,
@@ -62,6 +64,11 @@ export interface ScoutingScheduleDetailData {
 export async function getScoutingSchedulesForOrganization(
   organizationId: string
 ): Promise<ScoutingScheduleListItem[]> {
+  "use cache";
+
+  cacheLife("hours");
+  cacheTag(cacheTags.scoutingSchedules(organizationId));
+
   const rows = await db
     .select({
       id: scoutingSchedule.id,
@@ -102,6 +109,11 @@ export async function getScoutingScheduleDetail(
   scheduleId: string,
   organizationId: string
 ): Promise<ScoutingScheduleDetailData | null> {
+  "use cache";
+
+  cacheLife("hours");
+  cacheTag(cacheTags.scoutingSchedule(organizationId, scheduleId));
+
   const scheduleRecord = await db.query.scoutingSchedule.findFirst({
     where: and(
       eq(scoutingSchedule.id, scheduleId),

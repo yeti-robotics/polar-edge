@@ -1,7 +1,8 @@
 "use server";
 
 import { and, eq, inArray, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
+import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
   match,
@@ -11,7 +12,6 @@ import {
   scoutingScheduleAssignment,
   teamMatch,
 } from "@/lib/database/schema";
-import { routes } from "@/lib/routes";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
 import {
   buildDefaultScheduleInfoSections,
@@ -87,8 +87,8 @@ export async function createScoutingScheduleAction(
       return { data: null, error: "Failed to create scouting schedule." };
     }
 
-    revalidatePath(routes.scoutingSchedule.root);
-    revalidatePath(routes.scoutingSchedule.detail(newSchedule.id));
+    revalidateTag(cacheTags.scoutingSchedules(activeMember.organizationId), "max");
+    revalidateTag(cacheTags.scoutingSchedule(activeMember.organizationId, newSchedule.id), "max");
 
     return { data: { success: true, scheduleId: newSchedule.id }, error: null };
   } catch (error) {
@@ -179,8 +179,11 @@ export async function updateScoutingScheduleDetails(input: unknown) {
       })
       .where(eq(scoutingSchedule.id, validated.data.scheduleId));
 
-    revalidatePath(routes.scoutingSchedule.root);
-    revalidatePath(routes.scoutingSchedule.detail(validated.data.scheduleId));
+    revalidateTag(cacheTags.scoutingSchedules(activeMember.organizationId), "max");
+    revalidateTag(
+      cacheTags.scoutingSchedule(activeMember.organizationId, validated.data.scheduleId),
+      "max"
+    );
 
     return { data: { success: true }, error: null };
   } catch (error) {
@@ -294,7 +297,10 @@ export async function updateScoutingScheduleAssignment(input: unknown) {
         });
     });
 
-    revalidatePath(routes.scoutingSchedule.detail(validated.data.scheduleId));
+    revalidateTag(
+      cacheTags.scoutingSchedule(activeMember.organizationId, validated.data.scheduleId),
+      "max"
+    );
 
     return {
       data: {

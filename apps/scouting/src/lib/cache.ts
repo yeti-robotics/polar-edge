@@ -20,4 +20,7 @@ export const cacheTags = {
   eventCoprs: (eventId: string) => `event-coprs-${eventId}`,
   driveRanking: (organizationId: string, eventId?: string | null) =>
     eventId ? `drive-ranking-${organizationId}-${eventId}` : `drive-ranking-${organizationId}`,
+  scoutingSchedules: (organizationId: string) => `scouting-schedules-${organizationId}`,
+  scoutingSchedule: (organizationId: string, scheduleId: string) =>
+    `scouting-schedule-${organizationId}-${scheduleId}`,
 };

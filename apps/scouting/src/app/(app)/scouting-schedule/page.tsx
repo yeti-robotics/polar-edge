@@ -1,7 +1,7 @@
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
+import { TypographyH1, TypographyH4, TypographyMuted } from "@repo/ui/components/typography";
 import { CalendarDaysIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -81,10 +81,10 @@ async function ScoutingScheduleContent() {
       <section className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold">Open schedules</h2>
-            <p className="text-sm text-muted-foreground">
+            <TypographyH4>Open schedules</TypographyH4>
+            <TypographyMuted>
               Current schedules your scouts can open and reference.
-            </p>
+            </TypographyMuted>
           </div>
           {createButton}
         </div>
@@ -113,10 +113,10 @@ async function ScoutingScheduleContent() {
       {closedSchedules.length > 0 && (
         <section className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold">Closed schedules</h2>
-            <p className="text-sm text-muted-foreground">
+            <TypographyH4>Closed schedules</TypographyH4>
+            <TypographyMuted>
               Previous schedules that are still available for reference.
-            </p>
+            </TypographyMuted>
           </div>
           <div className="flex flex-col gap-4">
             {closedSchedules.map((schedule) => (

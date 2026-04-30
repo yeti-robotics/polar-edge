@@ -1,9 +1,4 @@
-import { formOptions } from "@tanstack/react-form-nextjs";
 import * as z from "zod";
-import type {
-  ScoutingScheduleInfoSection,
-  ScoutingScheduleShiftSection,
-} from "@/lib/database/schema/tables/scouting-schedule";
 
 export type { ScoutingScheduleInfoItem } from "@/lib/database/schema/tables/scouting-schedule";
 export type {
@@ -75,13 +70,4 @@ export const UpdateScoutingScheduleAssignmentSchema = z.object({
   teamMatchId: z.coerce.number().int().positive(),
   slotIndex: z.coerce.number().int().min(1).max(2),
   memberId: z.string().trim().min(1).nullable(),
-});
-
-export const scoutingScheduleDetailsFormOpts = formOptions({
-  defaultValues: {
-    name: "",
-    isOpen: true,
-    infoSections: [] as ScoutingScheduleInfoSection[],
-    shiftSections: [] as ScoutingScheduleShiftSection[],
-  },
 });
