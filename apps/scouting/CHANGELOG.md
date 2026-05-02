@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.21.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.20.2...scouting-v2026.21.0) (2026-05-02)
+
+
+### Features
+
+* **scouting:** add individual scout audit tooling ([ef02d8b](https://github.com/yeti-robotics/polar-edge/commit/ef02d8be83ccc52f726c590a936a64ddf8c18048))
+
 ## [2026.20.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.20.1...scouting-v2026.20.2) (2026-04-11)
 
 
