@@ -10,10 +10,12 @@ import {
 } from "@repo/ui/components/table";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { Suspense } from "react";
 import { RemoveMemberButton } from "@/features/org/members/components/RemoveMemberButton";
 import { RoleSelect } from "@/features/org/members/components/RoleSelect";
 import { auth } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
 
 function getInitials(name: string): string {
@@ -130,7 +132,10 @@ async function MembersContent() {
           {members.map((memberData) => (
             <TableRow key={memberData.id}>
               <TableCell>
-                <div className="flex items-center gap-3">
+                <Link
+                  href={routes.admin.member(memberData.id)}
+                  className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+                >
                   <Avatar className="size-9">
                     <AvatarImage
                       src={memberData.user.image ?? undefined}
@@ -141,10 +146,10 @@ async function MembersContent() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="font-medium">{memberData.user.name}</span>
+                    <span className="font-medium hover:underline">{memberData.user.name}</span>
                     <span className="text-sm text-muted-foreground">{memberData.user.email}</span>
                   </div>
-                </div>
+                </Link>
               </TableCell>
               <TableCell>
                 <RoleSelect

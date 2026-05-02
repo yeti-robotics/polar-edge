@@ -10,6 +10,9 @@ export const routes = {
   admin: {
     root: "/admin",
     members: "/admin/members",
+    member: (memberId: string) => `/admin/members/${memberId}` as const,
+    memberForm: (memberId: string, formId: string) =>
+      `/admin/members/${memberId}/forms/${formId}` as const,
     invites: "/admin/invites",
     event: "/admin/event",
     settings: "/admin/settings",
