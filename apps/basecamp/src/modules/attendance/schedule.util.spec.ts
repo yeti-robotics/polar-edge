@@ -54,7 +54,7 @@ describe("schedule.util", () => {
   // -------------------------------------------------------------------------
   describe("basic sanity", () => {
     it("returns 0 at the season start — May is optional", () => {
-      expect(getTotalPossibleHoursToDate(new Date("2025-05-01T12:00:00Z"))).toBe(0);
+      expect(getTotalPossibleHoursToDate(new Date("2025-05-07T12:00:00Z"))).toBe(0);
     });
 
     it("returns 0 through the end of July — optional months", () => {
@@ -391,7 +391,7 @@ describe("schedule.util", () => {
   describe("season year determination", () => {
     it("May date belongs to the current year's season", () => {
       // May 2025 → season 2025
-      const may = getTotalSeasonHours(new Date("2025-05-01T12:00:00Z"));
+      const may = getTotalSeasonHours(new Date("2025-05-07T12:00:00Z"));
       const oct = getTotalSeasonHours(new Date("2025-10-01T12:00:00Z"));
       expect(may).toBe(oct);
     });

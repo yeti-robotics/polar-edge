@@ -69,7 +69,10 @@ function toEasternDate(year: number, month: number, day: number): Date {
 }
 
 function getSeasonYearFromParts(parts: EasternDate): number {
-  return parts.month >= 5 ? parts.year : parts.year - 1;
+  if ((parts.month >= 5 && parts.day >= 7) || parts.month > 5) {
+    return parts.year;
+  }
+  return parts.year - 1;
 }
 
 function getSeasonYear(date: Date): number {
