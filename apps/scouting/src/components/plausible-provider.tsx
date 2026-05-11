@@ -1,6 +1,5 @@
 "use client";
 
-import { init } from "@plausible-analytics/tracker";
 import { useEffect } from "react";
 
 let initialized = false;
@@ -9,7 +8,9 @@ export function PlausibleProvider() {
   useEffect(() => {
     if (!initialized) {
       initialized = true;
-      init({ domain: "scout.yetirobotics.org" });
+      import("@plausible-analytics/tracker").then(({ init }) => {
+        init({ domain: "scout.yetirobotics.org" });
+      });
     }
   }, []);
 
