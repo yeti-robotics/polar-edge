@@ -20,4 +20,9 @@ export const cacheTags = {
   eventCoprs: (eventId: string) => `event-coprs-${eventId}`,
   driveRanking: (organizationId: string, eventId?: string | null) =>
     eventId ? `drive-ranking-${organizationId}-${eventId}` : `drive-ranking-${organizationId}`,
+  memberFormSummary: (eventId: string, memberId: string) =>
+    `member-form-summary-${eventId}-${memberId}`,
+  memberStandForms: (eventId: string, memberId: string) =>
+    `member-stand-forms-${eventId}-${memberId}`,
+  standFormAudit: (formId: string) => `stand-form-audit-${formId}`,
 };

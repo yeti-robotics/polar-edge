@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.4.0...basecamp-v1.4.1) (2026-05-02)
+
+
+### Bug Fixes
+
+* **basecamp:** add additional dates ([76d0be4](https://github.com/yeti-robotics/polar-edge/commit/76d0be466b22128f3e53d414b33b89a5715e74d3))
+* **basecamp:** fix tests ([672b35a](https://github.com/yeti-robotics/polar-edge/commit/672b35ad832b76f0a252c3f523fa06b54efb3a7d))
+
 ## [1.4.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.3.2...basecamp-v1.4.0) (2026-04-06)
 
 
