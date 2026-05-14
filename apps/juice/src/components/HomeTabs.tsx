@@ -19,7 +19,7 @@ export function HomeTabs({ children }: HomeTabsProps) {
 							: "text-muted-foreground hover:text-foreground"
 					}`}
 				>
-					Upload
+					Overview
 				</button>
 				<button
 					type="button"
@@ -62,7 +62,7 @@ function HowToUseContent() {
 				<ol className="ml-4 list-decimal space-y-2 text-sm text-muted-foreground">
 					<li>
 						Click the <span className="font-medium text-foreground">Analyzer</span>{" "}
-						card on the Upload tab
+						card on the Overview tab
 					</li>
 					<li>Upload your DS log file (.log or .csv)</li>
 					<li>Review the analysis graphs and metrics below</li>
