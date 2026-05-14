@@ -1,5 +1,6 @@
 ---
 import "../styles/globals.css";
+import { HomeTabs } from "../components/HomeTabs";
 ---
 
 <html lang="en" class="dark">
@@ -26,43 +27,45 @@ import "../styles/globals.css";
 			<h1 class="mb-3 text-center text-3xl font-medium tracking-tight text-foreground">
 				FRC Battery Tools
 			</h1>
-			<p class="mb-12 max-w-md text-center text-sm leading-relaxed text-muted-foreground">
+			<p class="mb-8 max-w-md text-center text-sm leading-relaxed text-muted-foreground">
 				Analyze DS logs for voltage, current, and impedance — or track your battery fleet at competitions.
 			</p>
 
-			<div class="grid w-full max-w-[520px] grid-cols-1 gap-4 sm:grid-cols-2">
-				<a
-					href="/analyzer"
-					class="group rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/40"
-				>
-					<div class="mb-3 text-3xl">📊</div>
-					<h2 class="mb-1 font-mono text-sm font-semibold uppercase tracking-wider text-foreground">
-						Analyzer
-					</h2>
-					<p class="text-xs leading-relaxed text-muted-foreground">
-						Upload DS logs and CAN data to analyze voltage trends, current demand, power, and battery impedance.
-					</p>
-					<span class="mt-3 inline-block font-mono text-xs text-primary opacity-0 transition-opacity group-hover:opacity-100">
-						Open →
-					</span>
-				</a>
+			<HomeTabs client:load>
+				<div class="grid w-full max-w-[520px] grid-cols-1 gap-4 sm:grid-cols-2">
+					<a
+						href="/analyzer"
+						class="group rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/40"
+					>
+						<div class="mb-3 text-3xl">📊</div>
+						<h2 class="mb-1 font-mono text-sm font-semibold uppercase tracking-wider text-foreground">
+							Analyzer
+						</h2>
+						<p class="text-xs leading-relaxed text-muted-foreground">
+							Upload DS logs and CAN data to analyze voltage trends, current demand, power, and battery impedance.
+						</p>
+						<span class="mt-3 inline-block font-mono text-xs text-primary opacity-0 transition-opacity group-hover:opacity-100">
+							Open →
+						</span>
+					</a>
 
-				<a
-					href="/tracker"
-					class="group rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/40"
-				>
-					<div class="mb-3 text-3xl">🔋</div>
-					<h2 class="mb-1 font-mono text-sm font-semibold uppercase tracking-wider text-foreground">
-						Battery Tracker
-					</h2>
-					<p class="text-xs leading-relaxed text-muted-foreground">
-						Track battery check-outs, KW700 readings, voltage, brownouts, and performance at events.
-					</p>
-					<span class="mt-3 inline-block font-mono text-xs text-primary opacity-0 transition-opacity group-hover:opacity-100">
-						Open →
-					</span>
-				</a>
-			</div>
+					<a
+						href="/tracker"
+						class="group rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/40"
+					>
+						<div class="mb-3 text-3xl">🔋</div>
+						<h2 class="mb-1 font-mono text-sm font-semibold uppercase tracking-wider text-foreground">
+							Battery Tracker
+						</h2>
+						<p class="text-xs leading-relaxed text-muted-foreground">
+							Track battery check-outs, KW700 readings, voltage, brownouts, and performance at events.
+						</p>
+						<span class="mt-3 inline-block font-mono text-xs text-primary opacity-0 transition-opacity group-hover:opacity-100">
+							Open →
+						</span>
+					</a>
+				</div>
+			</HomeTabs>
 		</div>
 	</body>
 </html>
