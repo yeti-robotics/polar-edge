@@ -1,6 +1,7 @@
 ---
 import "../styles/globals.css";
-import { HomeTabs } from "../components/HomeTabs";
+import { Home } from "../components/HomeTabs";
+import { JuiceNav } from "../components/JuiceNav";
 ---
 
 <html lang="en" class="dark">
@@ -13,16 +14,7 @@ import { HomeTabs } from "../components/HomeTabs";
 		<title>Juice — FRC Battery Tools</title>
 	</head>
 	<body class="min-h-screen bg-background text-foreground">
-		<div class="sticky top-0 z-50 flex items-center gap-4 border-b border-border bg-background/95 px-5 py-2.5 backdrop-blur-sm">
-			<a href="/" class="shrink-0 font-mono text-sm font-bold uppercase tracking-widest text-primary">
-				JUICE
-			</a>
-			<nav class="flex gap-0 overflow-x-auto">
-				<a href="/" class="whitespace-nowrap border-b-2 border-primary px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider text-primary">Home</a>
-				<a href="/analyzer" class="whitespace-nowrap border-b-2 border-transparent px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground">Analyzer</a>
-				<a href="/tracker" class="whitespace-nowrap border-b-2 border-transparent px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground">Tracker</a>
-			</nav>
-		</div>
+		<JuiceNav active="home" client:load />
 		<div class="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center px-6 py-12">
 			<h1 class="mb-3 text-center text-3xl font-medium tracking-tight text-foreground">
 				FRC Battery Tools
@@ -31,7 +23,7 @@ import { HomeTabs } from "../components/HomeTabs";
 				Analyze DS logs for voltage, current, and impedance — or track your battery fleet at competitions.
 			</p>
 
-			<HomeTabs client:load>
+			<Home client:load>
 				<div class="grid w-full max-w-[520px] grid-cols-1 gap-4 sm:grid-cols-2">
 					<a
 						href="/analyzer"
@@ -65,7 +57,7 @@ import { HomeTabs } from "../components/HomeTabs";
 						</span>
 					</a>
 				</div>
-			</HomeTabs>
+			</Home>
 		</div>
 	</body>
 </html>
