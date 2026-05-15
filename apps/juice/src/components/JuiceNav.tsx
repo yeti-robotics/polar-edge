@@ -1,11 +1,15 @@
+import { Button } from "@repo/ui/components/button";
+import { cn } from "@repo/ui/lib/utils";
+
 interface JuiceNavProps {
-  active: "home" | "analyzer" | "tracker";
+  active: "home" | "analyzer" | "tracker" | "how-to-use";
 }
 
 const links = [
   { href: "/", label: "Home", key: "home" },
   { href: "/analyzer", label: "Analyzer", key: "analyzer" },
   { href: "/tracker", label: "Tracker", key: "tracker" },
+  { href: "/how-to-use", label: "How to use?", key: "how-to-use" },
 ] as const;
 
 export function JuiceNav({ active }: JuiceNavProps) {
@@ -19,17 +23,18 @@ export function JuiceNav({ active }: JuiceNavProps) {
       </a>
       <nav className="flex gap-0 overflow-x-auto">
         {links.map(({ href, label, key }) => (
-          <a
+          <Button
             key={key}
-            href={href}
-            className={`whitespace-nowrap border-b-2 px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider transition-colors ${
-              active === key
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
+            variant="ghost"
+            size="sm"
+            asChild
+            className={cn(
+              "font-mono text-[10px] uppercase tracking-wider",
+              active === key && "border-b-2 border-primary text-primary"
+            )}
           >
-            {label}
-          </a>
+            <a href={href}>{label}</a>
+          </Button>
         ))}
       </nav>
     </div>
