@@ -1,8 +1,6 @@
 ---
 import "../styles/globals.css";
 // biome-ignore lint/correctness/noUnusedImports: used in Astro template below
-import { HomeLayout } from "../components/HomeLayout";
-// biome-ignore lint/correctness/noUnusedImports: used in Astro template below
 import { JuiceNav } from "../components/JuiceNav";
 ---
 
@@ -25,7 +23,7 @@ import { JuiceNav } from "../components/JuiceNav";
 				Analyze DS logs for voltage, current, and impedance — or track your battery fleet at competitions.
 			</p>
 
-			<HomeLayout client:load>
+			<div className="flex flex-col gap-6">
 				<div class="grid w-full max-w-[520px] grid-cols-1 gap-4 sm:grid-cols-2">
 					<a
 						href="/analyzer"
@@ -59,7 +57,7 @@ import { JuiceNav } from "../components/JuiceNav";
 						</span>
 					</a>
 				</div>
-			</Home>
+			</div>
 		</div>
 	</body>
 </html>
