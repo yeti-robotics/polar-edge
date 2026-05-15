@@ -1,4 +1,17 @@
 {
   "name": "juice",
-  "compatibility_flags": ["nodejs_compat"]
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-04-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    {
+      "binding": "SESSION"
+    }
+  ],
+  "images": {
+    "binding": "IMAGES"
+  },
+  "assets": {
+    "binding": "ASSETS"
+  }
 }
