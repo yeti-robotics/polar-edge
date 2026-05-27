@@ -39,6 +39,9 @@ const DAYS_IN_MONTH = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 const SEASON_END_MONTH = 7;
 const SEASON_END_DAY = 31;
 
+const COUNTED_PERIOD_START_MONTH = 5;
+const COUNTED_PERIOD_START_DAY = 20;
+
 /** Cached meeting dates by season year (May–July). Reused across requests. */
 const MEETING_DATES_BY_SEASON = new Map<number, MeetingDate[]>();
 
@@ -202,13 +205,21 @@ function generateMeetingDates(referenceDate: Date = new Date()): MeetingDate[] {
   return meetings;
 }
 
+export function getScoringPeriodStart(referenceDate: Date = new Date()): Date {
+  return toEasternDate(
+    getSeasonYear(referenceDate),
+    COUNTED_PERIOD_START_MONTH,
+    COUNTED_PERIOD_START_DAY
+  );
+}
+
 /** Clears the meeting-dates cache. Use in tests or when PARTIAL_MEETINGS / schedule config changes. */
 export function clearScheduleCache(): void {
   MEETING_DATES_BY_SEASON.clear();
 }
 
 export function getTotalPossibleHoursToDate(asOfDate: Date = new Date()): number {
-  const meetings = generateMeetingDates();
+  const meetings = generateMeetingDates(asOfDate);
   const asOfStr = getEasternDateString(asOfDate);
 
   let total = 0;

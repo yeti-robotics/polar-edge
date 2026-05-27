@@ -19,7 +19,7 @@ import {
 } from "./attendance.constants";
 import { AttendanceRepository } from "./attendance.repository";
 import { type AttendanceRecord } from "./attendance.schema";
-import { getTotalPossibleHoursToDate } from "./schedule.util";
+import { getScoringPeriodStart, getTotalPossibleHoursToDate } from "./schedule.util";
 import { TwofaService } from "./twofa/twofa.service";
 
 type AttendanceOperationResult =
@@ -271,6 +271,23 @@ export class AttendanceService {
     });
   }
 
+  private filterToCountedPeriod(records: AttendanceRecord[]): AttendanceRecord[] {
+    const cutoff = getScoringPeriodStart();
+    const result: AttendanceRecord[] = [];
+    let includeSession = false;
+
+    for (const record of records) {
+      if (record.isSigningIn) {
+        includeSession = new Date(record.date) >= cutoff;
+        if (includeSession) result.push(record);
+      } else if (includeSession) {
+        result.push(record);
+        includeSession = false;
+      }
+    }
+    return result;
+  }
+
   private calculateHoursFromRecords(records: AttendanceRecord[]): Result<number, Error> {
     let hours = 0;
     let lastSignIn: Date | null = null;
@@ -295,7 +312,7 @@ export class AttendanceService {
 
   public getUserHours(discordId: string): ResultAsync<number, Error> {
     return this.getAttendance(discordId).andThen((records) =>
-      this.calculateHoursFromRecords(records)
+      this.calculateHoursFromRecords(this.filterToCountedPeriod(records))
     );
   }
 
@@ -321,7 +338,7 @@ export class AttendanceService {
 
       const entries: Array<{ discordId: string; userName: string; totalHours: number }> = [];
       for (const [id, { userName, records: userRecs }] of userRecords.entries()) {
-        const hoursResult = this.calculateHoursFromRecords(userRecs);
+        const hoursResult = this.calculateHoursFromRecords(this.filterToCountedPeriod(userRecs));
         if (hoursResult.isErr()) return errAsync(hoursResult.error);
         entries.push({ discordId: id, userName, totalHours: hoursResult.value });
       }

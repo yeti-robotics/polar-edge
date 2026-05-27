@@ -29,7 +29,6 @@ export class AttendanceRepository {
       rows
         .slice(1)
         .filter((row) => row[COLUMN_INDICES.DISCORD_ID] === discordId)
-        .filter((row) => new Date(row[COLUMN_INDICES.DATE] as string) > new Date("2026-05-20"))
         .flatMap((row) => {
           const result = this.parseRow(row);
           if (result.isErr()) {
