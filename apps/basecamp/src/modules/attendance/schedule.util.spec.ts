@@ -25,6 +25,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearScheduleCache,
+  getSeasonDataStartForDate,
   getTotalPossibleHoursToDate,
   getTotalSeasonHours,
 } from "./schedule.util";
@@ -41,6 +42,10 @@ function hoursAddedOn(dateStr: string): number {
 
 describe("schedule.util", () => {
   beforeEach(() => {
+    // Default to 2025 season so tests that don't set their own system time work correctly.
+    // Tests for other seasons override this in their own beforeEach.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2025-09-01T12:00:00Z"));
     clearScheduleCache();
   });
 
@@ -382,6 +387,66 @@ describe("schedule.util", () => {
       // Aug 1 = Fri, so Aug 31 = Fri + 30 days = (5+30)%7 = 35%7 = 0 = Sunday
       expect(hoursAddedOn("2025-08-31T12:00:00Z")).toBe(0);
       expect(hoursAddedOn("2025-09-01T12:00:00Z")).toBe(0);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 2026 season: competition phase starts Jan 9, 2027 (not Jan 7)
+  // Jan 1, 2027 = Friday; Jan 7 = Thu, Jan 8 = Fri, Jan 9 = Sat
+  // -------------------------------------------------------------------------
+  describe("2026 season competition schedule", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-09-01T12:00:00Z")); // in 2026 season
+      clearScheduleCache();
+    });
+
+    it("Thu Jan 7, 2027 adds 3h — pre-comp Tue/Thu (winter break ends Jan 6)", () => {
+      expect(hoursAddedOn("2027-01-07T12:00:00Z")).toBe(3);
+    });
+
+    it("Fri Jan 8, 2027 adds 0h — pre-comp phase, only Tue/Thu before Jan 9", () => {
+      expect(hoursAddedOn("2027-01-08T12:00:00Z")).toBe(0);
+    });
+
+    it("Sat Jan 9, 2027 adds 12h — first comp Saturday (Kickoff day)", () => {
+      expect(hoursAddedOn("2027-01-09T12:00:00Z")).toBe(12);
+    });
+
+    it("Tue Jan 12, 2027 adds 3h — comp Tue", () => {
+      expect(hoursAddedOn("2027-01-12T12:00:00Z")).toBe(3);
+    });
+
+    it("Fri Jan 15, 2027 adds 3h — comp Fri", () => {
+      expect(hoursAddedOn("2027-01-15T12:00:00Z")).toBe(3);
+    });
+
+    it("returns 0 through end of July 2026 — optional months", () => {
+      expect(getTotalPossibleHoursToDate(new Date("2026-07-31T12:00:00Z"))).toBe(0);
+    });
+
+    it("returns positive after first required meeting (Aug 4, 2026 = Tuesday)", () => {
+      // Aug 1, 2026 = Saturday; Aug 4 = Tuesday
+      expect(getTotalPossibleHoursToDate(new Date("2026-08-04T12:00:00Z"))).toBeGreaterThan(0);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // getSeasonDataStartForDate
+  // -------------------------------------------------------------------------
+  describe("getSeasonDataStartForDate", () => {
+    beforeEach(() => {
+      clearScheduleCache();
+    });
+
+    it("returns June 2, 2026 UTC when in the 2026 season", () => {
+      const start = getSeasonDataStartForDate(new Date("2026-09-01T12:00:00Z"));
+      expect(start.toISOString()).toBe("2026-06-02T00:00:00.000Z");
+    });
+
+    it("returns May 1 UTC for seasons without a specific override", () => {
+      const start = getSeasonDataStartForDate(new Date("2025-09-01T12:00:00Z"));
+      expect(start.toISOString()).toBe("2025-05-01T00:00:00.000Z");
     });
   });
 
