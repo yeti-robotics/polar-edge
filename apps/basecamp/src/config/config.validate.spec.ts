@@ -62,6 +62,36 @@ describe("envSchema", () => {
       }
     });
 
+    it("omits attendanceLookupDiscordId when not set", () => {
+      const result = envSchema.safeParse(validConfig);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.attendanceLookupDiscordId).toBeUndefined();
+      }
+    });
+
+    it("parses attendanceLookupDiscordId when provided", () => {
+      const result = envSchema.safeParse({
+        ...validConfig,
+        attendanceLookupDiscordId: "864685448282636319",
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.attendanceLookupDiscordId).toBe("864685448282636319");
+      }
+    });
+
+    it("treats empty attendanceLookupDiscordId as unset", () => {
+      const result = envSchema.safeParse({
+        ...validConfig,
+        attendanceLookupDiscordId: "",
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.attendanceLookupDiscordId).toBeUndefined();
+      }
+    });
+
     it("accepts attendance2faEnabled as true", () => {
       const result = envSchema.safeParse({ ...validConfig, attendance2faEnabled: true });
       expect(result.success).toBe(true);

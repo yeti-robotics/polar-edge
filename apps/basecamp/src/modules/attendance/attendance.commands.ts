@@ -279,7 +279,7 @@ export class AttendanceCommands {
 
     const hoursString = Math.floor(hours);
     const hoursPercentage = totalPossibleHours > 0 ? hours / totalPossibleHours : 0;
-    const hoursPercentageString = formatPercentage(hoursPercentage);
+    const hoursPercentageString = hoursPercentage > 0 ? formatPercentage(hoursPercentage) : "∞";
 
     const memberRequiredHours = totalPossibleHours * MEMBER_REQUIRED_PERCENTAGE;
     const leadershipRequiredHours = totalPossibleHours * LEADERSHIP_REQUIRED_PERCENTAGE;
