@@ -7,7 +7,7 @@ const COMP_SEASON_STARTS = new Map<number, { month: number; day: number }>([
 
 /** Per-season data start: the first date whose records count toward the new season. */
 const SEASON_DATA_STARTS = new Map<number, { year: number; month: number; day: number }>([
-  [2026, { year: 2026, month: 6, day: 2 }], // New season begins June 2, 2026
+  [2026, { year: 2026, month: 8, day: 1 }], // New season begins Aug 1, 2026
 ]);
 
 const EASTERN_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
