@@ -92,7 +92,13 @@ export class AttendanceCommands {
 
     if (opResult.value.success) {
       if (context.successAnnouncement && interaction.channel?.isSendable()) {
-        await interaction.channel.send(context.successAnnouncement);
+        await interaction.channel.send(context.successAnnouncement).catch((error: unknown) => {
+          this.logger.warn(
+            `Failed to send ${context.operationName} announcement for ${context.userId}: ${
+              error instanceof Error ? error.message : String(error)
+            }`
+          );
+        });
       }
       return interaction.editReply({
         content: opResult.value.message ?? context.defaultSuccessMessage,
