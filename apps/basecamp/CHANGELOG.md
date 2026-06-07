@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.4.2...basecamp-v1.4.3) (2026-06-07)
+
+
+### Bug Fixes
+
+* **basecamp:** docker build issues ([#554](https://github.com/yeti-robotics/polar-edge/issues/554)) ([ad55de4](https://github.com/yeti-robotics/polar-edge/commit/ad55de4420d44d925354e323998299cbe6281c41))
+
 ## [1.4.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.4.1...basecamp-v1.4.2) (2026-06-07)
 
 
