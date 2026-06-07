@@ -17,7 +17,7 @@
     "@repo/ui": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "astro": "^6.1.9",
+    "astro": "^6.1.10",
     "idb": "^8.0.3",
     "react": "catalog:",
     "react-dom": "catalog:",
