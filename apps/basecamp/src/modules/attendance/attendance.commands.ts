@@ -283,7 +283,6 @@ export class AttendanceCommands {
     const hours = hoursResult.value;
     const totalPossibleHours = this.attendanceService.getTotalPossibleHoursToDate();
 
-    const hoursString = Math.floor(hours);
     const hoursPercentage = totalPossibleHours > 0 ? hours / totalPossibleHours : 0;
     const hoursPercentageString = hoursPercentage > 0 ? formatPercentage(hoursPercentage) : "∞";
 
@@ -293,17 +292,17 @@ export class AttendanceCommands {
     const totalPossibleHoursDisplay = Math.floor(totalPossibleHours);
     if (hours >= leadershipRequiredHours) {
       return interaction.reply(
-        `You're currently above the minimum hours for leadership (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! :tada:`
+        `You're currently above the minimum hours for leadership (${hours} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! :tada:`
       );
     } else if (hours >= memberRequiredHours) {
       const remainingHours = Math.ceil(leadershipRequiredHours - hours);
       return interaction.reply(
-        `You're currently above the minimum hours for members (${hoursString} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
+        `You're currently above the minimum hours for members (${hours} hours, ${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date)! If you're on leadership, you are currently ${remainingHours} hour(s) behind the leadership requirement.`
       );
     } else {
       const remainingHours = Math.ceil(memberRequiredHours - hours);
       return interaction.reply(
-        `You've got ${hoursString} hours (${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
+        `You've got ${hours} hours (${hoursPercentageString}% of ${totalPossibleHoursDisplay} possible hours to date). You are currently ${remainingHours} hour(s) behind the minimum hours goal. :rocket:`
       );
     }
   }

@@ -297,7 +297,7 @@ export class AttendanceService {
     const seasonStart = getSeasonDataStartForDate();
     return this.getAttendance(discordId).andThen((records) => {
       const seasonRecords = records.filter((r) => new Date(r.date) >= seasonStart);
-      return this.calculateHoursFromRecords(seasonRecords);
+      return this.calculateHoursFromRecords(seasonRecords).map((hours) => Math.round(hours * 100) / 100);
     });
   }
 
