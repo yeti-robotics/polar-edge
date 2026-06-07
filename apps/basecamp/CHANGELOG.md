@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.4.1...basecamp-v1.4.2) (2026-06-07)
+
+
+### Bug Fixes
+
+* **basecamp:** end previous season and set new season dates ([#551](https://github.com/yeti-robotics/polar-edge/issues/551)) ([361725a](https://github.com/yeti-robotics/polar-edge/commit/361725a4d8e5cd351b5c0d9b5678b75d57eb1794))
+* **basecamp:** lint errors ([#553](https://github.com/yeti-robotics/polar-edge/issues/553)) ([83cc544](https://github.com/yeti-robotics/polar-edge/commit/83cc544d14a80245de1c789c734c9bb4c2365e81))
+* **basecamp:** remove flooring of hours ([#552](https://github.com/yeti-robotics/polar-edge/issues/552)) ([959efa8](https://github.com/yeti-robotics/polar-edge/commit/959efa86205f619133d1eb4eb69970c1d4231697))
+
 ## [1.4.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.4.0...basecamp-v1.4.1) (2026-05-02)
 
 
