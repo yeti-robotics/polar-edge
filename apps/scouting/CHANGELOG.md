@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.22.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.21.0...scouting-v2026.22.0) (2026-06-07)
+
+
+### Features
+
+* **scouting:** add plausible analytics tracker ([#541](https://github.com/yeti-robotics/polar-edge/issues/541)) ([24103e6](https://github.com/yeti-robotics/polar-edge/commit/24103e69a83a037ed05ab84b0d46093db8261e9f))
+
 ## [2026.21.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.20.2...scouting-v2026.21.0) (2026-05-02)
 
 
