@@ -181,6 +181,23 @@ describe("AttendanceCommands", () => {
       });
     });
 
+    it("still confirms sign-in when channel announcement fails", async () => {
+      const interaction = makeInteraction({
+        channel: {
+          id: "channel-id",
+          isSendable: vi.fn().mockReturnValue(true),
+          send: vi.fn().mockRejectedValue(new Error("Missing Access")),
+        },
+      });
+      service.signIn.mockReturnValue(okAsync({ success: true }));
+
+      await commands.onSignIn([interaction] as never, { code: 123456 });
+
+      expect(interaction.editReply).toHaveBeenCalledWith({
+        content: "Signed in successfully",
+      });
+    });
+
     it("replies with failure message on unsuccessful sign-in", async () => {
       const interaction = makeInteraction();
       service.signIn.mockReturnValue(okAsync({ success: false, message: "Invalid code." }));
@@ -632,7 +649,7 @@ describe("AttendanceCommands", () => {
       await commands.onAttendance([interaction] as never);
 
       // When totalPossibleHours is 0 the percentage branch shows "behind goal"
-      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("0%"));
+      expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining("∞%"));
     });
   });
 

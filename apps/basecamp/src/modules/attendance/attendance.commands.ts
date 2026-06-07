@@ -92,7 +92,13 @@ export class AttendanceCommands {
 
     if (opResult.value.success) {
       if (context.successAnnouncement && interaction.channel?.isSendable()) {
-        await interaction.channel.send(context.successAnnouncement);
+        await interaction.channel.send(context.successAnnouncement).catch((error: unknown) => {
+          this.logger.warn(
+            `Failed to send ${context.operationName} announcement for ${context.userId}: ${
+              error instanceof Error ? error.message : String(error)
+            }`
+          );
+        });
       }
       return interaction.editReply({
         content: opResult.value.message ?? context.defaultSuccessMessage,
@@ -279,7 +285,7 @@ export class AttendanceCommands {
 
     const hoursString = Math.floor(hours);
     const hoursPercentage = totalPossibleHours > 0 ? hours / totalPossibleHours : 0;
-    const hoursPercentageString = formatPercentage(hoursPercentage);
+    const hoursPercentageString = hoursPercentage > 0 ? formatPercentage(hoursPercentage) : "∞";
 
     const memberRequiredHours = totalPossibleHours * MEMBER_REQUIRED_PERCENTAGE;
     const leadershipRequiredHours = totalPossibleHours * LEADERSHIP_REQUIRED_PERCENTAGE;

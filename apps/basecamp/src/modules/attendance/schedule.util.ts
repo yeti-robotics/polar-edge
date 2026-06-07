@@ -1,5 +1,15 @@
 const EASTERN_TZ = "America/New_York";
 
+/** Per-season competition phase start (Eastern month/day). Default = Jan 7 (first non-break day). */
+const COMP_SEASON_STARTS = new Map<number, { month: number; day: number }>([
+  [2026, { month: 1, day: 9 }], // 2026-27: Kickoff is Jan 9, 2027 (first comp Saturday)
+]);
+
+/** Per-season data start: the first date whose records count toward the new season. */
+const SEASON_DATA_STARTS = new Map<number, { year: number; month: number; day: number }>([
+  [2026, { year: 2026, month: 6, day: 2 }], // Season data tracking starts Jun 6, 2026. Required meetings start Aug 1, 2026
+]);
+
 const EASTERN_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
   timeZone: EASTERN_TZ,
   year: "numeric",
@@ -124,6 +134,10 @@ function isNoMeetingDate(date: Date): boolean {
   return getNoMeetingDateStrings(seasonYear).has(toEasternDateString(parts));
 }
 
+function getCompSeasonStart(seasonYear: number): { month: number; day: number } {
+  return COMP_SEASON_STARTS.get(seasonYear) ?? { month: 1, day: 7 };
+}
+
 function isRegularMeetingDay(date: Date): boolean {
   if (isNoMeetingDate(date)) return false;
 
@@ -135,11 +149,18 @@ function isRegularMeetingDay(date: Date): boolean {
   if (parts.month >= 5 && parts.month <= 12 && parts.year === seasonYear) {
     return dayOfWeek === 2 || dayOfWeek === 4;
   }
-  // January–April: Tuesday, Thursday, Friday, Saturday
+  // January–April: pre-competition (Tue/Thu) vs competition phase (Tue/Thu/Fri/Sat)
   if (parts.month >= 1 && parts.month <= 4 && parts.year === seasonYear + 1) {
-    return dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 5 || dayOfWeek === 6;
+    const compStart = getCompSeasonStart(seasonYear);
+    const inCompPhase =
+      parts.month > compStart.month ||
+      (parts.month === compStart.month && parts.day >= compStart.day);
+    if (inCompPhase) {
+      return dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 5 || dayOfWeek === 6;
+    }
+    return dayOfWeek === 2 || dayOfWeek === 4;
   }
-  // May–August: Tuesday and Thursday
+  // May–August (post-season): Tuesday and Thursday
   if (parts.month >= 5 && parts.month <= 8 && parts.year === seasonYear + 1) {
     return dayOfWeek === 2 || dayOfWeek === 4;
   }
@@ -219,6 +240,16 @@ export function getTotalPossibleHoursToDate(asOfDate: Date = new Date()): number
     }
   }
   return total;
+}
+
+/**
+ * Returns the first UTC-midnight Date from which records count toward the season.
+ * Records with a date before this value belong to a prior season and are excluded.
+ */
+export function getSeasonDataStartForDate(asOfDate: Date = new Date()): Date {
+  const seasonYear = getSeasonYear(asOfDate);
+  const parts = SEASON_DATA_STARTS.get(seasonYear) ?? { year: seasonYear, month: 5, day: 1 };
+  return new Date(Date.UTC(parts.year, parts.month - 1, parts.day));
 }
 
 export function getTotalSeasonHours(referenceDate: Date = new Date()): number {

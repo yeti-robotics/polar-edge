@@ -1,14 +1,16 @@
 import { Test, type TestingModule } from "@nestjs/testing";
 import { ResultAsync } from "neverthrow";
+import { AppConfigService } from "src/config/config.service";
 import { SheetService } from "src/lib/sheet/sheet.service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SHEET_RANGE } from "./attendance.constants";
 import { AttendanceRepository } from "./attendance.repository";
 import type { AttendanceRecord } from "./attendance.schema";
 
-const { mockGet, mockAppend } = vi.hoisted(() => ({
+const { mockGet, mockAppend, mockConfigGet } = vi.hoisted(() => ({
   mockGet: vi.fn(),
   mockAppend: vi.fn(),
+  mockConfigGet: vi.fn(),
 }));
 
 /** Header row + data rows. Column order: discordId, team, discordName, date, isSigningIn */
@@ -23,6 +25,7 @@ describe("AttendanceRepository", () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    mockConfigGet.mockReturnValue(undefined);
     mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve([HEADER])));
     mockAppend.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve()));
 
@@ -34,6 +37,12 @@ describe("AttendanceRepository", () => {
           useValue: {
             get: mockGet,
             append: mockAppend,
+          },
+        },
+        {
+          provide: AppConfigService,
+          useValue: {
+            get: mockConfigGet,
           },
         },
       ],
@@ -70,6 +79,26 @@ describe("AttendanceRepository", () => {
         isSigningIn: true,
       });
       expect(mockGet).toHaveBeenCalledWith(SHEET_RANGE);
+    });
+
+    it("should use ATTENDANCE_LOOKUP_DISCORD_ID override when configured", async () => {
+      const overrideDiscordId = "864685448282636319";
+      mockConfigGet.mockImplementation((key: string) =>
+        key === "attendanceLookupDiscordId" ? overrideDiscordId : undefined
+      );
+
+      const rows = makeSheetRows(
+        HEADER,
+        [overrideDiscordId, "YETI Robotics", "user#1234", "2025-01-15", "true"],
+        ["other-id", "Dev", "other#5678", "2025-01-16", "true"]
+      );
+      mockGet.mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve(rows)));
+
+      const result = await repository.findByDiscordId("requested-id");
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap()).toHaveLength(1);
+      expect(result._unsafeUnwrap()[0]?.discordId).toBe(overrideDiscordId);
     });
 
     it("should return multiple records when user has multiple entries", async () => {

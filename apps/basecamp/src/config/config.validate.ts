@@ -6,6 +6,7 @@ export function validateEnv(config: Record<string, unknown>): Env {
     yetiServerId: config.YETI_SERVER_ID,
     devGuildId: config.DEV_GUILD_ID,
     adminRoleId: config.ADMIN_ROLE_ID,
+    attendanceLookupDiscordId: config.ATTENDANCE_LOOKUP_DISCORD_ID,
     googleCredentials: config.GOOGLE_APPLICATION_CREDENTIALS,
     attendanceSpreadsheetId: config.ATTENDANCE_SPREADSHEET_ID,
     outreachSpreadsheetId: config.OUTREACH_SPREADSHEET_ID,
