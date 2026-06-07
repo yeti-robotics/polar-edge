@@ -186,6 +186,18 @@ describe("AttendanceService", () => {
       expect(result).toBe(0);
     });
 
+    it("rounds calculated hours to at most two decimal places", async () => {
+      repository.findByDiscordId.mockReturnValue(
+        okAsync([
+          makeRecord("user1", "2026-06-15T10:00:00Z", true),
+          makeRecord("user1", "2026-06-15T10:01:00Z", false),
+        ])
+      );
+
+      const result = (await service.getUserHours("user1"))._unsafeUnwrap();
+      expect(result).toBe(0.02);
+    });
+
     it("excludes records from before the 2026 season data start (June 2, 2026)", async () => {
       repository.findByDiscordId.mockReturnValue(
         okAsync([
