@@ -2,20 +2,16 @@ import { Button } from "@repo/ui/components/button";
 import { FileUploadCard } from "./FileUploadCard";
 
 interface BatteryLandingProps {
-  dsFile: File | null;
-  canFile: File | null;
-  onDsFileSelect: (file: File) => void;
-  onCanFileSelect: (file: File) => void;
+  logFile: File | null;
+  onLogFileSelect: (file: File) => void;
   onAnalyze: () => void;
   onDemo: () => void;
   loading: boolean;
 }
 
 export function BatteryLanding({
-  dsFile,
-  canFile,
-  onDsFileSelect,
-  onCanFileSelect,
+  logFile,
+  onLogFileSelect,
   onAnalyze,
   onDemo,
   loading,
@@ -31,60 +27,39 @@ export function BatteryLanding({
       </h1>
 
       <p className="mb-12 max-w-lg text-center text-sm leading-relaxed text-muted-foreground">
-        Upload your <strong className="text-foreground">DS Log</strong> to analyze battery voltage
-        and current from PDP/PDH channels. Optionally add a{" "}
-        <strong className="text-foreground">CAN JSON</strong> to override the current source with
-        per-device CAN bus data.
+        Upload your{" "}
+        <strong className="text-foreground">DS Log</strong> to analyze battery voltage, current
+        demand, and per-channel PDH power distribution.
       </p>
 
-      <div className="mb-7 grid w-full max-w-[700px] grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="mb-7 mx-auto w-full max-w-xl">
         <FileUploadCard
           label="Required"
-          title="DS Log"
+          title="DS Log File"
           description={
             <>
               <code className="rounded bg-primary/10 px-1 py-0.5 font-mono text-[11px] text-primary">
                 .dslog
               </code>{" "}
-              binary or{" "}
-              <code className="rounded bg-primary/10 px-1 py-0.5 font-mono text-[11px] text-primary">
-                .csv
-              </code>{" "}
-              export.
-              <br />
-              Provides voltage and PDP/PDH current at ~50 Hz.
+              binary — provides voltage, current, and PDH channel data.
             </>
           }
           icon="📋"
           accept="*"
-          file={dsFile}
+          file={logFile}
           variant="required"
-          onFileSelect={onDsFileSelect}
-        />
-        <FileUploadCard
-          label="Optional"
-          title="CAN JSON"
-          description={
-            <>
-              Overrides PDP current with per-device CAN bus data.
-              <br />
-              JSON array with{" "}
-              <code className="rounded bg-amber-500/10 px-1 py-0.5 font-mono text-[11px] text-amber-500">
-                time
-              </code>{" "}
-              and current fields per device.
-            </>
-          }
-          icon="🔌"
-          accept=".json,.txt,.csv,*"
-          file={canFile}
-          variant="optional"
-          onFileSelect={onCanFileSelect}
+          onFileSelect={(f) => {
+            if (!f.name.toLowerCase().endsWith(".dslog")) {
+              alert("Please select a .dslog file.");
+              return;
+            }
+            onLogFileSelect(f);
+          }}
         />
       </div>
 
       <div className="flex flex-col items-center gap-3">
-        <Button onClick={onAnalyze} disabled={!dsFile || loading} className="px-10">
+        <Button onClick={onAnalyze} disabled={!logFile || loading} className="px-10">
           {loading ? "Analyzing..." : "⚡ Analyze"}
         </Button>
         <Button
@@ -97,26 +72,19 @@ export function BatteryLanding({
         </Button>
       </div>
 
-      <div className="mt-9 grid w-full max-w-[700px] grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="mt-9 grid w-full max-w-[500px] grid-cols-1 gap-3 sm:grid-cols-2">
         <HintCard title="DS Log files">
-          The <code className="text-primary">.dslog</code> binary contains voltage, PDP/PDH channel
+          The{" "}
+          <code className="text-primary">.dslog</code> binary contains voltage, PDP/PDH channel
           currents, trip time, packet loss, CAN utilization, and more — all parsed natively.
-        </HintCard>
-        <HintCard title="CAN JSON override">
-          Optionally provide a CAN JSON to replace PDP current with per-device CAN bus readings —
-          useful for more granular current profiling via WPILib or AdvantageScope.
         </HintCard>
         <HintCard title="What gets analyzed?">
           Voltage trends, current demand, instantaneous power{" "}
           <span className="inline-flex items-baseline gap-0.5 rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[10px] text-foreground">
             <i>P</i> = <i>V</i> × <i>I</i>
           </span>
-          , and battery impedance{" "}
-          <span className="inline-flex items-baseline gap-0.5 rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[10px] text-foreground">
-            <i>R</i> = (<i>V</i>
-            <sub>oc</sub> − <i>V</i>) / <i>I</i>
-          </span>{" "}
-          — all with rolling windows, regression lines, and CSV export.
+          , battery impedance, and a per-subsystem PDH breakdown with rolling windows and CSV
+          export.
         </HintCard>
       </div>
     </div>

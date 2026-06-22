@@ -3,6 +3,13 @@ export interface DSVoltagePoint {
   v: number;
 }
 
+export interface DSLogParseResult {
+  voltage: DSVoltagePoint[];
+  current: CANCurrentPoint[];
+  /** Per-channel current arrays aligned to the voltage timeline, keyed by "CH N" */
+  channels: Record<string, number[]>;
+}
+
 export interface CANCurrentPoint {
   t: number;
   current: number;

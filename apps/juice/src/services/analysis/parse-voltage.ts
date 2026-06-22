@@ -1,26 +1,22 @@
 import { DSLogParser } from "../dslog";
-import type { CANCurrentPoint, DSVoltagePoint } from "./types";
+import { parseWPILog } from "../wpilog";
+import type { CANCurrentPoint, DSLogParseResult, DSVoltagePoint } from "./types";
 
-export interface DSLogParseResult {
-  voltage: DSVoltagePoint[];
-  current: CANCurrentPoint[];
-  /** Per-channel current arrays, keyed by channel name */
-  channels: Record<string, number[]>;
-}
+export type { DSLogParseResult };
 
 /**
- * Parse a DS Log file using the proper DSLogParser.
- * Extracts both voltage and total current (sum of PDP channels).
- * Falls back to CSV parsing for non-.dslog files.
+ * Parse a DS Log or WPILog file.
+ * - .dslog  → binary DSLog parser (voltage + PDP/PDH channels)
+ * - .wpilog → WPILog v1.0 parser (voltage + PDH channels + total current)
+ * - other   → CSV fallback (voltage only)
  */
 export function parseDSFile(fileName: string, buffer: ArrayBuffer): DSLogParseResult | null {
   const lower = fileName.toLowerCase();
 
-  if (lower.endsWith(".dslog")) {
-    return parseDSLogBinary(buffer);
-  }
+  if (lower.endsWith(".dslog")) return parseDSLogBinary(buffer);
+  if (lower.endsWith(".wpilog")) return parseWPILog(buffer);
 
-  // CSV fallback — voltage only (no PDP channel data in CSV exports)
+  // CSV fallback — voltage only
   const text = new TextDecoder().decode(buffer);
   const voltage = parseDSCSV(text);
   if (!voltage) return null;
@@ -34,12 +30,10 @@ function parseDSLogBinary(buffer: ArrayBuffer): DSLogParseResult | null {
     const result = parser.parse(buffer);
     if (result.records.length < 10) return null;
 
-    const _startTs = result.records[0]?.timestamp;
-
     const voltage: DSVoltagePoint[] = [];
     const current: CANCurrentPoint[] = [];
 
-    // Filter to only auto/teleop periods (skip disabled/disconnected)
+    // Filter to only auto/teleop periods
     const enabled = result.records.filter(
       (r) => (r.robotAuto || r.robotTeleop) && r.voltageV > 0 && r.voltageV <= 20
     );

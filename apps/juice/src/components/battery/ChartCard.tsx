@@ -15,6 +15,7 @@ import {
   ScatterController,
   Tooltip,
 } from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
 import { useMemo, useRef } from "react";
 import { Chart } from "react-chartjs-2";
 
@@ -29,7 +30,8 @@ ChartJS.register(
   BarController,
   ScatterController,
   Tooltip,
-  Filler
+  Filler,
+  zoomPlugin
 );
 
 export interface ThresholdLine {
@@ -182,10 +184,22 @@ export function ChartCard({
 
       {/* Chart */}
       <div className="rounded-lg border border-border bg-card p-4">
-        <h3 className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-          {title}
-        </h3>
-        <p className="mb-3 text-[11px] text-muted-foreground">{subtitle}</p>
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <div>
+            <h3 className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+              {title}
+            </h3>
+            <p className="text-[11px] text-muted-foreground">{subtitle}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => (chartRef.current as ChartJS | null)?.resetZoom()}
+            className="flex-shrink-0 rounded border border-border px-2 py-0.5 font-mono text-[9px] text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+            title="Reset zoom"
+          >
+            Reset zoom
+          </button>
+        </div>
         <div style={{ height }}>
           <Chart
             ref={chartRef}
@@ -195,12 +209,31 @@ export function ChartCard({
               responsive: true,
               maintainAspectRatio: false,
               animation: false,
-              plugins: { legend: { display: false } },
+              plugins: {
+                legend: { display: false },
+                zoom: {
+                  limits: {
+                    x: { min: "original", max: "original", minRange: 12 },
+                  },
+                  zoom: {
+                    wheel: { enabled: true },
+                    drag: { enabled: true, backgroundColor: "oklch(0.7366 0.1138 232.04 / 0.1)", borderColor: "oklch(0.7366 0.1138 232.04 / 0.4)", borderWidth: 1 },
+                    mode: "x",
+                  },
+                  pan: {
+                    enabled: true,
+                    mode: "x",
+                  },
+                },
+              },
               ...options,
             }}
             plugins={plugins}
           />
         </div>
+        <p className="mt-2 font-mono text-[9px] text-muted-foreground/50">
+          Scroll to zoom · Drag to select range · Shift+drag to pan · Reset zoom to fit all
+        </p>
       </div>
 
       {onDownload && (

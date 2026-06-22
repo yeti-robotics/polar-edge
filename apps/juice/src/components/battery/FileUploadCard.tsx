@@ -49,7 +49,7 @@ export function FileUploadCard({
         const f = e.dataTransfer.files[0];
         if (f) onFileSelect(f);
       }}
-      className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border bg-card/50 p-6 text-center transition-colors ${borderClass}`}
+      className={`flex w-full cursor-pointer flex-col items-center gap-3 rounded-lg border bg-card/50 px-10 py-10 text-center transition-colors ${borderClass}`}
     >
       <span className="text-3xl">{icon}</span>
       <span

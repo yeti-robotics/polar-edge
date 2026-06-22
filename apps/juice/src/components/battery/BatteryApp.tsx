@@ -3,7 +3,7 @@ import { generateDemoData } from "@/services/analysis/demo";
 import { mergeData } from "@/services/analysis/merge";
 import { parseDSFile } from "@/services/analysis/parse-voltage";
 import type { MergedData } from "@/services/analysis/types";
-import { parseCANJSON } from "@/services/can/parser";
+import { loadPDHConfig, savePDHConfig, seedDemoConfig } from "@/services/pdh/config";
 import { JuiceNav } from "../JuiceNav";
 import { BatteryAnalysis } from "./BatteryAnalysis";
 import { BatteryLanding } from "./BatteryLanding";
@@ -12,44 +12,34 @@ type Phase = "landing" | "analysis";
 
 export function BatteryApp() {
   const [phase, setPhase] = useState<Phase>("landing");
-  const [dsFile, setDsFile] = useState<File | null>(null);
-  const [canFile, setCanFile] = useState<File | null>(null);
+  const [logFile, setLogFile] = useState<File | null>(null);
   const [mergedData, setMergedData] = useState<MergedData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
-    if (!dsFile) return;
+    if (!logFile) return;
     setLoading(true);
     setError(null);
 
     try {
-      const dsBuffer = await dsFile.arrayBuffer();
-      const result = parseDSFile(dsFile.name, dsBuffer);
+      const buffer = await logFile.arrayBuffer();
+      const result = parseDSFile(logFile.name, buffer);
 
       if (!result || result.voltage.length < 10) {
         setError(
-          "Could not parse DS log. Make sure it is a .dslog binary or CSV with a voltage column (values 6–15 V)."
+          "Could not parse the log file. Supported formats: .dslog binary, .wpilog binary, or CSV with a voltage column (values 6–15 V)."
         );
         setLoading(false);
         return;
       }
 
-      // Use current from the DS log's PDP channels by default.
-      // If a CAN JSON file is provided, it overrides the current source.
-      let currentData = result.current.length > 0 ? result.current : null;
-
-      if (canFile) {
-        const canText = await canFile.text();
-        const canParsed = parseCANJSON(canText);
-        if (canParsed) currentData = canParsed;
-      }
-
+      const currentData = result.current.length > 0 ? result.current : null;
       const merged = mergeData(result.voltage, currentData, result.channels);
       setMergedData(merged);
       setPhase("analysis");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to analyze files");
+      setError(e instanceof Error ? e.message : "Failed to analyze file");
     } finally {
       setLoading(false);
     }
@@ -58,11 +48,16 @@ export function BatteryApp() {
   const handleDemo = () => {
     setLoading(true);
     setTimeout(() => {
-      const { dsData, canData } = generateDemoData();
-      const merged = mergeData(dsData, canData);
+      const { dsData, canData, channels } = generateDemoData();
+      const merged = mergeData(dsData, canData, channels);
+
+      // Seed PDH config with realistic FRC labels if the user hasn't set any yet
+      const cfg = loadPDHConfig();
+      const hasLabels = cfg.channels.some((ch) => ch.label !== "");
+      if (!hasLabels) savePDHConfig(seedDemoConfig());
+
       setMergedData(merged);
-      setDsFile(null);
-      setCanFile(null);
+      setLogFile(null);
       setPhase("analysis");
       setLoading(false);
     }, 50);
@@ -81,10 +76,8 @@ export function BatteryApp() {
     <>
       <JuiceNav active="analyzer" />
       <BatteryLanding
-        dsFile={dsFile}
-        canFile={canFile}
-        onDsFileSelect={setDsFile}
-        onCanFileSelect={setCanFile}
+        logFile={logFile}
+        onLogFileSelect={setLogFile}
         onAnalyze={handleAnalyze}
         onDemo={handleDemo}
         loading={loading}

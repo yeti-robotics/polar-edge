@@ -6,9 +6,12 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import { fileURLToPath } from "node:url";
 
+const isProd = process.env.NODE_ENV === "production";
+
 // https://astro.build/config
 export default defineConfig({
-  adapter: cloudflare(),
+  output: "server",
+  adapter: isProd ? cloudflare() : undefined,
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
@@ -16,6 +19,9 @@ export default defineConfig({
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
+    },
+    server: {
+      hmr: false,
     },
   },
 });

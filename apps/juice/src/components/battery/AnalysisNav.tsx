@@ -7,6 +7,7 @@ const SECTIONS = [
   { id: "s-current", label: "② Current" },
   { id: "s-power", label: "③ Power" },
   { id: "s-impedance", label: "④ Impedance" },
+  { id: "s-pdh", label: "⑤ PDH Channels" },
 ] as const;
 
 interface AnalysisNavProps {

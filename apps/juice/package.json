@@ -18,6 +18,8 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "astro": "^6.1.9",
+    "chartjs-plugin-zoom": "^2.2.0",
+    "hammerjs": "^2.0.8",
     "idb": "^8.0.3",
     "react": "catalog:",
     "react-dom": "catalog:",

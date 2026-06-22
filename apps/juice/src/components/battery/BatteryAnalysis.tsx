@@ -4,6 +4,7 @@ import type { MergedData } from "@/services/analysis/types";
 import { AnalysisNav } from "./AnalysisNav";
 import { CurrentSection } from "./CurrentSection";
 import { ImpedanceSection } from "./ImpedanceSection";
+import { PDHSection } from "./PDHSection";
 import { PowerSection } from "./PowerSection";
 import { VoltageSection } from "./VoltageSection";
 
@@ -29,6 +30,7 @@ export function BatteryAnalysis({ data, onNewFiles }: BatteryAnalysisProps) {
       <CurrentSection data={data} />
       <PowerSection data={data} power={power} />
       <ImpedanceSection samples={impedanceSamples} dt={data.dt} />
+      <PDHSection data={data} />
     </div>
   );
 }
