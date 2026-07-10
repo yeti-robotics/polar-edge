@@ -35,7 +35,7 @@
     "@tanstack/react-form-nextjs": "^1.28.4",
     "@tanstack/react-table": "^8.21.3",
     "ai": "catalog:",
-    "better-auth": "^1.6.9",
+    "better-auth": "^1.6.13",
     "browser-image-compression": "^2.0.2",
     "drizzle-orm": "^0.45.2",
     "drizzle-seed": "^0.3.1",
