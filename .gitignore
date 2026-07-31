@@ -52,3 +52,6 @@ next-env.d.ts
 .windsurf
 
 .idea/
+
+.claude/
+.claude-flow/
