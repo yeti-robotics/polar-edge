@@ -72,5 +72,23 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
     return result.data;
   })
 
+  const seenMatchNumbers = new Set<number>();
+
+  for (const row of matchRows) {
+    if (seenMatchNumbers.has(row.matchNumber)) {
+      throw new Error(`Duplicate match number: ${row.matchNumber}`);
+    }
+    seenMatchNumbers.add(row.matchNumber);
+
+
+    const teams = [row.r1, row.r2, row.r3, row.b1, row.b2, row.b3];
+    const uniqueTeams = new Set(teams);
+
+    if (uniqueTeams.size !== teams.length) {
+      throw new Error(`Match ${row.matchNumber} contains duplicate teams`)
+    }
+
+  }
+
   return matchRows;
 }
