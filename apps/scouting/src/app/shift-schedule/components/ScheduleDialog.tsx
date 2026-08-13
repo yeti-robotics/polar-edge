@@ -6,6 +6,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/dialog";
+import {
+  Button
+} from "@repo/ui/components/button";
 
 // ScheduleForm was removed or moved — provide a small local placeholder so
 // the dialog builds correctly. Replace this with the real form component
@@ -17,13 +20,12 @@ function ScheduleForm({ onSuccess }: { onSuccess?: () => void }) {
         Schedule form placeholder.
       </p>
       <div className="flex justify-end">
-        <button
-          type="button"
-          className="rounded-md bg-primary px-3 py-1 text-sm font-medium text-white"
+        <Button
+          variant="outline"
           onClick={() => onSuccess?.()}
         >
           Close
-        </button>
+        </Button>
       </div>
     </div>
   );
