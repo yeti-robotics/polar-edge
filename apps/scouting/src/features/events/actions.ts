@@ -427,6 +427,10 @@ export async function createManualEventAction(
       };
     });
 
+    revalidatePath(routes.admin.event);
+    revalidateTag(cacheTags.teamsList, "max");
+    revalidateTag(cacheTags.eventTeams(eventId), "max");
+
     return {
       data: {
         success: true,
