@@ -264,10 +264,25 @@ export async function createManualEventAction(
 
     const schedule = parseMatchScheduleCsv(csvText);
 
+    const teamNumbers = [
+      ...new Set(schedule.flatMap((row) => [row.r1, row.r2, row.r3, row.b1, row.b2, row.b3]))
+    ];
+
+    const teamValues = teamNumbers.map
+      ((teamNumber) => (
+        {
+          teamNumber: teamNumber,
+          teamName: "",
+        })
+      );
+
+
+
     return {
       data: {
         event: eventResult.data,
         matchCount: schedule.length,
+        uniqueTeamCount: teamNumbers.length,
       },
       error: null,
     };
