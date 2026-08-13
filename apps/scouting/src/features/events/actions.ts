@@ -12,7 +12,7 @@ import {
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
 import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
-import { manualEventSchema } from "./manual-import-schema";
+import { type ManualEventInput, manualEventSchema } from "./manual-import-schema";
 import { parseMatchScheduleCsv } from "./parse-match-schedule-csv";
 
 export async function setActiveEventAction(organizationId: string, eventId: string) {
@@ -237,7 +237,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
 
 export async function createManualEventAction(
   organizationId: string,
-  eventInput: string,
+  eventInput: ManualEventInput,
   csvText: string
 ) {
   try {
@@ -302,7 +302,7 @@ export async function createManualEventAction(
         throw new Error("Failed to create event");
       }
 
-      const eventId = upsertedEvent.id;
+      const eventId = upsertedEvent.eventId;
 
       if (teamValues.length > 0) {
         await tx.insert(team).values(teamValues).onConflictDoNothing({

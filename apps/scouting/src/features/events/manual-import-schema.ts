@@ -2,13 +2,13 @@
 
 import { z } from "zod";
 
-
-export const manualEventSchema = z.object({
-  eventCode: z.string().trim().min(1).max(16),
-  name: z.string().trim().min(1),
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date()
-})
+export const manualEventSchema = z
+  .object({
+    eventCode: z.string().trim().min(1).max(16),
+    name: z.string().trim().min(1),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date(),
+  })
   .refine((event) => event.endDate >= event.startDate, {
     message: "The end data cannot be before the start date. ",
     path: ["endDate"],
@@ -26,6 +26,5 @@ export const matchScheduleRowSchema = z.object({
   b3: z.coerce.number().int().positive(),
 });
 
-
-export type ManualEventInput = z.infer<typeof manualEventSchema>;
+export type ManualEventInput = z.input<typeof manualEventSchema>;
 export type MatchScheduleRow = z.infer<typeof matchScheduleRowSchema>;
