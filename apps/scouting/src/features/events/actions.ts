@@ -1,5 +1,6 @@
 "use server";
-
+import { manualEventSchema } from "./manual-import-schema";
+import { parseMatchScheduleCsv } from "./parse-match-schedule-csv";
 import { eq, sql } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
@@ -13,6 +14,7 @@ import {
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
 import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
+import { error } from "better-auth/api";
 
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {
@@ -233,6 +235,48 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     };
   }
 }
+
+export async function createManualEventAction(
+  organizationId: string,
+  eventInput: string,
+  csvText: string
+) {
+  try {
+    const requestHeaders = await headers();
+    const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+
+    if (!activeMember || activeMember.organizationId !== organizationId) {
+      return { data: null, error: "Unauthorized, only organization admins and owners can create manual events" };
+    }
+    const { success: canSync } = await auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { event: ["sync"] } },
+    })
+
+    if (!canSync) {
+      return { data: null, error: "Unauthorized, only organization admins and owners can create manual events" };
+    }
+
+    const eventResult = manualEventSchema.safeParse(eventInput);
+    if (!eventResult.success) {
+      return { data: null, error: eventResult.error.issues[0]?.message ?? "Invalid event info" };
+    }
+
+    const schedule = parseMatchScheduleCsv(csvText);
+
+    return {
+      data: {
+        event: eventResult.data,
+        matchCount: schedule.length,
+      },
+      error: null,
+    };
+  } catch (e) {
+    console.error(`issue in codebase error: ${e}`)
+    return { data: null, error: e instanceof Error ? e.message : "Failed to create event" };
+  }
+}
+
 
 export async function enrichTeamNamesAction(organizationId: string) {
   try {
