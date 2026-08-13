@@ -1,4 +1,4 @@
-import nextErrorBrowserBinaryLoader from "next/dist/build/webpack/loaders/next-error-browser-binary-loader";
+
 import {
   matchScheduleRowSchema,
   type MatchScheduleRow,
@@ -6,7 +6,7 @@ import {
 
 
 const EXPECTED_HEADERS = [
-  "match number",
+  "match_number",
   "r1",
   "r2",
   "r3",
@@ -42,7 +42,7 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
   const headersAreValid = headers.length === EXPECTED_HEADERS.length && EXPECTED_HEADERS.every((expected, index) => headers[index] === expected);
 
   if(!headersAreValid) {
-    throw new Error("The CSV Header line is missing or contains invalid headers");
+    throw new Error("The CSV Header Line is missing or contains invalid headers");
   }
 
   const matchRows = lines.slice(1).map((line, index) => {
@@ -85,7 +85,7 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
     const uniqueTeams = new Set(teams);
 
     if (uniqueTeams.size !== teams.length) {
-      throw new Error(`Match ${row.matchNumber} contains duplicate teams`)
+      throw new Error(`Match ${row.matchNumber} contains a duplicate team`)
     }
 
   }

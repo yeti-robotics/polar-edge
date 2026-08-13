@@ -6,7 +6,7 @@ import { z } from "zod";
 export const manualEventSchema = z.object({
   eventCode: z.string().trim().min(1).max(16),
   name: z.string().trim().min(1),
-  startDate: z.coerce.date(), // number entered turns into a data using coerce
+  startDate: z.coerce.date(),
   endDate: z.coerce.date()
 })
   .refine((event) => event.endDate >= event.startDate, {
