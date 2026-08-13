@@ -1,19 +1,14 @@
 "use client";
 
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createManualEventAction } from "../actions";
+import { Button } from "@repo/ui/components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/card";
+import { Input } from "@repo/ui/components/input";
+import { Label } from "recharts";
 
 type Message = {
   type: "success" | "error";

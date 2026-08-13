@@ -5,8 +5,10 @@ import { Suspense } from "react";
 import { ActiveEventForm } from "@/features/events/components/ActiveEventForm";
 import { EnrichTeamNamesForm } from "@/features/events/components/EnrichTeamNamesForm";
 import { SyncFromTBAForm } from "@/features/events/components/SyncFromTBAForm";
+import { CreateManualEventForm } from "@/features/events/components/CreateManualEventForm";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
+
 
 function LoadingForm() {
   return (
@@ -41,6 +43,7 @@ async function EventContent() {
         activeEventId={activeEvent?.eventId ?? null}
       />
       <SyncFromTBAForm organizationId={organizationId} />
+      <CreateManualEventForm organizationId={organizationId} />
       <EnrichTeamNamesForm organizationId={organizationId} />
     </div>
   );
