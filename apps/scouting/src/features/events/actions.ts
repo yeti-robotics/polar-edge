@@ -278,22 +278,26 @@ export async function createManualEventAction(
       teamName: "",
     }));
 
-    const { eventId, matchCount } = await db.transaction(async (tx) => {
+    const { eventId, matchCount, teamMatchCount } = await db.transaction(async (tx) => {
       const eventData = eventResult.data;
 
-      const [upsertedEvent] = await tx.insert(event).values({
-        eventCode: eventData.eventCode,
-        name: eventData.name,
-        startDate: eventData.startDate,
-        endDate: eventData.endDate,
-      }).onConflictDoUpdate({
-        target: event.evenCode,
-        set: {
+      const [upsertedEvent] = await tx
+        .insert(event)
+        .values({
+          eventCode: eventData.eventCode,
           name: eventData.name,
           startDate: eventData.startDate,
           endDate: eventData.endDate,
-        },
-      }).returning({ eventId: event.id });
+        })
+        .onConflictDoUpdate({
+          target: event.eventCode,
+          set: {
+            name: eventData.name,
+            startDate: eventData.startDate,
+            endDate: eventData.endDate,
+          },
+        })
+        .returning({ eventId: event.id });
       if (!upsertedEvent) {
         throw new Error("Failed to create event");
       }
@@ -302,35 +306,133 @@ export async function createManualEventAction(
 
       if (teamValues.length > 0) {
         await tx.insert(team).values(teamValues).onConflictDoNothing({
-          target: team.teamNumber
+          target: team.teamNumber,
         });
       }
 
       if (schedule.length > 0) {
-        await tx.insert(match).values(schedule.map((row) => ({
+        await tx
+          .insert(match)
+          .values(
+            schedule.map((row) => ({
+              eventId,
+              matchType: "qm" as const,
+              matchNumber: row.matchNumber,
+              redScore: null,
+              blueScore: null,
+            }))
+          )
+          .onConflictDoNothing({
+            target: [match.eventId, match.matchNumber, match.matchType],
+          });
+      }
+
+      const insertedMatches = await tx
+        .select({
+          id: match.id,
+          matchNumber: match.matchNumber,
+        })
+        .from(match)
+        .where(eq(match.eventId, eventId));
+
+      const matchIdByNumber = new Map(insertedMatches.map((row) => [row.matchNumber, row.id]));
+
+      const teamMatchValues: Array<{
+        eventId: string;
+        matchId: string;
+        teamNumber: number;
+        alliance: "red" | "blue";
+        position: 1 | 2 | 3;
+        surrogate: boolean;
+      }> = [];
+
+      for (const row of schedule) {
+        const matchId = matchIdByNumber.get(row.matchNumber);
+        if (!matchId) {
+          throw new Error(`Match ${row.matchNumber} not found`);
+        }
+
+        teamMatchValues.push({
           eventId,
-          matchType: "qm" as const,
-          matchNumber: row.matchNumber,
-          redScore: null,
-          blueScore: null,
-        }))).onConflictDoNothing({
-          target: [match.eventId, match.matchNumber, match.matchType]
+          matchId,
+          teamNumber: row.r1,
+          alliance: "red",
+          position: 1,
+          surrogate: false,
         });
+
+        teamMatchValues.push({
+          eventId,
+          matchId,
+          teamNumber: row.r2,
+          alliance: "red",
+          position: 2,
+          surrogate: false,
+        });
+
+        teamMatchValues.push({
+          eventId,
+          matchId,
+          teamNumber: row.r3,
+          alliance: "red",
+          position: 3,
+          surrogate: false,
+        });
+
+        teamMatchValues.push({
+          eventId,
+          matchId,
+          teamNumber: row.b1,
+          alliance: "blue",
+          position: 1,
+          surrogate: false,
+        });
+
+        teamMatchValues.push({
+          eventId,
+          matchId,
+          teamNumber: row.b2,
+          alliance: "blue",
+          position: 2,
+          surrogate: false,
+        });
+
+        teamMatchValues.push({
+          eventId,
+          matchId,
+          teamNumber: row.b3,
+          alliance: "blue",
+          position: 3,
+          surrogate: false,
+        });
+      }
+      if (teamMatchValues.length > 0) {
+        await tx
+          .insert(teamMatch)
+          .values(teamMatchValues)
+          .onConflictDoUpdate({
+            target: [teamMatch.matchId, teamMatch.teamNumber],
+            set: {
+              alliance: sql`excluded.alliance`,
+              position: sql`excluded.position`,
+              surrogate: sql`excluded.surrogate`,
+            },
+          });
       }
 
       return {
         eventId,
-        matchCount: schedule.length
+        matchCount: schedule.length,
+        teamMatchCount: teamMatchValues.length,
       };
     });
-
-
 
     return {
       data: {
         success: true,
         eventId,
         matchCount,
+        teamMatchCount,
         uniqueTeamCount: teamNumbers.length,
       },
       error: null,
