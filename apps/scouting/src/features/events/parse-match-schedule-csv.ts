@@ -1,26 +1,12 @@
+import { type MatchScheduleRow, matchScheduleRowSchema } from "./manual-import-schema";
 
-import {
-  matchScheduleRowSchema,
-  type MatchScheduleRow,
-} from "./manual-import-schema";
-
-
-const EXPECTED_HEADERS = [
-  "match_number",
-  "r1",
-  "r2",
-  "r3",
-  "b1",
-  "b2",
-  "b3",
-] as const;
-
+const EXPECTED_HEADERS = ["match_number", "r1", "r2", "r3", "b1", "b2", "b3"] as const;
 
 export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
-
-  const normalizedText = csvText.replace(/^\uFEFF/, "")
-      .replace(/\r\n/g, "\n")
-      .trim();
+  const normalizedText = csvText
+    .replace(/^\uFEFF/, "")
+    .replace(/\r\n/g, "\n")
+    .trim();
 
   const lines = normalizedText.split("\n");
 
@@ -28,20 +14,19 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
     throw new Error("CSV must have at least two lines");
   }
 
-
   const headerLine = lines[0];
 
-  if(!headerLine) {
+  if (!headerLine) {
     throw new Error("The CSV Header line is missing");
   }
 
-
   const headers = headerLine.split(",").map((header) => header.trim());
 
+  const headersAreValid =
+    headers.length === EXPECTED_HEADERS.length &&
+    EXPECTED_HEADERS.every((expected, index) => headers[index] === expected);
 
-  const headersAreValid = headers.length === EXPECTED_HEADERS.length && EXPECTED_HEADERS.every((expected, index) => headers[index] === expected);
-
-  if(!headersAreValid) {
+  if (!headersAreValid) {
     throw new Error("The CSV Header Line is missing or contains invalid headers");
   }
 
@@ -49,11 +34,12 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
     const values = line.split(",").map((value) => value.trim());
 
     if (values.length !== EXPECTED_HEADERS.length) {
-      throw new Error(`Line ${index + 2} has ${values.length} values, expected ${EXPECTED_HEADERS.length}`);
+      throw new Error(
+        `Line ${index + 2} has ${values.length} values, expected ${EXPECTED_HEADERS.length}`
+      );
     }
 
     const [matchNumber, r1, r2, r3, b1, b2, b3] = values;
-
 
     const result = matchScheduleRowSchema.safeParse({
       matchNumber,
@@ -63,14 +49,14 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
       b1,
       b2,
       b3,
-    })
+    });
 
     if (!result.success) {
       throw new Error(`Line ${index + 2} is invalid: ${result.error.message}`);
     }
 
     return result.data;
-  })
+  });
 
   const seenMatchNumbers = new Set<number>();
 
@@ -80,14 +66,12 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
     }
     seenMatchNumbers.add(row.matchNumber);
 
-
     const teams = [row.r1, row.r2, row.r3, row.b1, row.b2, row.b3];
     const uniqueTeams = new Set(teams);
 
     if (uniqueTeams.size !== teams.length) {
-      throw new Error(`Match ${row.matchNumber} contains a duplicate team`)
+      throw new Error(`Match ${row.matchNumber} contains a duplicate team`);
     }
-
   }
 
   return matchRows;

@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-
 import { parseMatchScheduleCsv } from "./parse-match-schedule-csv";
-
-
 
 describe("parseMatchScheduleCsv", () => {
   it("should here parse a valid match schedule", () => {
@@ -34,14 +31,13 @@ describe("parseMatchScheduleCsv", () => {
         b2: 10599,
         b3: 4451,
       },
-    ])
-  })
+    ]);
+  });
   it("rejects invalid headers", () => {
-    const csv = [
-      "matchnmber,r1,r2,r3,b1,b2,b3",
-      "1,342,10367,10231,8137,3967, 343",
-    ].join("\n");
-    expect(() => parseMatchScheduleCsv(csv)).toThrow("The CSV Header Line is missing or contains invalid headers");
+    const csv = ["matchnmber,r1,r2,r3,b1,b2,b3", "1,342,10367,10231,8137,3967, 343"].join("\n");
+    expect(() => parseMatchScheduleCsv(csv)).toThrow(
+      "The CSV Header Line is missing or contains invalid headers"
+    );
   });
 
   it("rejects duplicate match numbers", () => {
@@ -53,16 +49,9 @@ describe("parseMatchScheduleCsv", () => {
     expect(() => parseMatchScheduleCsv(csv)).toThrow("Duplicate match number: 1");
   });
 
-
-
   it("rejects a duplicate team inside one match", () => {
-    const csv = [
-      "match_number,r1,r2,r3,b1,b2,b3",
-      "1,342,10367,342,8137,3967,343",
-    ].join("\n");
+    const csv = ["match_number,r1,r2,r3,b1,b2,b3", "1,342,10367,342,8137,3967,343"].join("\n");
 
-    expect(() => parseMatchScheduleCsv(csv)).toThrow(
-      "Match 1 contains a duplicate team",
-    );
+    expect(() => parseMatchScheduleCsv(csv)).toThrow("Match 1 contains a duplicate team");
   });
 });

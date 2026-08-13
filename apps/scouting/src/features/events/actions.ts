@@ -1,6 +1,4 @@
 "use server";
-import { manualEventSchema } from "./manual-import-schema";
-import { parseMatchScheduleCsv } from "./parse-match-schedule-csv";
 import { eq, sql } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
@@ -14,7 +12,8 @@ import {
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
 import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
-import { error } from "better-auth/api";
+import { manualEventSchema } from "./manual-import-schema";
+import { parseMatchScheduleCsv } from "./parse-match-schedule-csv";
 
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {
@@ -246,15 +245,21 @@ export async function createManualEventAction(
     const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
 
     if (!activeMember || activeMember.organizationId !== organizationId) {
-      return { data: null, error: "Unauthorized, only organization admins and owners can create manual events" };
+      return {
+        data: null,
+        error: "Unauthorized, only organization admins and owners can create manual events",
+      };
     }
     const { success: canSync } = await auth.api.hasPermission({
       headers: requestHeaders,
       body: { permissions: { event: ["sync"] } },
-    })
+    });
 
     if (!canSync) {
-      return { data: null, error: "Unauthorized, only organization admins and owners can create manual events" };
+      return {
+        data: null,
+        error: "Unauthorized, only organization admins and owners can create manual events",
+      };
     }
 
     const eventResult = manualEventSchema.safeParse(eventInput);
@@ -265,33 +270,76 @@ export async function createManualEventAction(
     const schedule = parseMatchScheduleCsv(csvText);
 
     const teamNumbers = [
-      ...new Set(schedule.flatMap((row) => [row.r1, row.r2, row.r3, row.b1, row.b2, row.b3]))
+      ...new Set(schedule.flatMap((row) => [row.r1, row.r2, row.r3, row.b1, row.b2, row.b3])),
     ];
 
-    const teamValues = teamNumbers.map
-      ((teamNumber) => (
-        {
-          teamNumber: teamNumber,
-          teamName: "",
-        })
-      );
+    const teamValues = teamNumbers.map((teamNumber) => ({
+      teamNumber: teamNumber,
+      teamName: "",
+    }));
+
+    const { eventId, matchCount } = await db.transaction(async (tx) => {
+      const eventData = eventResult.data;
+
+      const [upsertedEvent] = await tx.insert(event).values({
+        eventCode: eventData.eventCode,
+        name: eventData.name,
+        startDate: eventData.startDate,
+        endDate: eventData.endDate,
+      }).onConflictDoUpdate({
+        target: event.evenCode,
+        set: {
+          name: eventData.name,
+          startDate: eventData.startDate,
+          endDate: eventData.endDate,
+        },
+      }).returning({ eventId: event.id });
+      if (!upsertedEvent) {
+        throw new Error("Failed to create event");
+      }
+
+      const eventId = upsertedEvent.id;
+
+      if (teamValues.length > 0) {
+        await tx.insert(team).values(teamValues).onConflictDoNothing({
+          target: team.teamNumber
+        });
+      }
+
+      if (schedule.length > 0) {
+        await tx.insert(match).values(schedule.map((row) => ({
+          eventId,
+          matchType: "qm" as const,
+          matchNumber: row.matchNumber,
+          redScore: null,
+          blueScore: null,
+        }))).onConflictDoNothing({
+          target: [match.eventId, match.matchNumber, match.matchType]
+        });
+      }
+
+      return {
+        eventId,
+        matchCount: schedule.length
+      };
+    });
 
 
 
     return {
       data: {
-        event: eventResult.data,
-        matchCount: schedule.length,
+        success: true,
+        eventId,
+        matchCount,
         uniqueTeamCount: teamNumbers.length,
       },
       error: null,
     };
   } catch (e) {
-    console.error(`issue in codebase error: ${e}`)
+    console.error(`issue in codebase error: ${e}`);
     return { data: null, error: e instanceof Error ? e.message : "Failed to create event" };
   }
 }
-
 
 export async function enrichTeamNamesAction(organizationId: string) {
   try {
