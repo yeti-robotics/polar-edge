@@ -38,7 +38,7 @@ describe("updateOrganizationNameAction", () => {
   });
 
   it("should return error if not authenticated", async () => {
-    vi.mocked(auth.api.getActiveMember).mockResolvedValue(null);
+    vi.mocked(auth.api.getActiveMember).mockResolvedValue(null as any);
 
     const result = await updateOrganizationNameAction(
       initialState,
