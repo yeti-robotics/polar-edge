@@ -1,8 +1,8 @@
 import "server-only";
 
-import { eq } from "drizzle-orm";
+import { eq ,sql} from "drizzle-orm";
 import { db } from "@/lib/database";
-import { event } from "@/lib/database/schema/tables";
+import { event, team } from "@/lib/database/schema/tables";
 import type {
   ImportResult,
   MatchSchedule,
@@ -58,8 +58,49 @@ export async function importMatchSchedule(
       eventId = existingEvent.id;
     }
 
+     const teamNamesByNumber = new Map<number, string>();
+
+     for (const scheduledMatch of schedule.matches) {
+        for (const slot of scheduledMatch.slots) {
+           const knownName = slot.teamName?.trim();
+           if(knownName)
+           {
+              teamNamesByNumber.set(Number(slot.teamNumber), knownName);
+           } else if (!teamNamesByNumber.has(slot.teamNumber))
+           {
+              teamNamesByNumber.set(slot.teamNumber, "")
+           }
+        }
+     }
+
+
+     const teamValues = [...teamNamesByNumber].map(
+        ([teamNumber, teamName]) => ({ teamNumber, teamName }));
+
+
+     if (teamValues.length > 0) {
+        await tx
+           .insert(team)
+           .values(teamValues)
+           .onConflictDoUpdate({
+              target: team.teamNumber,
+              set: {
+                 teamName: sql`
+                    case
+                    when excluded.team_name <> ''
+                    then excluded.team_name
+                    else ${team.teamName}
+                    end
+                    `
+              }
+           })
+     }
+
+
+
+
     return {
-      eventId,
+      eventId: eventId,
       matchCount: 0,
       teamMatchCount: 0,
     };
