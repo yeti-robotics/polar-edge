@@ -168,7 +168,7 @@ export default function AnalysisPage() {
         </div>
       </div>
       <NavCardGrid items={navCards} />
-      <TypographyH1> c</TypographyH1>
+
     </div>
   );
 }
