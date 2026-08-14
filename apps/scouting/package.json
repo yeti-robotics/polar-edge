@@ -4,7 +4,6 @@
   "description": "FRC scouting application for YETI Robotics",
   "private": true,
   "scripts": {
-    "predev": "pnpm --filter @repo/tba-sdk build",
     "dev": "next dev --turbo",
     "db:start": "sh ./scripts/db-start.sh",
     "db:drop": "tsx scripts/db-drop.ts",
