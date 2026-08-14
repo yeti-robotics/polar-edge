@@ -26,7 +26,7 @@ export type AllianceSlot = {
 export type ScheduledMatch = {
 
 
-  matchNummber: number;
+  matchNumber: number;
   matchType: "qm";
   redScore?: number;
   blueScore?: number;

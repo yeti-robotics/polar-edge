@@ -2,7 +2,7 @@ import "server-only";
 
 import { eq ,sql} from "drizzle-orm";
 import { db } from "@/lib/database";
-import { event, team } from "@/lib/database/schema/tables";
+import { event, team, match, teamMatch } from "@/lib/database/schema/tables";
 import type {
   ImportResult,
   MatchSchedule,
@@ -98,11 +98,124 @@ export async function importMatchSchedule(
 
 
 
+     if (schedule.matches.length > 0) {
+        await tx
+           .insert(match)
+           .values(
+              schedule.matches.map((scheduledMatch) => ({
+                 eventId,
+                 matchType: scheduledMatch.matchType,
+                 matchNumber: scheduledMatch.matchNumber,
+                 redScore: scheduledMatch.redScore ?? null ,
+                 blueScore: scheduledMatch.blueScore ?? null,
+              }))
+        ).onConflictDoUpdate({
+           target: [
+              match.eventId,
+              match.matchNumber,
+              match.matchType,
+           ],
+           set: {
+              redScore: sql`
+                 coalesce(excluded.red_score, ${match.redScore})
+                 `,
+              blueScore: sql`
+                 coalesce(excluded.blue_score, ${match.blueScore})
+                 `, // if new score is known apply is if null than keep the existing score logic here
+           }
+           })
+     }
+
+     const storedMatches = await tx.select({
+        id: match.id,
+        matchNumber: match.matchNumber,
+        matchType: match.matchType,
+
+     }).from(match)
+        .where(eq(match.eventId, eventId))
+
+
+     const matchIdByKey = new Map(
+       storedMatches.map((storedMatch) => [
+         `${storedMatch.matchNumber}:${storedMatch.matchType}`,
+         storedMatch.id,
+       ]),
+     );
+
+
+     type TeamMatchValue = {
+        eventId: string;
+        matchId: string;
+        teamNumber: number;
+        alliance: "red" | "blue";
+        position: 1 | 2 | 3;
+        surrogate: boolean;
+     }
+
+
+     const knownSurrogateRows: TeamMatchValue[] = [];
+     const unknownSurrogateRows: TeamMatchValue[] = [];
+
+     for (const scheduledMatch of schedule.matches) {
+       const matchKey =
+         `${scheduledMatch.matchNumber}:${scheduledMatch.matchType}`;
+
+       const matchId = matchIdByKey.get(matchKey);
+
+       if (!matchId) {
+         throw new Error(
+           `Could not find imported match ${matchKey}`,
+         );
+       }
+
+       for (const slot of scheduledMatch.slots) {
+         const row: TeamMatchValue = {
+           eventId,
+           matchId,
+           teamNumber: slot.teamNumber,
+           alliance: slot.alliance,
+           position: slot.position,
+           surrogate: slot.surrogate ?? false,
+         };
+
+         if (slot.surrogate === undefined) {
+           unknownSurrogateRows.push(row);
+         } else {
+           knownSurrogateRows.push(row);
+         }
+       }
+
+
+     }
+
+
+     if (knownSurrogateRows.length > 0) {
+       await tx
+         .insert(teamMatch)
+         .values(knownSurrogateRows)
+         .onConflictDoUpdate({
+           target: [
+             teamMatch.matchId,
+             teamMatch.teamNumber,
+           ],
+           set: {
+             alliance: sql`excluded.alliance`,
+             position: sql`excluded.position`,
+             surrogate: sql`excluded.surrogate`,
+           },
+         });
+     }
+
+
+
+
+
+
 
     return {
       eventId: eventId,
-      matchCount: 0,
-      teamMatchCount: 0,
+      matchCount: schedule.matches.length,
+      teamMatchCount: knownSurrogateRows.length + unknownSurrogateRows.length,
     };
   });
 }
