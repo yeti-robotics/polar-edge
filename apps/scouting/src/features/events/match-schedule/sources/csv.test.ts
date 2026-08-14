@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseMatchScheduleCsv } from "./parse-match-schedule-csv";
+import { csvScheduleToImport, parseMatchScheduleCsv } from "./csv";
 
 describe("parseMatchScheduleCsv", () => {
   it("should here parse a valid match schedule", () => {
@@ -54,4 +54,49 @@ describe("parseMatchScheduleCsv", () => {
 
     expect(() => parseMatchScheduleCsv(csv)).toThrow("Match 1 contains a duplicate team");
   });
+
+  it("converts CSV data into the canonical match schedule", () => {
+    const csv = [
+      "match_number,r1,r2,r3,b1,b2,b3",
+      "1,342,10367,10231,8137,3976,343",
+    ].join("\n");
+
+    const schedule = csvScheduleToImport(
+      {
+        mode: "create-or-update",
+        eventCode: "2026thorwest",
+        name: "THOR West 2026",
+        startDate: new Date("2026-10-24"),
+        endDate: new Date("2026-10-24"),
+      },
+      csv,
+    );
+
+    expect(schedule.matches).toEqual([
+      {
+        matchNumber: 1,
+        matchType: "qm",
+        slots: [
+          { teamNumber: 342, alliance: "red", position: 1 },
+          { teamNumber: 10367, alliance: "red", position: 2 },
+          { teamNumber: 10231, alliance: "red", position: 3 },
+          { teamNumber: 8137, alliance: "blue", position: 1 },
+          { teamNumber: 3976, alliance: "blue", position: 2 },
+          { teamNumber: 343, alliance: "blue", position: 3 },
+        ],
+      },
+    ]);
+
+    expect(schedule.event.eventCode).toBe("2026thorwest");
+    expect(schedule.event.mode).toBe("create-or-update");
+  });
+
+
+
+
+
+
+
+
+
 });

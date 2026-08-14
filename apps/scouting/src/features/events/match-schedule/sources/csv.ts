@@ -1,6 +1,20 @@
 import { z } from "zod";
 import type { EventTarget, MatchSchedule } from "../types";
-''
+import { vTeamMatchConsensus } from "@/lib/database/schema";
+import { allianceEnum } from "@/lib/database/schema/types";
+
+
+export const matchScheduleRowSchema = z.object({
+  matchNumber: z.coerce.number().int().positive(),
+  r1: z.coerce.number().int().positive(),
+  r2: z.coerce.number().int().positive(),
+  r3: z.coerce.number().int().positive(),
+  b1: z.coerce.number().int().positive(),
+  b2: z.coerce.number().int().positive(),
+  b3: z.coerce.number().int().positive(),
+});
+
+export type MatchScheduleRow = z.infer<typeof matchScheduleRowSchema>;
 
 
 const EXPECTED_HEADERS = ["match_number", "r1", "r2", "r3", "b1", "b2", "b3"] as const;
@@ -78,4 +92,63 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
   }
 
   return matchRows;
+}
+
+type CreateableEventTarget = Extract<EventTarget, {
+  mode: "create-or-update"
+}>;
+
+export function csvScheduleToImport(
+  event: CreateableEventTarget,
+  csvText: string,
+): MatchSchedule {
+
+  const rows = parseMatchScheduleCsv(csvText);
+
+  return {
+    event,
+    matches: rows.map((row) => ({
+      matchNumber: row.matchNumber,
+      matchType: "qm",
+
+      slots: [
+        {
+          teamNumber: row.r1,
+          alliance: "red",
+          position: 1,
+
+
+        },
+        {
+          teamNumber: row.r2,
+          alliance: "red",
+          position: 2,
+        },
+        {
+          teamNumber: row.r3,
+          alliance: "red",
+          position: 3,
+        },
+
+        {
+          teamNumber: row.b1,
+          alliance: "blue",
+          position: 1,
+        },
+        {
+          teamNumber: row.b2,
+          alliance: "blue",
+          position: 2,
+        },
+        {
+          teamNumber: row.b3,
+          alliance: "blue",
+          position: 3,
+        },
+
+      ]
+    }))
+  }
+
+
 }

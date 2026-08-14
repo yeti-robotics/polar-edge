@@ -13,8 +13,7 @@ import {
 } from "@/lib/server/organization/active-event";
 import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
 import { type ManualEventInput, manualEventSchema } from "./manual-import-schema";
-import { parseMatchScheduleCsv } from "./parse-match-schedule-csv";
-
+import { csvScheduleToImport } from "./match-schedule/sources/csv";
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {
     const requestHeaders = await headers();
