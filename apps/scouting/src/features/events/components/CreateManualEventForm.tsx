@@ -158,6 +158,7 @@ export function CreateManualEventForm({
                   <Input
                     id={field.name}
                     name={field.name}
+                    
                     type="date"
                     value={field.state.value}
                     onBlur={field.handleBlur}
