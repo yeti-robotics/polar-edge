@@ -1,4 +1,7 @@
-import { type MatchScheduleRow, matchScheduleRowSchema } from "./manual-import-schema";
+import { z } from "zod";
+import type { EventTarget, MatchSchedule } from "../types";
+''
+
 
 const EXPECTED_HEADERS = ["match_number", "r1", "r2", "r3", "b1", "b2", "b3"] as const;
 
