@@ -5,16 +5,18 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { event, match, team, teamMatch } from "@/lib/database/schema/tables";
+import {  team } from "@/lib/database/schema/tables";
 import { routes } from "@/lib/routes";
 import {
   getActiveEventForOrganization,
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
-import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
+import { getTBAClient  } from "@/lib/server/tba";
 import {  manualEventSchema } from "./manual-import-schema";
 import { csvScheduleToImport } from "./match-schedule/sources/csv";
 import { importMatchSchedule } from "./match-schedule/import";
+import { tbaScheduleToImport } from "./match-schedule/sources/tba";
+
 
 
 
@@ -90,145 +92,19 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
       return { data: null, error: "TBA matches not found" };
     }
 
-    const qualifyingMatches = tbaMatches.filter((m) => m.comp_level === "qm");
+    const schedule = tbaScheduleToImport(
+      tbaEvent,
+      tbaMatches,
+      tbaTeams,
+    );
 
-    const { eventId, matchCount, teamMatchCount } = await db.transaction(async (tx) => {
-      const [upsertedEvent] = await tx
-        .insert(event)
-        .values({
-          eventCode: tbaEvent.key,
-          name: tbaEvent.name,
-          startDate: new Date(tbaEvent.start_date),
-          endDate: new Date(tbaEvent.end_date),
-        })
-        .onConflictDoUpdate({
-          target: event.eventCode,
-          set: {
-            name: tbaEvent.name,
-            startDate: new Date(tbaEvent.start_date),
-            endDate: new Date(tbaEvent.end_date),
-          },
-        })
-        .returning({ id: event.id });
+    const result = await importMatchSchedule(schedule);
 
-      if (!upsertedEvent) {
-        throw new Error("Failed to upsert event");
-      }
-
-      const eventId = upsertedEvent.id;
-
-      if (qualifyingMatches.length > 0) {
-        await tx
-          .insert(match)
-          .values(
-            qualifyingMatches.map((m) => ({
-              eventId,
-              matchType: "qm" as const,
-              matchNumber: m.match_number,
-              redScore: m.alliances.red.score ?? null,
-              blueScore: m.alliances.blue.score ?? null,
-            }))
-          )
-          .onConflictDoUpdate({
-            target: [match.eventId, match.matchNumber, match.matchType],
-            set: {
-              redScore: sql`excluded.red_score`,
-              blueScore: sql`excluded.blue_score`,
-            },
-          });
-      }
-
-      const matchRows = await tx
-        .select({ id: match.id, matchNumber: match.matchNumber, matchType: match.matchType })
-        .from(match)
-        .where(eq(match.eventId, eventId));
-      const matchIdByKey = new Map(matchRows.map((r) => [`${r.matchNumber}:${r.matchType}`, r.id]));
-
-      const teamMatchRows: Array<{
-        eventId: string;
-        matchId: string;
-        teamNumber: number;
-        alliance: "red" | "blue";
-        position: 1 | 2 | 3;
-        surrogate: boolean;
-      }> = [];
-
-      for (const m of qualifyingMatches) {
-        const matchId = matchIdByKey.get(`${m.match_number}:qm`);
-        if (!matchId) continue;
-
-        const redSurrogates = new Set(m.alliances.red.surrogate_team_keys ?? []);
-        const blueSurrogates = new Set(m.alliances.blue.surrogate_team_keys ?? []);
-
-        for (let i = 0; i < 3; i++) {
-          const redKey = m.alliances.red.team_keys[i];
-          const blueKey = m.alliances.blue.team_keys[i];
-          if (redKey) {
-            teamMatchRows.push({
-              eventId,
-              matchId,
-              teamNumber: parseTbaTeamKey(redKey),
-              alliance: "red",
-              position: (i + 1) as 1 | 2 | 3,
-              surrogate: redSurrogates.has(redKey),
-            });
-          }
-          if (blueKey) {
-            teamMatchRows.push({
-              eventId,
-              matchId,
-              teamNumber: parseTbaTeamKey(blueKey),
-              alliance: "blue",
-              position: (i + 1) as 1 | 2 | 3,
-              surrogate: blueSurrogates.has(blueKey),
-            });
-          }
-        }
-      }
-
-      const matchTeamNumbers = [...new Set(teamMatchRows.map((r) => r.teamNumber))];
-      const tbaTeamMap = new Map(tbaTeams.map((t) => [t.team_number, t.nickname ?? t.name ?? ""]));
-      const allTeamValues = matchTeamNumbers.map((n) => ({
-        teamNumber: n,
-        teamName: tbaTeamMap.get(n) ?? "",
-      }));
-
-      if (allTeamValues.length > 0) {
-        await tx
-          .insert(team)
-          .values(allTeamValues)
-          .onConflictDoUpdate({
-            target: team.teamNumber,
-            set: { teamName: sql`excluded.team_name` },
-          });
-      }
-
-      if (teamMatchRows.length > 0) {
-        await tx
-          .insert(teamMatch)
-          .values(teamMatchRows)
-          .onConflictDoUpdate({
-            target: [teamMatch.matchId, teamMatch.teamNumber],
-            set: {
-              alliance: sql`excluded.alliance`,
-              position: sql`excluded.position`,
-              surrogate: sql`excluded.surrogate`,
-            },
-          });
-      }
-
-      return {
-        eventId,
-        matchCount: qualifyingMatches.length,
-        teamMatchCount: teamMatchRows.length,
-      };
-    });
-
-    revalidatePath(routes.admin.event);
-    revalidateTag(cacheTags.teamsList, "max");
-    revalidateTag(cacheTags.eventTeams(eventId), "max");
     return {
-      data: { success: true, eventId, matchCount, teamMatchCount },
+      data: {
+        success: true,
+        ...result,
+      },
       error: null,
     };
   } catch (error) {
