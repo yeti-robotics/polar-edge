@@ -12,7 +12,7 @@ import {
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
 import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
-import { type ManualEventInput, manualEventSchema } from "./manual-import-schema";
+import {  manualEventSchema } from "./manual-import-schema";
 import { csvScheduleToImport } from "./match-schedule/sources/csv";
 import { importMatchSchedule } from "./match-schedule/import";
 

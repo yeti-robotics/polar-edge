@@ -7,11 +7,14 @@ import type {
   ImportResult,
   MatchSchedule,
 } from "./types";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { cacheTags } from "@/lib/cache";
+import { routes } from "@/lib/routes";
 
 export async function importMatchSchedule(
   schedule: MatchSchedule,
 ): Promise<ImportResult> {
-  return db.transaction(async (tx) => {
+  const result = await db.transaction(async (tx) => {
     let eventId: string;
 
     if (schedule.event.mode === "create-or-update") {
@@ -218,4 +221,11 @@ export async function importMatchSchedule(
       teamMatchCount: knownSurrogateRows.length + unknownSurrogateRows.length,
     };
   });
+
+  revalidatePath(routes.admin.event);
+  revalidateTag(cacheTags.teamsList, "max");
+  revalidateTag(cacheTags.eventTeams(result.eventId), "max");
+
+   return result;
+
 }
