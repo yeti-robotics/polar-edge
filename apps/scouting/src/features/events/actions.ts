@@ -14,6 +14,11 @@ import {
 import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
 import { type ManualEventInput, manualEventSchema } from "./manual-import-schema";
 import { csvScheduleToImport } from "./match-schedule/sources/csv";
+import { importMatchSchedule } from "./match-schedule/import";
+
+
+
+
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {
     const requestHeaders = await headers();
@@ -236,213 +241,83 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
 
 export async function createManualEventAction(
   organizationId: string,
-  eventInput: ManualEventInput,
-  csvText: string
+  eventInput: unknown,
+  csvText: string,
 ) {
   try {
     const requestHeaders = await headers();
-    const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
 
-    if (!activeMember || activeMember.organizationId !== organizationId) {
+    const activeMember = await auth.api.getActiveMember({
+      headers: requestHeaders,
+    });
+
+    if (
+      !activeMember ||
+      activeMember.organizationId !== organizationId
+    ) {
       return {
         data: null,
-        error: "Unauthorized, only organization admins and owners can create manual events",
+        error:
+          "Only organization admins and owners can create manual events",
       };
     }
+
     const { success: canSync } = await auth.api.hasPermission({
       headers: requestHeaders,
-      body: { permissions: { event: ["sync"] } },
+      body: {
+        permissions: {
+          event: ["sync"],
+        },
+      },
     });
 
     if (!canSync) {
       return {
         data: null,
-        error: "Unauthorized, only organization admins and owners can create manual events",
+        error:
+          "Only organization admins and owners can create manual events",
       };
     }
 
     const eventResult = manualEventSchema.safeParse(eventInput);
+
     if (!eventResult.success) {
-      return { data: null, error: eventResult.error.issues[0]?.message ?? "Invalid event info" };
+      return {
+        data: null,
+        error:
+          eventResult.error.issues[0]?.message ??
+          "Invalid event information",
+      };
     }
 
-    const schedule = parseMatchScheduleCsv(csvText);
+    const schedule = csvScheduleToImport(
+      {
+        mode: "create-or-update",
+        eventCode: eventResult.data.eventCode,
+        name: eventResult.data.name,
+        startDate: eventResult.data.startDate,
+        endDate: eventResult.data.endDate,
+      },
+      csvText,
+    );
 
-    const teamNumbers = [
-      ...new Set(schedule.flatMap((row) => [row.r1, row.r2, row.r3, row.b1, row.b2, row.b3])),
-    ];
-
-    const teamValues = teamNumbers.map((teamNumber) => ({
-      teamNumber: teamNumber,
-      teamName: "",
-    }));
-
-    const { eventId, matchCount, teamMatchCount } = await db.transaction(async (tx) => {
-      const eventData = eventResult.data;
-
-      const [upsertedEvent] = await tx
-        .insert(event)
-        .values({
-          eventCode: eventData.eventCode,
-          name: eventData.name,
-          startDate: eventData.startDate,
-          endDate: eventData.endDate,
-        })
-        .onConflictDoUpdate({
-          target: event.eventCode,
-          set: {
-            name: eventData.name,
-            startDate: eventData.startDate,
-            endDate: eventData.endDate,
-          },
-        })
-        .returning({ eventId: event.id });
-      if (!upsertedEvent) {
-        throw new Error("Failed to create event");
-      }
-
-      const eventId = upsertedEvent.eventId;
-
-      if (teamValues.length > 0) {
-        await tx.insert(team).values(teamValues).onConflictDoNothing({
-          target: team.teamNumber,
-        });
-      }
-
-      if (schedule.length > 0) {
-        await tx
-          .insert(match)
-          .values(
-            schedule.map((row) => ({
-              eventId,
-              matchType: "qm" as const,
-              matchNumber: row.matchNumber,
-              redScore: null,
-              blueScore: null,
-            }))
-          )
-          .onConflictDoNothing({
-            target: [match.eventId, match.matchNumber, match.matchType],
-          });
-      }
-
-      const insertedMatches = await tx
-        .select({
-          id: match.id,
-          matchNumber: match.matchNumber,
-        })
-        .from(match)
-        .where(eq(match.eventId, eventId));
-
-      const matchIdByNumber = new Map(insertedMatches.map((row) => [row.matchNumber, row.id]));
-
-      const teamMatchValues: Array<{
-        eventId: string;
-        matchId: string;
-        teamNumber: number;
-        alliance: "red" | "blue";
-        position: 1 | 2 | 3;
-        surrogate: boolean;
-      }> = [];
-
-      for (const row of schedule) {
-        const matchId = matchIdByNumber.get(row.matchNumber);
-        if (!matchId) {
-          throw new Error(`Match ${row.matchNumber} not found`);
-        }
-
-        teamMatchValues.push({
-          eventId,
-          matchId,
-          teamNumber: row.r1,
-          alliance: "red",
-          position: 1,
-          surrogate: false,
-        });
-
-        teamMatchValues.push({
-          eventId,
-          matchId,
-          teamNumber: row.r2,
-          alliance: "red",
-          position: 2,
-          surrogate: false,
-        });
-
-        teamMatchValues.push({
-          eventId,
-          matchId,
-          teamNumber: row.r3,
-          alliance: "red",
-          position: 3,
-          surrogate: false,
-        });
-
-        teamMatchValues.push({
-          eventId,
-          matchId,
-          teamNumber: row.b1,
-          alliance: "blue",
-          position: 1,
-          surrogate: false,
-        });
-
-        teamMatchValues.push({
-          eventId,
-          matchId,
-          teamNumber: row.b2,
-          alliance: "blue",
-          position: 2,
-          surrogate: false,
-        });
-
-        teamMatchValues.push({
-          eventId,
-          matchId,
-          teamNumber: row.b3,
-          alliance: "blue",
-          position: 3,
-          surrogate: false,
-        });
-      }
-      if (teamMatchValues.length > 0) {
-        await tx
-          .insert(teamMatch)
-          .values(teamMatchValues)
-          .onConflictDoUpdate({
-            target: [teamMatch.matchId, teamMatch.teamNumber],
-            set: {
-              alliance: sql`excluded.alliance`,
-              position: sql`excluded.position`,
-              surrogate: sql`excluded.surrogate`,
-            },
-          });
-      }
-
-      return {
-        eventId,
-        matchCount: schedule.length,
-        teamMatchCount: teamMatchValues.length,
-      };
-    });
-
-    revalidatePath(routes.admin.event);
-    revalidateTag(cacheTags.teamsList, "max");
-    revalidateTag(cacheTags.eventTeams(eventId), "max");
+    const result = await importMatchSchedule(schedule);
 
     return {
       data: {
         success: true,
-        eventId,
-        matchCount,
-        teamMatchCount,
-        uniqueTeamCount: teamNumbers.length,
+        ...result,
       },
       error: null,
     };
-  } catch (e) {
-    console.error(`issue in codebase error: ${e}`);
-    return { data: null, error: e instanceof Error ? e.message : "Failed to create event" };
+  } catch (error) {
+    return {
+      data: null,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create manual event",
+    };
   }
 }
 
