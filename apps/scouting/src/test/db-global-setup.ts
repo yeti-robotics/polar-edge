@@ -1,7 +1,7 @@
 import path from "node:path";
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
-import type { GlobalSetupContext } from "vitest/node";
+import type { TestProject } from "vitest/node";
 
 declare module "vitest" {
   interface ProvidedContext {
@@ -18,7 +18,7 @@ let container: StartedPostgreSqlContainer;
  * shared with the developer's own database, and no run can be polluted by state
  * left behind by a previous one.
  */
-export async function setup({ provide }: GlobalSetupContext) {
+export async function setup({ provide }: TestProject) {
   container = await new PostgreSqlContainer("postgres:17.0")
     .withDatabase("polar_edge_test")
     .withTmpFs({ "/var/lib/postgresql/data": "rw" })
