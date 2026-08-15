@@ -185,8 +185,8 @@ export async function importMatchSchedule(
      }
 
 
-     if (teamMatchRows.length > 0) {
-       await tx
+     const teamMatchInsertResult = teamMatchRows.length > 0
+       ? await tx
          .insert(teamMatch)
          .values(teamMatchRows)
          .onConflictDoUpdate({
@@ -199,8 +199,8 @@ export async function importMatchSchedule(
              position: sql`excluded.position`,
              surrogate: sql`excluded.surrogate`,
            },
-         });
-     }
+         })
+       : null;
 
 
 
@@ -211,7 +211,7 @@ export async function importMatchSchedule(
     return {
       eventId: eventId,
       matchCount: schedule.matches.length,
-      teamMatchCount: teamMatchRows.length,
+      teamMatchCount: teamMatchInsertResult?.rowCount ?? 0,
     };
   });
 
