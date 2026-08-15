@@ -8,8 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
+import { Field, FieldDescription, FieldError, FieldLabel } from "@repo/ui/components/field";
 import { Input } from "@repo/ui/components/input";
-import { Label } from "@repo/ui/components/label";
 import { useForm } from "@tanstack/react-form-nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,14 +20,12 @@ type Message = {
   text: string;
 };
 
-const required = (label: string) => ({ value }: { value: string }) =>
-  value.trim().length === 0 ? `${label} is required` : undefined;
+const required =
+  (label: string) =>
+  ({ value }: { value: string }) =>
+    value.trim() ? undefined : { message: `${label} is required` };
 
-export function CreateManualEventForm({
-  organizationId,
-}: {
-  organizationId: string;
-}) {
+export function CreateManualEventForm({ organizationId }: { organizationId: string }) {
   const router = useRouter();
   const [message, setMessage] = useState<Message | null>(null);
 
@@ -56,7 +54,7 @@ export function CreateManualEventForm({
             startDate: value.startDate,
             endDate: value.endDate,
           },
-          await value.csvFile.text(),
+          await value.csvFile.text()
         );
 
         if (result.error) {
@@ -79,8 +77,7 @@ export function CreateManualEventForm({
       <CardHeader>
         <CardTitle>Create manual event</CardTitle>
         <CardDescription>
-          Create an offseason event and upload its complete qualification match
-          schedule.
+          Create an offseason event and upload its complete qualification match schedule.
         </CardDescription>
       </CardHeader>
 
@@ -94,121 +91,107 @@ export function CreateManualEventForm({
           }}
         >
           <div className="grid gap-4 sm:grid-cols-2">
-            <form.Field
-              name="eventCode"
-              validators={{ onBlur: required("Event code") }}
-            >
-              {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Event code</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    placeholder="e.g. 2026thorwest"
-                    aria-invalid={!field.state.meta.isValid}
-                    required
-                  />
-                  {field.state.meta.isTouched &&
-                    field.state.meta.errors.map((error) => (
-                      <p key={String(error)} className="text-sm text-destructive">
-                        {String(error)}
-                      </p>
-                    ))}
-                </div>
-              )}
+            <form.Field name="eventCode" validators={{ onBlur: required("Event code") }}>
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Event code</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      placeholder="e.g. 2026thorwest"
+                      aria-invalid={isInvalid}
+                      required
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                );
+              }}
             </form.Field>
 
-            <form.Field
-              name="name"
-              validators={{ onBlur: required("Event name") }}
-            >
-              {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Event name</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    placeholder="e.g. THOR West 2026"
-                    aria-invalid={!field.state.meta.isValid}
-                    required
-                  />
-                  {field.state.meta.isTouched &&
-                    field.state.meta.errors.map((error) => (
-                      <p key={String(error)} className="text-sm text-destructive">
-                        {String(error)}
-                      </p>
-                    ))}
-                </div>
-              )}
+            <form.Field name="name" validators={{ onBlur: required("Event name") }}>
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Event name</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      placeholder="e.g. THOR West 2026"
+                      aria-invalid={isInvalid}
+                      required
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                );
+              }}
             </form.Field>
 
-            <form.Field
-              name="startDate"
-              validators={{ onBlur: required("Start date") }}
-            >
-              {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Start date</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    
-                    type="date"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    aria-invalid={!field.state.meta.isValid}
-                    required
-                  />
-                  {field.state.meta.isTouched &&
-                    field.state.meta.errors.map((error) => (
-                      <p key={String(error)} className="text-sm text-destructive">
-                        {String(error)}
-                      </p>
-                    ))}
-                </div>
-              )}
+            <form.Field name="startDate" validators={{ onBlur: required("Start date") }}>
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Start date</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="date"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      aria-invalid={isInvalid}
+                      required
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                );
+              }}
             </form.Field>
 
             <form.Field
               name="endDate"
               validators={{
                 onBlur: ({ value, fieldApi }) => {
-                  if (value.trim().length === 0) return "End date is required";
+                  if (!value.trim()) return { message: "End date is required" };
                   const startDate = fieldApi.form.getFieldValue("startDate");
                   return startDate && value < startDate
-                    ? "End date must be on or after the start date"
+                    ? { message: "End date must be on or after the start date" }
                     : undefined;
                 },
               }}
             >
-              {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>End date</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="date"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    aria-invalid={!field.state.meta.isValid}
-                    required
-                  />
-                  {field.state.meta.isTouched &&
-                    field.state.meta.errors.map((error) => (
-                      <p key={String(error)} className="text-sm text-destructive">
-                        {String(error)}
-                      </p>
-                    ))}
-                </div>
-              )}
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>End date</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="date"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      aria-invalid={isInvalid}
+                      required
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                );
+              }}
             </form.Field>
           </div>
 
@@ -216,35 +199,32 @@ export function CreateManualEventForm({
             name="csvFile"
             validators={{
               onChange: ({ value }) =>
-                value === null ? "A CSV file is required" : undefined,
+                value === null ? { message: "A CSV file is required" } : undefined,
             }}
           >
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Match-schedule CSV</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="file"
-                  accept=".csv,text/csv"
-                  onBlur={field.handleBlur}
-                  onChange={(event) =>
-                    field.handleChange(event.target.files?.[0] ?? null)
-                  }
-                  aria-invalid={!field.state.meta.isValid}
-                  required
-                />
-                <p className="text-sm text-muted-foreground">
-                  Required columns: match_number, r1, r2, r3, b1, b2, b3
-                </p>
-                {field.state.meta.isTouched &&
-                  field.state.meta.errors.map((error) => (
-                    <p key={String(error)} className="text-sm text-destructive">
-                      {String(error)}
-                    </p>
-                  ))}
-              </div>
-            )}
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Match-schedule CSV</FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="file"
+                    accept=".csv,text/csv"
+                    onBlur={field.handleBlur}
+                    onChange={(event) => field.handleChange(event.target.files?.[0] ?? null)}
+                    aria-invalid={isInvalid}
+                    required
+                  />
+                  <FieldDescription>
+                    Required columns: match_number, r1, r2, r3, b1, b2, b3
+                  </FieldDescription>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
           </form.Field>
 
           <form.Subscribe selector={(state) => state.isSubmitting}>
