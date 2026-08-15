@@ -156,8 +156,7 @@ export async function importMatchSchedule(
      }
 
 
-     const knownSurrogateRows: TeamMatchValue[] = [];
-     const unknownSurrogateRows: TeamMatchValue[] = [];
+     const teamMatchRows: TeamMatchValue[] = [];
 
      for (const scheduledMatch of schedule.matches) {
        const matchKey =
@@ -172,30 +171,24 @@ export async function importMatchSchedule(
        }
 
        for (const slot of scheduledMatch.slots) {
-         const row: TeamMatchValue = {
+         teamMatchRows.push({
            eventId,
            matchId,
            teamNumber: slot.teamNumber,
            alliance: slot.alliance,
            position: slot.position,
            surrogate: slot.surrogate ?? false,
-         };
-
-         if (slot.surrogate === undefined) {
-           unknownSurrogateRows.push(row);
-         } else {
-           knownSurrogateRows.push(row);
-         }
+         });
        }
 
 
      }
 
 
-     if (knownSurrogateRows.length > 0) {
+     if (teamMatchRows.length > 0) {
        await tx
          .insert(teamMatch)
-         .values(knownSurrogateRows)
+         .values(teamMatchRows)
          .onConflictDoUpdate({
            target: [
              teamMatch.matchId,
@@ -218,7 +211,7 @@ export async function importMatchSchedule(
     return {
       eventId: eventId,
       matchCount: schedule.matches.length,
-      teamMatchCount: knownSurrogateRows.length + unknownSurrogateRows.length,
+      teamMatchCount: teamMatchRows.length,
     };
   });
 
