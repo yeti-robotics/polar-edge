@@ -17,6 +17,12 @@ export const envSchema = z.object({
   devGuildId: z.string().min(1).optional(),
   adminRoleId: z.string().default(""),
 
+  // Attendance
+  attendanceLookupDiscordId: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().min(1).optional()
+  ),
+
   // Google Sheets
   googleCredentials: z
     .base64()

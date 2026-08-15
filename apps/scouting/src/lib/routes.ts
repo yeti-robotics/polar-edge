@@ -4,11 +4,15 @@
  */
 export const routes = {
   home: "/",
+  login: "/login",
 
   // Admin
   admin: {
     root: "/admin",
     members: "/admin/members",
+    member: (memberId: string) => `/admin/members/${memberId}` as const,
+    memberForm: (memberId: string, formId: string) =>
+      `/admin/members/${memberId}/forms/${formId}` as const,
     invites: "/admin/invites",
     event: "/admin/event",
     settings: "/admin/settings",
@@ -39,6 +43,8 @@ export const routes = {
   forms: {
     pit: "/forms/pit",
     stand: "/forms/stand",
+    driveRanking: "/forms/drive-ranking",
+    workability: "/forms/workability",
   },
 
   // Picklist

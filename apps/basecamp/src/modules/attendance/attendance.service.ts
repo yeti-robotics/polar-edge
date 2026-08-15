@@ -19,7 +19,7 @@ import {
 } from "./attendance.constants";
 import { AttendanceRepository } from "./attendance.repository";
 import { type AttendanceRecord } from "./attendance.schema";
-import { getTotalPossibleHoursToDate } from "./schedule.util";
+import { getSeasonDataStartForDate, getTotalPossibleHoursToDate } from "./schedule.util";
 import { TwofaService } from "./twofa/twofa.service";
 
 type AttendanceOperationResult =
@@ -294,9 +294,13 @@ export class AttendanceService {
   }
 
   public getUserHours(discordId: string): ResultAsync<number, Error> {
-    return this.getAttendance(discordId).andThen((records) =>
-      this.calculateHoursFromRecords(records)
-    );
+    const seasonStart = getSeasonDataStartForDate();
+    return this.getAttendance(discordId).andThen((records) => {
+      const seasonRecords = records.filter((r) => new Date(r.date) >= seasonStart);
+      return this.calculateHoursFromRecords(seasonRecords).map(
+        (hours) => Math.round(hours * 100) / 100
+      );
+    });
   }
 
   public getTotalPossibleHoursToDate(asOfDate?: Date): number {
@@ -307,10 +311,12 @@ export class AttendanceService {
     Array<{ discordId: string; userName: string; totalHours: number }>,
     Error
   > {
+    const seasonStart = getSeasonDataStartForDate();
     return this.repository.findAll().andThen((records) => {
+      const seasonRecords = records.filter((r) => new Date(r.date) >= seasonStart);
       const userRecords = new Map<string, { userName: string; records: AttendanceRecord[] }>();
 
-      for (const record of records) {
+      for (const record of seasonRecords) {
         let userData = userRecords.get(record.discordId);
         if (!userData) {
           userData = { userName: record.discordName, records: [] };

@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.4.3](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.4.2...basecamp-v1.4.3) (2026-06-07)
+
+
+### Bug Fixes
+
+* **basecamp:** docker build issues ([#554](https://github.com/yeti-robotics/polar-edge/issues/554)) ([ad55de4](https://github.com/yeti-robotics/polar-edge/commit/ad55de4420d44d925354e323998299cbe6281c41))
+
+## [1.4.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.4.1...basecamp-v1.4.2) (2026-06-07)
+
+
+### Bug Fixes
+
+* **basecamp:** end previous season and set new season dates ([#551](https://github.com/yeti-robotics/polar-edge/issues/551)) ([361725a](https://github.com/yeti-robotics/polar-edge/commit/361725a4d8e5cd351b5c0d9b5678b75d57eb1794))
+* **basecamp:** lint errors ([#553](https://github.com/yeti-robotics/polar-edge/issues/553)) ([83cc544](https://github.com/yeti-robotics/polar-edge/commit/83cc544d14a80245de1c789c734c9bb4c2365e81))
+* **basecamp:** remove flooring of hours ([#552](https://github.com/yeti-robotics/polar-edge/issues/552)) ([959efa8](https://github.com/yeti-robotics/polar-edge/commit/959efa86205f619133d1eb4eb69970c1d4231697))
+
+## [1.4.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.4.0...basecamp-v1.4.1) (2026-05-02)
+
+
+### Bug Fixes
+
+* **basecamp:** add additional dates ([76d0be4](https://github.com/yeti-robotics/polar-edge/commit/76d0be466b22128f3e53d414b33b89a5715e74d3))
+* **basecamp:** fix tests ([672b35a](https://github.com/yeti-robotics/polar-edge/commit/672b35ad832b76f0a252c3f523fa06b54efb3a7d))
+
+## [1.4.0](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.3.2...basecamp-v1.4.0) (2026-04-06)
+
+
+### Features
+
+* **basecamp:** Refactor leaderboard to show user rank outside top 5 ([#469](https://github.com/yeti-robotics/polar-edge/issues/469)) ([d6ea46f](https://github.com/yeti-robotics/polar-edge/commit/d6ea46f74b87d01120c8ef5acbfe1ad491227b90))
+
 ## [1.3.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-v1.3.1...basecamp-v1.3.2) (2026-03-25)
 
 

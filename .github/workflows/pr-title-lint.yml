@@ -31,6 +31,7 @@ jobs:
           scopes: |
             basecamp
             basecamp-fe
+            juice
             scouting
             deps
           requireScope: false

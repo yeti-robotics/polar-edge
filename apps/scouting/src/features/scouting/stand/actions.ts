@@ -62,6 +62,9 @@ export async function submitStandForm(data: unknown) {
     return result;
   } catch (error) {
     console.error("Submit stand form error:", error);
+    if (error instanceof Error && error.message.includes("uniq_stand_form_active_submission")) {
+      return { error: "You have already submitted a form for this match and team" };
+    }
     if (error instanceof Error) {
       return { error: error.message };
     }

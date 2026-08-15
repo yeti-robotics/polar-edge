@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { err, ok, Result, ResultAsync } from "neverthrow";
+import { AppConfigService } from "src/config/config.service";
 import { SheetService } from "src/lib/sheet/sheet.service";
 import { ZodError } from "zod";
 import { COLUMN_INDICES, SHEET_RANGE } from "./attendance.constants";
@@ -9,7 +10,10 @@ import { type AttendanceRecord, AttendanceRecordSchema } from "./attendance.sche
 export class AttendanceRepository {
   private readonly logger = new Logger(AttendanceRepository.name);
 
-  constructor(private readonly sheet: SheetService) {}
+  constructor(
+    private readonly sheet: SheetService,
+    private readonly configService: AppConfigService
+  ) {}
 
   private parseRow(row: unknown[]): Result<AttendanceRecord, ZodError> {
     const result = AttendanceRecordSchema.safeParse({
@@ -25,10 +29,12 @@ export class AttendanceRepository {
   }
 
   public findByDiscordId(discordId: string): ResultAsync<AttendanceRecord[], Error> {
+    const lookupDiscordId = this.configService.get("attendanceLookupDiscordId") ?? discordId;
+
     return this.sheet.get(SHEET_RANGE).map((rows) =>
       rows
         .slice(1)
-        .filter((row) => row[COLUMN_INDICES.DISCORD_ID] === discordId)
+        .filter((row) => row[COLUMN_INDICES.DISCORD_ID] === lookupDiscordId)
         .flatMap((row) => {
           const result = this.parseRow(row);
           if (result.isErr()) {

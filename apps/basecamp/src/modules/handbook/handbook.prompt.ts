@@ -12,9 +12,9 @@ export const handbookPrompt = `You are a professional mentor for FIRST Robotics 
 ## Handbook Content
 
 <handbook>
-YETI Robotics / Handbook / 2025-2026
+YETI Robotics / Handbook / 2026-2027
 FRC Team 3506, YETI Robotics
-Team Handbook (revised 06/2025)
+Team Handbook (revised 06/2026)
 
 === OVERVIEW ===
 Welcome to YETI Robotics and the Queen City Robotics Alliance (QCRA). This handbook lists requirements and expectations for all participating students, mentors, volunteers, and parents. Returning students should reference the Requirements and Need to Know sections for changes. All members are responsible for knowing this content.
@@ -33,16 +33,16 @@ To join YETI Robotics, members must meet minimum requirements:
 YETI uses Discord and Google Groups. Members must be on these platforms. Google Groups admin is Iaiela Dumitrescu. Any current member can invite to Discord.
 
 Required forms:
-- Student Application/Parent/Mentor Application: https://forms.gle/wSv3j8HKALLUsa1s9
-- QCRA Contact Information Form
-- Medical Emergency Form & Insurance Cards: https://forms.gle/GiR1UmdkRGTha4bD9
+- Student Application/Parent/Mentor Application: https://forms.gle/NQTbeDyij75SuLaF7
+- QCRA Contact Information Form: https://forms.gle/2dJ8hAAHKTvtw1349
+- Medical Emergency Form & Insurance Cards: https://forms.gle/JVi5zP2Kp3gLgjmB7
 - Sign up on FIRSTinspires.org and complete required signatures after invitation email from donotreply@firstinspires.org
 - Sign digital acknowledgement that you have read expectations, rules, and completed requirements checklist.
 
 2. FEES AND FUNDRAISING REQUIREMENTS
-- Non-refundable $300 Registration fee due with application before September 12th, 2025 (increases to $400 if paid after)
-- Minimum $1750 in fundraising goals met before February 26, 2026
-- If paying completely out of pocket: $2500 before February 26, 2026, split in 3 equal payments with hard deadlines
+- Non-refundable $300 Registration fee due with application before September 10th, 2026 (increases to $500 if paid after)
+- Minimum $1750 from a sponsor (that can continue to be reached out to even after student graduates) in fundraising goals met before February 27, 2027, NO LATE OR EXTENDED DATES
+- If paying completely out of pocket including matching: total to meet is $2500 before February 27, 2027, split in 3 equal payments with hard deadlines, NO LATE OR EXTENDED DATES
 
 What fees provide:
 - Registration Fee allows attendance at all team meetings and training events at The Zone
@@ -255,7 +255,7 @@ Since 2011, YETI has seven championship plays, 16 Blue Banner titles, over 40 Aw
 - Robot designed, CADed, and built
 - Business side submits for awards: Impact Award (outreach), Woodie Flowers Award (mentor nomination), outreach ongoing
 
-3. COMPETITION SEASON (March - April)
+3. COMPETITION SEASON (March - May)
 - Teams attend two District events, if ranked high enough advance to State Championship, if ranked high enough at States advance to World Championship in Houston, TX
 - Robot continues to be fine-tuned
 
@@ -346,7 +346,10 @@ Facebook: YETI Robotics, FIRST Team 3506
 X: YETI Robotics
 Instagram: yetirobotics
 
-3. OUTREACH
+3. GENERAL BRANDING INFORMATION (LOGO, T-SHIRT, SWEATSHIRT)
+Team branding materials include the YETI 3506 logo, team t-shirt, and sweatshirt designs used across apparel, marketing, and outreach materials.
+
+4. OUTREACH
 YETI's high emphasis on outreach means every student's participation critical. Each student must contribute (rookies 50 hours, veterans 100 hours), totaling over 8,000 team hours over year. Outreach events include events hosted by local companies, demoing robot at community events, partnering with nonprofit organizations. Students improve skills and contribute to wider community.
 
 Events for upcoming season:
@@ -357,7 +360,7 @@ Events for upcoming season:
 - Girl Scouts: Mentored Girl Scouts for last 6 years in basic robotics with Lego EV3s to help earn merit badges
 - General Demos and Presentations
 
-4. IMPACT METRICS
+5. IMPACT METRICS
 Last season: over 2600 hours of outreach, more than 24 demos, impacted over 28,000 people.
 
 === HOW DO COMPETITIONS WORK? ===
@@ -385,13 +388,13 @@ Most competitions require overnight stays (see Travel/Hotel Rules and Safety). E
 === HOW DOES YETI RUN AS A BUSINESS ENTITY? ===
 
 1. FINANCES
-- Each year robot build typically costs around $10,000/robot. Team builds two robots to allow access for both mechanical and programming teams, provides flexibility for non-competition events. Total robot costs roughly $30,000-35,500 including spares.
+- Each year robot build typically costs around $14,000/robot. Team builds two robots to allow access for both mechanical and programming teams, provides flexibility for non-competition events. Total robot costs roughly $30,000-40,000 including spares.
 - Annually attends 2 district competitions and always qualified for State Championship. Each competition involves shirt, marketing, registration, hotel, dinner costs.
-- YETI operates out of Zone with other FIRST teams, pays rent to use space and store tools and robots. With other teams and QCRA, contribute to rent and utility costs totaling $63,984/year.
+- YETI operates out of Zone with other FIRST teams, pays rent to use space and store tools and robots. With other teams and QCRA, contribute to rent and utility costs totaling $70,320/year.
 - Aim to raise more than projected expenses. Budget surplus funds more robot development projects and outreach. Example: 2021-2022 season surplus built extra robot using swerve drive during off-season to work with technology and train rookies.
 
 2. BUSINESS PLAN - INCOME
-YETI receives income through three sources: registration, sponsorship, grants. Each student required to pay $300 registration fee (get matched if possible). At 60 members, acquire about $18,000 (potentially $36,000 with matches) from registration. Critical to fundraise minimum; each student responsible for raising $1750 for team in addition to registration fee. Can be acquired through corporate sponsorship, parents' employer volunteer hours, or matching. Provide extensive resources to help raise money: classes, email templates, script for calling potential sponsors. Work to ensure finances not barrier for membership. Many students raise upwards of $2000. Several sponsors supported team multiple years. If paying COMPLETELY OUT OF POCKET, must pay $2500.
+YETI receives income through three sources: registration, sponsorship, grants. Each student required to pay $300 registration fee (get matched if possible). At 65 members, acquire about $19,500 (potentially $39,000 with matches) from registration. Critical to fundraise minimum; each student responsible for raising $1750 for team in addition to registration fee. Can be acquired through corporate sponsorship, parents' employer volunteer hours, or matching. Provide extensive resources to help raise money: classes, email templates, script for calling potential sponsors. Work to ensure finances not barrier for membership. Many students raise upwards of $2000. Several sponsors supported team multiple years; parents with contacts at local companies should share those with Mrs. Iaiela. If paying COMPLETELY WITH MATCHING AND OUT OF POCKET, must pay $2500.
 
 3. SUSTAINABILITY
 Sustainability top priority. YETI at largest this season, growing from 8 members in 2020 to 66 in 2023 and roughly 85 for 2024-2025 season. Presents opportunity of expanding initiatives and challenge of engaging everyone. Built two robots, expanding community involvement during build season, preparing all members to become leaders in YETI and STEM.

@@ -1,5 +1,115 @@
 # Changelog
 
+## [2026.22.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.21.0...scouting-v2026.22.0) (2026-06-07)
+
+
+### Features
+
+* **scouting:** add plausible analytics tracker ([#541](https://github.com/yeti-robotics/polar-edge/issues/541)) ([24103e6](https://github.com/yeti-robotics/polar-edge/commit/24103e69a83a037ed05ab84b0d46093db8261e9f))
+
+## [2026.21.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.20.2...scouting-v2026.21.0) (2026-05-02)
+
+
+### Features
+
+* **scouting:** add individual scout audit tooling ([ef02d8b](https://github.com/yeti-robotics/polar-edge/commit/ef02d8be83ccc52f726c590a936a64ddf8c18048))
+
+## [2026.20.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.20.1...scouting-v2026.20.2) (2026-04-11)
+
+
+### Bug Fixes
+
+* **scouting:** remove back button from stand form navigation ([2e647be](https://github.com/yeti-robotics/polar-edge/commit/2e647beb6d391e2302f71cd4e4740992a1490ae3))
+
+## [2026.20.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.20.0...scouting-v2026.20.1) (2026-04-11)
+
+
+### Bug Fixes
+
+* **scouting:** states day 1 fixes ([#526](https://github.com/yeti-robotics/polar-edge/issues/526)) ([b20f6a5](https://github.com/yeti-robotics/polar-edge/commit/b20f6a578a85ecb7906f8264aa7f403f0b5eb6df))
+
+## [2026.20.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.19.0...scouting-v2026.20.0) (2026-04-09)
+
+
+### Features
+
+* **scouting:** show workability data on team analysis page ([#523](https://github.com/yeti-robotics/polar-edge/issues/523)) ([6d96ac7](https://github.com/yeti-robotics/polar-edge/commit/6d96ac7b66f6700d0db734f45c20ebe39bf1aff8))
+
+
+### Bug Fixes
+
+* **scouting:** workability form team select dropdown ([#513](https://github.com/yeti-robotics/polar-edge/issues/513)) ([74f7993](https://github.com/yeti-robotics/polar-edge/commit/74f7993285599810d6c34a011c3be4ff24f37638))
+
+## [2026.19.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.3...scouting-v2026.19.0) (2026-04-07)
+
+
+### Features
+
+* **scouting:** add match timer with auto phase transitions to stand form ([8361d3b](https://github.com/yeti-robotics/polar-edge/commit/8361d3b49ffbbc286968109ec60feee9cda1b55d))
+
+## [2026.18.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.2...scouting-v2026.18.3) (2026-04-07)
+
+
+### Bug Fixes
+
+* **scouting:** use coprs directly in event view ([910a028](https://github.com/yeti-robotics/polar-edge/commit/910a028685246bdb578b7203b9159196823c2286))
+
+## [2026.18.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.1...scouting-v2026.18.2) (2026-04-07)
+
+
+### Bug Fixes
+
+* **scouting:** refine fuel point calculations by removing endgame contributions ([a90541a](https://github.com/yeti-robotics/polar-edge/commit/a90541ad899204aadfe0ebcb5ae33641000d2a32))
+
+## [2026.18.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.18.0...scouting-v2026.18.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* **scouting:** use direct copr values ([cecc840](https://github.com/yeti-robotics/polar-edge/commit/cecc84046395ee7d0133064456f42dd7ab007118))
+
+## [2026.18.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.17.0...scouting-v2026.18.0) (2026-04-06)
+
+
+### Features
+
+* **scouting:** added checkbox on standform ([#497](https://github.com/yeti-robotics/polar-edge/issues/497)) ([239638c](https://github.com/yeti-robotics/polar-edge/commit/239638cfe83e7422a20ad35ecdcc81b19d2dfc34))
+* **scouting:** alliance form ([#505](https://github.com/yeti-robotics/polar-edge/issues/505)) ([f79e01f](https://github.com/yeti-robotics/polar-edge/commit/f79e01f0482b256b5c8b786fb26bfe1cd71f7c17))
+* **scouting:** bps estimation using COPR ([#511](https://github.com/yeti-robotics/polar-edge/issues/511)) ([c6bde74](https://github.com/yeti-robotics/polar-edge/commit/c6bde748cd1c94f65e2b4d035c674d1cefdad2f5))
+* **scouting:** enhance analysis metrics with new components and data handling ([b5c8e8c](https://github.com/yeti-robotics/polar-edge/commit/b5c8e8cbde1b38dd2bce6f84655270ff13aeb253))
+* **scouting:** improved team ui ([4131f50](https://github.com/yeti-robotics/polar-edge/commit/4131f50ef7e42422be0bd40045b3609daeca6d75))
+* **scouting:** showing user forms inside their profile and analysis overview page ([#494](https://github.com/yeti-robotics/polar-edge/issues/494)) ([98a7546](https://github.com/yeti-robotics/polar-edge/commit/98a75461f2a0268f1385b35f880458ee5051ab08))
+* **scouting:** standform robot alliance compatability ([#500](https://github.com/yeti-robotics/polar-edge/issues/500)) ([dc5d159](https://github.com/yeti-robotics/polar-edge/commit/dc5d1595b6b60dce990cd41e021fe2e11f6b4c10))
+
+
+### Bug Fixes
+
+* **scouting:** add touch sensor to dnd list ([de7544a](https://github.com/yeti-robotics/polar-edge/commit/de7544aa20e3beabc3078221c1bc75caafc17199))
+* **scouting:** adjust header styling ([1f28f81](https://github.com/yeti-robotics/polar-edge/commit/1f28f81ce7470733dc8e7ee880c4fe1e51a822f2))
+* **scouting:** fix typecheck ([2f85a09](https://github.com/yeti-robotics/polar-edge/commit/2f85a092ad79a45839956320675806873db1fe3f))
+* **scouting:** highlighting for scout lead pages ([09469ad](https://github.com/yeti-robotics/polar-edge/commit/09469ad7b8bd11e505e8087fa360d6635d227447))
+* **scouting:** only show analysis to unauthenticated users ([6bac6c0](https://github.com/yeti-robotics/polar-edge/commit/6bac6c0051ff39007b124f14f4e97bb6d1c6033e))
+* **scouting:** scope fuel distribution to per-form instead of per-team ([eb544f0](https://github.com/yeti-robotics/polar-edge/commit/eb544f0ce8949930ed49224cadda5d9befa875cb))
+* **scouting:** uncontrolled input ([b79c6f3](https://github.com/yeti-robotics/polar-edge/commit/b79c6f3e70756a5afa066b7e5faec08c7924d317))
+
+## [2026.17.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.16.0...scouting-v2026.17.0) (2026-04-03)
+
+
+### Features
+
+* **scouting:** add drive ranking coverage to data validation ([#507](https://github.com/yeti-robotics/polar-edge/issues/507)) ([f8ac622](https://github.com/yeti-robotics/polar-edge/commit/f8ac622b070793223aa80b4bffe3d49fe9cba786))
+* **scouting:** highlight current page in navbar ([#479](https://github.com/yeti-robotics/polar-edge/issues/479)) ([dfec6af](https://github.com/yeti-robotics/polar-edge/commit/dfec6af8c4002d644fae82d34234a7cf0373c2d4))
+
+## [2026.16.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.15.1...scouting-v2026.16.0) (2026-04-02)
+
+
+### Features
+
+* **scouting:** add CitrusRank drive team ranking system ([#504](https://github.com/yeti-robotics/polar-edge/issues/504)) ([fbef03d](https://github.com/yeti-robotics/polar-edge/commit/fbef03ddecb877928c020aeba48487a5a3b740ea))
+* **scouting:** picklist filters and removal accessibility ([#501](https://github.com/yeti-robotics/polar-edge/issues/501)) ([e5bf60e](https://github.com/yeti-robotics/polar-edge/commit/e5bf60eb536b93d7888c18055127f3d718645455))
+* **scouting:** pitform added turret or fixed shooter and added shoot while moving ([#498](https://github.com/yeti-robotics/polar-edge/issues/498)) ([34b299d](https://github.com/yeti-robotics/polar-edge/commit/34b299d9321d8f1cec4c8b4e2f82f15604934c68))
+* **scouting:** public scout coverage ([#496](https://github.com/yeti-robotics/polar-edge/issues/496)) ([ef6db41](https://github.com/yeti-robotics/polar-edge/commit/ef6db4186273d795b1704a1f50326af865698497))
+
 ## [2026.15.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.15.0...scouting-v2026.15.1) (2026-03-25)
 
 

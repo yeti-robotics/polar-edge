@@ -1,5 +1,5 @@
 import { defineConfig } from "vitest/config";
-import { baseConfig } from "./configs/base-config.js";
+import { baseConfig } from "./configs/base-config.ts";
 
 export const sharedConfig = defineConfig({
   test: {
@@ -8,5 +8,5 @@ export const sharedConfig = defineConfig({
   },
 });
 
-export { baseConfig } from "./configs/base-config.js";
-export { uiConfig } from "./configs/ui-config.js";
+export { baseConfig } from "./configs/base-config.ts";
+export { uiConfig } from "./configs/ui-config.ts";

@@ -1,0 +1,24 @@
+---
+import "../styles/globals.css";
+// biome-ignore lint/correctness/noUnusedImports: used in Astro template below
+import { HowToUseContent } from "../components/HowToUseContent";
+// biome-ignore lint/correctness/noUnusedImports: used in Astro template below
+import { JuiceNav } from "../components/JuiceNav";
+---
+
+<html lang="en" class="dark">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Juice — How to Use</title>
+	</head>
+	<body class="min-h-screen bg-background text-foreground">
+		<JuiceNav active="how-to-use" client:load />
+		<div class="flex min-h-[calc(100vh-3.5rem)] flex-col items-center px-6 py-12">
+			<HowToUseContent client:load />
+		</div>
+	</body>
+</html>

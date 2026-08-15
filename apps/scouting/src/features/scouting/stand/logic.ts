@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/database";
 import { climb, cycle, match, standForm, teamMatch } from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
@@ -76,12 +76,29 @@ export async function submitStandForm(
     return { error: "Invalid match for current event" };
   }
 
+  const existing = await db
+    .select({ id: standForm.id })
+    .from(standForm)
+    .where(
+      and(
+        eq(standForm.teamMatchId, data.teamMatchId),
+        eq(standForm.scoutMemberId, memberId),
+        isNull(standForm.deletedAt)
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    return { error: "You have already submitted a form for this match and team" };
+  }
+
   await db.transaction(async (tx) => {
     const [standFormRecord] = await tx
       .insert(standForm)
       .values({
         teamMatchId: data.teamMatchId,
         scoutMemberId: memberId,
+        canShuttle: data.canShuttle,
         comments: data.comments,
         oofTimeSeconds: data.oofTimeSeconds,
       })
@@ -97,7 +114,6 @@ export async function submitStandForm(
           standFormId: standFormRecord.id,
           phase: c.phase,
           cycleNumber: c.cycleNumber,
-          bucket: c.bucket,
           dumpDuration: ((c.endedAt - c.startedAt) / 1000).toString(),
         }))
       );
@@ -108,8 +124,6 @@ export async function submitStandForm(
         data.climbs.map((c) => ({
           standFormId: standFormRecord.id,
           climbPhase: c.phase,
-          climbLevel: c.climbLevel,
-          climbSuccess: c.climbSuccess,
           climbDuration: ((c.endedAt - c.startedAt) / 1000).toString(),
         }))
       );

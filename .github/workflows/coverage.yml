@@ -50,14 +50,10 @@ jobs:
       - name: Generate coverage report
         run: pnpm coverage
 
-      - name: Build Juice
-        run: pnpm turbo build --filter=juice
-
       - name: Assemble pages artifact
         run: |
-          mkdir -p _site/juice _site/coverage
+          mkdir -p _site/coverage
           cp -r packages/vitest-config/coverage/report/* _site/coverage/
-          cp -r apps/juice/dist/* _site/juice/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

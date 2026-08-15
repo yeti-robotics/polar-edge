@@ -1,0 +1,21 @@
+{
+  "name": "@repo/seed",
+  "version": "0.0.0",
+  "description": "FRC match simulation engine for generating realistic seed data",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "typecheck": "pnpm check-types"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:"
+  }
+}

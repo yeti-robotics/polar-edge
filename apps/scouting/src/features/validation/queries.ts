@@ -187,6 +187,57 @@ export async function getScoutCoverage(
   }));
 }
 
+// ── Drive Ranking Coverage ───────────────────────────────────────────────────
+
+export type DriveRankingCoverageRow = {
+  matchNumber: number;
+  alliance: string;
+  hasRanking: boolean;
+};
+
+/**
+ * Per-match, per-alliance drive ranking coverage for qual matches at an event,
+ * scoped to this org. Drive rankings are only collected for qualification matches.
+ */
+export async function getDriveRankingCoverage(
+  eventId: string,
+  organizationId: string
+): Promise<DriveRankingCoverageRow[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(cacheTags.driveRanking(organizationId, eventId));
+  cacheTag(cacheTags.eventTeams(eventId));
+
+  const rows = await db.execute(sql`
+    WITH match_alliances AS (
+      SELECT DISTINCT
+        m.id AS match_id,
+        m.match_number,
+        tm.alliance
+      FROM match m
+      JOIN team_match tm ON tm.match_id = m.id
+      WHERE m.event_id = ${eventId}
+        AND m.match_type = 'qm'
+    )
+    SELECT
+      ma.match_number,
+      ma.alliance,
+      CASE WHEN dr.id IS NOT NULL THEN true ELSE false END AS has_ranking
+    FROM match_alliances ma
+    LEFT JOIN drive_team_ranking dr
+      ON dr.match_id = ma.match_id
+      AND dr.alliance = ma.alliance
+      AND dr.organization_id = ${organizationId}
+    ORDER BY ma.match_number, ma.alliance
+  `);
+
+  return (rows.rows as Array<Record<string, unknown>>).map((r) => ({
+    matchNumber: Number(r.match_number),
+    alliance: r.alliance as string,
+    hasRanking: Boolean(r.has_ranking),
+  }));
+}
+
 // ── Flagged Forms ────────────────────────────────────────────────────────────
 
 export type FlaggedFormRow = {
@@ -268,6 +319,109 @@ export async function getFlaggedForms(
   }));
 }
 
+// ── Duplicate Forms ──────────────────────────────────────────────────────────
+
+export type DuplicateFormEntry = {
+  formId: string;
+  cycleCount: number;
+  climbCount: number;
+  commentsLength: number;
+  oofTimeSeconds: number;
+  createdAt: Date;
+};
+
+export type DuplicateGroup = {
+  teamMatchId: number;
+  scoutMemberId: string;
+  scoutName: string | null;
+  teamNumber: number;
+  matchNumber: number;
+  forms: DuplicateFormEntry[];
+};
+
+/**
+ * Groups of stand forms sharing the same (teamMatchId, scoutMemberId) pair,
+ * scoped to this org's members and the given event.
+ */
+export async function getDuplicateGroups(
+  eventId: string,
+  organizationId: string
+): Promise<DuplicateGroup[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(cacheTags.teamMetrics(eventId));
+
+  const cycleCount = sql<number>`count(DISTINCT ${cycle.id})::int`;
+  const climbCount = sql<number>`count(DISTINCT ${climb.id})::int`;
+
+  // Get all active forms for this event+org, with their aggregate counts
+  const rows = await db
+    .select({
+      formId: standForm.id,
+      teamMatchId: standForm.teamMatchId,
+      scoutMemberId: standForm.scoutMemberId,
+      scoutName: user.name,
+      teamNumber: teamMatch.teamNumber,
+      matchNumber: match.matchNumber,
+      oofTimeSeconds: standForm.oofTimeSeconds,
+      comments: standForm.comments,
+      createdAt: standForm.createdAt,
+      cycleCount,
+      climbCount,
+    })
+    .from(standForm)
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .innerJoin(match, eq(match.id, teamMatch.matchId))
+    .innerJoin(
+      member,
+      and(eq(member.id, standForm.scoutMemberId), eq(member.organizationId, organizationId))
+    )
+    .leftJoin(user, eq(user.id, member.userId))
+    .leftJoin(cycle, eq(cycle.standFormId, standForm.id))
+    .leftJoin(climb, eq(climb.standFormId, standForm.id))
+    .where(and(eq(teamMatch.eventId, eventId), isNull(standForm.deletedAt)))
+    .groupBy(
+      standForm.id,
+      standForm.teamMatchId,
+      standForm.scoutMemberId,
+      user.name,
+      teamMatch.teamNumber,
+      match.matchNumber,
+      standForm.oofTimeSeconds,
+      standForm.comments,
+      standForm.createdAt
+    )
+    .orderBy(match.matchNumber, standForm.createdAt);
+
+  // Group by (teamMatchId, scoutMemberId) and keep only groups with >1 form
+  const groupMap = new Map<string, DuplicateGroup>();
+  for (const row of rows) {
+    const key = `${row.teamMatchId}:${row.scoutMemberId}`;
+    let group = groupMap.get(key);
+    if (!group) {
+      group = {
+        teamMatchId: row.teamMatchId,
+        scoutMemberId: row.scoutMemberId ?? "",
+        scoutName: row.scoutName ?? null,
+        teamNumber: row.teamNumber,
+        matchNumber: row.matchNumber,
+        forms: [],
+      };
+      groupMap.set(key, group);
+    }
+    group.forms.push({
+      formId: row.formId,
+      cycleCount: row.cycleCount ?? 0,
+      climbCount: row.climbCount ?? 0,
+      commentsLength: (row.comments ?? "").length,
+      oofTimeSeconds: row.oofTimeSeconds ?? 0,
+      createdAt: row.createdAt,
+    });
+  }
+
+  return Array.from(groupMap.values()).filter((g) => g.forms.length > 1);
+}
+
 // ── Summary ──────────────────────────────────────────────────────────────────
 
 export type ValidationSummary = {
@@ -276,6 +430,8 @@ export type ValidationSummary = {
   totalSlots: number;
   scoutedSlots: number;
   singleScoutSlots: number;
+  driveRankingTotal: number;
+  driveRankingCovered: number;
 };
 
 /**
@@ -292,8 +448,9 @@ export async function getValidationSummary(
   cacheTag(cacheTags.matchScores(eventId));
   cacheTag(cacheTags.teamMetrics(eventId));
   cacheTag(cacheTags.eventTeams(eventId));
+  cacheTag(cacheTags.driveRanking(organizationId, eventId));
 
-  const [playedCountResult, matchScores, coverage] = await Promise.all([
+  const [playedCountResult, matchScores, coverage, driveRankingCoverage] = await Promise.all([
     // Simple count of all TBA-scored matches (independent of coverage)
     db
       .select({ count: sql<number>`count(*)::int` })
@@ -303,6 +460,7 @@ export async function getValidationSummary(
       ),
     getValidationMatchScores(eventId, organizationId),
     getScoutCoverage(eventId, organizationId),
+    getDriveRankingCoverage(eventId, organizationId),
   ]);
 
   const playedMatchCount = playedCountResult[0]?.count ?? 0;
@@ -317,5 +475,7 @@ export async function getValidationSummary(
     totalSlots: coverage.length,
     scoutedSlots: coverage.filter((s) => s.scoutCount >= 1).length,
     singleScoutSlots: coverage.filter((s) => s.scoutCount === 1).length,
+    driveRankingTotal: driveRankingCoverage.length,
+    driveRankingCovered: driveRankingCoverage.filter((r) => r.hasRanking).length,
   };
 }
