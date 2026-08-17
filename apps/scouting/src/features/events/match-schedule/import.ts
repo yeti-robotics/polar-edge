@@ -294,25 +294,22 @@ export async function importMatchSchedule(schedule: MatchSchedule): Promise<Impo
       }
     }
 
-    const teamMatchInsertResult =
-      teamMatchRows.length > 0
-        ? await tx
-            .insert(teamMatch)
-            .values(teamMatchRows)
-            .onConflictDoUpdate({
-              target: [teamMatch.matchId, teamMatch.teamNumber],
-              set: {
-                alliance: sql`excluded.alliance`,
-                position: sql`excluded.position`,
-                surrogate: sql`excluded.surrogate`,
-              },
-            })
-        : null;
+
+    if (teamMatchRows.length > 0) {
+      await tx.insert(teamMatch).values(teamMatchRows).onConflictDoUpdate({ target: [teamMatch.matchId, teamMatch.teamNumber],
+      set: {
+        alliance: sql`excluded.alliance`,
+        position: sql`excluded.position`,
+        surrogate: sql`excluded.surrogate`,
+      },
+      });
+    }
+
 
     return {
-      eventId: eventId,
+      eventId,
       matchCount: schedule.matches.length,
-      teamMatchCount: teamMatchInsertResult?.rowCount ?? 0,
+      teamMatchCount: teamMatchRows.length,
     };
   });
 
