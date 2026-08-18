@@ -68,13 +68,16 @@ export function CreateManualEventForm({ organizationId }: { organizationId: stri
           await value.csvFile.text()
         );
 
-        if (result.error) {
-          setMessage({ type: "error", text: result.error });
+        if (result.error || !result.data) {
+          setMessage({ type: "error", text: result.error ?? "Failed to create the event." });
           return;
         }
 
         form.reset();
-        setMessage({ type: "success", text: "Event created successfully." });
+        setMessage({
+          type: "success",
+          text: `Event created successfully with ${result.data.matchCount} matches and ${result.data.teamMatchCount} team match assignments.`,
+        });
         router.refresh();
       } catch (error) {
         console.error(error);
