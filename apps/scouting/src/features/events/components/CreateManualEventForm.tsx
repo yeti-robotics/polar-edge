@@ -14,6 +14,7 @@ import { useForm } from "@tanstack/react-form-nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createManualEventAction } from "../actions";
+import { MAX_CSV_BYTES } from "../manual-import-schema";
 
 type Message = {
   type: "success" | "error";
@@ -208,8 +209,15 @@ export function CreateManualEventForm({ organizationId }: { organizationId: stri
           <form.Field
             name="csvFile"
             validators={{
-              onChange: ({ value }) =>
-                value === null ? { message: "A CSV file is required" } : undefined,
+              onChange: ({ value }) => {
+                if (value === null) return { message: "A CSV file is required" };
+                if (value.size > MAX_CSV_BYTES) {
+                  return {
+                    message: `That file is ${Math.ceil(value.size / 1024)} KB. The limit is ${MAX_CSV_BYTES / 1024} KB.`,
+                  };
+                }
+                return undefined;
+              },
             }}
           >
             {(field) => {

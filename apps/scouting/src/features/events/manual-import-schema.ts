@@ -2,6 +2,8 @@
 
 import { z } from "zod";
 
+export const MAX_CSV_BYTES = 256 * 1024;
+
 export const manualEventSchema = z
   .object({
     eventCode: z.string().trim().min(1).max(16),

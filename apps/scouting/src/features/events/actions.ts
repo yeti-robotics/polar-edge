@@ -19,7 +19,7 @@ import {
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
 import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
-import { manualEventSchema } from "./manual-import-schema";
+import { manualEventSchema, MAX_CSV_BYTES } from "./manual-import-schema";
 import { importMatchSchedule } from "./match-schedule/import";
 import { csvScheduleToImport } from "./match-schedule/sources/csv";
 import { tbaScheduleToImport } from "./match-schedule/sources/tba";
@@ -231,6 +231,13 @@ export async function createManualEventAction(
       return {
         data: null,
         error: "Only organization admins and owners can create manual events",
+      };
+    }
+
+    if (Buffer.byteLength(csvText, "utf8") > MAX_CSV_BYTES) {
+      return {
+        data: null,
+        error: `The CSV is too large. The limit is ${MAX_CSV_BYTES / 1024} KB.`,
       };
     }
 
