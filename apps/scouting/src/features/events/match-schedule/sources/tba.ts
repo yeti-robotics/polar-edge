@@ -47,7 +47,6 @@ export function tbaScheduleToImport(
   const qualifyingMatches = tbaMatches.filter(
     (match) => match.comp_level === "qm",
   );
-  console.log(qualifyingMatches)
 
   return {
     event: {
