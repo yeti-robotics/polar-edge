@@ -15,21 +15,16 @@ import {
   workabilityForm,
 } from "@/lib/database/schema/tables";
 import { routes } from "@/lib/routes";
-import type { ImportResult, MatchSchedule } from "./types";
+import {
+  planScheduleChanges,
+  type ImportResult,
+  type MatchSchedule,
+  type ScheduleChanges,
+  type StoredMatch,
+  type StoredSchedule,
+} from "./types";
 
 type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
-type StoredMatch = Pick<typeof match.$inferSelect, "id" | "matchNumber" | "matchType">;
-type StoredTeamMatch = Pick<typeof teamMatch.$inferSelect, "id" | "matchId" | "teamNumber">;
-
-type StoredSchedule = {
-  matches: StoredMatch[];
-  teamMatches: StoredTeamMatch[];
-};
-
-type ScheduleChanges = {
-  staleMatches: StoredMatch[];
-  obsoleteTeamMatches: StoredTeamMatch[];
-};
 
 type TeamMatchValue = {
   eventId: string;
@@ -46,7 +41,7 @@ export async function importMatchSchedule(schedule: MatchSchedule): Promise<Impo
     await upsertTeams(tx, schedule);
     await upsertMatches(tx, eventId, schedule);
     const stored = await readStoredSchedule(tx, eventId, schedule);
-    const changes = planScheduleChanges(stored, schedule);
+    const changes = planScheduleChanges(stored, schedule.matches);
     await ensureChangesAreSafe(tx, stored.matches, changes);
     await applyDeletions(tx, changes);
     return upsertAssignments(tx, eventId, stored.matches, schedule);
@@ -178,32 +173,6 @@ async function readStoredSchedule(
   return { matches, teamMatches };
 }
 
-function planScheduleChanges(stored: StoredSchedule, schedule: MatchSchedule): ScheduleChanges {
-  const incomingKeys = new Set(
-    schedule.matches.map(({ matchNumber, matchType }) => matchKey(matchNumber, matchType))
-  );
-  const staleMatches = stored.matches.filter(
-    ({ matchNumber, matchType }) => !incomingKeys.has(matchKey(matchNumber, matchType))
-  );
-  const staleMatchIds = new Set(staleMatches.map(({ id }) => id));
-  const storedKeyById = new Map(
-    stored.matches.map(({ id, matchNumber, matchType }) => [id, matchKey(matchNumber, matchType)])
-  );
-  const wantedTeamsByMatch = new Map(
-    schedule.matches.map(({ matchNumber, matchType, slots }) => [
-      matchKey(matchNumber, matchType),
-      new Set(slots.map(({ teamNumber }) => teamNumber)),
-    ])
-  );
-  const obsoleteTeamMatches = stored.teamMatches.filter(({ matchId, teamNumber }) => {
-    if (staleMatchIds.has(matchId)) return true;
-    const key = storedKeyById.get(matchId);
-    return !key || !wantedTeamsByMatch.get(key)?.has(teamNumber);
-  });
-
-  return { staleMatches, obsoleteTeamMatches };
-}
-
 async function ensureChangesAreSafe(
   tx: Transaction,
   storedMatches: StoredMatch[],
@@ -251,10 +220,7 @@ async function findProtectedMatches(
   }
 
   const staleIds = new Set(staleMatches.map(({ id }) => id));
-  const changedIds = [
-    ...new Set([...staleIds, ...obsoleteTeamMatches.map(({ matchId }) => matchId)]),
-  ];
-  if (changedIds.length === 0) return protectedIds;
+  if (changes.changedMatchIds.length === 0) return protectedIds;
 
   const obsoleteAssignments = new Set(
     obsoleteTeamMatches.map(({ matchId, teamNumber }) => `${matchId}:${teamNumber}`)
@@ -263,11 +229,11 @@ async function findProtectedMatches(
     tx
       .select({ matchId: workabilityForm.matchId, teamNumber: workabilityForm.teamNumber })
       .from(workabilityForm)
-      .where(inArray(workabilityForm.matchId, changedIds)),
+      .where(inArray(workabilityForm.matchId, changes.changedMatchIds)),
     tx
       .select({ matchId: driveTeamRanking.matchId })
       .from(driveTeamRanking)
-      .where(inArray(driveTeamRanking.matchId, changedIds)),
+      .where(inArray(driveTeamRanking.matchId, changes.changedMatchIds)),
   ]);
 
   for (const { matchId, teamNumber } of workabilityForms) {
