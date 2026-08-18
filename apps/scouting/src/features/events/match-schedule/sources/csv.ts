@@ -39,12 +39,13 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
 
   const headers = headerLine.split(",").map((header) => header.trim());
 
-  const headersAreValid =
-    headers.length === EXPECTED_HEADERS.length &&
-    EXPECTED_HEADERS.every((expected, index) => headers[index] === expected);
-
-  if (!headersAreValid) {
-    throw new Error("The CSV Header Line is missing or contains invalid headers");
+  if (
+    headers.length !== EXPECTED_HEADERS.length ||
+    EXPECTED_HEADERS.some((expected, index) => headers[index] !== expected)
+  ) {
+    throw new Error(
+      `The CSV header must be: ${EXPECTED_HEADERS.join(", ")}. Received: ${headers.join(", ")}.`
+    );
   }
 
   const matchRows = lines.slice(1).map((line, index) => {

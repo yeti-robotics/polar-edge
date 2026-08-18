@@ -36,7 +36,7 @@ describe("parseMatchScheduleCsv", () => {
   it("rejects invalid headers", () => {
     const csv = ["matchnmber,r1,r2,r3,b1,b2,b3", "1,342,10367,10231,8137,3967, 343"].join("\n");
     expect(() => parseMatchScheduleCsv(csv)).toThrow(
-      "The CSV Header Line is missing or contains invalid headers"
+      "The CSV header must be: match_number, r1, r2, r3, b1, b2, b3. Received: matchnmber, r1, r2, r3, b1, b2, b3."
     );
   });
 
