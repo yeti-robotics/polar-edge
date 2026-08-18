@@ -20,6 +20,22 @@ type Message = {
   text: string;
 };
 
+type CreateManualEventValues = {
+  eventCode: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  csvFile: File | null; // changed so it isnt null as FIle becaus asserting hided errrors i see why now 
+};
+
+const defaultValues: CreateManualEventValues = {
+  eventCode: "",
+  name: "",
+  startDate: "",
+  endDate: "",
+  csvFile: null,
+};
+
 const required =
   (label: string) =>
   ({ value }: { value: string }) =>
@@ -30,13 +46,7 @@ export function CreateManualEventForm({ organizationId }: { organizationId: stri
   const [message, setMessage] = useState<Message | null>(null);
 
   const form = useForm({
-    defaultValues: {
-      eventCode: "",
-      name: "",
-      startDate: "",
-      endDate: "",
-      csvFile: null as File | null,
-    },
+    defaultValues,
     onSubmit: async ({ value }) => {
       setMessage(null);
 
