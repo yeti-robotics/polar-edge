@@ -1,81 +1,80 @@
 import { z } from "zod";
+import { parse } from "csv-parse/sync";
 import type { EventTarget, MatchSchedule } from "../types";
 
 
+const sanitizeNumber = (val: unknown) => {
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    if (/^\d{1,3}(,\d{3})*$/.test(trimmed)) {
+      return trimmed.replaceAll(",", "");
+    }
+    return trimmed;
+  }
+  return val;
+};
 
+const coercedInt = z.preprocess( // usaiblity write for the matchSchedule below
+  sanitizeNumber,
+  z.coerce.number().int().positive()
+);
 
 export const matchScheduleRowSchema = z.object({
-  matchNumber: z.coerce.number().int().positive(),
-  r1: z.coerce.number().int().positive(),
-  r2: z.coerce.number().int().positive(),
-  r3: z.coerce.number().int().positive(),
-  b1: z.coerce.number().int().positive(),
-  b2: z.coerce.number().int().positive(),
-  b3: z.coerce.number().int().positive(),
+  match_number: coercedInt,
+  r1: coercedInt,
+  r2: coercedInt,
+  r3: coercedInt,
+  b1: coercedInt,
+  b2: coercedInt,
+  b3: coercedInt,
 });
 
-export type MatchScheduleRow = z.infer<typeof matchScheduleRowSchema>;
-
-
-const EXPECTED_HEADERS = ["match_number", "r1", "r2", "r3", "b1", "b2", "b3"] as const;
-
-export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
-  const normalizedText = csvText
-    .replace(/^\uFEFF/, "")
-    .replace(/\r\n/g, "\n")
-    .trim();
-
-  const lines = normalizedText.split("\n");
-
-  if (lines.length < 2) {
-    throw new Error("CSV must have at least two lines");
-  }
-
-  const headerLine = lines[0];
-
-  if (!headerLine) {
-    throw new Error("The CSV Header line is missing");
-  }
-
-  const headers = headerLine.split(",").map((header) => header.trim());
-
-  if (
-    headers.length !== EXPECTED_HEADERS.length ||
-    EXPECTED_HEADERS.some((expected, index) => headers[index] !== expected)
-  ) {
-    throw new Error(
-      `The CSV header must be: ${EXPECTED_HEADERS.join(", ")}. Received: ${headers.join(", ")}.`
-    );
-  }
-
-  const matchRows = lines.slice(1).map((line, index) => {
-    const values = line.split(",").map((value) => value.trim());
-
-    if (values.length !== EXPECTED_HEADERS.length) {
-      throw new Error(
-        `Line ${index + 2} has ${values.length} values, expected ${EXPECTED_HEADERS.length}`
-      );
-    }
-
-    const [matchNumber, r1, r2, r3, b1, b2, b3] = values;
-
-    const result = matchScheduleRowSchema.safeParse({
-      matchNumber,
-      r1,
-      r2,
-      r3,
-      b1,
-      b2,
-      b3,
+export function parseMatchScheduleCsv(csvText: string): Array<{
+  matchNumber: number;
+  r1: number;
+  r2: number;
+  r3: number;
+  b1: number;
+  b2: number;
+  b3: number;
+}> {
+  // using headers to parse the csv string into objects
+  let records: Record<string, unknown>[];
+  try {
+    records = parse(csvText, {
+      columns: true, // first row
+      skip_empty_lines: true,
+      trim: true,
+      bom: true,
     });
+  } catch (err: any) {
+    throw new Error(`CSV parsing failed: ${err.message}`);
+  }
+
+  if (records.length === 0) {
+    throw new Error("CSV must have at least one data row");
+  }
+
+  const matchRows = records.map((record, index) => {
+    const result = matchScheduleRowSchema.safeParse(record);
 
     if (!result.success) {
       throw new Error(`Line ${index + 2} is invalid: ${result.error.message}`);
     }
 
-    return result.data;
+    const d = result.data;
+    return {
+      matchNumber: d.match_number,
+      r1: d.r1,
+      r2: d.r2,
+      r3: d.r3,
+      b1: d.b1,
+      b2: d.b2,
+      b3: d.b3,
+    };
   });
 
+  // Duplicate checks
   const seenMatchNumbers = new Set<number>();
 
   for (const row of matchRows) {
@@ -95,15 +94,17 @@ export function parseMatchScheduleCsv(csvText: string): MatchScheduleRow[] {
   return matchRows;
 }
 
-type CreateableEventTarget = Extract<EventTarget, {
-  mode: "create-or-update"
-}>;
+type CreateableEventTarget = Extract<
+  EventTarget,
+  {
+    mode: "create-or-update";
+  }
+>;
 
 export function csvScheduleToImport(
   event: CreateableEventTarget,
-  csvText: string,
+  csvText: string
 ): MatchSchedule {
-
   const rows = parseMatchScheduleCsv(csvText);
 
   return {
@@ -111,45 +112,14 @@ export function csvScheduleToImport(
     matches: rows.map((row) => ({
       matchNumber: row.matchNumber,
       matchType: "qm",
-
       slots: [
-        {
-          teamNumber: row.r1,
-          alliance: "red",
-          position: 1,
-
-
-        },
-        {
-          teamNumber: row.r2,
-          alliance: "red",
-          position: 2,
-        },
-        {
-          teamNumber: row.r3,
-          alliance: "red",
-          position: 3,
-        },
-
-        {
-          teamNumber: row.b1,
-          alliance: "blue",
-          position: 1,
-        },
-        {
-          teamNumber: row.b2,
-          alliance: "blue",
-          position: 2,
-        },
-        {
-          teamNumber: row.b3,
-          alliance: "blue",
-          position: 3,
-        },
-
-      ]
-    }))
-  }
-
-
+        { teamNumber: row.r1, alliance: "red", position: 1 },
+        { teamNumber: row.r2, alliance: "red", position: 2 },
+        { teamNumber: row.r3, alliance: "red", position: 3 },
+        { teamNumber: row.b1, alliance: "blue", position: 1 },
+        { teamNumber: row.b2, alliance: "blue", position: 2 },
+        { teamNumber: row.b3, alliance: "blue", position: 3 },
+      ],
+    })),
+  };
 }
