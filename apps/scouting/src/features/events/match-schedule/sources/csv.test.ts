@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { csvScheduleToImport, parseMatchScheduleCsv } from "./csv";
 
 describe("parseMatchScheduleCsv", () => {
-  it("should here parse a valid match schedule", () => {
+  it("parses a valid match schedule", () => {
     const csv = [
       "match_number, r1,r2,r3,b1,b2,b3",
       "1,342,10367,10231,8137,3967, 343",
@@ -40,6 +40,22 @@ describe("parseMatchScheduleCsv", () => {
     );
   });
 
+  it("parses quoted grouped numbers", () => {
+    const csv = ["match_number,r1,r2,r3,b1,b2,b3", '1,"1,234",10367,10231,8137,3967,343'].join(
+      "\n"
+    );
+
+    expect(parseMatchScheduleCsv(csv)[0]?.r1).toBe(1234);
+  });
+
+  it("rejects malformed grouped numbers", () => {
+    const csv = ["match_number,r1,r2,r3,b1,b2,b3", '1,"1,2,3",10367,10231,8137,3967,343'].join(
+      "\n"
+    );
+
+    expect(() => parseMatchScheduleCsv(csv)).toThrow("Line 2 is invalid");
+  });
+
   it("rejects duplicate match numbers", () => {
     const csv = [
       "match_number, r1,r2,r3,b1,b2,b3",
@@ -56,10 +72,7 @@ describe("parseMatchScheduleCsv", () => {
   });
 
   it("converts CSV data into the canonical match schedule", () => {
-    const csv = [
-      "match_number,r1,r2,r3,b1,b2,b3",
-      "1,342,10367,10231,8137,3976,343",
-    ].join("\n");
+    const csv = ["match_number,r1,r2,r3,b1,b2,b3", "1,342,10367,10231,8137,3976,343"].join("\n");
 
     const schedule = csvScheduleToImport(
       {
@@ -90,13 +103,4 @@ describe("parseMatchScheduleCsv", () => {
     expect(schedule.event.eventCode).toBe("2026thorwest");
     expect(schedule.event.mode).toBe("create-or-update");
   });
-
-
-
-
-
-
-
-
-
 });

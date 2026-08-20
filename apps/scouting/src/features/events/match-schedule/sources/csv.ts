@@ -1,12 +1,8 @@
-import { z } from "zod";
 import { parse } from "csv-parse/sync";
+import { z } from "zod";
 import type { EventTarget, MatchSchedule } from "../types";
 
-
-
-
 const EXPECTED_HEADERS = ["match_number", "r1", "r2", "r3", "b1", "b2", "b3"] as const;
-
 
 const sanitizeNumber = (val: unknown) => {
   if (typeof val === "string") {
@@ -43,21 +39,21 @@ export function parseMatchScheduleCsv(csvText: string): Array<{
   b2: number;
   b3: number;
 }> {
-  // using headers to parse the csv string into objects
   let records: Record<string, unknown>[];
   try {
     records = parse(csvText, {
       columns: (headers) => {
-        const receivedHeaders = headers.map((header) => header.trim())
+        const receivedHeaders = headers.map((header) => header.trim());
 
         const headersAreValid =
           receivedHeaders.length === EXPECTED_HEADERS.length && EXPECTED_HEADERS.every(
             (expected, index) => receivedHeaders[index] === expected
           );
 
-
-        if(!headersAreValid) {
-          throw new Error(`Invalid headers: ${receivedHeaders.join(", ")}`);
+        if (!headersAreValid) {
+          const expected = EXPECTED_HEADERS.join(", ");
+          const received = receivedHeaders.join(", ");
+          throw new Error(`The CSV header must be: ${expected}. Received: ${received}.`);
         }
         return receivedHeaders;
       },
@@ -93,7 +89,6 @@ export function parseMatchScheduleCsv(csvText: string): Array<{
     };
   });
 
-  // Duplicate checks
   const seenMatchNumbers = new Set<number>();
 
   for (const row of matchRows) {
