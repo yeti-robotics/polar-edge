@@ -1,15 +1,5 @@
-import { parseTbaTeamKey } from "@/lib/server/tba";
-import type {
-  AllianceSlot,
-  MatchSchedule,
-} from "../types";
-
-type TbaEventInput = {
-  key: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-};
+import { parseTbaTeamKey } from "@/lib/tba";
+import type { AllianceSlot, EventTarget, MatchSchedule } from "../types";
 
 type TbaAllianceInput = {
   score?: number | null;
@@ -33,7 +23,7 @@ type TbaTeamInput = {
 };
 
 export function tbaScheduleToImport(
-  tbaEvent: TbaEventInput,
+  event: EventTarget,
   tbaMatches: TbaMatchInput[],
   tbaTeams: TbaTeamInput[],
 ): MatchSchedule {
@@ -49,13 +39,7 @@ export function tbaScheduleToImport(
   );
 
   return {
-    event: {
-      mode: "create-or-update",
-      eventCode: tbaEvent.key,
-      name: tbaEvent.name,
-      startDate: new Date(tbaEvent.start_date),
-      endDate: new Date(tbaEvent.end_date),
-    },
+    event,
 
     matches: qualifyingMatches.map((tbaMatch) => {
       const slots: AllianceSlot[] = [];

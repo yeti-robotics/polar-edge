@@ -18,7 +18,8 @@ import {
   getActiveEventForOrganization,
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
-import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
+import { getTBAClient } from "@/lib/server/tba";
+import { parseTbaTeamKey } from "@/lib/tba";
 import { manualEventSchema, MAX_CSV_BYTES } from "./manual-import-schema";
 import { importMatchSchedule } from "./match-schedule/import";
 import { csvScheduleToImport } from "./match-schedule/sources/csv";
@@ -96,7 +97,17 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
       return { data: null, error: "TBA matches not found" };
     }
 
-    const schedule = tbaScheduleToImport(tbaEvent, tbaMatches, tbaTeams);
+    const schedule = tbaScheduleToImport(
+      {
+        mode: "create-or-update",
+        eventCode: tbaEvent.key,  // db event code 
+        name: tbaEvent.name,
+        startDate: new Date(tbaEvent.start_date),
+        endDate: new Date(tbaEvent.end_date),
+      },
+      tbaMatches,
+      tbaTeams,
+    );
     const result = await importMatchSchedule(schedule);
     const qualifyingMatches = tbaMatches.filter((tbaMatch) => tbaMatch.comp_level === "qm");
     const matchTeamNumbers = [
