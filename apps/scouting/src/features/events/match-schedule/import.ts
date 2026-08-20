@@ -32,10 +32,15 @@ type TeamMatchValue = {
   teamNumber: number;
   alliance: "red" | "blue";
   position: 1 | 2 | 3;
-  surrogate: boolean;
+  surrogate?: boolean;
 };
 
 export async function importMatchSchedule(schedule: MatchSchedule): Promise<ImportResult> {
+  if (schedule.matches.length === 0) {
+    const eventId = await findEventId(schedule.event.eventCode);
+    return { eventId, matchCount: 0, teamMatchCount: 0 };
+  }
+
   const result = await db.transaction(async (tx) => {
     const eventId = await resolveEvent(tx, schedule);
     await upsertTeams(tx, schedule);
@@ -49,6 +54,17 @@ export async function importMatchSchedule(schedule: MatchSchedule): Promise<Impo
 
   revalidateImportedSchedule(result.eventId);
   return result;
+}
+
+async function findEventId(eventCode: string): Promise<string> {
+  const [existingEvent] = await db
+    .select({ id: event.id })
+    .from(event)
+    .where(eq(event.eventCode, eventCode))
+    .limit(1);
+
+  if (!existingEvent) throw new Error(`Event ${eventCode} does not exist`);
+  return existingEvent.id;
 }
 
 async function resolveEvent(tx: Transaction, schedule: MatchSchedule): Promise<string> {
@@ -263,7 +279,8 @@ async function upsertAssignments(
   const idByKey = new Map(
     storedMatches.map(({ id, matchNumber, matchType }) => [matchKey(matchNumber, matchType), id])
   );
-  const rows: TeamMatchValue[] = [];
+  const knownSurrogateRows: TeamMatchValue[] = [];
+  const unknownSurrogateRows: TeamMatchValue[] = [];
 
   for (const scheduledMatch of schedule.matches) {
     const key = matchKey(scheduledMatch.matchNumber, scheduledMatch.matchType);
@@ -271,21 +288,23 @@ async function upsertAssignments(
     if (!matchId) throw new Error(`Could not find imported match ${key}`);
 
     for (const slot of scheduledMatch.slots) {
-      rows.push({
+      const row: TeamMatchValue = {
         eventId,
         matchId,
         teamNumber: slot.teamNumber,
         alliance: slot.alliance,
         position: slot.position,
-        surrogate: slot.surrogate ?? false,
-      });
+      };
+
+      if (slot.surrogate === undefined) unknownSurrogateRows.push(row);
+      else knownSurrogateRows.push({ ...row, surrogate: slot.surrogate });
     }
   }
 
-  if (rows.length > 0) {
+  if (knownSurrogateRows.length > 0) {
     await tx
       .insert(teamMatch)
-      .values(rows)
+      .values(knownSurrogateRows)
       .onConflictDoUpdate({
         target: [teamMatch.matchId, teamMatch.teamNumber],
         set: {
@@ -296,7 +315,24 @@ async function upsertAssignments(
       });
   }
 
-  return { eventId, matchCount: schedule.matches.length, teamMatchCount: rows.length };
+  if (unknownSurrogateRows.length > 0) {
+    await tx
+      .insert(teamMatch)
+      .values(unknownSurrogateRows)
+      .onConflictDoUpdate({
+        target: [teamMatch.matchId, teamMatch.teamNumber],
+        set: {
+          alliance: sql`excluded.alliance`,
+          position: sql`excluded.position`,
+        },
+      });
+  }
+
+  return {
+    eventId,
+    matchCount: schedule.matches.length,
+    teamMatchCount: knownSurrogateRows.length + unknownSurrogateRows.length,
+  };
 }
 
 function matchKey(matchNumber: number, matchType: string): string {
@@ -307,4 +343,6 @@ function revalidateImportedSchedule(eventId: string): void {
   revalidatePath(routes.admin.event);
   revalidateTag(cacheTags.teamsList, "max");
   revalidateTag(cacheTags.eventTeams(eventId), "max");
+  revalidateTag(cacheTags.matchScores(eventId), "max");
+  revalidateTag(cacheTags.teamMetrics(eventId), "max");
 }

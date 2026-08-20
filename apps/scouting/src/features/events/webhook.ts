@@ -9,11 +9,13 @@ import {
   event,
   match,
   tbaMatchBreakdown,
-  team,
   teamEventCopr,
   teamMatch,
 } from "@/lib/database/schema/tables";
-import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
+import { getTBAClient } from "@/lib/server/tba";
+import { parseTbaTeamKey } from "@/lib/tba";
+import { importMatchSchedule } from "./match-schedule/import";
+import { tbaScheduleToImport } from "./match-schedule/sources/tba";
 import type { MatchScorePayload, ScheduleUpdatedPayload } from "./webhook-schemas";
 
 // --- HMAC verification ---
@@ -207,100 +209,27 @@ export async function processScheduleUpdated(
   const qualMatches = tbaMatches.filter((m) => m.comp_level === "qm");
   if (!qualMatches.length) return { updated: false, reason: "No qualifying matches in schedule" };
 
+  const schedule = tbaScheduleToImport(
+    { mode: "existing-only", eventCode: eventKey },
+    tbaMatches,
+    []
+  );
+
+  try {
+    await importMatchSchedule(schedule);
+  } catch (error) {
+    return {
+      updated: false,
+      reason: error instanceof Error ? error.message : "Schedule import failed",
+    };
+  }
+
   await db.transaction(async (tx) => {
-    // Upsert matches. ON CONFLICT DO UPDATE never deletes — team_match IDs stay stable,
-    // preserving all stand form links even if this fires mid-event.
-    const upsertedMatches = await tx
-      .insert(match)
-      .values(
-        qualMatches.map((m) => ({
-          eventId: eventRow.id,
-          matchType: "qm" as const,
-          matchNumber: m.match_number,
-          redScore: m.alliances.red.score >= 0 ? m.alliances.red.score : null,
-          blueScore: m.alliances.blue.score >= 0 ? m.alliances.blue.score : null,
-        }))
-      )
-      .onConflictDoUpdate({
-        target: [match.eventId, match.matchNumber, match.matchType],
-        set: {
-          redScore: sql`excluded.red_score`,
-          blueScore: sql`excluded.blue_score`,
-        },
-      })
-      .returning({ id: match.id, matchNumber: match.matchNumber });
-    const matchIdByNumber = new Map(upsertedMatches.map((r) => [r.matchNumber, r.id]));
-
-    const teamMatchRows: Array<{
-      eventId: string;
-      matchId: string;
-      teamNumber: number;
-      alliance: "red" | "blue";
-      position: 1 | 2 | 3;
-      surrogate: boolean;
-    }> = [];
-    const teamNumbers = new Set<number>();
-
-    for (const m of qualMatches) {
-      const matchId = matchIdByNumber.get(m.match_number);
-      if (!matchId) continue;
-
-      const redSurrogates = new Set(m.alliances.red.surrogate_team_keys ?? []);
-      const blueSurrogates = new Set(m.alliances.blue.surrogate_team_keys ?? []);
-
-      for (let i = 0; i < 3; i++) {
-        const redKey = m.alliances.red.team_keys[i];
-        const blueKey = m.alliances.blue.team_keys[i];
-        if (redKey) {
-          const teamNumber = parseTbaTeamKey(redKey);
-          teamNumbers.add(teamNumber);
-          teamMatchRows.push({
-            eventId: eventRow.id,
-            matchId,
-            teamNumber,
-            alliance: "red",
-            position: (i + 1) as 1 | 2 | 3,
-            surrogate: redSurrogates.has(redKey),
-          });
-        }
-        if (blueKey) {
-          const teamNumber = parseTbaTeamKey(blueKey);
-          teamNumbers.add(teamNumber);
-          teamMatchRows.push({
-            eventId: eventRow.id,
-            matchId,
-            teamNumber,
-            alliance: "blue",
-            position: (i + 1) as 1 | 2 | 3,
-            surrogate: blueSurrogates.has(blueKey),
-          });
-        }
-      }
-    }
-
-    // Insert teams that don't yet exist — don't overwrite names from prior enrichment.
-    if (teamNumbers.size > 0) {
-      await tx
-        .insert(team)
-        .values([...teamNumbers].map((n) => ({ teamNumber: n, teamName: "" })))
-        .onConflictDoNothing();
-    }
-
-    if (teamMatchRows.length > 0) {
-      await tx
-        .insert(teamMatch)
-        .values(teamMatchRows)
-        .onConflictDoUpdate({
-          target: [teamMatch.matchId, teamMatch.teamNumber],
-          set: {
-            alliance: sql`excluded.alliance`,
-            position: sql`excluded.position`,
-            surrogate: sql`excluded.surrogate`,
-          },
-        });
-    }
-
-    // Upsert TBA score breakdown climb data for played matches
+    const matchRows = await tx
+      .select({ id: match.id, matchNumber: match.matchNumber })
+      .from(match)
+      .where(and(eq(match.eventId, eventRow.id), eq(match.matchType, "qm")));
+    const matchIdByNumber = new Map(matchRows.map((row) => [row.matchNumber, row.id]));
     const breakdownValues: Array<{
       teamMatchId: number;
       autoClimbLevel: number;
@@ -358,9 +287,7 @@ export async function processScheduleUpdated(
     }
   });
 
-  revalidateTag(cacheTags.eventTeams(eventRow.id), "max");
   revalidateTag(cacheTags.teamMetrics(eventRow.id), "max");
-  revalidateTag(cacheTags.matchScores(eventRow.id), "max");
 
   return { updated: true };
 }
