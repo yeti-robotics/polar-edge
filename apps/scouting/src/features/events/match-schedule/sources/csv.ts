@@ -15,7 +15,8 @@ const sanitizeNumber = (val: unknown) => {
   return val;
 };
 
-const coercedInt = z.preprocess( // usaiblity write for the matchSchedule below
+const coercedInt = z.preprocess(
+  // usaiblity write for the matchSchedule below
   sanitizeNumber,
   z.coerce.number().int().positive()
 );
@@ -46,9 +47,8 @@ export function parseMatchScheduleCsv(csvText: string): Array<{
         const receivedHeaders = headers.map((header) => header.trim());
 
         const headersAreValid =
-          receivedHeaders.length === EXPECTED_HEADERS.length && EXPECTED_HEADERS.every(
-            (expected, index) => receivedHeaders[index] === expected
-          );
+          receivedHeaders.length === EXPECTED_HEADERS.length &&
+          EXPECTED_HEADERS.every((expected, index) => receivedHeaders[index] === expected);
 
         if (!headersAreValid) {
           const expected = EXPECTED_HEADERS.join(", ");
@@ -61,7 +61,8 @@ export function parseMatchScheduleCsv(csvText: string): Array<{
       trim: true,
       bom: true,
     });
-  } catch (err: unknown) { // changed to unkown to allow more tsx featues 
+  } catch (err: unknown) {
+    // changed to unkown to allow more tsx featues
     const message = err instanceof Error ? err.message : "Unknown";
     throw new Error(`CSV parsing failed: ${message}`);
   }
@@ -115,10 +116,7 @@ type CreateableEventTarget = Extract<
   }
 >;
 
-export function csvScheduleToImport(
-  event: CreateableEventTarget,
-  csvText: string
-): MatchSchedule {
+export function csvScheduleToImport(event: CreateableEventTarget, csvText: string): MatchSchedule {
   const rows = parseMatchScheduleCsv(csvText);
 
   return {

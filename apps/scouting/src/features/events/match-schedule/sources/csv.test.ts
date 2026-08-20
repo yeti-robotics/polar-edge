@@ -82,7 +82,7 @@ describe("parseMatchScheduleCsv", () => {
         startDate: new Date("2026-10-24"),
         endDate: new Date("2026-10-24"),
       },
-      csv,
+      csv
     );
 
     expect(schedule.matches).toEqual([

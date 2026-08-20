@@ -3,12 +3,11 @@ import { Skeleton } from "@repo/ui/components/skeleton";
 import { TypographyH1, TypographyMuted } from "@repo/ui/components/typography";
 import { Suspense } from "react";
 import { ActiveEventForm } from "@/features/events/components/ActiveEventForm";
+import { CreateManualEventForm } from "@/features/events/components/CreateManualEventForm";
 import { EnrichTeamNamesForm } from "@/features/events/components/EnrichTeamNamesForm";
 import { SyncFromTBAForm } from "@/features/events/components/SyncFromTBAForm";
-import { CreateManualEventForm } from "@/features/events/components/CreateManualEventForm";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
 import { getActiveEventForOrganization, listEvents } from "@/lib/server/organization/active-event";
-
 
 function LoadingForm() {
   return (

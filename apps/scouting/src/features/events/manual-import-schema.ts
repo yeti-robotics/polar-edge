@@ -16,8 +16,5 @@ export const manualEventSchema = z
     path: ["endDate"],
   });
 
-
-
-
 export type ManualEventInput = z.input<typeof manualEventSchema>;
 // export type MatchScheduleRow = z.infer<typeof matchScheduleRowSchema>;

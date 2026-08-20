@@ -20,7 +20,7 @@ import {
 } from "@/lib/server/organization/active-event";
 import { getTBAClient } from "@/lib/server/tba";
 import { parseTbaTeamKey } from "@/lib/tba";
-import { manualEventSchema, MAX_CSV_BYTES } from "./manual-import-schema";
+import { MAX_CSV_BYTES, manualEventSchema } from "./manual-import-schema";
 import { importMatchSchedule } from "./match-schedule/import";
 import { csvScheduleToImport } from "./match-schedule/sources/csv";
 import { tbaScheduleToImport } from "./match-schedule/sources/tba";
@@ -100,18 +100,20 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
     const schedule = tbaScheduleToImport(
       {
         mode: "create-or-update",
-        eventCode: tbaEvent.key,  // db event code 
+        eventCode: tbaEvent.key, // db event code
         name: tbaEvent.name,
         startDate: new Date(tbaEvent.start_date),
         endDate: new Date(tbaEvent.end_date),
       },
       tbaMatches,
-      tbaTeams,
+      tbaTeams
     );
     const result = await importMatchSchedule(schedule);
     const qualifyingMatches = tbaMatches.filter((tbaMatch) => tbaMatch.comp_level === "qm");
     const matchTeamNumbers = [
-      ...new Set(schedule.matches.flatMap(({ slots }) => slots.map(({ teamNumber }) => teamNumber))),
+      ...new Set(
+        schedule.matches.flatMap(({ slots }) => slots.map(({ teamNumber }) => teamNumber))
+      ),
     ];
 
     await db.transaction(async (tx) => {
@@ -121,10 +123,9 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
         .where(eq(match.eventId, result.eventId));
       const matchIdByKey = new Map(matchRows.map((r) => [`${r.matchNumber}:${r.matchType}`, r.id]));
 
-      // Upsert TBA score breakdown climb 
+      // Upsert TBA score breakdown climb
       const breakdownRows = extractClimbBreakdowns(qualifyingMatches, matchIdByKey);
       if (breakdownRows.length > 0) {
-       
         const tmRows = await tx
           .select({
             id: teamMatch.id,
@@ -280,7 +281,6 @@ export async function createManualEventAction(
     };
   }
 }
-
 
 type TowerRobot2026 = "Level1" | "Level2" | "Level3" | "None";
 

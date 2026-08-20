@@ -25,18 +25,13 @@ type TbaTeamInput = {
 export function tbaScheduleToImport(
   event: EventTarget,
   tbaMatches: TbaMatchInput[],
-  tbaTeams: TbaTeamInput[],
+  tbaTeams: TbaTeamInput[]
 ): MatchSchedule {
   const teamNameByNumber = new Map(
-    tbaTeams.map((team) => [
-      team.team_number,
-      team.nickname ?? team.name ?? "",
-    ]),
+    tbaTeams.map((team) => [team.team_number, team.nickname ?? team.name ?? ""])
   );
 
-  const qualifyingMatches = tbaMatches.filter(
-    (match) => match.comp_level === "qm",
-  );
+  const qualifyingMatches = tbaMatches.filter((match) => match.comp_level === "qm");
 
   return {
     event,
@@ -44,13 +39,9 @@ export function tbaScheduleToImport(
     matches: qualifyingMatches.map((tbaMatch) => {
       const slots: AllianceSlot[] = [];
 
-      const redSurrogates = new Set(
-        tbaMatch.alliances.red.surrogate_team_keys ?? [],
-      );
+      const redSurrogates = new Set(tbaMatch.alliances.red.surrogate_team_keys ?? []);
 
-      const blueSurrogates = new Set(
-        tbaMatch.alliances.blue.surrogate_team_keys ?? [],
-      );
+      const blueSurrogates = new Set(tbaMatch.alliances.blue.surrogate_team_keys ?? []);
 
       for (let index = 0; index < 3; index++) {
         const redKey = tbaMatch.alliances.red.team_keys[index];
@@ -88,15 +79,9 @@ export function tbaScheduleToImport(
         matchNumber: tbaMatch.match_number,
         matchType: "qm" as const,
 
-        redScore:
-          typeof redScore === "number" && redScore >= 0
-            ? redScore
-            : undefined,
+        redScore: typeof redScore === "number" && redScore >= 0 ? redScore : undefined,
 
-        blueScore:
-          typeof blueScore === "number" && blueScore >= 0
-            ? blueScore
-            : undefined,
+        blueScore: typeof blueScore === "number" && blueScore >= 0 ? blueScore : undefined,
 
         slots,
       };

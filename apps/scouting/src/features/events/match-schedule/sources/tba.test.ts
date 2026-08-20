@@ -62,7 +62,7 @@ describe("tbaScheduleToImport", () => {
           nickname: "The Zebracorns",
           name: "The Zebracorns",
         },
-      ],
+      ]
     );
 
     expect(schedule.event).toBe(event);
@@ -146,7 +146,7 @@ describe("tbaScheduleToImport", () => {
           },
         },
       ],
-      [],
+      []
     );
 
     expect(schedule.event).toBe(event);
