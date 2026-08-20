@@ -3,6 +3,11 @@ import { parse } from "csv-parse/sync";
 import type { EventTarget, MatchSchedule } from "../types";
 
 
+
+
+const EXPECTED_HEADERS = ["match_number", "r1", "r2", "r3", "b1", "b2", "b3"] as const;
+
+
 const sanitizeNumber = (val: unknown) => {
   if (typeof val === "string") {
     const trimmed = val.trim();
@@ -42,13 +47,27 @@ export function parseMatchScheduleCsv(csvText: string): Array<{
   let records: Record<string, unknown>[];
   try {
     records = parse(csvText, {
-      columns: true, // first row
+      columns: (headers) => {
+        const receivedHeaders = headers.map((header) => header.trim())
+
+        const headersAreValid =
+          receivedHeaders.length === EXPECTED_HEADERS.length && EXPECTED_HEADERS.every(
+            (expected, index) => receivedHeaders[index] === expected
+          );
+
+
+        if(!headersAreValid) {
+          throw new Error(`Invalid headers: ${receivedHeaders.join(", ")}`);
+        }
+        return receivedHeaders;
+      },
       skip_empty_lines: true,
       trim: true,
       bom: true,
     });
-  } catch (err: any) {
-    throw new Error(`CSV parsing failed: ${err.message}`);
+  } catch (err: unknown) { // changed to unkown to allow more tsx featues 
+    const message = err instanceof Error ? err.message : "Unknown";
+    throw new Error(`CSV parsing failed: ${message}`);
   }
 
   if (records.length === 0) {
