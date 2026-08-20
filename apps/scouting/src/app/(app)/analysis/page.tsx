@@ -92,7 +92,7 @@ export default function AnalysisPage() {
     <div className="space-y-8">
       <div>
         <TypographyH1 className="mb-1">Scouting Data</TypographyH1>
-        <TypographyMuted> Match and team data collected across all events. </TypographyMuted>
+        <TypographyMuted> Match and team data collected across all events.</TypographyMuted>
       </div>
 
       <Suspense

@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
+import { DatePicker } from "@repo/ui/components/date-picker";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@repo/ui/components/field";
 import { Input } from "@repo/ui/components/input";
 import { useForm } from "@tanstack/react-form-nextjs";
@@ -158,13 +159,12 @@ export function CreateManualEventForm({ organizationId }: { organizationId: stri
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Start date</FieldLabel>
-                    <Input
+                    <DatePicker
                       id={field.name}
                       name={field.name}
-                      type="date"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(event) => field.handleChange(event.target.value)}
+                      onValueChange={field.handleChange}
                       aria-invalid={isInvalid}
                       required
                     />
@@ -192,13 +192,12 @@ export function CreateManualEventForm({ organizationId }: { organizationId: stri
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>End date</FieldLabel>
-                    <Input
+                    <DatePicker
                       id={field.name}
                       name={field.name}
-                      type="date"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(event) => field.handleChange(event.target.value)}
+                      onValueChange={field.handleChange}
                       aria-invalid={isInvalid}
                       required
                     />
