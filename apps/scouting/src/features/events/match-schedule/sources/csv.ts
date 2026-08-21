@@ -1,6 +1,6 @@
 import { parse } from "csv-parse/sync";
 import { z } from "zod";
-import type { EventTarget, MatchSchedule } from "../types";
+import type { MatchSchedule } from "../types";
 
 const EXPECTED_HEADERS = ["match_number", "r1", "r2", "r3", "b1", "b2", "b3"] as const;
 
@@ -109,18 +109,10 @@ export function parseMatchScheduleCsv(csvText: string): Array<{
   return matchRows;
 }
 
-type CreateableEventTarget = Extract<
-  EventTarget,
-  {
-    mode: "create-or-update";
-  }
->;
-
-export function csvScheduleToImport(event: CreateableEventTarget, csvText: string): MatchSchedule {
+export function csvScheduleToImport(csvText: string): MatchSchedule {
   const rows = parseMatchScheduleCsv(csvText);
 
   return {
-    event,
     matches: rows.map((row) => ({
       matchNumber: row.matchNumber,
       matchType: "qm",

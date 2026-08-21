@@ -74,16 +74,7 @@ describe("parseMatchScheduleCsv", () => {
   it("converts CSV data into the canonical match schedule", () => {
     const csv = ["match_number,r1,r2,r3,b1,b2,b3", "1,342,10367,10231,8137,3976,343"].join("\n");
 
-    const schedule = csvScheduleToImport(
-      {
-        mode: "create-or-update",
-        eventCode: "2026thorwest",
-        name: "THOR West 2026",
-        startDate: new Date("2026-10-24"),
-        endDate: new Date("2026-10-24"),
-      },
-      csv
-    );
+    const schedule = csvScheduleToImport(csv);
 
     expect(schedule.matches).toEqual([
       {
@@ -99,8 +90,5 @@ describe("parseMatchScheduleCsv", () => {
         ],
       },
     ]);
-
-    expect(schedule.event.eventCode).toBe("2026thorwest");
-    expect(schedule.event.mode).toBe("create-or-update");
   });
 });

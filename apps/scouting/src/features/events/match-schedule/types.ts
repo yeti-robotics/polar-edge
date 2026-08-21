@@ -79,21 +79,7 @@ export type ScheduledMatch = {
   slots: AllianceSlot[];
 };
 
-export type EventTarget =
-  | {
-      mode: "create-or-update";
-      eventCode: string;
-      name: string;
-      startDate: Date;
-      endDate: Date;
-    }
-  | {
-      mode: "existing-only";
-      eventCode: string;
-    };
-
 export type MatchSchedule = {
-  event: EventTarget;
   matches: ScheduledMatch[];
 };
 

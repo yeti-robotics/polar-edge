@@ -209,14 +209,10 @@ export async function processScheduleUpdated(
   const qualMatches = tbaMatches.filter((m) => m.comp_level === "qm");
   if (!qualMatches.length) return { updated: false, reason: "No qualifying matches in schedule" };
 
-  const schedule = tbaScheduleToImport(
-    { mode: "existing-only", eventCode: eventKey },
-    tbaMatches,
-    []
-  );
+  const schedule = tbaScheduleToImport(tbaMatches, []);
 
   try {
-    await importMatchSchedule(schedule);
+    await importMatchSchedule(eventRow.id, schedule);
   } catch (error) {
     return {
       updated: false,

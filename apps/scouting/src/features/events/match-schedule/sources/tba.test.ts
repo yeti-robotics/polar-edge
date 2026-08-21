@@ -3,15 +3,7 @@ import { tbaScheduleToImport } from "./tba";
 
 describe("tbaScheduleToImport", () => {
   it("converts TBA data into the canonical match schedule", () => {
-    const event = {
-      mode: "create-or-update" as const,
-      eventCode: "2026ncwak",
-      name: "Wake County District Event",
-      startDate: new Date("2026-03-06"),
-      endDate: new Date("2026-03-08"),
-    };
     const schedule = tbaScheduleToImport(
-      event,
       [
         {
           comp_level: "qm",
@@ -64,8 +56,6 @@ describe("tbaScheduleToImport", () => {
         },
       ]
     );
-
-    expect(schedule.event).toBe(event);
 
     expect(schedule.matches).toHaveLength(1);
 
@@ -122,12 +112,7 @@ describe("tbaScheduleToImport", () => {
   });
 
   it("treats negative TBA scores as unknown", () => {
-    const event = {
-      mode: "existing-only" as const,
-      eventCode: "2026test",
-    };
     const schedule = tbaScheduleToImport(
-      event,
       [
         {
           comp_level: "qm",
@@ -149,8 +134,6 @@ describe("tbaScheduleToImport", () => {
       []
     );
 
-    expect(schedule.event).toBe(event);
-    expect(schedule.event).toEqual({ mode: "existing-only", eventCode: "2026test" });
     expect(schedule.matches[0]?.redScore).toBeUndefined();
     expect(schedule.matches[0]?.blueScore).toBeUndefined();
   });

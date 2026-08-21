@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
+  event,
   match,
   tbaMatchBreakdown,
   team,
@@ -97,18 +98,14 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
       return { data: null, error: "TBA matches not found" };
     }
 
-    const schedule = tbaScheduleToImport(
-      {
-        mode: "create-or-update",
-        eventCode: tbaEvent.key, // db event code
-        name: tbaEvent.name,
-        startDate: new Date(tbaEvent.start_date),
-        endDate: new Date(tbaEvent.end_date),
-      },
-      tbaMatches,
-      tbaTeams
-    );
-    const result = await importMatchSchedule(schedule);
+    const eventId = await upsertEvent({
+      eventCode: tbaEvent.key,
+      name: tbaEvent.name,
+      startDate: new Date(tbaEvent.start_date),
+      endDate: new Date(tbaEvent.end_date),
+    });
+    const schedule = tbaScheduleToImport(tbaMatches, tbaTeams);
+    const result = await importMatchSchedule(eventId, schedule);
     const qualifyingMatches = tbaMatches.filter((tbaMatch) => tbaMatch.comp_level === "qm");
     const matchTeamNumbers = [
       ...new Set(
@@ -261,17 +258,9 @@ export async function createManualEventAction(
       };
     }
 
-    const schedule = csvScheduleToImport(
-      {
-        mode: "create-or-update",
-        eventCode: eventResult.data.eventCode,
-        name: eventResult.data.name,
-        startDate: eventResult.data.startDate,
-        endDate: eventResult.data.endDate,
-      },
-      csvText
-    );
-    const result = await importMatchSchedule(schedule);
+    const eventId = await upsertEvent(eventResult.data);
+    const schedule = csvScheduleToImport(csvText);
+    const result = await importMatchSchedule(eventId, schedule);
 
     return { data: { success: true, ...result }, error: null };
   } catch (error) {
@@ -280,6 +269,29 @@ export async function createManualEventAction(
       error: error instanceof Error ? error.message : "Failed to create manual event",
     };
   }
+}
+
+async function upsertEvent(values: {
+  eventCode: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+}): Promise<string> {
+  const [upsertedEvent] = await db
+    .insert(event)
+    .values(values)
+    .onConflictDoUpdate({
+      target: event.eventCode,
+      set: {
+        name: values.name,
+        startDate: values.startDate,
+        endDate: values.endDate,
+      },
+    })
+    .returning({ id: event.id });
+
+  if (!upsertedEvent) throw new Error("Failed to create or update event");
+  return upsertedEvent.id;
 }
 
 type TowerRobot2026 = "Level1" | "Level2" | "Level3" | "None";

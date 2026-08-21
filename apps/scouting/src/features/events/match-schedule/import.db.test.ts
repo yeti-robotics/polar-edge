@@ -22,10 +22,9 @@ vi.mock("next/cache", () => ({
   revalidateTag: vi.fn(),
 }));
 
-import { importMatchSchedule } from "./import";
+import { importMatchSchedule as importResolvedMatchSchedule } from "./import";
 
 const event = {
-  mode: "create-or-update" as const,
   eventCode: "2026test",
   name: "Test Event",
   startDate: new Date("2026-03-01T00:00:00Z"),
@@ -51,7 +50,18 @@ function scheduledMatch(
 }
 
 function schedule(matches: MatchSchedule["matches"]): MatchSchedule {
-  return { event, matches };
+  return { matches };
+}
+
+async function importMatchSchedule(scheduleToImport: MatchSchedule) {
+  const [eventRow] = await db
+    .insert(eventTable)
+    .values(event)
+    .onConflictDoUpdate({ target: eventTable.eventCode, set: { name: event.name } })
+    .returning({ id: eventTable.id });
+
+  if (!eventRow) throw new Error("Failed to set up test event");
+  return importResolvedMatchSchedule(eventRow.id, scheduleToImport);
 }
 
 beforeEach(() => {
@@ -59,15 +69,16 @@ beforeEach(() => {
 });
 
 describe("importMatchSchedule", () => {
-  it("rejects an existing-only import when the event does not exist", async () => {
-    await expect(
-      importMatchSchedule({
-        event: { mode: "existing-only", eventCode: "missing" },
-        matches: [scheduledMatch(1, [1, 2, 3, 4, 5, 6])],
-      })
-    ).rejects.toThrow("Event missing does not exist");
+  it("accepts an already-resolved event for an empty schedule", async () => {
+    const [eventRow] = await db.insert(eventTable).values(event).returning({ id: eventTable.id });
+    if (!eventRow) throw new Error("Failed to set up test event");
 
-    expect(await db.select().from(eventTable)).toHaveLength(0);
+    await expect(importResolvedMatchSchedule(eventRow.id, { matches: [] })).resolves.toEqual({
+      eventId: eventRow.id,
+      matchCount: 0,
+      teamMatchCount: 0,
+    });
+
     expect(await db.select().from(match)).toHaveLength(0);
     expect(revalidatePath).not.toHaveBeenCalled();
     expect(revalidateTag).not.toHaveBeenCalled();
@@ -267,10 +278,7 @@ describe("importMatchSchedule", () => {
     await importMatchSchedule(schedule([scheduledMatch(1, [1, 2, 3, 4, 5, 6])]));
     vi.clearAllMocks();
 
-    const result = await importMatchSchedule({
-      event: { ...event, name: "Changed Event Name" },
-      matches: [],
-    });
+    const result = await importMatchSchedule({ matches: [] });
     const [savedEvent] = await db
       .select({ name: eventTable.name })
       .from(eventTable)

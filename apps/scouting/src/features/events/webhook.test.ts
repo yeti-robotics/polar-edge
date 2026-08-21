@@ -67,12 +67,12 @@ describe("processScheduleUpdated", () => {
     expect(mocks.importMatchSchedule).not.toHaveBeenCalled();
   });
 
-  it("imports the schedule with an existing-only target", async () => {
+  it("imports the schedule for the resolved event", async () => {
     await expect(processScheduleUpdated(payload)).resolves.toEqual({ updated: true });
 
     expect(mocks.importMatchSchedule).toHaveBeenCalledWith(
+      "event-id",
       expect.objectContaining({
-        event: { mode: "existing-only", eventCode: "2026test" },
         matches: [expect.objectContaining({ matchNumber: 1, matchType: "qm" })],
       })
     );

@@ -6,7 +6,6 @@ import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import {
   driveTeamRanking,
-  event,
   match,
   standForm,
   tbaMatchBreakdown,
@@ -35,14 +34,15 @@ type TeamMatchValue = {
   surrogate?: boolean;
 };
 
-export async function importMatchSchedule(schedule: MatchSchedule): Promise<ImportResult> {
+export async function importMatchSchedule(
+  eventId: string,
+  schedule: MatchSchedule
+): Promise<ImportResult> {
   if (schedule.matches.length === 0) {
-    const eventId = await findEventId(schedule.event.eventCode);
     return { eventId, matchCount: 0, teamMatchCount: 0 };
   }
 
   const result = await db.transaction(async (tx) => {
-    const eventId = await resolveEvent(tx, schedule);
     await upsertTeams(tx, schedule);
     await upsertMatches(tx, eventId, schedule);
     const stored = await readStoredSchedule(tx, eventId, schedule);
@@ -54,51 +54,6 @@ export async function importMatchSchedule(schedule: MatchSchedule): Promise<Impo
 
   revalidateImportedSchedule(result.eventId);
   return result;
-}
-
-async function findEventId(eventCode: string): Promise<string> {
-  const [existingEvent] = await db
-    .select({ id: event.id })
-    .from(event)
-    .where(eq(event.eventCode, eventCode))
-    .limit(1);
-
-  if (!existingEvent) throw new Error(`Event ${eventCode} does not exist`);
-  return existingEvent.id;
-}
-
-async function resolveEvent(tx: Transaction, schedule: MatchSchedule): Promise<string> {
-  if (schedule.event.mode === "create-or-update") {
-    const [upsertedEvent] = await tx
-      .insert(event)
-      .values({
-        eventCode: schedule.event.eventCode,
-        name: schedule.event.name,
-        startDate: schedule.event.startDate,
-        endDate: schedule.event.endDate,
-      })
-      .onConflictDoUpdate({
-        target: event.eventCode,
-        set: {
-          name: schedule.event.name,
-          startDate: schedule.event.startDate,
-          endDate: schedule.event.endDate,
-        },
-      })
-      .returning({ id: event.id });
-
-    if (!upsertedEvent) throw new Error("Failed to create or update event");
-    return upsertedEvent.id;
-  }
-
-  const [existingEvent] = await tx
-    .select({ id: event.id })
-    .from(event)
-    .where(eq(event.eventCode, schedule.event.eventCode))
-    .limit(1);
-
-  if (!existingEvent) throw new Error(`Event ${schedule.event.eventCode} does not exist`);
-  return existingEvent.id;
 }
 
 async function upsertTeams(tx: Transaction, schedule: MatchSchedule): Promise<void> {
