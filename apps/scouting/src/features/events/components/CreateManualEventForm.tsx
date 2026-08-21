@@ -27,7 +27,7 @@ type CreateManualEventValues = {
   name: string;
   startDate: string;
   endDate: string;
-  csvFile: File | null; // changed so it isnt null as FIle becaus asserting hided errrors i see why now
+  csvFile: File | null;
 };
 
 const defaultValues: CreateManualEventValues = {

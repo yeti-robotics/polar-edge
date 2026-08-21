@@ -16,7 +16,6 @@ const sanitizeNumber = (val: unknown) => {
 };
 
 const coercedInt = z.preprocess(
-  // usaiblity write for the matchSchedule below
   sanitizeNumber,
   z.coerce.number().int().positive()
 );
@@ -62,7 +61,6 @@ export function parseMatchScheduleCsv(csvText: string): Array<{
       bom: true,
     });
   } catch (err: unknown) {
-    // changed to unkown to allow more tsx featues
     const message = err instanceof Error ? err.message : "Unknown";
     throw new Error(`CSV parsing failed: ${message}`);
   }
