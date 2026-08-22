@@ -105,7 +105,6 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
       endDate: new Date(tbaEvent.end_date),
     });
     const schedule = tbaScheduleToImport(tbaMatches, tbaTeams);
-    const result = await importMatchSchedule(eventId, schedule);
     const qualifyingMatches = tbaMatches.filter((tbaMatch) => tbaMatch.comp_level === "qm");
     const matchTeamNumbers = [
       ...new Set(
@@ -113,11 +112,12 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
       ),
     ];
 
-    await db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx) => {
+      const importResult = await importMatchSchedule(eventId, schedule, tx);
       const matchRows = await tx
         .select({ id: match.id, matchNumber: match.matchNumber, matchType: match.matchType })
         .from(match)
-        .where(eq(match.eventId, result.eventId));
+        .where(eq(match.eventId, importResult.eventId));
       const matchIdByKey = new Map(matchRows.map((r) => [`${r.matchNumber}:${r.matchType}`, r.id]));
 
       // Upsert TBA score breakdown climb
@@ -130,7 +130,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
             teamNumber: teamMatch.teamNumber,
           })
           .from(teamMatch)
-          .where(eq(teamMatch.eventId, result.eventId));
+          .where(eq(teamMatch.eventId, importResult.eventId));
         const tmIdByKey = new Map(tmRows.map((r) => [`${r.matchId}:${r.teamNumber}`, r.id]));
 
         const breakdownValues = breakdownRows
@@ -172,7 +172,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
             .map((tbaKey) => {
               const teamNumber = parseTbaTeamKey(tbaKey);
               return {
-                eventId: result.eventId,
+                eventId: importResult.eventId,
                 teamNumber,
                 autoFuelCount: String(autoFuel[tbaKey] ?? 0),
                 teleopFuelCount: String(teleopFuel?.[tbaKey] ?? 0),
@@ -199,6 +199,8 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
           }
         }
       }
+
+      return importResult;
     });
 
     revalidateTag(cacheTags.eventCoprs(result.eventId), "max");

@@ -36,13 +36,14 @@ type TeamMatchValue = {
 
 export async function importMatchSchedule(
   eventId: string,
-  schedule: MatchSchedule
+  schedule: MatchSchedule,
+  transaction?: Transaction
 ): Promise<ImportResult> {
   if (schedule.matches.length === 0) {
     return { eventId, matchCount: 0, teamMatchCount: 0 };
   }
 
-  const result = await db.transaction(async (tx) => {
+  const importSchedule = async (tx: Transaction) => {
     await upsertTeams(tx, schedule);
     await upsertMatches(tx, eventId, schedule);
     const stored = await readStoredSchedule(tx, eventId, schedule);
@@ -50,7 +51,10 @@ export async function importMatchSchedule(
     await ensureChangesAreSafe(tx, stored.matches, changes);
     await applyDeletions(tx, changes);
     return upsertAssignments(tx, eventId, stored.matches, schedule);
-  });
+  };
+  const result = transaction
+    ? await importSchedule(transaction)
+    : await db.transaction(importSchedule);
 
   revalidateImportedSchedule(result.eventId);
   return result;
