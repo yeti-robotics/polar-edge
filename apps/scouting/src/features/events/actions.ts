@@ -260,8 +260,8 @@ export async function createManualEventAction(
       };
     }
 
-    const eventId = await createEvent(eventResult.data);
     const schedule = csvScheduleToImport(csvText);
+    const eventId = await createEvent(eventResult.data);
     const result = await importMatchSchedule(eventId, schedule);
 
     return { data: { success: true, ...result }, error: null };
