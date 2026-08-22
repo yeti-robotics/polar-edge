@@ -9,13 +9,12 @@ import {
   event,
   match,
   tbaMatchBreakdown,
+  team,
   teamEventCopr,
   teamMatch,
 } from "@/lib/database/schema/tables";
 import { getTBAClient } from "@/lib/server/tba";
 import { parseTbaTeamKey } from "@/lib/tba";
-import { importMatchSchedule } from "./match-schedule/import";
-import { tbaScheduleToImport } from "./match-schedule/sources/tba";
 import type { MatchScorePayload, ScheduleUpdatedPayload } from "./webhook-schemas";
 
 // --- HMAC verification ---
@@ -209,16 +208,82 @@ export async function processScheduleUpdated(
   const qualMatches = tbaMatches.filter((m) => m.comp_level === "qm");
   if (!qualMatches.length) return { updated: false, reason: "No qualifying matches in schedule" };
 
-  const schedule = tbaScheduleToImport(tbaMatches, []);
+  await db.transaction(async (tx) => {
+    // Upsert matches without deleting stale rows so saved scouting data remains linked.
+    const upsertedMatches = await tx
+      .insert(match)
+      .values(
+        qualMatches.map((m) => ({
+          eventId: eventRow.id,
+          matchType: "qm" as const,
+          matchNumber: m.match_number,
+          redScore: m.alliances.red.score >= 0 ? m.alliances.red.score : null,
+          blueScore: m.alliances.blue.score >= 0 ? m.alliances.blue.score : null,
+        }))
+      )
+      .onConflictDoUpdate({
+        target: [match.eventId, match.matchNumber, match.matchType],
+        set: {
+          redScore: sql`excluded.red_score`,
+          blueScore: sql`excluded.blue_score`,
+        },
+      })
+      .returning({ id: match.id, matchNumber: match.matchNumber });
+    const matchIdByNumber = new Map(upsertedMatches.map((row) => [row.matchNumber, row.id]));
+    const teamMatchRows: Array<{
+      eventId: string;
+      matchId: string;
+      teamNumber: number;
+      alliance: "red" | "blue";
+      position: 1 | 2 | 3;
+      surrogate: boolean;
+    }> = [];
+    const teamNumbers = new Set<number>();
 
-  try {
-    await importMatchSchedule(eventRow.id, schedule);
-  } catch (error) {
-    return {
-      updated: false,
-      reason: error instanceof Error ? error.message : "Schedule import failed",
-    };
-  }
+    for (const m of qualMatches) {
+      const matchId = matchIdByNumber.get(m.match_number);
+      if (!matchId) continue;
+
+      for (const alliance of ["red", "blue"] as const) {
+        const surrogateKeys = new Set(m.alliances[alliance].surrogate_team_keys ?? []);
+        for (let i = 0; i < 3; i++) {
+          const teamKey = m.alliances[alliance].team_keys[i];
+          if (!teamKey) continue;
+          const teamNumber = parseTbaTeamKey(teamKey);
+          teamNumbers.add(teamNumber);
+          teamMatchRows.push({
+            eventId: eventRow.id,
+            matchId,
+            teamNumber,
+            alliance,
+            position: (i + 1) as 1 | 2 | 3,
+            surrogate: surrogateKeys.has(teamKey),
+          });
+        }
+      }
+    }
+
+    if (teamNumbers.size > 0) {
+      await tx
+        .insert(team)
+        .values([...teamNumbers].map((teamNumber) => ({ teamNumber, teamName: "" })))
+        .onConflictDoNothing();
+    }
+
+    if (teamMatchRows.length > 0) {
+      await tx
+        .insert(teamMatch)
+        .values(teamMatchRows)
+        .onConflictDoUpdate({
+          target: [teamMatch.matchId, teamMatch.teamNumber],
+          set: {
+            alliance: sql`excluded.alliance`,
+            position: sql`excluded.position`,
+            surrogate: sql`excluded.surrogate`,
+          },
+        });
+    }
+  });
 
   await db.transaction(async (tx) => {
     const matchRows = await tx
