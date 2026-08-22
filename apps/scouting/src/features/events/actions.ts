@@ -258,7 +258,7 @@ export async function createManualEventAction(
       };
     }
 
-    const eventId = await upsertEvent(eventResult.data);
+    const eventId = await createEvent(eventResult.data);
     const schedule = csvScheduleToImport(csvText);
     const result = await importMatchSchedule(eventId, schedule);
 
@@ -269,6 +269,22 @@ export async function createManualEventAction(
       error: error instanceof Error ? error.message : "Failed to create manual event",
     };
   }
+}
+
+async function createEvent(values: {
+  eventCode: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+}): Promise<string> {
+  const [createdEvent] = await db
+    .insert(event)
+    .values(values)
+    .onConflictDoNothing({ target: event.eventCode })
+    .returning({ id: event.id });
+
+  if (!createdEvent) throw new Error(`Event code ${values.eventCode} already exists`);
+  return createdEvent.id;
 }
 
 async function upsertEvent(values: {
