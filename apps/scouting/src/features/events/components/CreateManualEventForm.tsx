@@ -13,7 +13,7 @@ import { Field, FieldDescription, FieldError, FieldLabel } from "@repo/ui/compon
 import { Input } from "@repo/ui/components/input";
 import { useForm } from "@tanstack/react-form-nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createManualEventAction } from "../actions";
 import { MAX_CSV_BYTES } from "../manual-import-schema";
 
@@ -45,6 +45,7 @@ const required =
 
 export function CreateManualEventForm({ organizationId }: { organizationId: string }) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<Message | null>(null);
 
   const form = useForm({
@@ -75,6 +76,7 @@ export function CreateManualEventForm({ organizationId }: { organizationId: stri
         }
 
         form.reset();
+        if (fileInputRef.current) fileInputRef.current.value = "";
         setMessage({
           type: "success",
           text: `Event created successfully with ${result.data.matchCount} matches and ${result.data.teamMatchCount} team match assignments.`,
@@ -229,6 +231,7 @@ export function CreateManualEventForm({ organizationId }: { organizationId: stri
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Match-schedule CSV</FieldLabel>
                   <Input
+                    ref={fileInputRef}
                     id={field.name}
                     name={field.name}
                     type="file"
