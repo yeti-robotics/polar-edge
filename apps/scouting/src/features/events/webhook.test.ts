@@ -3,8 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   findEvent: vi.fn(),
   getEventMatches: vi.fn(),
-  importMatchSchedule: vi.fn(),
   transaction: vi.fn(),
+  insert: vi.fn(),
+  select: vi.fn(),
+  where: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -17,9 +19,6 @@ vi.mock("@/lib/database", () => ({
 }));
 vi.mock("@/lib/server/tba", () => ({
   getTBAClient: () => ({ matches: { getEventMatches: mocks.getEventMatches } }),
-}));
-vi.mock("./match-schedule/import", () => ({
-  importMatchSchedule: mocks.importMatchSchedule,
 }));
 
 import { processScheduleUpdated } from "./webhook";
@@ -47,12 +46,28 @@ beforeEach(() => {
   vi.clearAllMocks();
   mocks.findEvent.mockResolvedValue({ id: "event-id" });
   mocks.getEventMatches.mockResolvedValue(tbaMatches);
-  mocks.importMatchSchedule.mockResolvedValue({
-    eventId: "event-id",
-    matchCount: 1,
-    teamMatchCount: 6,
-  });
-  mocks.transaction.mockResolvedValue(undefined);
+
+  const insertChain = {
+    values: vi.fn(),
+    onConflictDoUpdate: vi.fn(),
+    onConflictDoNothing: vi.fn(),
+    returning: vi.fn().mockResolvedValue([{ id: "match-id", matchNumber: 1 }]),
+  };
+  insertChain.values.mockReturnValue(insertChain);
+  insertChain.onConflictDoUpdate.mockReturnValue(insertChain);
+  insertChain.onConflictDoNothing.mockResolvedValue(undefined);
+  mocks.insert.mockReturnValue(insertChain);
+
+  const selectChain = { from: vi.fn(), where: mocks.where };
+  selectChain.from.mockReturnValue(selectChain);
+  mocks.select.mockReturnValue(selectChain);
+  mocks.where
+    .mockResolvedValueOnce([{ id: "match-id", matchNumber: 1 }])
+    .mockResolvedValueOnce([]);
+
+  mocks.transaction.mockImplementation(async (callback) =>
+    callback({ insert: mocks.insert, select: mocks.select })
+  );
 });
 
 describe("processScheduleUpdated", () => {
@@ -64,28 +79,23 @@ describe("processScheduleUpdated", () => {
       reason: "Event not in DB: 2026test",
     });
     expect(mocks.getEventMatches).not.toHaveBeenCalled();
-    expect(mocks.importMatchSchedule).not.toHaveBeenCalled();
+    expect(mocks.transaction).not.toHaveBeenCalled();
   });
 
   it("imports the schedule for the resolved event", async () => {
     await expect(processScheduleUpdated(payload)).resolves.toEqual({ updated: true });
 
-    expect(mocks.importMatchSchedule).toHaveBeenCalledWith(
-      "event-id",
-      expect.objectContaining({
-        matches: [expect.objectContaining({ matchNumber: 1, matchType: "qm" })],
-      })
-    );
+    expect(mocks.getEventMatches).toHaveBeenCalledWith("2026test");
+    expect(mocks.transaction).toHaveBeenCalledTimes(2);
+    expect(mocks.insert).toHaveBeenCalledTimes(3);
   });
 
-  it("returns importer conflicts without running enrichment", async () => {
-    mocks.importMatchSchedule.mockRejectedValue(
-      new Error("Cannot replace the schedule because saved data exists for qm1.")
-    );
+  it("does not import a schedule containing only playoff matches", async () => {
+    mocks.getEventMatches.mockResolvedValue([{ ...tbaMatches[0], comp_level: "sf" }]);
 
     await expect(processScheduleUpdated(payload)).resolves.toEqual({
       updated: false,
-      reason: "Cannot replace the schedule because saved data exists for qm1.",
+      reason: "No qualifying matches in schedule",
     });
     expect(mocks.transaction).not.toHaveBeenCalled();
   });
