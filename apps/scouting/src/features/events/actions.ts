@@ -19,7 +19,12 @@ import {
   getActiveEventForOrganization,
   setActiveEventForOrganization,
 } from "@/lib/server/organization/active-event";
-import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
+import { getTBAClient } from "@/lib/server/tba";
+import { parseTbaTeamKey } from "@/lib/tba";
+import { MAX_CSV_BYTES, manualEventSchema } from "./manual-import-schema";
+import { importMatchSchedule } from "./match-schedule/import";
+import { csvScheduleToImport } from "./match-schedule/sources/csv";
+import { tbaScheduleToImport } from "./match-schedule/sources/tba";
 
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {
@@ -93,137 +98,31 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
       return { data: null, error: "TBA matches not found" };
     }
 
-    const qualifyingMatches = tbaMatches.filter((m) => m.comp_level === "qm");
+    const eventId = await upsertEvent({
+      eventCode: tbaEvent.key,
+      name: tbaEvent.name,
+      startDate: new Date(tbaEvent.start_date),
+      endDate: new Date(tbaEvent.end_date),
+    });
+    const schedule = tbaScheduleToImport(tbaMatches, tbaTeams);
+    const qualifyingMatches = tbaMatches.filter((tbaMatch) => tbaMatch.comp_level === "qm");
+    const matchTeamNumbers = [
+      ...new Set(
+        schedule.matches.flatMap(({ slots }) => slots.map(({ teamNumber }) => teamNumber))
+      ),
+    ];
 
-    const { eventId, matchCount, teamMatchCount } = await db.transaction(async (tx) => {
-      const [upsertedEvent] = await tx
-        .insert(event)
-        .values({
-          eventCode: tbaEvent.key,
-          name: tbaEvent.name,
-          startDate: new Date(tbaEvent.start_date),
-          endDate: new Date(tbaEvent.end_date),
-        })
-        .onConflictDoUpdate({
-          target: event.eventCode,
-          set: {
-            name: tbaEvent.name,
-            startDate: new Date(tbaEvent.start_date),
-            endDate: new Date(tbaEvent.end_date),
-          },
-        })
-        .returning({ id: event.id });
-
-      if (!upsertedEvent) {
-        throw new Error("Failed to upsert event");
-      }
-
-      const eventId = upsertedEvent.id;
-
-      if (qualifyingMatches.length > 0) {
-        await tx
-          .insert(match)
-          .values(
-            qualifyingMatches.map((m) => ({
-              eventId,
-              matchType: "qm" as const,
-              matchNumber: m.match_number,
-              redScore: m.alliances.red.score ?? null,
-              blueScore: m.alliances.blue.score ?? null,
-            }))
-          )
-          .onConflictDoUpdate({
-            target: [match.eventId, match.matchNumber, match.matchType],
-            set: {
-              redScore: sql`excluded.red_score`,
-              blueScore: sql`excluded.blue_score`,
-            },
-          });
-      }
-
+    const result = await db.transaction(async (tx) => {
+      const importResult = await importMatchSchedule(eventId, schedule, tx);
       const matchRows = await tx
         .select({ id: match.id, matchNumber: match.matchNumber, matchType: match.matchType })
         .from(match)
-        .where(eq(match.eventId, eventId));
+        .where(eq(match.eventId, importResult.eventId));
       const matchIdByKey = new Map(matchRows.map((r) => [`${r.matchNumber}:${r.matchType}`, r.id]));
 
-      const teamMatchRows: Array<{
-        eventId: string;
-        matchId: string;
-        teamNumber: number;
-        alliance: "red" | "blue";
-        position: 1 | 2 | 3;
-        surrogate: boolean;
-      }> = [];
-
-      for (const m of qualifyingMatches) {
-        const matchId = matchIdByKey.get(`${m.match_number}:qm`);
-        if (!matchId) continue;
-
-        const redSurrogates = new Set(m.alliances.red.surrogate_team_keys ?? []);
-        const blueSurrogates = new Set(m.alliances.blue.surrogate_team_keys ?? []);
-
-        for (let i = 0; i < 3; i++) {
-          const redKey = m.alliances.red.team_keys[i];
-          const blueKey = m.alliances.blue.team_keys[i];
-          if (redKey) {
-            teamMatchRows.push({
-              eventId,
-              matchId,
-              teamNumber: parseTbaTeamKey(redKey),
-              alliance: "red",
-              position: (i + 1) as 1 | 2 | 3,
-              surrogate: redSurrogates.has(redKey),
-            });
-          }
-          if (blueKey) {
-            teamMatchRows.push({
-              eventId,
-              matchId,
-              teamNumber: parseTbaTeamKey(blueKey),
-              alliance: "blue",
-              position: (i + 1) as 1 | 2 | 3,
-              surrogate: blueSurrogates.has(blueKey),
-            });
-          }
-        }
-      }
-
-      const matchTeamNumbers = [...new Set(teamMatchRows.map((r) => r.teamNumber))];
-      const tbaTeamMap = new Map(tbaTeams.map((t) => [t.team_number, t.nickname ?? t.name ?? ""]));
-      const allTeamValues = matchTeamNumbers.map((n) => ({
-        teamNumber: n,
-        teamName: tbaTeamMap.get(n) ?? "",
-      }));
-
-      if (allTeamValues.length > 0) {
-        await tx
-          .insert(team)
-          .values(allTeamValues)
-          .onConflictDoUpdate({
-            target: team.teamNumber,
-            set: { teamName: sql`excluded.team_name` },
-          });
-      }
-
-      if (teamMatchRows.length > 0) {
-        await tx
-          .insert(teamMatch)
-          .values(teamMatchRows)
-          .onConflictDoUpdate({
-            target: [teamMatch.matchId, teamMatch.teamNumber],
-            set: {
-              alliance: sql`excluded.alliance`,
-              position: sql`excluded.position`,
-              surrogate: sql`excluded.surrogate`,
-            },
-          });
-      }
-
-      // Upsert TBA score breakdown climb data
+      // Upsert TBA score breakdown climb
       const breakdownRows = extractClimbBreakdowns(qualifyingMatches, matchIdByKey);
       if (breakdownRows.length > 0) {
-        // Need teamMatch IDs to FK into tba_match_breakdown
         const tmRows = await tx
           .select({
             id: teamMatch.id,
@@ -231,7 +130,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
             teamNumber: teamMatch.teamNumber,
           })
           .from(teamMatch)
-          .where(eq(teamMatch.eventId, eventId));
+          .where(eq(teamMatch.eventId, importResult.eventId));
         const tmIdByKey = new Map(tmRows.map((r) => [`${r.matchId}:${r.teamNumber}`, r.id]));
 
         const breakdownValues = breakdownRows
@@ -273,7 +172,7 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
             .map((tbaKey) => {
               const teamNumber = parseTbaTeamKey(tbaKey);
               return {
-                eventId,
+                eventId: importResult.eventId,
                 teamNumber,
                 autoFuelCount: String(autoFuel[tbaKey] ?? 0),
                 teleopFuelCount: String(teleopFuel?.[tbaKey] ?? 0),
@@ -301,20 +200,13 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
         }
       }
 
-      return {
-        eventId,
-        matchCount: qualifyingMatches.length,
-        teamMatchCount: teamMatchRows.length,
-      };
+      return importResult;
     });
 
-    revalidatePath(routes.admin.event);
-    revalidateTag(cacheTags.teamsList, "max");
-    revalidateTag(cacheTags.eventTeams(eventId), "max");
-    revalidateTag(cacheTags.eventCoprs(eventId), "max");
-    revalidateTag(cacheTags.teamMetrics(eventId), "max");
+    revalidateTag(cacheTags.eventCoprs(result.eventId), "max");
+    revalidateTag(cacheTags.teamMetrics(result.eventId), "max");
     return {
-      data: { success: true, eventId, matchCount, teamMatchCount },
+      data: { success: true, ...result },
       error: null,
     };
   } catch (error) {
@@ -325,7 +217,100 @@ export async function syncEventFromTBAAction(organizationId: string, tbaEventKey
   }
 }
 
-// --- TBA score breakdown helpers ---
+export async function createManualEventAction(
+  organizationId: string,
+  eventInput: unknown,
+  csvText: string
+) {
+  try {
+    const requestHeaders = await headers();
+    const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+
+    if (!activeMember || activeMember.organizationId !== organizationId) {
+      return {
+        data: null,
+        error: "Only organization admins and owners can create manual events",
+      };
+    }
+
+    const { success: canSync } = await auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { event: ["sync"] } },
+    });
+
+    if (!canSync) {
+      return {
+        data: null,
+        error: "Only organization admins and owners can create manual events",
+      };
+    }
+
+    if (Buffer.byteLength(csvText, "utf8") > MAX_CSV_BYTES) {
+      return {
+        data: null,
+        error: `The CSV is too large. The limit is ${MAX_CSV_BYTES / 1024} KB.`,
+      };
+    }
+
+    const eventResult = manualEventSchema.safeParse(eventInput);
+    if (!eventResult.success) {
+      return {
+        data: null,
+        error: eventResult.error.issues[0]?.message ?? "Invalid event information",
+      };
+    }
+
+    const eventId = await createEvent(eventResult.data);
+    const schedule = csvScheduleToImport(csvText);
+    const result = await importMatchSchedule(eventId, schedule);
+
+    return { data: { success: true, ...result }, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : "Failed to create manual event",
+    };
+  }
+}
+
+async function createEvent(values: {
+  eventCode: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+}): Promise<string> {
+  const [createdEvent] = await db
+    .insert(event)
+    .values(values)
+    .onConflictDoNothing({ target: event.eventCode })
+    .returning({ id: event.id });
+
+  if (!createdEvent) throw new Error(`Event code ${values.eventCode} already exists`);
+  return createdEvent.id;
+}
+
+async function upsertEvent(values: {
+  eventCode: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+}): Promise<string> {
+  const [upsertedEvent] = await db
+    .insert(event)
+    .values(values)
+    .onConflictDoUpdate({
+      target: event.eventCode,
+      set: {
+        name: values.name,
+        startDate: values.startDate,
+        endDate: values.endDate,
+      },
+    })
+    .returning({ id: event.id });
+
+  if (!upsertedEvent) throw new Error("Failed to create or update event");
+  return upsertedEvent.id;
+}
 
 type TowerRobot2026 = "Level1" | "Level2" | "Level3" | "None";
 
