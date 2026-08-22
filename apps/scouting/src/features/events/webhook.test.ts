@@ -61,9 +61,7 @@ beforeEach(() => {
   const selectChain = { from: vi.fn(), where: mocks.where };
   selectChain.from.mockReturnValue(selectChain);
   mocks.select.mockReturnValue(selectChain);
-  mocks.where
-    .mockResolvedValueOnce([{ id: "match-id", matchNumber: 1 }])
-    .mockResolvedValueOnce([]);
+  mocks.where.mockResolvedValueOnce([{ id: "match-id", matchNumber: 1 }]).mockResolvedValueOnce([]);
 
   mocks.transaction.mockImplementation(async (callback) =>
     callback({ insert: mocks.insert, select: mocks.select })
