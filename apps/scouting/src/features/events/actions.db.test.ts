@@ -1,4 +1,3 @@
-
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
@@ -6,11 +5,10 @@ import { db } from "@/lib/database";
 import { event } from "@/lib/database/schema/tables";
 import { createManualEventAction } from "./actions";
 
-
 vi.mock("server-only", () => ({}));
 
 vi.mock("next/headers", () => ({
-  headers: vi.fn(async () => nw Headers()),
+  headers: vi.fn(async () => new Headers()),
 }));
 
 vi.mock("next/cache", () => ({
@@ -56,13 +54,9 @@ describe("createManualEventAction", () => {
 
     expect(failedAttempt.error).toContain("CSV");
 
-    const savedEvents = await db
-      .select()
-      .from(event)
-      .where(q(event.eventCode, "2026test"));
+    const savedEvents = await db.select().from(event).where(eq(event.eventCode, "2026test"));
 
     expect(savedEvents).toHaveLength(0);
-
 
     const successfulRetry = await createManualEventAction(
       "org-123",
@@ -70,7 +64,8 @@ describe("createManualEventAction", () => {
       ["match_number,r1,r2,r3,b1,b2,b3", "1,1,2,3,4,5,6"].join("\n")
     );
 
-    expect(successfulRetry).toMatchObject({ // no use of ToObject**
+    expect(successfulRetry).toMatchObject({
+      // no use of ToObject**
       data: { success: true },
       error: null,
     });
