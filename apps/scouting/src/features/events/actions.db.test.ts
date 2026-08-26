@@ -52,7 +52,9 @@ describe("createManualEventAction", () => {
       ["wrong_header,r1,r2,r3,b1,b2,b3", "1,1,2,3,4,5,6"].join("\n")
     );
 
-    expect(failedAttempt.error).toContain("CSV");
+    expect(failedAttempt.error).toBe(
+      "CSV parsing failed: The CSV header must be: match_number, r1, r2, r3, b1, b2, b3. Received: wrong_header, r1, r2, r3, b1, b2, b3."
+    );
 
     const savedEvents = await db.select().from(event).where(eq(event.eventCode, "2026test"));
 
@@ -65,7 +67,6 @@ describe("createManualEventAction", () => {
     );
 
     expect(successfulRetry).toMatchObject({
-      // no use of ToObject**
       data: { success: true },
       error: null,
     });
