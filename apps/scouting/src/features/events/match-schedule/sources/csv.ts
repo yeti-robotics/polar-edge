@@ -15,7 +15,7 @@ const sanitizeNumber = (val: unknown) => {
   return val;
 };
 
-const coercedInt = z.preprocess(sanitizeNumber, z.coerce.number().int().positive());
+const coercedInt = z.preprocess(sanitizeNumber, z.coerce.number().int().positive().max(2147483647));
 
 export const matchScheduleRowSchema = z.object({
   match_number: coercedInt,

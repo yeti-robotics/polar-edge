@@ -26,6 +26,8 @@ import { importMatchSchedule } from "./match-schedule/import";
 import { csvScheduleToImport } from "./match-schedule/sources/csv";
 import { tbaScheduleToImport } from "./match-schedule/sources/tba";
 
+type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
 export async function setActiveEventAction(organizationId: string, eventId: string) {
   try {
     const requestHeaders = await headers();
@@ -260,9 +262,11 @@ export async function createManualEventAction(
       };
     }
 
-    const eventId = await createEvent(eventResult.data);
     const schedule = csvScheduleToImport(csvText);
-    const result = await importMatchSchedule(eventId, schedule);
+    const result = await db.transaction(async (tx) => {
+      const eventId = await createEvent(eventResult.data, tx);
+      return importMatchSchedule(eventId, schedule, tx);
+    });
 
     return { data: { success: true, ...result }, error: null };
   } catch (error) {
@@ -273,13 +277,16 @@ export async function createManualEventAction(
   }
 }
 
-async function createEvent(values: {
-  eventCode: string;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-}): Promise<string> {
-  const [createdEvent] = await db
+async function createEvent(
+  values: {
+    eventCode: string;
+    name: string;
+    startDate: Date;
+    endDate: Date;
+  },
+  tx: Transaction
+): Promise<string> {
+  const [createdEvent] = await tx
     .insert(event)
     .values(values)
     .onConflictDoNothing({ target: event.eventCode })
