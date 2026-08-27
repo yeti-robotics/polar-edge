@@ -65,5 +65,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Lint, format, test, and build
-        run: pnpm turbo run lint build test typecheck --affected
+      # `//#lint` is a root task, so `--affected` only schedules it when a
+      # root-level file changes. Run it in its own invocation so `biome check .`
+      # runs on every PR; it stays cached and takes ~150ms on a hit.
+      - name: Lint and format
+        run: pnpm turbo run lint
+
+      - name: Build, test, and typecheck
+        run: pnpm turbo run build test typecheck --affected

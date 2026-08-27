@@ -57,10 +57,9 @@ describe("parseMatchScheduleCsv", () => {
   });
 
   it("rejects integers larger than a PostgreSQL integer", () => {
-    const csv = [
-      "match_number,r1,r2,r3,b1,b2,b3",
-      "1,2147483648,10367,10231,8137,3967,343",
-    ].join("\n");
+    const csv = ["match_number,r1,r2,r3,b1,b2,b3", "1,2147483648,10367,10231,8137,3967,343"].join(
+      "\n"
+    );
 
     expect(() => parseMatchScheduleCsv(csv)).toThrow("Line 2 is invalid");
   });
