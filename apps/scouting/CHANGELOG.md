@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.23.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.23.0...scouting-v2026.23.1) (2026-08-27)
+
+
+### Bug Fixes
+
+* **scouting:** rebuild image with the @swc/helpers pin ([1dca998](https://github.com/yeti-robotics/polar-edge/commit/1dca9983e81bc501566133b2da697f6520cfa124))
+
 ## [2026.23.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.22.0...scouting-v2026.23.0) (2026-08-27)
 
 
