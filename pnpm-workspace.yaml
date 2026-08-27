@@ -31,3 +31,11 @@ overrides:
   # esbuild with a dev-server CORS advisory. No upstream fix; drizzle-kit is a
   # devDependency, so force a patched esbuild.
   esbuild@<0.25.0: '>=0.25.0'
+  # @swc/helpers >=0.5.17 adds a `module-sync` export condition. Under pnpm's
+  # symlinked layout Next's file tracer copies only the cjs build into
+  # `.next/standalone`, but Node >=22.10 honours `module-sync` and loads the
+  # ESM build, which was never traced -- the standalone server dies at boot
+  # with MODULE_NOT_FOUND on @swc/helpers/esm/*. 0.5.15 is the last version
+  # without that condition and still exports every helper next/dist requires.
+  # Scoped to next so @swc/core keeps its own version.
+  next>@swc/helpers: 0.5.15
