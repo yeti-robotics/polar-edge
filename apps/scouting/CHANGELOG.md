@@ -1,5 +1,25 @@
 # Changelog
 
+## [2026.23.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.23.0...scouting-v2026.23.1) (2026-08-27)
+
+
+### Bug Fixes
+
+* **scouting:** rebuild image with the @swc/helpers pin ([1dca998](https://github.com/yeti-robotics/polar-edge/commit/1dca9983e81bc501566133b2da697f6520cfa124))
+
+## [2026.23.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.22.0...scouting-v2026.23.0) (2026-08-27)
+
+
+### Features
+
+* **scouting:** import csv file for offseason matches tba ([#568](https://github.com/yeti-robotics/polar-edge/issues/568)) ([1f685c4](https://github.com/yeti-robotics/polar-edge/commit/1f685c44958b3d8e2b4f2f55831544808ee6e76a))
+
+
+### Bug Fixes
+
+* **scouting:** run lint on every CI run and fix csv test formatting ([#573](https://github.com/yeti-robotics/polar-edge/issues/573)) ([a02277a](https://github.com/yeti-robotics/polar-edge/commit/a02277a216b940bfc2973e44bcb9dd22c8ae2651))
+* **scouting:** validate CSV before creating manual event ([#572](https://github.com/yeti-robotics/polar-edge/issues/572)) ([3f69434](https://github.com/yeti-robotics/polar-edge/commit/3f69434c0e98d93c8581f43f0c35702dc3b81415))
+
 ## [2026.22.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.21.0...scouting-v2026.22.0) (2026-06-07)
 
 

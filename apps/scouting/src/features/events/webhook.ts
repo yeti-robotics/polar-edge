@@ -13,7 +13,8 @@ import {
   teamEventCopr,
   teamMatch,
 } from "@/lib/database/schema/tables";
-import { getTBAClient, parseTbaTeamKey } from "@/lib/server/tba";
+import { getTBAClient } from "@/lib/server/tba";
+import { parseTbaTeamKey } from "@/lib/tba";
 import type { MatchScorePayload, ScheduleUpdatedPayload } from "./webhook-schemas";
 
 // --- HMAC verification ---
@@ -208,8 +209,7 @@ export async function processScheduleUpdated(
   if (!qualMatches.length) return { updated: false, reason: "No qualifying matches in schedule" };
 
   await db.transaction(async (tx) => {
-    // Upsert matches. ON CONFLICT DO UPDATE never deletes — team_match IDs stay stable,
-    // preserving all stand form links even if this fires mid-event.
+    // Upsert matches without deleting stale rows so saved scouting data remains linked.
     const upsertedMatches = await tx
       .insert(match)
       .values(
@@ -229,8 +229,7 @@ export async function processScheduleUpdated(
         },
       })
       .returning({ id: match.id, matchNumber: match.matchNumber });
-    const matchIdByNumber = new Map(upsertedMatches.map((r) => [r.matchNumber, r.id]));
-
+    const matchIdByNumber = new Map(upsertedMatches.map((row) => [row.matchNumber, row.id]));
     const teamMatchRows: Array<{
       eventId: string;
       matchId: string;
@@ -245,44 +244,29 @@ export async function processScheduleUpdated(
       const matchId = matchIdByNumber.get(m.match_number);
       if (!matchId) continue;
 
-      const redSurrogates = new Set(m.alliances.red.surrogate_team_keys ?? []);
-      const blueSurrogates = new Set(m.alliances.blue.surrogate_team_keys ?? []);
-
-      for (let i = 0; i < 3; i++) {
-        const redKey = m.alliances.red.team_keys[i];
-        const blueKey = m.alliances.blue.team_keys[i];
-        if (redKey) {
-          const teamNumber = parseTbaTeamKey(redKey);
+      for (const alliance of ["red", "blue"] as const) {
+        const surrogateKeys = new Set(m.alliances[alliance].surrogate_team_keys ?? []);
+        for (let i = 0; i < 3; i++) {
+          const teamKey = m.alliances[alliance].team_keys[i];
+          if (!teamKey) continue;
+          const teamNumber = parseTbaTeamKey(teamKey);
           teamNumbers.add(teamNumber);
           teamMatchRows.push({
             eventId: eventRow.id,
             matchId,
             teamNumber,
-            alliance: "red",
+            alliance,
             position: (i + 1) as 1 | 2 | 3,
-            surrogate: redSurrogates.has(redKey),
-          });
-        }
-        if (blueKey) {
-          const teamNumber = parseTbaTeamKey(blueKey);
-          teamNumbers.add(teamNumber);
-          teamMatchRows.push({
-            eventId: eventRow.id,
-            matchId,
-            teamNumber,
-            alliance: "blue",
-            position: (i + 1) as 1 | 2 | 3,
-            surrogate: blueSurrogates.has(blueKey),
+            surrogate: surrogateKeys.has(teamKey),
           });
         }
       }
     }
 
-    // Insert teams that don't yet exist — don't overwrite names from prior enrichment.
     if (teamNumbers.size > 0) {
       await tx
         .insert(team)
-        .values([...teamNumbers].map((n) => ({ teamNumber: n, teamName: "" })))
+        .values([...teamNumbers].map((teamNumber) => ({ teamNumber, teamName: "" })))
         .onConflictDoNothing();
     }
 
@@ -299,8 +283,14 @@ export async function processScheduleUpdated(
           },
         });
     }
+  });
 
-    // Upsert TBA score breakdown climb data for played matches
+  await db.transaction(async (tx) => {
+    const matchRows = await tx
+      .select({ id: match.id, matchNumber: match.matchNumber })
+      .from(match)
+      .where(and(eq(match.eventId, eventRow.id), eq(match.matchType, "qm")));
+    const matchIdByNumber = new Map(matchRows.map((row) => [row.matchNumber, row.id]));
     const breakdownValues: Array<{
       teamMatchId: number;
       autoClimbLevel: number;
@@ -358,9 +348,7 @@ export async function processScheduleUpdated(
     }
   });
 
-  revalidateTag(cacheTags.eventTeams(eventRow.id), "max");
   revalidateTag(cacheTags.teamMetrics(eventRow.id), "max");
-  revalidateTag(cacheTags.matchScores(eventRow.id), "max");
 
   return { updated: true };
 }
