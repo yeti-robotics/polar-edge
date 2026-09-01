@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { OrganizationSettingsForm } from "@/features/org/settings/components/OrganizationSettingsForm";
 import { auth } from "@/lib/auth";
 import { requireAdminMember } from "@/lib/server/auth/require-member";
+import {  TypographyH2, TypographyH3 } from "@repo/ui/components/typography";
 
 function LoadingForm() {
   return (
@@ -48,6 +49,13 @@ export default function AdminSettingsPage() {
       <Suspense fallback={<LoadingForm />}>
         <SettingsContent />
       </Suspense>
+      <Card className="mt-8">
+        <CardContent className="pt-6">
+          <TypographyH3 > Corps FallBack </TypographyH3>
+          <p className="mt-2 text-muted-foreground">Choose fallback</p>
+        </CardContent>
+      </Card>
+
     </main>
   );
 }

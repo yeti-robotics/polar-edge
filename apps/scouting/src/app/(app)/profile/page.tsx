@@ -1,4 +1,4 @@
-import { TypographyH2, TypographyP } from "@repo/ui/components/typography";
+import { TypographyH1, TypographyH2, TypographyP } from "@repo/ui/components/typography";
 import { headers } from "next/headers";
 import Image from "next/image";
 import { Suspense } from "react";
@@ -82,6 +82,12 @@ export default async function ProfilePage() {
           <ProfileSubmissionsSection />
         </Suspense>
       </div>
+
+
+
+
+
+
     </main>
   );
 }
