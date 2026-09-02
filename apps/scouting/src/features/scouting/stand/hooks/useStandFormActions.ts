@@ -46,7 +46,7 @@ export function useStandFormActions() {
    * Updates both ActionState (clears activeAction) and FormData (adds cycle).
    * BPS is derived from TBA COPRs, not manual bucket selection.
    */
-  const completeShootingCycle = (endedAt?: number) => {
+  const completeShootingCycle = (bucket?: number, endedAt?: number) => {
     if (!actionState.activeAction || actionState.activeAction.type !== "shooting") {
       console.warn("Cannot complete shooting cycle: no active shooting action");
       return;
@@ -65,6 +65,7 @@ export function useStandFormActions() {
         cycleNumber,
         startedAt: activeAction.startedAt,
         endedAt: resolvedEndedAt,
+        bucket,
       },
     });
 

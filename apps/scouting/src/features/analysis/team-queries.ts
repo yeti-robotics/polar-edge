@@ -2,7 +2,7 @@ import "server-only";
 
 import { createGradientProvider } from "@repo/ai";
 import { generateText } from "ai";
-import { and, desc, eq, exists, inArray, isNull, ne, sql } from "drizzle-orm";
+import { and, desc, eq, exists, isNull, ne, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { z } from "zod";
 import { cacheTags } from "@/lib/cache";
@@ -14,9 +14,9 @@ import {
   member,
   pitForm,
   standForm,
-  teamEventCopr,
   teamMatch,
   user,
+  vStandFormExpected,
   vTeamGoblinMatch,
   vTeamMatchConsensus,
   vTeamRpMagicMatch,
@@ -65,12 +65,6 @@ export async function getTeamKeyMetrics(
     ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
     : eq(teamMatch.teamNumber, teamNumber);
 
-  // Direct COPR fuel averages, scoped to events where this team has been scouted
-  const scopedEventIds = db
-    .selectDistinct({ eventId: teamMatch.eventId })
-    .from(teamMatch)
-    .where(teamWhere);
-
   // Subquery: distinct teamMatchIds that have at least one stand form
   const sfExistsSub = db
     .select({ teamMatchId: standForm.teamMatchId })
@@ -87,20 +81,20 @@ export async function getTeamKeyMetrics(
     .groupBy(standForm.teamMatchId)
     .as("sf_oof");
 
-  const [coprStats, formStats, matchStats] = await Promise.all([
-    // Direct COPR averages across scoped events
+  const [fuelStats, formStats, matchStats] = await Promise.all([
+    // COPR-first fuel averages with manual fallback per stand form.
     db
       .select({
-        avgAutoPoints: sql<number>`avg(${teamEventCopr.autoFuelCount}::numeric)`,
-        avgTeleopPoints: sql<number>`avg(${teamEventCopr.teleopFuelCount}::numeric)`,
+        avgAutoPoints: sql<number>`avg(${vStandFormExpected.expFuelAuto}::numeric)`,
+        avgTeleopPoints: sql<number>`avg(${vStandFormExpected.expFuelTeleop}::numeric)`,
       })
-      .from(teamEventCopr)
-      .where(
-        and(
-          eq(teamEventCopr.teamNumber, teamNumber),
-          inArray(teamEventCopr.eventId, scopedEventIds)
-        )
-      ),
+      .from(teamMatch)
+      .innerJoin(
+        standForm,
+        and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
+      )
+      .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
+      .where(teamWhere),
 
     // Per stand-form: uptime, downtime
     db
@@ -151,12 +145,12 @@ export async function getTeamKeyMetrics(
   const m = matchStats[0];
   if (!m || Number(m.totalMatchesScouted) === 0) return null;
 
-  const c = coprStats[0];
+  const fuel = fuelStats[0];
   const f = formStats[0];
   if (!f) return null;
   return {
-    avgAutoPoints: Math.round(Number(c?.avgAutoPoints ?? 0) * 10) / 10,
-    avgTeleopPoints: Math.round(Number(c?.avgTeleopPoints ?? 0) * 10) / 10,
+    avgAutoPoints: Math.round(Number(fuel?.avgAutoPoints ?? 0) * 10) / 10,
+    avgTeleopPoints: Math.round(Number(fuel?.avgTeleopPoints ?? 0) * 10) / 10,
     avgClimbPoints: Math.round(Number(m.avgClimbPoints) * 10) / 10,
     avgAutoClimbPoints: Math.round(Number(m.avgAutoClimbPoints) * 10) / 10,
     avgTeleopClimbPoints: Math.round(Number(m.avgTeleopClimbPoints) * 10) / 10,
@@ -212,12 +206,14 @@ export async function getTeamBpsEstimate(
       teamMatchId: sql<number>`${teamMatch.id}`.as("team_match_id"),
       eventId: sql<string>`${teamMatch.eventId}`.as("evt_id"),
       totalDumpDuration: sql<number>`sum(${cycle.dumpDuration}::numeric)`.as("total_dump_duration"),
+      totalFuel: vStandFormExpected.expFuelActive,
     })
     .from(cycle)
     .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
     .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
+    .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
     .where(teamWhere)
-    .groupBy(standForm.id, teamMatch.id, teamMatch.eventId)
+    .groupBy(standForm.id, teamMatch.id, teamMatch.eventId, vStandFormExpected.expFuelActive)
     .as("per_form_dur");
 
   // Step 2: Per team_match median across forms (consensus), then avg across matches
@@ -229,6 +225,10 @@ export async function getTeamBpsEstimate(
         sql<number>`percentile_cont(0.5) within group (order by ${perFormDuration.totalDumpDuration})`.as(
           "consensus_duration"
         ),
+      consensusFuel:
+        sql<number>`percentile_cont(0.5) within group (order by ${perFormDuration.totalFuel})`.as(
+          "consensus_fuel"
+        ),
     })
     .from(perFormDuration)
     .groupBy(perFormDuration.teamMatchId, perFormDuration.eventId)
@@ -237,16 +237,9 @@ export async function getTeamBpsEstimate(
   const rows = await db
     .select({
       avgDumpDurationPerMatch: sql<number>`avg(${perMatchConsensus.consensusDuration})`,
-      avgTotalFuelCount: sql<number>`avg(${teamEventCopr.totalFuelCount}::numeric)`,
+      avgTotalFuelCount: sql<number>`avg(${perMatchConsensus.consensusFuel})`,
     })
-    .from(perMatchConsensus)
-    .leftJoin(
-      teamEventCopr,
-      and(
-        eq(teamEventCopr.eventId, perMatchConsensus.eventId),
-        eq(teamEventCopr.teamNumber, teamNumber)
-      )
-    );
+    .from(perMatchConsensus);
 
   const row = rows[0];
   if (!row) return null;

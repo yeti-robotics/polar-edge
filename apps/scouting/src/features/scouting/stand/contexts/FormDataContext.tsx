@@ -11,6 +11,7 @@ export type FormDataState = {
   teamMatchId: number | null;
   matchNumber: number | null;
   teamNumber: number | null;
+  requiresManualFuelEstimate: boolean;
   canShuttle: boolean;
   comments: string;
 };
@@ -36,6 +37,7 @@ function formDataReducer(state: FormDataState, action: FormDataAction): FormData
         teamMatchId: action.payload.teamMatchId,
         matchNumber: action.payload.matchNumber,
         teamNumber: action.payload.teamNumber,
+        requiresManualFuelEstimate: action.payload.requiresManualFuelEstimate,
       };
 
     case "set_comments":
@@ -69,6 +71,7 @@ function formDataReducer(state: FormDataState, action: FormDataAction): FormData
         teamMatchId: null,
         matchNumber: null,
         teamNumber: null,
+        requiresManualFuelEstimate: false,
         canShuttle: false,
         comments: "",
       };
@@ -96,6 +99,7 @@ export function FormDataProvider({ children }: { children: React.ReactNode }) {
     teamMatchId: null,
     matchNumber: null,
     teamNumber: null,
+    requiresManualFuelEstimate: false,
     canShuttle: false,
     comments: "",
   });

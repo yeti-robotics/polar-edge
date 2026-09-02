@@ -14,6 +14,8 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
   pureClimbTeleop: numeric("pure_climb_teleop", { precision: 18, scale: 6 }).notNull(),
 
   cyclesCount: integer("cycles_count").notNull(),
+  expFuelAuto: numeric("exp_fuel_auto", { precision: 18, scale: 6 }).notNull(),
+  expFuelTeleop: numeric("exp_fuel_teleop", { precision: 18, scale: 6 }).notNull(),
 }).as(sql`
   with form_phase_duration as (
     -- Total dump duration per stand form per phase (single match).
@@ -28,30 +30,48 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
     where sf2.deleted_at is null
     group by c.stand_form_id, c.phase
   ),
-  cycle_fuel as (
+  cycle_estimates as (
     select
       c.stand_form_id,
-      sum(
-        case
-          when fpd.total_duration > 0 then
-            (case c.phase
-              when 'auto' then coalesce(copr.auto_fuel_count, 0.0)
-              when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0)
-              else 0.0
-            end)
-            / fpd.total_duration
-            * greatest(coalesce(c.dump_duration, 0.0), 0.0)
-          else 0.0
-        end
-      ) as fuel_active,
-      count(*) as cycles_count
+      c.phase,
+      case
+        when copr.id is not null and fpd.total_duration > 0 then
+          (case c.phase
+            when 'auto' then coalesce(copr.auto_fuel_count, 0.0)
+            when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0)
+            else 0.0
+          end)
+          / fpd.total_duration
+          * greatest(coalesce(c.dump_duration, 0.0), 0.0)
+        when copr.id is null then
+          (case c.bucket
+            when 0 then 0.0
+            when 1 then 1.0
+            when 2 then 2.25
+            when 3 then 4.0
+            when 4 then 6.0
+            when 5 then 8.0
+            else 0.0
+          end)
+          * greatest(coalesce(c.dump_duration, 0.0), 0.0)
+        else 0.0
+      end as fuel_estimate
     from cycle c
     join stand_form sf3 on sf3.id = c.stand_form_id
     join team_match tm on tm.id = sf3.team_match_id
     left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number
     left join form_phase_duration fpd on fpd.stand_form_id = c.stand_form_id and fpd.phase = c.phase
     where sf3.deleted_at is null
-    group by c.stand_form_id
+  ),
+  cycle_fuel as (
+    select
+      stand_form_id,
+      sum(fuel_estimate) as fuel_active,
+      sum(fuel_estimate) filter (where phase = 'auto') as fuel_auto,
+      sum(fuel_estimate) filter (where phase = 'teleop') as fuel_teleop,
+      count(*) as cycles_count
+    from cycle_estimates
+    group by stand_form_id
   ),
   climb_pts as (
     select
@@ -133,7 +153,9 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
     coalesce(cp.pure_climb_auto,  0.0) as pure_climb_auto,
     coalesce(cp.pure_climb_teleop, 0.0) as pure_climb_teleop,
 
-    coalesce(cf.cycles_count, 0)::int as cycles_count
+    coalesce(cf.cycles_count, 0)::int as cycles_count,
+    coalesce(cf.fuel_auto, 0.0) as exp_fuel_auto,
+    coalesce(cf.fuel_teleop, 0.0) as exp_fuel_teleop
   from stand_form sf
   left join cycle_fuel cf on cf.stand_form_id = sf.id
   left join climb_pts cp on cp.stand_form_id = sf.id

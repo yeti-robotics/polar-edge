@@ -1,12 +1,17 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: this is a test file, so we can use any */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
-import { type UpdateOrganizationNameState, updateOrganizationNameAction } from "./actions";
+import {
+  type UpdateOrganizationNameState,
+  updateCoprFallbackAction,
+  updateOrganizationNameAction,
+} from "./actions";
 
 vi.mock("@/lib/auth", () => ({
   auth: {
     api: {
       getActiveMember: vi.fn(),
+      getFullOrganization: vi.fn(),
       hasPermission: vi.fn(),
       updateOrganization: vi.fn(),
     },
@@ -299,5 +304,62 @@ describe("updateOrganizationNameAction", () => {
       data: { success: true },
       error: null,
     });
+  });
+});
+
+describe("updateCoprFallbackAction", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(auth.api.getActiveMember).mockResolvedValue({
+      id: "active-member-123",
+      organizationId: "org-123",
+      role: "admin",
+      userId: "user-123",
+      createdAt: new Date(),
+    } as any);
+    vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: true } as any);
+    vi.mocked(auth.api.getFullOrganization).mockResolvedValue({
+      id: "org-123",
+      name: "YETI",
+      slug: "yeti",
+      metadata: { existingSetting: "preserved" },
+    } as any);
+    vi.mocked(auth.api.updateOrganization).mockResolvedValue({} as any);
+  });
+
+  it("enables fallback while preserving other metadata", async () => {
+    const result = await updateCoprFallbackAction(
+      initialState,
+      makeFormData({ organizationId: "org-123", coprFallbackEnabled: "true" })
+    );
+
+    expect(result).toEqual({ data: { success: true }, error: null });
+    expect(auth.api.updateOrganization).toHaveBeenCalledWith({
+      body: {
+        organizationId: "org-123",
+        data: {
+          metadata: {
+            existingSetting: "preserved",
+            coprFallbackEnabled: true,
+          },
+        },
+      },
+      headers: expect.any(Headers),
+    });
+  });
+
+  it("rejects a member without organization update permission", async () => {
+    vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: false } as any);
+
+    const result = await updateCoprFallbackAction(
+      initialState,
+      makeFormData({ organizationId: "org-123", coprFallbackEnabled: "true" })
+    );
+
+    expect(result).toEqual({
+      data: null,
+      error: "Only organization admins and owners can update settings",
+    });
+    expect(auth.api.updateOrganization).not.toHaveBeenCalled();
   });
 });

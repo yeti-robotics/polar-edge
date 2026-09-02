@@ -10,7 +10,6 @@ import {
   pitForm,
   standForm,
   team,
-  teamEventCopr,
   teamMatch,
   vStandFormExpected,
 } from "@/lib/database/schema";
@@ -47,33 +46,26 @@ export async function getMainEventOverviewRow(
     cacheTag(cacheTags.teamMetrics(`${eventId}-${organizationId}`));
   }
 
-  // Per-team COPR fuel (single event, so just read directly from the table)
+  // Per-form fuel uses COPR when available and manual rate estimates otherwise.
   const standPointsQuery = db
     .select({
       teamMatchId: standForm.teamMatchId,
       autoPoints: sql<number>`
-        coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.pureClimbAuto}, 0)
+        coalesce(${vStandFormExpected.expFuelAuto}, 0) + coalesce(${vStandFormExpected.pureClimbAuto}, 0)
       `.as("auto_points"),
       teleopPoints: sql<number>`
-        coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.pureClimbTeleop}, 0)
+        coalesce(${vStandFormExpected.expFuelTeleop}, 0) + coalesce(${vStandFormExpected.pureClimbTeleop}, 0)
       `.as("teleop_points"),
       climbPoints: sql<number>`
         coalesce(${vStandFormExpected.pureClimbTotal}, 0)
       `.as("climb_points"),
       totalPoints: sql<number>`
-        coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric + coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.expTower}, 0)
+        coalesce(${vStandFormExpected.expFuelActive}, 0) + coalesce(${vStandFormExpected.expTower}, 0)
       `.as("total_points"),
     })
     .from(standForm)
     .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
-    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
-    .leftJoin(
-      teamEventCopr,
-      and(
-        eq(teamEventCopr.eventId, teamMatch.eventId),
-        eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
-      )
-    );
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId));
 
   const standPoints = db
     .$with("stand_points")
