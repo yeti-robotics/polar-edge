@@ -348,6 +348,41 @@ describe("updateCoprFallbackAction", () => {
     });
   });
 
+  it("disables fallback while preserving other metadata", async () => {
+    const result = await updateCoprFallbackAction(
+      initialState,
+      makeFormData({ organizationId: "org-123", coprFallbackEnabled: "false" })
+    );
+
+    expect(result).toEqual({ data: { success: true }, error: null });
+    expect(auth.api.updateOrganization).toHaveBeenCalledWith({
+      body: {
+        organizationId: "org-123",
+        data: {
+          metadata: {
+            existingSetting: "preserved",
+            coprFallbackEnabled: false,
+          },
+        },
+      },
+      headers: expect.any(Headers),
+    });
+  });
+
+  it("rejects an update for a different organization", async () => {
+    const result = await updateCoprFallbackAction(
+      initialState,
+      makeFormData({ organizationId: "org-other", coprFallbackEnabled: "true" })
+    );
+
+    expect(result).toEqual({
+      data: null,
+      error: "Only organization admins and owners can update settings",
+    });
+    expect(auth.api.hasPermission).not.toHaveBeenCalled();
+    expect(auth.api.updateOrganization).not.toHaveBeenCalled();
+  });
+
   it("rejects a member without organization update permission", async () => {
     vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: false } as any);
 

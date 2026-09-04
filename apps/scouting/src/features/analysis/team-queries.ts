@@ -81,20 +81,35 @@ export async function getTeamKeyMetrics(
     .groupBy(standForm.teamMatchId)
     .as("sf_oof");
 
+  // Reduce multiple scout observations to one value per match before averaging across matches.
+  // This prevents matches with more submitted forms from carrying extra weight.
+  const perMatchFuel = db
+    .select({
+      teamMatchId: teamMatch.id,
+      autoPoints:
+        sql<number>`percentile_cont(0.5) within group (order by ${vStandFormExpected.expFuelAuto}::numeric)`.as(
+          "auto_points"
+        ),
+      teleopPoints:
+        sql<number>`percentile_cont(0.5) within group (order by ${vStandFormExpected.expFuelTeleop}::numeric)`.as(
+          "teleop_points"
+        ),
+    })
+    .from(teamMatch)
+    .innerJoin(standForm, and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt)))
+    .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
+    .where(teamWhere)
+    .groupBy(teamMatch.id)
+    .as("per_match_fuel");
+
   const [fuelStats, formStats, matchStats] = await Promise.all([
-    // COPR-first fuel averages with manual fallback per stand form.
+    // COPR-first fuel averages with manual fallback, weighted once per match.
     db
       .select({
-        avgAutoPoints: sql<number>`avg(${vStandFormExpected.expFuelAuto}::numeric)`,
-        avgTeleopPoints: sql<number>`avg(${vStandFormExpected.expFuelTeleop}::numeric)`,
+        avgAutoPoints: sql<number>`avg(${perMatchFuel.autoPoints})`,
+        avgTeleopPoints: sql<number>`avg(${perMatchFuel.teleopPoints})`,
       })
-      .from(teamMatch)
-      .innerJoin(
-        standForm,
-        and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
-      )
-      .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
-      .where(teamWhere),
+      .from(perMatchFuel),
 
     // Per stand-form: uptime, downtime
     db

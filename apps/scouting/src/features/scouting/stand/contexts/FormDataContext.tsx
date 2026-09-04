@@ -19,7 +19,12 @@ export type FormDataState = {
 export type FormDataAction =
   | {
       type: "set_team_match_id";
-      payload: { teamMatchId: number; matchNumber: number; teamNumber: number };
+      payload: {
+        teamMatchId: number;
+        matchNumber: number;
+        teamNumber: number;
+        requiresManualFuelEstimate: boolean;
+      };
     }
   | { type: "set_can_shuttle"; payload: boolean }
   | { type: "set_comments"; payload: string }
