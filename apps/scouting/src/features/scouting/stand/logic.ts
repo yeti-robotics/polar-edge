@@ -1,6 +1,15 @@
 import { and, eq, isNull } from "drizzle-orm";
+import { isCoprFallbackEnabled } from "@/features/org/settings/organization-settings";
 import { db } from "@/lib/database";
-import { climb, cycle, match, standForm, teamMatch } from "@/lib/database/schema";
+import {
+  climb,
+  cycle,
+  match,
+  organization,
+  standForm,
+  teamEventCopr,
+  teamMatch,
+} from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import type { StandFormSubmission } from "./types";
 
@@ -48,7 +57,24 @@ export async function lookupTeamMatch(
     return { error: `Team ${teamNumber} not found in match ${matchNumber}` };
   }
 
-  return { teamMatchId: teamMatchRecord.id };
+  const [organizationRecord, coprRecord] = await Promise.all([
+    db.query.organization.findFirst({
+      where: eq(organization.id, organizationId),
+      columns: { metadata: true },
+    }),
+    db.query.teamEventCopr.findFirst({
+      where: and(
+        eq(teamEventCopr.eventId, activeEvent.event.id),
+        eq(teamEventCopr.teamNumber, teamNumber)
+      ),
+      columns: { id: true },
+    }),
+  ]);
+
+  return {
+    teamMatchId: teamMatchRecord.id,
+    requiresManualFuelEstimate: isCoprFallbackEnabled(organizationRecord?.metadata) && !coprRecord,
+  };
 }
 
 /**
@@ -74,6 +100,31 @@ export async function submitStandForm(
 
   if (validTeamMatch.length === 0) {
     return { error: "Invalid match for current event" };
+  }
+
+  const selectedTeam = validTeamMatch[0];
+  if (!selectedTeam) {
+    return { error: "Invalid match for current event" };
+  }
+
+  const [organizationRecord, coprRecord] = await Promise.all([
+    db.query.organization.findFirst({
+      where: eq(organization.id, organizationId),
+      columns: { metadata: true },
+    }),
+    db.query.teamEventCopr.findFirst({
+      where: and(
+        eq(teamEventCopr.eventId, activeEvent.event.id),
+        eq(teamEventCopr.teamNumber, selectedTeam.teamNumber)
+      ),
+      columns: { id: true },
+    }),
+  ]);
+
+  const requiresManualFuelEstimate =
+    isCoprFallbackEnabled(organizationRecord?.metadata) && !coprRecord;
+  if (requiresManualFuelEstimate && data.cycles.some((cycle) => cycle.bucket === undefined)) {
+    return { error: "A shooting-rate estimate is required for every shooting cycle" };
   }
 
   const existing = await db
@@ -114,6 +165,7 @@ export async function submitStandForm(
           standFormId: standFormRecord.id,
           phase: c.phase,
           cycleNumber: c.cycleNumber,
+          bucket: c.bucket,
           dumpDuration: ((c.endedAt - c.startedAt) / 1000).toString(),
         }))
       );
@@ -133,6 +185,6 @@ export async function submitStandForm(
   return {
     success: true,
     eventId: activeEvent.event.id,
-    teamNumber: validTeamMatch[0]?.teamNumber,
+    teamNumber: selectedTeam.teamNumber,
   };
 }

@@ -19,6 +19,7 @@ export type CompletedCycle = {
   cycleNumber: number;
   startedAt: number;
   endedAt: number;
+  bucket?: number;
 };
 
 export type CompletedClimb = {
@@ -35,6 +36,7 @@ export const CycleSchema = z
     cycleNumber: z.number().int().positive(),
     startedAt: z.number(),
     endedAt: z.number(),
+    bucket: z.number().int().min(0).max(5).optional(),
   })
   .refine((data) => data.endedAt > data.startedAt, {
     message: "End time must be after start time",
