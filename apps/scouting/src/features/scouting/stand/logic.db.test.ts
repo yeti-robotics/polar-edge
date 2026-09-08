@@ -1,13 +1,22 @@
 import { eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { db } from "@/lib/database";
 import { cycle, organization, teamEventCopr, teamMatch } from "@/lib/database/schema";
 import { aMatch, anEvent, anOrganization } from "@/test/factories";
+
+const { getActiveEventForOrganization } = vi.hoisted(() => ({
+  getActiveEventForOrganization: vi.fn(),
+}));
+
+vi.mock("@/lib/server/organization/active-event", () => ({ getActiveEventForOrganization }));
+
 import { lookupTeamMatch, submitStandForm } from "./logic";
 
 async function aSelectedTeam(options: { fallbackEnabled: boolean; withCopr?: boolean }) {
   const event = await anEvent();
   const { organization: org, member } = await anOrganization({ activeEventId: event.id });
+  getActiveEventForOrganization.mockResolvedValue({ event });
+
   await db
     .update(organization)
     .set({ metadata: JSON.stringify({ coprFallbackEnabled: options.fallbackEnabled }) })
