@@ -13,6 +13,30 @@ export type UpdateOrganizationNameState = {
 
 export type UpdateCoprFallbackState = UpdateOrganizationNameState;
 
+async function authorizeOrganizationUpdate(organizationId: string) {
+  const requestHeaders = await headers();
+  const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
+  const canUpdate =
+    activeMember?.organizationId === organizationId &&
+    (
+      await auth.api.hasPermission({
+        headers: requestHeaders,
+        body: { permissions: { organization: ["update"] } },
+      })
+    ).success;
+
+  if (!canUpdate) {
+    return {
+      error: {
+        data: null,
+        error: "Only organization admins and owners can update settings",
+      } satisfies UpdateOrganizationNameState,
+    };
+  }
+
+  return { requestHeaders };
+}
+
 export async function updateOrganizationNameAction(
   _prevState: UpdateOrganizationNameState,
   formData: FormData
@@ -21,26 +45,9 @@ export async function updateOrganizationNameAction(
     const organizationId = formData.get("organizationId") as string;
     const name = formData.get("name") as string;
 
-    const requestHeaders = await headers();
-    const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-
-    if (!activeMember || activeMember.organizationId !== organizationId) {
-      return {
-        data: null,
-        error: "Only organization admins and owners can update settings",
-      };
-    }
-
-    const { success: canUpdate } = await auth.api.hasPermission({
-      headers: requestHeaders,
-      body: { permissions: { organization: ["update"] } },
-    });
-    if (!canUpdate) {
-      return {
-        data: null,
-        error: "Only organization admins and owners can update settings",
-      };
-    }
+    const authorization = await authorizeOrganizationUpdate(organizationId);
+    if (authorization.error) return authorization.error;
+    const { requestHeaders } = authorization;
 
     const trimmedName = name?.trim();
     if (!trimmedName) {
@@ -72,26 +79,9 @@ export async function updateCoprFallbackAction(
   try {
     const organizationId = formData.get("organizationId") as string;
     const enabled = formData.get("coprFallbackEnabled") === "true";
-    const requestHeaders = await headers();
-    const activeMember = await auth.api.getActiveMember({ headers: requestHeaders });
-
-    if (!activeMember || activeMember.organizationId !== organizationId) {
-      return {
-        data: null,
-        error: "Only organization admins and owners can update settings",
-      };
-    }
-
-    const { success: canUpdate } = await auth.api.hasPermission({
-      headers: requestHeaders,
-      body: { permissions: { organization: ["update"] } },
-    });
-    if (!canUpdate) {
-      return {
-        data: null,
-        error: "Only organization admins and owners can update settings",
-      };
-    }
+    const authorization = await authorizeOrganizationUpdate(organizationId);
+    if (authorization.error) return authorization.error;
+    const { requestHeaders } = authorization;
 
     const current = await auth.api.getFullOrganization({
       query: { organizationId },
