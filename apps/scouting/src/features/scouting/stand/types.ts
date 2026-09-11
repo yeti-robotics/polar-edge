@@ -56,6 +56,7 @@ export const COMMENTS_MIN_LENGTH = 32;
 
 export const StandFormSchema = z.object({
   teamMatchId: z.number().positive(),
+  requiresManualFuelEstimate: z.boolean(),
   canShuttle: z.boolean(),
   comments: z
     .string()

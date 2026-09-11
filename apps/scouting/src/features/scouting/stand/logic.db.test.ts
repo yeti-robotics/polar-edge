@@ -48,8 +48,13 @@ async function aSelectedTeam(options: { fallbackEnabled: boolean; withCopr?: boo
   return { event, org, member, selectedTeamMatch };
 }
 
-const aSubmission = (teamMatchId: number, bucket?: number) => ({
+const aSubmission = (
+  teamMatchId: number,
+  bucket?: number,
+  requiresManualFuelEstimate = bucket !== undefined
+) => ({
   teamMatchId,
+  requiresManualFuelEstimate,
   canShuttle: false,
   comments: "Observed a consistent shooting cycle during this match.",
   oofTimeSeconds: 0,
@@ -94,7 +99,7 @@ describe("stand-form manual COPR fallback", () => {
     const { org, member, selectedTeamMatch } = await aSelectedTeam({ fallbackEnabled: true });
 
     await expect(
-      submitStandForm(aSubmission(selectedTeamMatch.id), member.id, org.id)
+      submitStandForm(aSubmission(selectedTeamMatch.id, undefined, true), member.id, org.id)
     ).resolves.toEqual({ error: "A shooting-rate estimate is required for every shooting cycle" });
   });
 
@@ -121,5 +126,41 @@ describe("stand-form manual COPR fallback", () => {
 
     const storedCycle = await db.select().from(cycle).limit(1);
     expect(storedCycle[0]?.bucket).toBeNull();
+  });
+
+  it("uses the match-start decision when fallback becomes enabled before submission", async () => {
+    const { org, member, selectedTeamMatch } = await aSelectedTeam({ fallbackEnabled: false });
+    const lookup = await lookupTeamMatch(1, 3506, org.id);
+
+    await db
+      .update(organization)
+      .set({ metadata: JSON.stringify({ coprFallbackEnabled: true }) })
+      .where(eq(organization.id, org.id));
+
+    await expect(
+      submitStandForm(
+        aSubmission(selectedTeamMatch.id, undefined, lookup.requiresManualFuelEstimate),
+        member.id,
+        org.id
+      )
+    ).resolves.toMatchObject({ success: true });
+  });
+
+  it("uses the match-start decision when COPR disappears before submission", async () => {
+    const { org, member, selectedTeamMatch } = await aSelectedTeam({
+      fallbackEnabled: true,
+      withCopr: true,
+    });
+    const lookup = await lookupTeamMatch(1, 3506, org.id);
+
+    await db.delete(teamEventCopr).where(eq(teamEventCopr.eventId, selectedTeamMatch.eventId));
+
+    await expect(
+      submitStandForm(
+        aSubmission(selectedTeamMatch.id, undefined, lookup.requiresManualFuelEstimate),
+        member.id,
+        org.id
+      )
+    ).resolves.toMatchObject({ success: true });
   });
 });

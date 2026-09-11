@@ -107,23 +107,7 @@ export async function submitStandForm(
     return { error: "Invalid match for current event" };
   }
 
-  const [organizationRecord, coprRecord] = await Promise.all([
-    db.query.organization.findFirst({
-      where: eq(organization.id, organizationId),
-      columns: { metadata: true },
-    }),
-    db.query.teamEventCopr.findFirst({
-      where: and(
-        eq(teamEventCopr.eventId, activeEvent.event.id),
-        eq(teamEventCopr.teamNumber, selectedTeam.teamNumber)
-      ),
-      columns: { id: true },
-    }),
-  ]);
-
-  const requiresManualFuelEstimate =
-    isCoprFallbackEnabled(organizationRecord?.metadata) && !coprRecord;
-  if (requiresManualFuelEstimate && data.cycles.some((cycle) => cycle.bucket === undefined)) {
+  if (data.requiresManualFuelEstimate && data.cycles.some((cycle) => cycle.bucket === undefined)) {
     return { error: "A shooting-rate estimate is required for every shooting cycle" };
   }
 
