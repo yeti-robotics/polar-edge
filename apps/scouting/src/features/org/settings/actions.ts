@@ -73,12 +73,10 @@ export async function updateOrganizationNameAction(
 }
 
 export async function updateCoprFallbackAction(
-  _prevState: UpdateCoprFallbackState,
-  formData: FormData
+  organizationId: string,
+  enabled: boolean
 ): Promise<UpdateCoprFallbackState> {
   try {
-    const organizationId = formData.get("organizationId") as string;
-    const enabled = formData.get("coprFallbackEnabled") === "true";
     const authorization = await authorizeOrganizationUpdate(organizationId);
     if (authorization.error) return authorization.error;
     const { requestHeaders } = authorization;

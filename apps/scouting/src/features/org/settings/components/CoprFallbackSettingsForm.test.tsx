@@ -31,9 +31,7 @@ describe("CoprFallbackSettingsForm", () => {
     await user.click(screen.getByRole("switch"));
 
     await waitFor(() => expect(mockUpdate).toHaveBeenCalledOnce());
-    const submitted = mockUpdate.mock.calls[0]?.[1];
-    expect(submitted?.get("organizationId")).toBe("org-123");
-    expect(submitted?.get("coprFallbackEnabled")).toBe("true");
+    expect(mockUpdate).toHaveBeenCalledWith("org-123", true);
     expect(await screen.findByText("On")).toBeInTheDocument();
     expect(toast.success).toHaveBeenCalledWith("Manual shooting-rate fallback enabled");
   });
@@ -48,5 +46,19 @@ describe("CoprFallbackSettingsForm", () => {
     expect(await screen.findByText("Off")).toBeInTheDocument();
     expect(screen.getByRole("switch")).not.toBeChecked();
     expect(toast.error).toHaveBeenCalledWith("Could not save");
+  });
+
+  it("rolls back to the latest persisted state", async () => {
+    const user = userEvent.setup();
+    render(<CoprFallbackSettingsForm organizationId="org-123" enabled={false} />);
+
+    await user.click(screen.getByRole("switch"));
+    expect(await screen.findByText("On")).toBeInTheDocument();
+
+    mockUpdate.mockResolvedValueOnce({ data: null, error: "Could not save" });
+    await user.click(screen.getByRole("switch"));
+
+    expect(await screen.findByText("On")).toBeInTheDocument();
+    expect(screen.getByRole("switch")).toBeChecked();
   });
 });

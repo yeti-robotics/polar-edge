@@ -10,7 +10,8 @@ import {
 import { Label } from "@repo/ui/components/label";
 import { toast } from "@repo/ui/components/sonner";
 import { Switch } from "@repo/ui/components/switch";
-import { useEffect, useState, useTransition } from "react";
+import { useForm } from "@tanstack/react-form-nextjs";
+import { useEffect } from "react";
 import { updateCoprFallbackAction } from "../actions";
 
 export function CoprFallbackSettingsForm({
@@ -20,37 +21,29 @@ export function CoprFallbackSettingsForm({
   organizationId: string;
   enabled: boolean;
 }) {
-  const [checked, setChecked] = useState(enabled);
-  const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setChecked(enabled);
-  }, [enabled]);
-
-  const handleCheckedChange = (nextChecked: boolean) => {
-    const previousChecked = checked;
-    setChecked(nextChecked);
-
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.set("organizationId", organizationId);
-      formData.set("coprFallbackEnabled", String(nextChecked));
-
+  const form = useForm({
+    defaultValues: { enabled },
+    onSubmit: async ({ value }) => {
       try {
-        const result = await updateCoprFallbackAction({ data: null, error: null }, formData);
+        const result = await updateCoprFallbackAction(organizationId, value.enabled);
         if (result.error) {
-          setChecked(previousChecked);
+          form.reset();
           toast.error(result.error);
           return;
         }
 
-        toast.success(`Manual shooting-rate fallback ${nextChecked ? "enabled" : "disabled"}`);
+        form.reset(value);
+        toast.success(`Manual shooting-rate fallback ${value.enabled ? "enabled" : "disabled"}`);
       } catch {
-        setChecked(previousChecked);
+        form.reset();
         toast.error("Failed to update COPR fallback");
       }
-    });
-  };
+    },
+  });
+
+  useEffect(() => {
+    form.reset({ enabled });
+  }, [enabled, form]);
 
   return (
     <Card className="mt-8">
@@ -63,13 +56,20 @@ export function CoprFallbackSettingsForm({
       </CardHeader>
       <CardContent>
         <div className="flex items-start gap-3">
-          <Switch
-            id="copr-fallback-enabled"
-            checked={checked}
-            onCheckedChange={handleCheckedChange}
-            disabled={isPending}
-            aria-describedby="copr-fallback-status"
-          />
+          <form.Field name="enabled">
+            {(field) => (
+              <Switch
+                id="copr-fallback-enabled"
+                checked={field.state.value}
+                onCheckedChange={(checked) => {
+                  field.handleChange(checked);
+                  void form.handleSubmit();
+                }}
+                disabled={form.state.isSubmitting}
+                aria-describedby="copr-fallback-status"
+              />
+            )}
+          </form.Field>
           <div className="space-y-1">
             <Label htmlFor="copr-fallback-enabled">Manual shooting-rate fallback</Label>
             <p
@@ -77,7 +77,9 @@ export function CoprFallbackSettingsForm({
               className="text-sm text-muted-foreground"
               aria-live="polite"
             >
-              {isPending ? "Saving…" : checked ? "On" : "Off"}
+              <form.Subscribe selector={(state) => [state.values.enabled, state.isSubmitting]}>
+                {([checked, isSubmitting]) => (isSubmitting ? "Saving…" : checked ? "On" : "Off")}
+              </form.Subscribe>
             </p>
           </div>
         </div>

@@ -328,10 +328,7 @@ describe("updateCoprFallbackAction", () => {
   });
 
   it("enables fallback while preserving other metadata", async () => {
-    const result = await updateCoprFallbackAction(
-      initialState,
-      makeFormData({ organizationId: "org-123", coprFallbackEnabled: "true" })
-    );
+    const result = await updateCoprFallbackAction("org-123", true);
 
     expect(result).toEqual({ data: { success: true }, error: null });
     expect(auth.api.updateOrganization).toHaveBeenCalledWith({
@@ -349,10 +346,7 @@ describe("updateCoprFallbackAction", () => {
   });
 
   it("disables fallback while preserving other metadata", async () => {
-    const result = await updateCoprFallbackAction(
-      initialState,
-      makeFormData({ organizationId: "org-123", coprFallbackEnabled: "false" })
-    );
+    const result = await updateCoprFallbackAction("org-123", false);
 
     expect(result).toEqual({ data: { success: true }, error: null });
     expect(auth.api.updateOrganization).toHaveBeenCalledWith({
@@ -370,10 +364,7 @@ describe("updateCoprFallbackAction", () => {
   });
 
   it("rejects an update for a different organization", async () => {
-    const result = await updateCoprFallbackAction(
-      initialState,
-      makeFormData({ organizationId: "org-other", coprFallbackEnabled: "true" })
-    );
+    const result = await updateCoprFallbackAction("org-other", true);
 
     expect(result).toEqual({
       data: null,
@@ -386,10 +377,7 @@ describe("updateCoprFallbackAction", () => {
   it("rejects a member without organization update permission", async () => {
     vi.mocked(auth.api.hasPermission).mockResolvedValue({ success: false } as any);
 
-    const result = await updateCoprFallbackAction(
-      initialState,
-      makeFormData({ organizationId: "org-123", coprFallbackEnabled: "true" })
-    );
+    const result = await updateCoprFallbackAction("org-123", true);
 
     expect(result).toEqual({
       data: null,
