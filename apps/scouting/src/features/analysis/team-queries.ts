@@ -262,7 +262,7 @@ export async function getTeamBpsEstimate(
   const avgDuration = Number(row.avgDumpDurationPerMatch);
   const avgFuel = Number(row.avgTotalFuelCount);
 
-  if (!avgDuration || avgDuration <= 0 || !avgFuel) return null;
+  if (!avgDuration || avgDuration <= 0 || row.avgTotalFuelCount == null) return null;
 
   return {
     bps: Math.round((avgFuel / avgDuration) * 100) / 100,
