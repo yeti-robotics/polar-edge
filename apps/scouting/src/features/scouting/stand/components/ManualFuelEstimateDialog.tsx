@@ -10,6 +10,7 @@ import {
 } from "@repo/ui/components/dialog";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
+import { useForm } from "@tanstack/react-form-nextjs";
 import { CheckCircleIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -32,28 +33,29 @@ export function ManualFuelEstimateDialog({
   onCancel?: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [selectedBucket, setSelectedBucket] = useState("");
+  const form = useForm({
+    defaultValues: { selectedBucket: null as number | null },
+    onSubmit: ({ value }) => {
+      if (value.selectedBucket === null) return;
+      onComplete(value.selectedBucket);
+      setOpen(false);
+      form.reset();
+    },
+  });
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (nextOpen) onOpen?.();
     else onCancel?.();
     setOpen(nextOpen);
     if (!nextOpen) {
-      setSelectedBucket("");
+      form.reset();
     }
-  };
-
-  const handleConfirm = () => {
-    if (!selectedBucket) return;
-    onComplete(Number(selectedBucket));
-    setOpen(false);
-    setSelectedBucket("");
   };
 
   const handleCancel = () => {
     onCancel?.();
     setOpen(false);
-    setSelectedBucket("");
+    form.reset();
   };
 
   return (
@@ -71,26 +73,43 @@ export function ManualFuelEstimateDialog({
         <p className="text-sm text-muted-foreground">
           TBA does not have COPR data for this team. Choose the closest observed rate.
         </p>
-        <div className="space-y-4">
-          <Label>Balls/Second Estimate</Label>
-          <RadioGroup value={selectedBucket} onValueChange={setSelectedBucket}>
-            {BUCKETS.map((bucket) => (
-              <div key={bucket.value} className="flex items-center gap-2">
-                <RadioGroupItem value={bucket.value} id={`fuel-bucket-${bucket.value}`} />
-                <Label htmlFor={`fuel-bucket-${bucket.value}`} className="cursor-pointer">
-                  {bucket.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-        </div>
+        <form.Field
+          name="selectedBucket"
+          validators={{
+            onMount: ({ value }) => (value === null ? "A fuel estimate is required" : undefined),
+            onChange: ({ value }) => (value === null ? "A fuel estimate is required" : undefined),
+          }}
+        >
+          {(field) => (
+            <div className="space-y-4">
+              <Label>Balls/Second Estimate</Label>
+              <RadioGroup
+                value={field.state.value?.toString()}
+                onValueChange={(value) => field.handleChange(Number(value))}
+              >
+                {BUCKETS.map((bucket) => (
+                  <div key={bucket.value} className="flex items-center gap-2">
+                    <RadioGroupItem value={bucket.value} id={`fuel-bucket-${bucket.value}`} />
+                    <Label htmlFor={`fuel-bucket-${bucket.value}`} className="cursor-pointer">
+                      {bucket.label}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          )}
+        </form.Field>
         <div className="flex justify-end gap-2 pt-4">
           <Button variant="secondary" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button onClick={handleConfirm} disabled={!selectedBucket}>
-            Confirm
-          </Button>
+          <form.Subscribe selector={(state) => state.canSubmit}>
+            {(canSubmit) => (
+              <Button onClick={() => form.handleSubmit()} disabled={!canSubmit}>
+                Confirm
+              </Button>
+            )}
+          </form.Subscribe>
         </div>
       </DialogContent>
     </Dialog>
