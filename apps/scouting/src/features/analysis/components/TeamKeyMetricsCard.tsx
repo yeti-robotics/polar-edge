@@ -43,8 +43,18 @@ export function TeamKeyMetricsCard({ metrics }: { metrics: TeamKeyMetrics }) {
       <CardContent className="space-y-5">
         {/* Fuel scoring */}
         <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
-          <MetricTile label="Avg Auto" value={metrics.avgAutoPoints} unit="fuel" />
-          <MetricTile label="Avg Teleop" value={metrics.avgTeleopPoints} unit="fuel" />
+          <MetricTile
+            label="Avg Auto"
+            value={metrics.avgAutoPoints}
+            unit="fuel"
+            estimated={metrics.autoFuelIsEstimated}
+          />
+          <MetricTile
+            label="Avg Teleop"
+            value={metrics.avgTeleopPoints}
+            unit="fuel"
+            estimated={metrics.teleopFuelIsEstimated}
+          />
           <MetricTile label="Matches Scouted" value={metrics.totalMatchesScouted} />
         </div>
 
