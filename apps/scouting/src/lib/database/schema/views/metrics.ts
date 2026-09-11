@@ -43,7 +43,7 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
           end)
           / fpd.total_duration
           * greatest(coalesce(c.dump_duration, 0.0), 0.0)
-        when copr.id is null then
+        when copr.id is null and o.metadata::jsonb ->> 'coprFallbackEnabled' = 'true' then
           (case c.bucket
             when 0 then 0.0
             when 1 then 1.0
@@ -58,6 +58,8 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
       end as fuel_estimate
     from cycle c
     join stand_form sf3 on sf3.id = c.stand_form_id
+    left join member m on m.id = sf3.scout_member_id
+    left join organization o on o.id = m.organization_id
     join team_match tm on tm.id = sf3.team_match_id
     left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number
     left join form_phase_duration fpd on fpd.stand_form_id = c.stand_form_id and fpd.phase = c.phase
