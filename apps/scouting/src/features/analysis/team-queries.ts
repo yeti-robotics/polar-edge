@@ -25,6 +25,8 @@ import {
 export type TeamKeyMetrics = {
   avgAutoPoints: number;
   avgTeleopPoints: number;
+  autoFuelIsEstimated: boolean;
+  teleopFuelIsEstimated: boolean;
   avgClimbPoints: number;
   avgAutoClimbPoints: number;
   avgTeleopClimbPoints: number;
@@ -94,6 +96,13 @@ export async function getTeamKeyMetrics(
         sql<number>`percentile_cont(0.5) within group (order by ${vStandFormExpected.expFuelTeleop}::numeric)`.as(
           "teleop_points"
         ),
+      autoFuelIsEstimated: sql<boolean>`bool_or(${vStandFormExpected.expFuelAutoIsEstimated})`.as(
+        "auto_fuel_is_estimated"
+      ),
+      teleopFuelIsEstimated:
+        sql<boolean>`bool_or(${vStandFormExpected.expFuelTeleopIsEstimated})`.as(
+          "teleop_fuel_is_estimated"
+        ),
     })
     .from(teamMatch)
     .innerJoin(standForm, and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt)))
@@ -108,6 +117,8 @@ export async function getTeamKeyMetrics(
       .select({
         avgAutoPoints: sql<number>`avg(${perMatchFuel.autoPoints})`,
         avgTeleopPoints: sql<number>`avg(${perMatchFuel.teleopPoints})`,
+        autoFuelIsEstimated: sql<boolean>`bool_or(${perMatchFuel.autoFuelIsEstimated})`,
+        teleopFuelIsEstimated: sql<boolean>`bool_or(${perMatchFuel.teleopFuelIsEstimated})`,
       })
       .from(perMatchFuel),
 
@@ -166,6 +177,8 @@ export async function getTeamKeyMetrics(
   return {
     avgAutoPoints: Math.round(Number(fuel?.avgAutoPoints ?? 0) * 10) / 10,
     avgTeleopPoints: Math.round(Number(fuel?.avgTeleopPoints ?? 0) * 10) / 10,
+    autoFuelIsEstimated: fuel?.autoFuelIsEstimated ?? false,
+    teleopFuelIsEstimated: fuel?.teleopFuelIsEstimated ?? false,
     avgClimbPoints: Math.round(Number(m.avgClimbPoints) * 10) / 10,
     avgAutoClimbPoints: Math.round(Number(m.avgAutoClimbPoints) * 10) / 10,
     avgTeleopClimbPoints: Math.round(Number(m.avgTeleopClimbPoints) * 10) / 10,
@@ -181,6 +194,7 @@ export async function getTeamKeyMetrics(
 
 export type BpsEstimate = {
   bps: number;
+  isEstimated: boolean;
   totalFuelPerMatch: number;
   avgShootingTimePerMatch: number;
 };
@@ -222,13 +236,20 @@ export async function getTeamBpsEstimate(
       eventId: sql<string>`${teamMatch.eventId}`.as("evt_id"),
       totalDumpDuration: sql<number>`sum(${cycle.dumpDuration}::numeric)`.as("total_dump_duration"),
       totalFuel: vStandFormExpected.expFuelActive,
+      fuelIsEstimated: vStandFormExpected.expFuelActiveIsEstimated,
     })
     .from(cycle)
     .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
     .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
     .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
     .where(teamWhere)
-    .groupBy(standForm.id, teamMatch.id, teamMatch.eventId, vStandFormExpected.expFuelActive)
+    .groupBy(
+      standForm.id,
+      teamMatch.id,
+      teamMatch.eventId,
+      vStandFormExpected.expFuelActive,
+      vStandFormExpected.expFuelActiveIsEstimated
+    )
     .as("per_form_dur");
 
   // Step 2: Per team_match median across forms (consensus), then avg across matches
@@ -244,6 +265,9 @@ export async function getTeamBpsEstimate(
         sql<number>`percentile_cont(0.5) within group (order by ${perFormDuration.totalFuel})`.as(
           "consensus_fuel"
         ),
+      fuelIsEstimated: sql<boolean>`bool_or(${perFormDuration.fuelIsEstimated})`.as(
+        "fuel_is_estimated"
+      ),
     })
     .from(perFormDuration)
     .groupBy(perFormDuration.teamMatchId, perFormDuration.eventId)
@@ -253,6 +277,7 @@ export async function getTeamBpsEstimate(
     .select({
       avgDumpDurationPerMatch: sql<number>`avg(${perMatchConsensus.consensusDuration})`,
       avgTotalFuelCount: sql<number>`avg(${perMatchConsensus.consensusFuel})`,
+      fuelIsEstimated: sql<boolean>`bool_or(${perMatchConsensus.fuelIsEstimated})`,
     })
     .from(perMatchConsensus);
 
@@ -266,6 +291,7 @@ export async function getTeamBpsEstimate(
 
   return {
     bps: Math.round((avgFuel / avgDuration) * 100) / 100,
+    isEstimated: row.fuelIsEstimated ?? false,
     totalFuelPerMatch: Math.round(avgFuel * 10) / 10,
     avgShootingTimePerMatch: Math.round(avgDuration * 10) / 10,
   };

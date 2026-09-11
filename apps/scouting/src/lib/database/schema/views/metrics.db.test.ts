@@ -53,6 +53,9 @@ async function expectedFuel(standFormId: string) {
       expFuelActive: vStandFormExpected.expFuelActive,
       expFuelAuto: vStandFormExpected.expFuelAuto,
       expFuelTeleop: vStandFormExpected.expFuelTeleop,
+      activeIsEstimated: vStandFormExpected.expFuelActiveIsEstimated,
+      autoIsEstimated: vStandFormExpected.expFuelAutoIsEstimated,
+      teleopIsEstimated: vStandFormExpected.expFuelTeleopIsEstimated,
     })
     .from(vStandFormExpected)
     .where(eq(vStandFormExpected.standFormId, standFormId))
@@ -61,6 +64,9 @@ async function expectedFuel(standFormId: string) {
     active: Number(row?.expFuelActive ?? 0),
     auto: Number(row?.expFuelAuto ?? 0),
     teleop: Number(row?.expFuelTeleop ?? 0),
+    activeIsEstimated: row?.activeIsEstimated ?? false,
+    autoIsEstimated: row?.autoIsEstimated ?? false,
+    teleopIsEstimated: row?.teleopIsEstimated ?? false,
   };
 }
 
@@ -68,7 +74,14 @@ describe("vStandFormExpected fuel fallback", () => {
   it("uses the manual bucket midpoint when COPR is unavailable", async () => {
     const { form } = await aScoutedCycle(2);
 
-    expect(await expectedFuel(form.id)).toEqual({ active: 4.5, auto: 0, teleop: 4.5 });
+    expect(await expectedFuel(form.id)).toEqual({
+      active: 4.5,
+      auto: 0,
+      teleop: 4.5,
+      activeIsEstimated: true,
+      autoIsEstimated: false,
+      teleopIsEstimated: true,
+    });
   });
 
   it("ignores manual bucket estimates when fallback is disabled", async () => {
@@ -81,18 +94,39 @@ describe("vStandFormExpected fuel fallback", () => {
       dumpDuration: "2",
     });
 
-    expect(await expectedFuel(form.id)).toEqual({ active: 0, auto: 0, teleop: 0 });
+    expect(await expectedFuel(form.id)).toEqual({
+      active: 0,
+      auto: 0,
+      teleop: 0,
+      activeIsEstimated: false,
+      autoIsEstimated: false,
+      teleopIsEstimated: false,
+    });
   });
 
   it("uses zero when neither COPR nor a manual estimate is available", async () => {
     const { form } = await aScoutedCycle();
 
-    expect(await expectedFuel(form.id)).toEqual({ active: 0, auto: 0, teleop: 0 });
+    expect(await expectedFuel(form.id)).toEqual({
+      active: 0,
+      auto: 0,
+      teleop: 0,
+      activeIsEstimated: false,
+      autoIsEstimated: false,
+      teleopIsEstimated: false,
+    });
   });
 
   it("automatically prefers COPR when it arrives after manual scouting", async () => {
     const { event, form } = await aScoutedCycle(2);
-    expect(await expectedFuel(form.id)).toEqual({ active: 4.5, auto: 0, teleop: 4.5 });
+    expect(await expectedFuel(form.id)).toEqual({
+      active: 4.5,
+      auto: 0,
+      teleop: 4.5,
+      activeIsEstimated: true,
+      autoIsEstimated: false,
+      teleopIsEstimated: true,
+    });
 
     await db.insert(teamEventCopr).values({
       eventId: event.id,
@@ -103,6 +137,13 @@ describe("vStandFormExpected fuel fallback", () => {
       totalFuelCount: "35",
     });
 
-    expect(await expectedFuel(form.id)).toEqual({ active: 30, auto: 0, teleop: 30 });
+    expect(await expectedFuel(form.id)).toEqual({
+      active: 30,
+      auto: 0,
+      teleop: 30,
+      activeIsEstimated: false,
+      autoIsEstimated: false,
+      teleopIsEstimated: false,
+    });
   });
 });

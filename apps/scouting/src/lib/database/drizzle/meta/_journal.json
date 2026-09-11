@@ -176,6 +176,13 @@
       "when": 1789085116418,
       "tag": "0024_broad_polaris",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1789091083713,
+      "tag": "0025_magical_nitro",
+      "breakpoints": true
     }
   ]
 }
