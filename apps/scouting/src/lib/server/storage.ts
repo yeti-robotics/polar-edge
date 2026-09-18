@@ -32,6 +32,10 @@ function getClient(): S3Client {
       secretAccessKey: config.secret,
     },
     forcePathStyle: false, // DO Spaces uses virtual-hosted-style URLs
+    // SDK v3 defaults to WHEN_SUPPORTED, which signs presigned URLs with
+    // x-amz-checksum-crc32 / x-amz-sdk-checksum-algorithm. DO Spaces' CORS
+    // policy doesn't allow those headers, so browser preflight PUTs 403.
+    requestChecksumCalculation: "WHEN_REQUIRED",
   });
 
   return _client;
