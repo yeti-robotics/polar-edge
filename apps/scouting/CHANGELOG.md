@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026.24.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.23.1...scouting-v2026.24.0) (2026-09-18)
+
+
+### Features
+
+* **scouting:** update favicon ([#575](https://github.com/yeti-robotics/polar-edge/issues/575)) ([666e0a9](https://github.com/yeti-robotics/polar-edge/commit/666e0a9508532de039e67c34aceb27335d696bbb))
+
+
+### Bug Fixes
+
+* **scouting:** disable SDK checksum headers on presigned pit-photo uploads ([b9bf36e](https://github.com/yeti-robotics/polar-edge/commit/b9bf36e51f23b4e9e918ee8472b19852083d40e5))
+
 ## [2026.23.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.23.0...scouting-v2026.23.1) (2026-08-27)
 
 
