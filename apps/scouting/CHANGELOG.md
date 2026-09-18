@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.24.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.24.0...scouting-v2026.24.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* fixd the pit form team number typeahead due to wrong object filtering ([#584](https://github.com/yeti-robotics/polar-edge/issues/584)) ([2f1f4bc](https://github.com/yeti-robotics/polar-edge/commit/2f1f4bc34a0ebd6baed5cd0f955a79ebb67c9d8d))
+
 ## [2026.24.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.23.1...scouting-v2026.24.0) (2026-09-18)
 
 
