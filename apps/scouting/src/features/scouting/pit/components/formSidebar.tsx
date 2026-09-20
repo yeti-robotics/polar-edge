@@ -14,7 +14,7 @@ export function FormSidebar() {
           Stand Form
         </Link>
         <Link className="text-sm" href={routes.forms.workability}>
-          Workability Form
+          Synergy Form
         </Link>
       </div>
     </aside>

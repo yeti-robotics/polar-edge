@@ -67,7 +67,7 @@ export function CompatibilitySection({ teams }: { teams: CompatibleTeam[] }) {
         <AccordionContent className="pt-1">
           {rankedTeams.length === 0 ? (
             <div className="rounded-lg border border-dashed px-4 py-6 text-sm text-muted-foreground">
-              No compatibility ratings yet. Submit driver or human-player workability feedback to
+              No compatibility ratings yet. Submit driver or human-player synergy feedback to
               populate this ranking.
             </div>
           ) : (

@@ -25,7 +25,7 @@ export async function submitWorkabilityForm(_prevState: unknown, formData: FormD
     if (!activeMember) {
       return {
         ...initialFormState,
-        _error: "You must be signed in to submit workability feedback.",
+        _error: "You must be signed in to submit synergy feedback.",
       };
     }
 
