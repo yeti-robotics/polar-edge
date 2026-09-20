@@ -18,10 +18,10 @@ export function TeamWorkabilityCard({ summary }: { summary: TeamWorkabilitySumma
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Workability</CardTitle>
+          <CardTitle>Synergy</CardTitle>
         </CardHeader>
         <CardContent>
-          <TypographyMuted>No workability data available for this team.</TypographyMuted>
+          <TypographyMuted>No synergy data available for this team.</TypographyMuted>
         </CardContent>
       </Card>
     );
@@ -30,7 +30,7 @@ export function TeamWorkabilityCard({ summary }: { summary: TeamWorkabilitySumma
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Workability</CardTitle>
+        <CardTitle>Synergy</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4">
