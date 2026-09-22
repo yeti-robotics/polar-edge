@@ -47,7 +47,7 @@ export function CompatibilityNotesDialog({ notes, noteCount }: CompatibilityNote
         <DialogHeader>
           <DialogTitle>Compatibility Notes</DialogTitle>
           <DialogDescription>
-            Recent driver and human-player workability notes for this team.
+            Recent driver and human-player synergy notes for this team.
           </DialogDescription>
         </DialogHeader>
 

@@ -132,12 +132,12 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
 
   const selectedMatchNumber = useStore(
     form.store,
-    (state) => Number(state.values.matchNumber) || 0
+    (state) => Number(state.values?.matchNumber) || 0
   );
-  const selectedTeamNumber = useStore(form.store, (state) => Number(state.values.teamNumber) || 0);
+  const selectedTeamNumber = useStore(form.store, (state) => Number(state.values?.teamNumber) || 0);
   const selectedRole = useStore(form.store, (state) =>
-    WORKABILITY_ROLE_OPTIONS.includes(state.values.role)
-      ? state.values.role
+    WORKABILITY_ROLE_OPTIONS.includes(state.values?.role)
+      ? state.values?.role
       : WORKABILITY_FORM_DEFAULT_VALUES.role
   );
   const selectedMatch = matchOptionMap.get(selectedMatchNumber) ?? null;
@@ -202,7 +202,7 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
         savedSubmission.role
       );
 
-      toast.success("Workability feedback saved.", {
+      toast.success("Synergy feedback saved.", {
         position: "bottom-right",
       });
     }
@@ -307,7 +307,7 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
                     </ComboboxContent>
                   </Combobox>
                   <FieldDescription>
-                    Workability feedback is tracked per match so repeated pairings stay distinct.
+                    Synergy feedback is tracked per match so repeated pairings stay distinct.
                   </FieldDescription>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
@@ -420,7 +420,7 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
 
       <Card>
         <CardHeader>
-          <CardTitle>Workability Rating</CardTitle>
+          <CardTitle>Synergy Rating</CardTitle>
           <CardDescription>
             Use a simple 1-5 scale where 1 is very difficult to work with and 5 is very easy.
           </CardDescription>
@@ -437,7 +437,7 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
 
               return (
                 <Field className="gap-4">
-                  <FieldLabel className="sr-only">Workability rating</FieldLabel>
+                  <FieldLabel className="sr-only">Synergy rating</FieldLabel>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Current rating</span>
                     <span className="text-lg font-semibold tabular-nums">
@@ -456,7 +456,7 @@ export function WorkabilityForm({ matchOptions, initialSubmissions }: Workabilit
                       field.handleChange(value[0] ?? WORKABILITY_RATING_DEFAULT)
                     }
                     aria-invalid={isInvalid}
-                    aria-label="Workability rating"
+                    aria-label="Synergy rating"
                   />
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     {WORKABILITY_RATING_OPTIONS.map((rating) => (

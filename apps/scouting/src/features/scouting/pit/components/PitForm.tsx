@@ -48,6 +48,7 @@ const DRIVING_ABILITIES = [
 ] as const;
 
 export function PitForm({ teams }: { teams: { teamNumber: number; teamName: string }[] }) {
+  const teamNumbers = teams.map((team) => team.teamNumber.toString());
   const [state, action, isPending] = useActionState(submitPitForm, initialFormState);
   const form = useForm({
     ...formOpts,
@@ -183,7 +184,7 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                     onValueChange={(v) => {
                       v && field.handleChange(Number(v));
                     }}
-                    items={teams}
+                    items={teamNumbers}
                     itemToStringLabel={(v) => {
                       const team = teams.find((t) => t.teamNumber.toString() === v);
                       return team ? `${team.teamNumber} - ${team.teamName}` : (v ?? "");
@@ -198,11 +199,17 @@ export function PitForm({ teams }: { teams: { teamNumber: number; teamName: stri
                     <ComboboxContent>
                       <ComboboxEmpty>No items found.</ComboboxEmpty>
                       <ComboboxList>
-                        {(item) => (
-                          <ComboboxItem key={item.teamNumber} value={item.teamNumber.toString()}>
-                            {item.teamNumber} - {item.teamName}
-                          </ComboboxItem>
-                        )}
+                        {(teamNumber) => {
+                          const team = teams.find(
+                            (item) => item.teamNumber.toString() === teamNumber
+                          );
+
+                          return (
+                            <ComboboxItem key={teamNumber} value={teamNumber}>
+                              {team ? `${team.teamNumber} - ${team.teamName}` : teamNumber}
+                            </ComboboxItem>
+                          );
+                        }}
                       </ComboboxList>
                     </ComboboxContent>
                   </Combobox>

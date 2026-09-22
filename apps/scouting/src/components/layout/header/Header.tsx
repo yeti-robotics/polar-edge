@@ -118,7 +118,7 @@ async function ConditionalNavItems() {
   const items = [
     ...(isScoutLeadOrAbove(activeMember.role)
       ? [
-          { label: "Workability", href: routes.forms.workability },
+          { label: "Synergy", href: routes.forms.workability },
           { label: "Drive Ranking", href: routes.forms.driveRanking },
         ]
       : []),
