@@ -39,6 +39,7 @@ export function MatchSelectionTab() {
             teamMatchId: result.teamMatchId,
             matchNumber: parseInt(matchNumber, 10),
             teamNumber: parseInt(teamNumber, 10),
+            requiresManualFuelEstimate: result.requiresManualFuelEstimate ?? false,
           },
         });
       } else {

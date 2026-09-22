@@ -28,6 +28,19 @@ import type { TeamEventOverviewRow } from "../types";
 
 const columnHelper = createColumnHelper<TeamEventOverviewRow>();
 
+function FuelValue({ value, estimated }: { value: number; estimated: boolean }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 tabular-nums">
+      {value.toFixed(1)}
+      {estimated && (
+        <span className="text-[10px] font-normal text-muted-foreground" title="Manual estimate">
+          Est.
+        </span>
+      )}
+    </span>
+  );
+}
+
 const columns = [
   columnHelper.accessor("teamNumber", {
     header: "Team #",
@@ -47,13 +60,17 @@ const columns = [
   }),
   columnHelper.accessor("avgAutoPoints", {
     header: "Avg Auto",
-    cell: ({ getValue }) => <span className="tabular-nums">{getValue().toFixed(1)}</span>,
+    cell: ({ getValue, row }) => (
+      <FuelValue value={getValue()} estimated={row.original.autoFuelIsEstimated} />
+    ),
     meta: { align: "right" },
     enableGlobalFilter: false,
   }),
   columnHelper.accessor("avgTeleopPoints", {
     header: "Avg Teleop",
-    cell: ({ getValue }) => <span className="tabular-nums">{getValue().toFixed(1)}</span>,
+    cell: ({ getValue, row }) => (
+      <FuelValue value={getValue()} estimated={row.original.teleopFuelIsEstimated} />
+    ),
     meta: { align: "right" },
     enableGlobalFilter: false,
   }),
@@ -65,7 +82,9 @@ const columns = [
   }),
   columnHelper.accessor("avgTotalPoints", {
     header: "Avg Total",
-    cell: ({ getValue }) => <span className="tabular-nums">{getValue().toFixed(1)}</span>,
+    cell: ({ getValue, row }) => (
+      <FuelValue value={getValue()} estimated={row.original.totalFuelIsEstimated} />
+    ),
     meta: { align: "right" },
     enableGlobalFilter: false,
   }),

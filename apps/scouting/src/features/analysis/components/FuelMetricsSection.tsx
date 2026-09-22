@@ -23,12 +23,23 @@ export function FuelMetricsSection({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4">
-            <MetricTile label="Avg Auto" value={metrics.avgAutoPoints} unit="fuel" />
-            <MetricTile label="Avg Teleop" value={metrics.avgTeleopPoints} unit="fuel" />
+            <MetricTile
+              label="Avg Auto"
+              value={metrics.avgAutoPoints}
+              unit="fuel"
+              estimated={metrics.autoFuelIsEstimated}
+            />
+            <MetricTile
+              label="Avg Teleop"
+              value={metrics.avgTeleopPoints}
+              unit="fuel"
+              estimated={metrics.teleopFuelIsEstimated}
+            />
             <MetricTile
               label="Est. BPS"
               value={bps ? bps.bps : "N/A"}
               unit={bps ? "balls/s" : undefined}
+              estimated={bps?.isEstimated}
               description={
                 bps
                   ? `${bps.totalFuelPerMatch} fuel / ${bps.avgShootingTimePerMatch}s per match`

@@ -10,7 +10,6 @@ import {
   pitForm,
   standForm,
   team,
-  teamEventCopr,
   teamMatch,
   vStandFormExpected,
 } from "@/lib/database/schema";
@@ -47,33 +46,29 @@ export async function getMainEventOverviewRow(
     cacheTag(cacheTags.teamMetrics(`${eventId}-${organizationId}`));
   }
 
-  // Per-team COPR fuel (single event, so just read directly from the table)
+  // Per-form fuel uses COPR when available and manual rate estimates otherwise.
   const standPointsQuery = db
     .select({
       teamMatchId: standForm.teamMatchId,
       autoPoints: sql<number>`
-        coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.pureClimbAuto}, 0)
+        coalesce(${vStandFormExpected.expFuelAuto}, 0) + coalesce(${vStandFormExpected.pureClimbAuto}, 0)
       `.as("auto_points"),
       teleopPoints: sql<number>`
-        coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.pureClimbTeleop}, 0)
+        coalesce(${vStandFormExpected.expFuelTeleop}, 0) + coalesce(${vStandFormExpected.pureClimbTeleop}, 0)
       `.as("teleop_points"),
       climbPoints: sql<number>`
         coalesce(${vStandFormExpected.pureClimbTotal}, 0)
       `.as("climb_points"),
       totalPoints: sql<number>`
-        coalesce(${teamEventCopr.autoFuelCount}, 0)::numeric + coalesce(${teamEventCopr.teleopFuelCount}, 0)::numeric + coalesce(${vStandFormExpected.expTower}, 0)
+        coalesce(${vStandFormExpected.expFuelActive}, 0) + coalesce(${vStandFormExpected.expTower}, 0)
       `.as("total_points"),
+      autoFuelIsEstimated: vStandFormExpected.expFuelAutoIsEstimated,
+      teleopFuelIsEstimated: vStandFormExpected.expFuelTeleopIsEstimated,
+      totalFuelIsEstimated: vStandFormExpected.expFuelActiveIsEstimated,
     })
     .from(standForm)
     .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
-    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
-    .leftJoin(
-      teamEventCopr,
-      and(
-        eq(teamEventCopr.eventId, teamMatch.eventId),
-        eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
-      )
-    );
+    .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId));
 
   const standPoints = db
     .$with("stand_points")
@@ -101,6 +96,15 @@ export async function getMainEventOverviewRow(
         totalPoints: sql<number>`
           percentile_cont(0.5) within group (order by ${standPoints.totalPoints})
         `.as("total_points"),
+        autoFuelIsEstimated: sql<boolean>`bool_or(${standPoints.autoFuelIsEstimated})`.as(
+          "auto_fuel_is_estimated"
+        ),
+        teleopFuelIsEstimated: sql<boolean>`bool_or(${standPoints.teleopFuelIsEstimated})`.as(
+          "teleop_fuel_is_estimated"
+        ),
+        totalFuelIsEstimated: sql<boolean>`bool_or(${standPoints.totalFuelIsEstimated})`.as(
+          "total_fuel_is_estimated"
+        ),
       })
       .from(standPoints)
       .groupBy(standPoints.teamMatchId)
@@ -122,6 +126,18 @@ export async function getMainEventOverviewRow(
         avgTotalPoints: sql<number>`
           avg(${teamMatchConsensusPoints.totalPoints})
         `.as("avg_total_points"),
+        autoFuelIsEstimated:
+          sql<boolean>`bool_or(${teamMatchConsensusPoints.autoFuelIsEstimated})`.as(
+            "auto_fuel_is_estimated"
+          ),
+        teleopFuelIsEstimated:
+          sql<boolean>`bool_or(${teamMatchConsensusPoints.teleopFuelIsEstimated})`.as(
+            "teleop_fuel_is_estimated"
+          ),
+        totalFuelIsEstimated:
+          sql<boolean>`bool_or(${teamMatchConsensusPoints.totalFuelIsEstimated})`.as(
+            "total_fuel_is_estimated"
+          ),
         matchesScouted: sql<number>`
           count(${teamMatchConsensusPoints.teamMatchId})::int
         `.as("matches_scouted"),
@@ -200,6 +216,15 @@ export async function getMainEventOverviewRow(
       avgTotalPoints: sql<number>`
         coalesce(${teamMetrics.avgTotalPoints}, 0)
       `.as("avg_total_points"),
+      autoFuelIsEstimated: sql<boolean>`coalesce(${teamMetrics.autoFuelIsEstimated}, false)`.as(
+        "auto_fuel_is_estimated"
+      ),
+      teleopFuelIsEstimated: sql<boolean>`coalesce(${teamMetrics.teleopFuelIsEstimated}, false)`.as(
+        "teleop_fuel_is_estimated"
+      ),
+      totalFuelIsEstimated: sql<boolean>`coalesce(${teamMetrics.totalFuelIsEstimated}, false)`.as(
+        "total_fuel_is_estimated"
+      ),
       uptimePct: sql<number>`coalesce(${teamUptime.uptimePct}, 0)`.as("uptime_pct"),
       matchesScouted: sql<number>`coalesce(${teamMetrics.matchesScouted}, 0)`.as("matches_scouted"),
       drivetrainType: latestPit.drivetrainType,
@@ -218,6 +243,9 @@ export async function getMainEventOverviewRow(
     avgTeleopPoints: round1(Number(row.avgTeleopPoints) || 0),
     avgClimbPoints: round1(Number(row.avgClimbPoints) || 0),
     avgTotalPoints: round1(Number(row.avgTotalPoints) || 0),
+    autoFuelIsEstimated: row.autoFuelIsEstimated,
+    teleopFuelIsEstimated: row.teleopFuelIsEstimated,
+    totalFuelIsEstimated: row.totalFuelIsEstimated,
     uptimePct: round1(Number(row.uptimePct) || 0),
     matchesScouted: Number(row.matchesScouted) || 0,
     drivetrainType: row.drivetrainType ?? null,
