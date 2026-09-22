@@ -31,13 +31,13 @@ export function OofActiveLayout() {
         <div className="text-lg text-muted-foreground">Total: {totalSeconds}s</div>
       </div>
       <div className="grid grid-cols-2 gap-4 w-full h-24">
-        <Button variant="outline" className="h-full" onClick={handleCancelOof}>
-          <XIcon className="mr-2 h-4 w-4" />
-          Cancel
-        </Button>
         <Button variant="default" className="h-full" onClick={handleEndOof}>
           <CheckCircleIcon className="mr-2 h-5 w-5" />
           End Oof Time
+        </Button>
+        <Button variant="destructive" className="h-full" onClick={handleCancelOof}>
+          <XIcon className="mr-2 h-4 w-4" />
+          Cancel
         </Button>
       </div>
     </div>
