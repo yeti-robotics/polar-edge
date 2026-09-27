@@ -1,0 +1,314 @@
+"use client";
+
+import { Button } from "@repo/ui/components/button";
+import { Input } from "@repo/ui/components/input";
+import { cn } from "@repo/ui/lib/utils";
+import {
+  ChevronDownIcon,
+  LoaderCircleIcon,
+  UploadIcon,
+  VideoIcon,
+  WifiOffIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useRef, useState } from "react";
+import { useNetworkStatus } from "@/lib/offline/use-network-status";
+import { routes } from "@/lib/routes";
+import { createMatchVideo, getVideoUploadUrl, openMatchVideo } from "../actions";
+import { filterMatchOptions, parseYouTubeId } from "../logic";
+import type { FilmRoomMatchOption } from "../types";
+
+const EXTENSION_TYPES: Record<string, string> = {
+  mp4: "video/mp4",
+  m4v: "video/mp4",
+  mov: "video/quicktime",
+  webm: "video/webm",
+};
+
+function videoContentType(file: File): string {
+  if (file.type) return file.type;
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  return EXTENSION_TYPES[extension] ?? "";
+}
+
+/** PUT with progress, which fetch() can't report. */
+function uploadWithProgress(
+  url: string,
+  file: File,
+  contentType: string,
+  onProgress: (fraction: number) => void
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", contentType);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(e.loaded / e.total);
+    };
+    xhr.onload = () =>
+      xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error(`HTTP ${xhr.status}`));
+    xhr.onerror = () => reject(new Error("Network error"));
+    xhr.send(file);
+  });
+}
+
+/**
+ * Film Room's blank video screen: an address-bar field over the empty stage.
+ * Type or pick a qual match (its TBA video opens straight away), paste or drop
+ * a YouTube link, or upload a clip from Photos.
+ */
+export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOption[] }) {
+  const router = useRouter();
+  const online = useNetworkStatus();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [text, setText] = useState("");
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  /** A qual match with no video yet: the next link or upload attaches to it. */
+  const [selectedMatch, setSelectedMatch] = useState<FilmRoomMatchOption | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const looksLikeLink = /[/.]/.test(text) || parseYouTubeId(text) !== null;
+  const suggestions = useMemo(
+    () => (looksLikeLink ? [] : filterMatchOptions(matchOptions, selectedMatch ? "" : text)),
+    [looksLikeLink, matchOptions, selectedMatch, text]
+  );
+
+  const openVideo = (videoId: string) => {
+    router.push(routes.filmRoom.video(videoId));
+  };
+
+  const pickMatch = async (option: FilmRoomMatchOption) => {
+    setText(option.label);
+    setSuggestOpen(false);
+    setError(null);
+    if (option.videoId) {
+      setBusy(`Opening ${option.label}…`);
+      openVideo(option.videoId);
+      return;
+    }
+    setBusy(`Finding ${option.label} on TBA…`);
+    const result = await openMatchVideo({ matchId: option.matchId });
+    if ("error" in result) {
+      setBusy(null);
+      setError(result.error);
+      return;
+    }
+    if ("videoId" in result.data) {
+      openVideo(result.data.videoId);
+      return;
+    }
+    setBusy(null);
+    setSelectedMatch(option);
+  };
+
+  const submitLink = async (raw: string) => {
+    const url = raw.trim();
+    if (!parseYouTubeId(url)) {
+      // Not a link: treat it as a match search and open the only hit.
+      const hits = filterMatchOptions(matchOptions, url);
+      const exact = hits.find((h) => h.label.toLowerCase() === url.toLowerCase());
+      const hit = exact ?? (hits.length === 1 ? hits[0] : null);
+      if (hit) return pickMatch(hit);
+      setError("Pick a qual match, or paste a YouTube link.");
+      return;
+    }
+    setError(null);
+    setSuggestOpen(false);
+    setBusy("Opening video…");
+    const result = await createMatchVideo({
+      source: "youtube",
+      url,
+      matchId: selectedMatch?.matchId ?? null,
+    });
+    if ("error" in result) {
+      setBusy(null);
+      setError(result.error);
+      return;
+    }
+    openVideo(result.data.videoId);
+  };
+
+  const uploadFile = async (file: File) => {
+    const contentType = videoContentType(file);
+    if (!contentType.startsWith("video/")) {
+      setError("Pick a video file.");
+      return;
+    }
+    setError(null);
+    setBusy("Uploading… 0%");
+    const target = await getVideoUploadUrl({ contentType, fileSize: file.size });
+    if ("error" in target) {
+      setBusy(null);
+      setError(target.error);
+      return;
+    }
+    try {
+      await uploadWithProgress(target.data.url, file, contentType, (f) =>
+        setBusy(`Uploading… ${Math.round(f * 100)}%`)
+      );
+    } catch {
+      setBusy(null);
+      setError("Upload failed. Check the wifi and try again.");
+      return;
+    }
+    const result = await createMatchVideo({
+      source: "upload",
+      storageKey: target.data.key,
+      fileName: file.name,
+      matchId: selectedMatch?.matchId ?? null,
+    });
+    if ("error" in result) {
+      setBusy(null);
+      setError(result.error);
+      return;
+    }
+    openVideo(result.data.videoId);
+  };
+
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files?.[0];
+    if (file) {
+      void uploadFile(file);
+      return;
+    }
+    const dropped =
+      event.dataTransfer.getData("text/uri-list") || event.dataTransfer.getData("text/plain");
+    if (dropped) {
+      setText(dropped.trim());
+      void submitLink(dropped);
+    }
+  };
+
+  return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: drop target for links and clips
+    <div
+      className="relative flex size-full flex-col overflow-hidden bg-black text-white select-none"
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={onDrop}
+    >
+      {/* Blank footage plate */}
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(135deg, oklch(0.16 0.006 285) 0 14px, oklch(0.13 0.006 285) 14px 28px)",
+        }}
+      >
+        <span className="font-mono text-xs text-white/40">Film Room</span>
+      </div>
+
+      {!online && (
+        <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1.5 text-xs">
+          <WifiOffIcon className="size-3.5" />
+          Offline
+        </div>
+      )}
+
+      {/* Address bar: type a match or a link; the chevron opens the qual list */}
+      <div className="relative z-20 flex flex-col gap-2 bg-gradient-to-b from-black/75 to-transparent px-4.5 py-4">
+        <form
+          className={cn(
+            "relative w-[520px] max-w-full",
+            !online && "ml-[108px] max-w-[calc(100%-108px)]"
+          )}
+          onSubmit={(e) => {
+            e.preventDefault();
+            void submitLink(text);
+          }}
+        >
+          <Input
+            value={text}
+            onChange={(e) => {
+              const next = e.target.value;
+              setText(next);
+              // Pasting a link after picking a match attaches it to that match;
+              // typing anything else is a new search.
+              if (!parseYouTubeId(next)) setSelectedMatch(null);
+              setSuggestOpen(true);
+              setError(null);
+            }}
+            onFocus={() => setSuggestOpen(true)}
+            onBlur={() => window.setTimeout(() => setSuggestOpen(false), 150)}
+            placeholder="Qual match, or paste a YouTube link…"
+            inputMode="url"
+            autoComplete="off"
+            disabled={busy !== null}
+            className="h-11.5 rounded-full border-white/15 bg-white/10 pr-11 pl-4 text-sm text-white placeholder:text-white/50 md:text-sm"
+          />
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            aria-label="Show qual matches"
+            disabled={busy !== null}
+            className="absolute top-1.5 right-1.5 size-8.5 rounded-full text-white/70 hover:bg-white/10 hover:text-white"
+            onClick={() => setSuggestOpen((v) => !v)}
+          >
+            <ChevronDownIcon className="size-4.5" />
+          </Button>
+
+          {suggestOpen && suggestions.length > 0 && (
+            <div className="absolute top-13 right-0 left-0 z-20 flex max-h-[min(60vh,420px)] flex-col overflow-y-auto rounded-xl border bg-popover text-popover-foreground shadow-lg">
+              {suggestions.map((m) => (
+                <button
+                  key={m.matchId}
+                  type="button"
+                  // Keep focus in the field so onBlur doesn't close the list first.
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => void pickMatch(m)}
+                  className="flex h-11 shrink-0 items-center gap-2 border-b border-border/50 px-3.5 text-left text-sm last:border-b-0 hover:bg-accent"
+                >
+                  <VideoIcon className="size-4 text-muted-foreground" />
+                  {m.label}
+                  {(m.videoId || m.tbaYoutubeId) && (
+                    <span className="ml-auto size-1.5 rounded-full bg-primary" title="Has video" />
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </form>
+        {selectedMatch && !busy && (
+          <p className={cn("text-sm text-white/70", !online && "ml-[108px]")}>
+            No video on TBA for {selectedMatch.label} yet. Paste a link or upload one.
+          </p>
+        )}
+        {error && <p className={cn("text-sm text-red-400", !online && "ml-[108px]")}>{error}</p>}
+      </div>
+
+      {/* Upload from Photos, centred on the blank plate */}
+      <div className="relative z-10 flex flex-1 items-center justify-center">
+        {busy ? (
+          <div className="inline-flex h-12 items-center gap-2.5 rounded-full bg-black/40 px-5 text-sm font-medium">
+            <LoaderCircleIcon className="size-4 animate-spin" />
+            {busy}
+          </div>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            className="h-12 rounded-full border-white/20 bg-black/40 px-5 text-sm text-white hover:bg-black/60 hover:text-white dark:border-white/20 dark:bg-black/40 dark:hover:bg-black/60"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <UploadIcon className="size-4.5" />
+            Upload from Photos
+          </Button>
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="video/*"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = "";
+            if (file) void uploadFile(file);
+          }}
+        />
+      </div>
+    </div>
+  );
+}
