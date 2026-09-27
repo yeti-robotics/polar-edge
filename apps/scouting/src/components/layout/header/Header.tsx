@@ -37,6 +37,10 @@ const navItems = [
     label: "Picklist",
     href: routes.picklist.root,
   },
+  {
+    label: "Film Room",
+    href: routes.filmRoom.root,
+  },
 ];
 
 function OrganizationSelectorFallback() {
