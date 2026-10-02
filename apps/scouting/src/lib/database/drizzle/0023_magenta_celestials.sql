@@ -1,3 +1,4 @@
+ALTER TABLE "stand_form" ADD COLUMN "uses_manual_fuel_estimate" boolean DEFAULT false NOT NULL;--> statement-breakpoint
 CREATE OR REPLACE VIEW "public"."v_stand_form_expected" AS (
   with form_phase_duration as (
     -- Total dump duration per stand form per phase (single match).
@@ -25,7 +26,7 @@ CREATE OR REPLACE VIEW "public"."v_stand_form_expected" AS (
           end)
           / fpd.total_duration
           * greatest(coalesce(c.dump_duration, 0.0), 0.0)
-        when copr.id is null then
+        when copr.id is null and sf3.uses_manual_fuel_estimate = true then
           (case c.bucket
             when 0 then 0.0
             when 1 then 1.0
@@ -37,7 +38,12 @@ CREATE OR REPLACE VIEW "public"."v_stand_form_expected" AS (
           end)
           * greatest(coalesce(c.dump_duration, 0.0), 0.0)
         else 0.0
-      end as fuel_estimate
+      end as fuel_estimate,
+      (
+        copr.id is null
+        and sf3.uses_manual_fuel_estimate = true
+        and c.bucket is not null
+      ) as fuel_is_estimated
     from cycle c
     join stand_form sf3 on sf3.id = c.stand_form_id
     join team_match tm on tm.id = sf3.team_match_id
@@ -51,6 +57,9 @@ CREATE OR REPLACE VIEW "public"."v_stand_form_expected" AS (
       sum(fuel_estimate) as fuel_active,
       sum(fuel_estimate) filter (where phase = 'auto') as fuel_auto,
       sum(fuel_estimate) filter (where phase = 'teleop') as fuel_teleop,
+      bool_or(fuel_is_estimated) as fuel_active_is_estimated,
+      bool_or(fuel_is_estimated) filter (where phase = 'auto') as fuel_auto_is_estimated,
+      bool_or(fuel_is_estimated) filter (where phase = 'teleop') as fuel_teleop_is_estimated,
       count(*) as cycles_count
     from cycle_estimates
     group by stand_form_id
@@ -137,7 +146,10 @@ CREATE OR REPLACE VIEW "public"."v_stand_form_expected" AS (
 
     coalesce(cf.cycles_count, 0)::int as cycles_count,
     coalesce(cf.fuel_auto, 0.0) as exp_fuel_auto,
-    coalesce(cf.fuel_teleop, 0.0) as exp_fuel_teleop
+    coalesce(cf.fuel_teleop, 0.0) as exp_fuel_teleop,
+    coalesce(cf.fuel_active_is_estimated, false) as exp_fuel_active_is_estimated,
+    coalesce(cf.fuel_auto_is_estimated, false) as exp_fuel_auto_is_estimated,
+    coalesce(cf.fuel_teleop_is_estimated, false) as exp_fuel_teleop_is_estimated
   from stand_form sf
   left join cycle_fuel cf on cf.stand_form_id = sf.id
   left join climb_pts cp on cp.stand_form_id = sf.id

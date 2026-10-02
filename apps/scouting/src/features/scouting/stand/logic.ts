@@ -136,6 +136,7 @@ export async function submitStandForm(
         canShuttle: data.canShuttle,
         comments: data.comments,
         oofTimeSeconds: data.oofTimeSeconds,
+        usesManualFuelEstimate: data.requiresManualFuelEstimate,
       })
       .returning();
 

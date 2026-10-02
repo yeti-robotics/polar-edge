@@ -39,39 +39,42 @@ export type TeamKeyMetrics = {
   brokeCount: number;
 };
 
+type TeamAnalysisScope = {
+  organizationId?: string | null;
+  eventId?: string | null;
+};
+
+function teamMatchScope(teamNumber: number, eventId?: string | null) {
+  return and(
+    eq(teamMatch.teamNumber, teamNumber),
+    eventId ? eq(teamMatch.eventId, eventId) : undefined
+  );
+}
+
+function organizationFormScope(organizationId?: string | null) {
+  if (!organizationId) return undefined;
+
+  return exists(
+    db
+      .select({ one: sql<number>`1` })
+      .from(member)
+      .where(and(eq(member.id, standForm.scoutMemberId), eq(member.organizationId, organizationId)))
+  );
+}
+
 export async function getTeamKeyMetrics(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<TeamKeyMetrics | null> {
   const { organizationId, eventId } = opts;
-
-  const scopeCondition = eventId
-    ? eq(teamMatch.eventId, eventId)
-    : organizationId
-      ? exists(
-          db
-            .select({ one: sql<number>`1` })
-            .from(standForm)
-            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-            .where(
-              and(
-                eq(standForm.teamMatchId, teamMatch.id),
-                isNull(standForm.deletedAt),
-                eq(member.organizationId, organizationId)
-              )
-            )
-        )
-      : undefined;
-
-  const teamWhere = scopeCondition
-    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
-    : eq(teamMatch.teamNumber, teamNumber);
+  const teamWhere = teamMatchScope(teamNumber, eventId);
+  const formScope = organizationFormScope(organizationId);
 
   // Subquery: distinct teamMatchIds that have at least one stand form
   const sfExistsSub = db
     .select({ teamMatchId: standForm.teamMatchId })
     .from(standForm)
-    .where(isNull(standForm.deletedAt))
+    .where(and(isNull(standForm.deletedAt), formScope))
     .groupBy(standForm.teamMatchId)
     .as("sf_exists");
 
@@ -79,7 +82,7 @@ export async function getTeamKeyMetrics(
   const sfOofSub = db
     .select({ teamMatchId: standForm.teamMatchId })
     .from(standForm)
-    .where(and(isNull(standForm.deletedAt), sql`${standForm.oofTimeSeconds} > 0`))
+    .where(and(isNull(standForm.deletedAt), sql`${standForm.oofTimeSeconds} > 0`, formScope))
     .groupBy(standForm.teamMatchId)
     .as("sf_oof");
 
@@ -107,7 +110,7 @@ export async function getTeamKeyMetrics(
     .from(teamMatch)
     .innerJoin(standForm, and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt)))
     .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
-    .where(teamWhere)
+    .where(and(teamWhere, formScope))
     .groupBy(teamMatch.id)
     .as("per_match_fuel");
 
@@ -133,7 +136,7 @@ export async function getTeamKeyMetrics(
         standForm,
         and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
       )
-      .where(teamWhere),
+      .where(and(teamWhere, formScope)),
 
     // Per match: climb pts, total scouted matches, broke count
     db
@@ -201,31 +204,11 @@ export type BpsEstimate = {
 
 export async function getTeamBpsEstimate(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<BpsEstimate | null> {
   const { organizationId, eventId } = opts;
-
-  const scopeCondition = eventId
-    ? eq(teamMatch.eventId, eventId)
-    : organizationId
-      ? exists(
-          db
-            .select({ one: sql<number>`1` })
-            .from(standForm)
-            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-            .where(
-              and(
-                eq(standForm.teamMatchId, teamMatch.id),
-                isNull(standForm.deletedAt),
-                eq(member.organizationId, organizationId)
-              )
-            )
-        )
-      : undefined;
-
-  const teamWhere = scopeCondition
-    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
-    : eq(teamMatch.teamNumber, teamNumber);
+  const teamWhere = teamMatchScope(teamNumber, eventId);
+  const formScope = organizationFormScope(organizationId);
 
   // Step 1: Per stand_form total dump duration (one row per form)
   // Alias teamMatchId/eventId explicitly to avoid column name collision (both tables have "id")
@@ -242,7 +225,7 @@ export async function getTeamBpsEstimate(
     .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
     .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
     .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
-    .where(teamWhere)
+    .where(and(teamWhere, formScope))
     .groupBy(
       standForm.id,
       teamMatch.id,
@@ -310,31 +293,11 @@ export type CycleTimeseriesPoint = {
 
 export async function getTeamCycleTimeseries(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<CycleTimeseriesPoint[]> {
   const { organizationId, eventId } = opts;
-
-  const scopeCondition = eventId
-    ? eq(teamMatch.eventId, eventId)
-    : organizationId
-      ? exists(
-          db
-            .select({ one: sql<number>`1` })
-            .from(standForm)
-            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-            .where(
-              and(
-                eq(standForm.teamMatchId, teamMatch.id),
-                isNull(standForm.deletedAt),
-                eq(member.organizationId, organizationId)
-              )
-            )
-        )
-      : undefined;
-
-  const teamWhere = scopeCondition
-    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
-    : eq(teamMatch.teamNumber, teamNumber);
+  const teamWhere = teamMatchScope(teamNumber, eventId);
+  const formScope = organizationFormScope(organizationId);
 
   // Step 1: Aggregate per stand_form (one row per form per match)
   // Alias teamMatchId explicitly to avoid column name collision with standForm.id
@@ -370,7 +333,7 @@ export async function getTeamCycleTimeseries(
     .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
     .innerJoin(match, eq(match.id, teamMatch.matchId))
     .innerJoin(event, eq(event.id, teamMatch.eventId))
-    .where(teamWhere)
+    .where(and(teamWhere, formScope))
     .groupBy(
       standForm.id,
       teamMatch.id,
@@ -431,31 +394,11 @@ export type TeamComment = {
 
 export async function getTeamComments(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<TeamComment[]> {
   const { organizationId, eventId } = opts;
-
-  const scopeCondition = eventId
-    ? eq(teamMatch.eventId, eventId)
-    : organizationId
-      ? exists(
-          db
-            .select({ one: sql<number>`1` })
-            .from(standForm)
-            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-            .where(
-              and(
-                eq(standForm.teamMatchId, teamMatch.id),
-                isNull(standForm.deletedAt),
-                eq(member.organizationId, organizationId)
-              )
-            )
-        )
-      : undefined;
-
-  const teamWhere = scopeCondition
-    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
-    : eq(teamMatch.teamNumber, teamNumber);
+  const teamWhere = teamMatchScope(teamNumber, eventId);
+  const formScope = organizationFormScope(organizationId);
 
   const rows = await db
     .select({ comments: standForm.comments, scoutName: user.name })
@@ -463,7 +406,7 @@ export async function getTeamComments(
     .innerJoin(standForm, and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt)))
     .leftJoin(member, eq(member.id, standForm.scoutMemberId))
     .leftJoin(user, eq(user.id, member.userId))
-    .where(and(teamWhere, ne(standForm.comments, "")))
+    .where(and(teamWhere, formScope, ne(standForm.comments, "")))
     .orderBy(desc(standForm.createdAt));
 
   return rows.map((r) => ({ comment: r.comments, scoutName: r.scoutName }));
@@ -471,7 +414,7 @@ export async function getTeamComments(
 
 export async function getTeamCommentSummary(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<(CommentSummary & { commentCount: number }) | null> {
   "use cache";
   cacheLife("hours");

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it, vi } from "vitest";
 import { db } from "@/lib/database";
-import { cycle, organization, teamEventCopr, teamMatch } from "@/lib/database/schema";
+import { cycle, organization, standForm, teamEventCopr, teamMatch } from "@/lib/database/schema";
 import { aMatch, anEvent, anOrganization } from "@/test/factories";
 
 const { getActiveEventForOrganization } = vi.hoisted(() => ({
@@ -110,8 +110,12 @@ describe("stand-form manual COPR fallback", () => {
       submitStandForm(aSubmission(selectedTeamMatch.id, 0), member.id, org.id)
     ).resolves.toMatchObject({ success: true });
 
-    const storedCycle = await db.query.cycle.findFirst();
+    const [storedCycle, storedForm] = await Promise.all([
+      db.query.cycle.findFirst(),
+      db.query.standForm.findFirst(),
+    ]);
     expect(storedCycle?.bucket).toBe(0);
+    expect(storedForm?.usesManualFuelEstimate).toBe(true);
   });
 
   it("accepts a cycle without a bucket when COPR exists", async () => {
@@ -124,8 +128,12 @@ describe("stand-form manual COPR fallback", () => {
       submitStandForm(aSubmission(selectedTeamMatch.id), member.id, org.id)
     ).resolves.toMatchObject({ success: true });
 
-    const storedCycle = await db.select().from(cycle).limit(1);
+    const [storedCycle, storedForm] = await Promise.all([
+      db.select().from(cycle).limit(1),
+      db.select().from(standForm).limit(1),
+    ]);
     expect(storedCycle[0]?.bucket).toBeNull();
+    expect(storedForm[0]?.usesManualFuelEstimate).toBe(false);
   });
 
   it("uses the match-start decision when fallback becomes enabled before submission", async () => {

@@ -11,12 +11,12 @@ import {
 } from "@/lib/database/schema";
 import { aMatch, anEvent, anOrganization } from "@/test/factories";
 
-async function aScoutedCycle(bucket?: number, fallbackEnabled = true) {
+async function aScoutedCycle(bucket?: number, usesManualFuelEstimate = true) {
   const event = await anEvent();
   const { organization: org, member } = await anOrganization({ activeEventId: event.id });
   await db
     .update(organization)
-    .set({ metadata: JSON.stringify({ coprFallbackEnabled: fallbackEnabled }) })
+    .set({ metadata: JSON.stringify({ coprFallbackEnabled: usesManualFuelEstimate }) })
     .where(eq(organization.id, org.id));
   await aMatch({
     eventId: event.id,
@@ -32,7 +32,11 @@ async function aScoutedCycle(bucket?: number, fallbackEnabled = true) {
 
   const [form] = await db
     .insert(standForm)
-    .values({ teamMatchId: selectedTeamMatch.id, scoutMemberId: member.id })
+    .values({
+      teamMatchId: selectedTeamMatch.id,
+      scoutMemberId: member.id,
+      usesManualFuelEstimate,
+    })
     .returning();
   if (!form) throw new Error("Expected stand form");
 
@@ -44,7 +48,7 @@ async function aScoutedCycle(bucket?: number, fallbackEnabled = true) {
     dumpDuration: "2",
   });
 
-  return { event, form };
+  return { event, form, organization: org };
 }
 
 async function expectedFuel(standFormId: string) {
@@ -84,7 +88,7 @@ describe("vStandFormExpected fuel fallback", () => {
     });
   });
 
-  it("ignores manual bucket estimates when fallback is disabled", async () => {
+  it("ignores bucket estimates from submissions not captured in fallback mode", async () => {
     const { form } = await aScoutedCycle(2, false);
     await db.insert(cycle).values({
       standFormId: form.id,
@@ -93,6 +97,42 @@ describe("vStandFormExpected fuel fallback", () => {
       bucket: 2,
       dumpDuration: "2",
     });
+
+    expect(await expectedFuel(form.id)).toEqual({
+      active: 0,
+      auto: 0,
+      teleop: 0,
+      activeIsEstimated: false,
+      autoIsEstimated: false,
+      teleopIsEstimated: false,
+    });
+  });
+
+  it("preserves captured fallback estimates after the organization disables collection", async () => {
+    const { form, organization: org } = await aScoutedCycle(2);
+
+    await db
+      .update(organization)
+      .set({ metadata: JSON.stringify({ coprFallbackEnabled: false }) })
+      .where(eq(organization.id, org.id));
+
+    expect(await expectedFuel(form.id)).toEqual({
+      active: 4.5,
+      auto: 0,
+      teleop: 4.5,
+      activeIsEstimated: true,
+      autoIsEstimated: false,
+      teleopIsEstimated: true,
+    });
+  });
+
+  it("does not activate old submissions when the organization enables collection later", async () => {
+    const { form, organization: org } = await aScoutedCycle(2, false);
+
+    await db
+      .update(organization)
+      .set({ metadata: JSON.stringify({ coprFallbackEnabled: true }) })
+      .where(eq(organization.id, org.id));
 
     expect(await expectedFuel(form.id)).toEqual({
       active: 0,
