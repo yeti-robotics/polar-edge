@@ -314,6 +314,22 @@ async function main() {
     };
 
     const observations: ScoutObservation[] = [];
+    const assignedScoutsByTeamMatch = new Map<number, Set<string>>();
+    const scoutForTeamMatch = (teamMatchId: number): string => {
+      const assigned = assignedScoutsByTeamMatch.get(teamMatchId) ?? new Set<string>();
+      const available = allMemberIds.filter((id) => !assigned.has(id));
+      if (available.length === 0) {
+        throw new Error(`No unused scout members remain for team-match ${teamMatchId}`);
+      }
+
+      const scoutMemberId = available[Math.floor(Math.random() * available.length)];
+      if (!scoutMemberId) {
+        throw new Error(`Could not choose a scout member for team-match ${teamMatchId}`);
+      }
+      assigned.add(scoutMemberId);
+      assignedScoutsByTeamMatch.set(teamMatchId, assigned);
+      return scoutMemberId;
+    };
 
     for (const result of simResults) {
       const matchId = matchIdByNumber.get(result.matchNumber);
@@ -327,7 +343,7 @@ async function main() {
         observations.push({
           standFormValue: {
             teamMatchId: tmId,
-            scoutMemberId: randomMemberId(),
+            scoutMemberId: scoutForTeamMatch(tmId),
             comments: teamResult.comments,
             oofTimeSeconds: teamResult.oofTimeSeconds,
           },
@@ -342,7 +358,7 @@ async function main() {
             observations.push({
               standFormValue: {
                 teamMatchId: tmId,
-                scoutMemberId: randomMemberId(),
+                scoutMemberId: scoutForTeamMatch(tmId),
                 comments: secondObs.comments,
                 oofTimeSeconds: secondObs.oofTimeSeconds,
               },
