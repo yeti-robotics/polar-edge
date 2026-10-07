@@ -114,6 +114,21 @@ const PETAL_SCALE = 1.12;
 /** How far the open ring reaches from the node centre, in px (widest petal). */
 const RING_EXTENT = RING_RADIUS + (PETAL_SIZE * PETAL_SCALE) / 2;
 
+/**
+ * `crypto.randomUUID` only exists in secure contexts (HTTPS or localhost), so
+ * it's undefined when the iPad hits the app over a plain-HTTP LAN address.
+ */
+function createId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 type Mode = "draft" | "final";
 
 /* -------------------------------------------------------------------------- */
@@ -638,7 +653,7 @@ export function VideoAnnotator({
   const commitPending = () => {
     if (!pending) return;
     const record: Annotation = {
-      id: pending.editingId ?? crypto.randomUUID(),
+      id: pending.editingId ?? createId(),
       timestamp: pending.timestamp,
       durationSeconds: CLIP_SECONDS,
       type: pending.type,
