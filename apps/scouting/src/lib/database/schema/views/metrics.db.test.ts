@@ -178,8 +178,39 @@ describe("vStandFormExpected fuel fallback", () => {
     });
 
     expect(await expectedFuel(form.id)).toEqual({
-      active: 30,
-      auto: 0,
+      active: 35,
+      auto: 5,
+      teleop: 30,
+      activeIsEstimated: false,
+      autoIsEstimated: false,
+      teleopIsEstimated: false,
+    });
+  });
+
+  it.each([
+    "auto",
+    "teleop",
+    "none",
+  ] as const)("retains both COPR phase counts when recorded cycles are %s", async (phase) => {
+    const { event, form } = await aScoutedCycle(2);
+    if (phase === "none") {
+      await db.delete(cycle).where(eq(cycle.standFormId, form.id));
+    } else {
+      await db.update(cycle).set({ phase }).where(eq(cycle.standFormId, form.id));
+    }
+
+    await db.insert(teamEventCopr).values({
+      eventId: event.id,
+      teamNumber: 3506,
+      autoFuelCount: "5",
+      teleopFuelCount: "30",
+      endgameFuelCount: "0",
+      totalFuelCount: "35",
+    });
+
+    expect(await expectedFuel(form.id)).toEqual({
+      active: 35,
+      auto: 5,
       teleop: 30,
       activeIsEstimated: false,
       autoIsEstimated: false,

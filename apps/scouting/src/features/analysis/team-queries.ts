@@ -2,7 +2,7 @@ import "server-only";
 
 import { createGradientProvider } from "@repo/ai";
 import { generateText } from "ai";
-import { and, desc, eq, exists, isNull, ne, sql } from "drizzle-orm";
+import { and, desc, eq, exists, isNotNull, isNull, ne, or, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { z } from "zod";
 import { cacheTags } from "@/lib/cache";
@@ -14,6 +14,7 @@ import {
   member,
   pitForm,
   standForm,
+  teamEventCopr,
   teamMatch,
   user,
   vStandFormExpected,
@@ -225,7 +226,21 @@ export async function getTeamBpsEstimate(
     .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
     .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
     .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
-    .where(and(teamWhere, formScope))
+    .leftJoin(
+      teamEventCopr,
+      and(
+        eq(teamEventCopr.eventId, teamMatch.eventId),
+        eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
+      )
+    )
+    // Unknown fuel is not an observed zero. Keep duration and fuel populations aligned.
+    .where(
+      and(
+        teamWhere,
+        formScope,
+        or(isNotNull(teamEventCopr.id), eq(vStandFormExpected.expFuelActiveIsEstimated, true))
+      )
+    )
     .groupBy(
       standForm.id,
       teamMatch.id,

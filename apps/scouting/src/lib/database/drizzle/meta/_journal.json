@@ -169,6 +169,13 @@
       "when": 1790897818266,
       "tag": "0023_magenta_celestials",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791580403682,
+      "tag": "0024_cultured_arclight",
+      "breakpoints": true
     }
   ]
 }

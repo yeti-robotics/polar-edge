@@ -155,7 +155,9 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
     sf.id as stand_form_id,
     sf.team_match_id,
 
-    coalesce(cf.fuel_active, 0.0) as exp_fuel_active,
+    -- A missing phase has no cycle aggregate; retain its available COPR count.
+    coalesce(cf.fuel_auto, copr.auto_fuel_count, 0.0)
+      + coalesce(cf.fuel_teleop, copr.teleop_fuel_count, 0.0) as exp_fuel_active,
 
     coalesce(cp.total_climb_pts, 0.0) as exp_tower,
     coalesce(cp.total_climb_pts, 0.0) as clank_match,
@@ -165,12 +167,14 @@ export const vStandFormExpected = pgView("v_stand_form_expected", {
     coalesce(cp.pure_climb_teleop, 0.0) as pure_climb_teleop,
 
     coalesce(cf.cycles_count, 0)::int as cycles_count,
-    coalesce(cf.fuel_auto, 0.0) as exp_fuel_auto,
-    coalesce(cf.fuel_teleop, 0.0) as exp_fuel_teleop,
+    coalesce(cf.fuel_auto, copr.auto_fuel_count, 0.0) as exp_fuel_auto,
+    coalesce(cf.fuel_teleop, copr.teleop_fuel_count, 0.0) as exp_fuel_teleop,
     coalesce(cf.fuel_active_is_estimated, false) as exp_fuel_active_is_estimated,
     coalesce(cf.fuel_auto_is_estimated, false) as exp_fuel_auto_is_estimated,
     coalesce(cf.fuel_teleop_is_estimated, false) as exp_fuel_teleop_is_estimated
   from stand_form sf
+  join team_match tm on tm.id = sf.team_match_id
+  left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number
   left join cycle_fuel cf on cf.stand_form_id = sf.id
   left join climb_pts cp on cp.stand_form_id = sf.id
   where sf.deleted_at is null
