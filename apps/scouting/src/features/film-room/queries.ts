@@ -11,8 +11,8 @@ import type { Annotation, FilmRoomMatchOption, FilmRoomTeamOption, TeamFilmSumma
 
 /**
  * YouTube ids TBA has for each qual match at an event, keyed by match number.
- * Only feeds the picker's "has video" hint, so a short cache is fine; opening a
- * match re-checks TBA directly. Resolves empty when TBA is unreachable.
+ * Only feeds the picker's "has video" hint, so a short cache is fine. Resolves
+ * empty when TBA is unreachable.
  */
 export async function getTbaQualVideos(eventCode: string): Promise<Record<number, string>> {
   "use cache";
@@ -54,7 +54,7 @@ export async function getQualMatchOptions(
     getTbaQualVideos(eventCode),
   ]);
 
-  // Newest video wins when a match was opened more than once.
+  // Newest video wins when a match was opened more than once
   const videoByMatch = new Map<string, string>();
   for (const v of videos) {
     if (v.matchId && !videoByMatch.has(v.matchId)) videoByMatch.set(v.matchId, v.id);
@@ -83,7 +83,6 @@ export async function getMatchVideo(videoId: string, organizationId: string) {
   return row ?? null;
 }
 
-/** The latest video this org opened for a match. */
 export async function getLatestVideoForMatch(matchId: string, organizationId: string) {
   const [row] = await db
     .select({ id: matchVideo.id })
@@ -94,7 +93,7 @@ export async function getLatestVideoForMatch(matchId: string, organizationId: st
   return row ?? null;
 }
 
-/** The six teams in a match, red 1-3 then blue 1-3. */
+/** Red 1-3, then blue 1-3. */
 export async function getMatchTeams(matchId: string): Promise<FilmRoomTeamOption[]> {
   const rows = await db
     .select({ teamNumber: teamMatch.teamNumber, name: team.teamName })
@@ -127,10 +126,7 @@ export async function getVideoAnnotations(
     .orderBy(asc(videoAnnotation.timestampSeconds));
 }
 
-/**
- * Film Room roll-up for the team analysis page: Good/Bad counts across every
- * mark tagged with this team, plus the marks that carry a written note.
- */
+/** Good/Bad counts for a team, plus the marks that carry a written note. */
 export async function getTeamFilmSummary(
   teamNumber: number,
   organizationId: string,

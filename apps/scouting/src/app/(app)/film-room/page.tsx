@@ -8,7 +8,7 @@ async function FilmRoomPickerContent() {
   const member = await requireActiveMember();
   const activeEvent = await getActiveEventForOrganization(member.organizationId);
 
-  // No active event: links and uploads still work, there's just no qual list.
+  // No active event: pasted links still work, there's just no qual list
   const matchOptions = activeEvent?.event
     ? await getQualMatchOptions(
         member.organizationId,

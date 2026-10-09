@@ -3,68 +3,28 @@
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { cn } from "@repo/ui/lib/utils";
-import {
-  ChevronDownIcon,
-  LoaderCircleIcon,
-  UploadIcon,
-  VideoIcon,
-  WifiOffIcon,
-} from "lucide-react";
+import { ChevronDownIcon, LoaderCircleIcon, VideoIcon, WifiOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { useNetworkStatus } from "@/lib/offline/use-network-status";
 import { routes } from "@/lib/routes";
-import { createMatchVideo, getVideoUploadUrl, openMatchVideo } from "../actions";
+import { createMatchVideo, openMatchVideo } from "../actions";
 import { filterMatchOptions, parseYouTubeId } from "../logic";
 import type { FilmRoomMatchOption } from "../types";
 
-const EXTENSION_TYPES: Record<string, string> = {
-  mp4: "video/mp4",
-  m4v: "video/mp4",
-  mov: "video/quicktime",
-  webm: "video/webm",
-};
-
-function videoContentType(file: File): string {
-  if (file.type) return file.type;
-  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
-  return EXTENSION_TYPES[extension] ?? "";
-}
-
-/** PUT with progress, which fetch() can't report. */
-function uploadWithProgress(
-  url: string,
-  file: File,
-  contentType: string,
-  onProgress: (fraction: number) => void
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", url);
-    xhr.setRequestHeader("Content-Type", contentType);
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) onProgress(e.loaded / e.total);
-    };
-    xhr.onload = () =>
-      xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error(`HTTP ${xhr.status}`));
-    xhr.onerror = () => reject(new Error("Network error"));
-    xhr.send(file);
-  });
-}
-
 /**
- * Film Room's blank video screen: an address-bar field over the empty stage.
- * Type or pick a qual match (its TBA video opens straight away), paste or drop
- * a YouTube link, or upload a clip from Photos.
+ * The blank video screen: an address-bar field over the empty stage. Type or
+ * pick a qual match, which opens its TBA video straight away, or paste or drop
+ * a YouTube link.
  */
 export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOption[] }) {
   const router = useRouter();
   const online = useNetworkStatus();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [text, setText] = useState("");
   const [suggestOpen, setSuggestOpen] = useState(false);
-  /** A qual match with no video yet: the next link or upload attaches to it. */
+  // A qual match with no video yet: the next link attaches to it
   const [selectedMatch, setSelectedMatch] = useState<FilmRoomMatchOption | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -106,7 +66,7 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
   const submitLink = async (raw: string) => {
     const url = raw.trim();
     if (!parseYouTubeId(url)) {
-      // Not a link: treat it as a match search and open the only hit.
+      // Not a link: treat it as a match search and open the only hit
       const hits = filterMatchOptions(matchOptions, url);
       const exact = hits.find((h) => h.label.toLowerCase() === url.toLowerCase());
       const hit = exact ?? (hits.length === 1 ? hits[0] : null);
@@ -117,48 +77,7 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
     setError(null);
     setSuggestOpen(false);
     setBusy("Opening video…");
-    const result = await createMatchVideo({
-      source: "youtube",
-      url,
-      matchId: selectedMatch?.matchId ?? null,
-    });
-    if ("error" in result) {
-      setBusy(null);
-      setError(result.error);
-      return;
-    }
-    openVideo(result.data.videoId);
-  };
-
-  const uploadFile = async (file: File) => {
-    const contentType = videoContentType(file);
-    if (!contentType.startsWith("video/")) {
-      setError("Pick a video file.");
-      return;
-    }
-    setError(null);
-    setBusy("Uploading… 0%");
-    const target = await getVideoUploadUrl({ contentType, fileSize: file.size });
-    if ("error" in target) {
-      setBusy(null);
-      setError(target.error);
-      return;
-    }
-    try {
-      await uploadWithProgress(target.data.url, file, contentType, (f) =>
-        setBusy(`Uploading… ${Math.round(f * 100)}%`)
-      );
-    } catch {
-      setBusy(null);
-      setError("Upload failed. Check the wifi and try again.");
-      return;
-    }
-    const result = await createMatchVideo({
-      source: "upload",
-      storageKey: target.data.key,
-      fileName: file.name,
-      matchId: selectedMatch?.matchId ?? null,
-    });
+    const result = await createMatchVideo({ url, matchId: selectedMatch?.matchId ?? null });
     if ("error" in result) {
       setBusy(null);
       setError(result.error);
@@ -169,11 +88,6 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
 
   const onDrop = (event: React.DragEvent) => {
     event.preventDefault();
-    const file = event.dataTransfer.files?.[0];
-    if (file) {
-      void uploadFile(file);
-      return;
-    }
     const dropped =
       event.dataTransfer.getData("text/uri-list") || event.dataTransfer.getData("text/plain");
     if (dropped) {
@@ -183,7 +97,7 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
   };
 
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: drop target for links and clips
+    // biome-ignore lint/a11y/noStaticElementInteractions: drop target for pasted links
     <div
       className="relative flex size-full flex-col overflow-hidden bg-black text-white select-none"
       onDragOver={(e) => e.preventDefault()}
@@ -220,12 +134,13 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
           }}
         >
           <Input
+            ref={inputRef}
             value={text}
             onChange={(e) => {
               const next = e.target.value;
               setText(next);
-              // Pasting a link after picking a match attaches it to that match;
-              // typing anything else is a new search.
+              // Pasting a link after picking a match attaches it to that match,
+              // typing anything else is a new search
               if (!parseYouTubeId(next)) setSelectedMatch(null);
               setSuggestOpen(true);
               setError(null);
@@ -256,7 +171,7 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
                 <button
                   key={m.matchId}
                   type="button"
-                  // Keep focus in the field so onBlur doesn't close the list first.
+                  // Keep focus in the field so onBlur doesn't close the list first
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => void pickMatch(m)}
                   className="flex h-11 shrink-0 items-center gap-2 border-b border-border/50 px-3.5 text-left text-sm last:border-b-0 hover:bg-accent"
@@ -273,13 +188,12 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
         </form>
         {selectedMatch && !busy && (
           <p className={cn("text-sm text-white/70", !online && "ml-[108px]")}>
-            No video on TBA for {selectedMatch.label} yet. Paste a link or upload one.
+            No video on TBA for {selectedMatch.label} yet. Paste a YouTube link for it.
           </p>
         )}
         {error && <p className={cn("text-sm text-red-400", !online && "ml-[108px]")}>{error}</p>}
       </div>
 
-      {/* Upload from Photos, centred on the blank plate */}
       <div className="relative z-10 flex flex-1 items-center justify-center">
         {busy ? (
           <div className="inline-flex h-12 items-center gap-2.5 rounded-full bg-black/40 px-5 text-sm font-medium">
@@ -291,23 +205,15 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
             type="button"
             variant="outline"
             className="h-12 rounded-full border-white/20 bg-black/40 px-5 text-sm text-white hover:bg-black/60 hover:text-white dark:border-white/20 dark:bg-black/40 dark:hover:bg-black/60"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              inputRef.current?.focus();
+              setSuggestOpen(true);
+            }}
           >
-            <UploadIcon className="size-4.5" />
-            Upload from Photos
+            <VideoIcon className="size-4.5" />
+            Browse qual matches
           </Button>
         )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="video/*"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            e.target.value = "";
-            if (file) void uploadFile(file);
-          }}
-        />
       </div>
     </div>
   );

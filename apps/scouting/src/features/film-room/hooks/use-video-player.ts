@@ -1,22 +1,6 @@
 "use client";
 
-import {
-  type RefObject,
-  type SyntheticEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import type { PlayableSource } from "../types";
-
-/**
- * Playback for one Film Room video, over either transport.
- *
- * YouTube goes through the IFrame Player API directly — no new dependency in
- * apps/scouting. Uploaded clips play through a native <video>. Callers get the
- * same controls either way and never branch on the source kind.
- */
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 
 type YTPlayer = {
   playVideo: () => void;
@@ -28,18 +12,32 @@ type YTPlayer = {
   destroy: () => void;
 };
 
+interface YTPlayerOptions {
+  videoId: string;
+  playerVars: Record<string, number>;
+  events: {
+    onReady: (event: { target: YTPlayer }) => void;
+    onStateChange: (event: { data: number }) => void;
+  };
+}
+
+declare global {
+  interface Window {
+    YT?: { Player: new (host: HTMLElement, options: YTPlayerOptions) => YTPlayer };
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
 let ytApiPromise: Promise<void> | null = null;
 
 function loadYouTubeApi(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
-  // biome-ignore lint/suspicious/noExplicitAny: YT global is untyped
-  const w = window as any;
-  if (w.YT?.Player) return Promise.resolve();
+  if (window.YT?.Player) return Promise.resolve();
   if (ytApiPromise) return ytApiPromise;
 
   ytApiPromise = new Promise<void>((resolve) => {
-    const previous = w.onYouTubeIframeAPIReady;
-    w.onYouTubeIframeAPIReady = () => {
+    const previous = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
       previous?.();
       resolve();
     };
@@ -52,18 +50,9 @@ function loadYouTubeApi(): Promise<void> {
   return ytApiPromise;
 }
 
-/** Spread onto the native <video>; inert for a YouTube source. */
-export interface NativeVideoProps {
-  onLoadedMetadata: (event: SyntheticEvent<HTMLVideoElement>) => void;
-  onPlay: () => void;
-  onPause: () => void;
-}
-
 export interface VideoPlayer {
-  isYouTube: boolean;
   /** Host div the IFrame player replaces. */
   playerHostRef: RefObject<HTMLDivElement | null>;
-  videoElRef: RefObject<HTMLVideoElement | null>;
   /** Float playback time, for sub-second fades. Read every frame. */
   floatTimeRef: RefObject<number>;
   /** Whole seconds, for labels and the scrub bar. */
@@ -77,19 +66,17 @@ export interface VideoPlayer {
   setRate: (rate: number) => void;
   /** Pull the live playback clock into `floatTimeRef` + `currentTime`. */
   syncTime: () => void;
-  nativeVideoProps: NativeVideoProps;
 }
 
-export function useVideoPlayer(source: PlayableSource, initialTime: number): VideoPlayer {
+export function useVideoPlayer(youtubeId: string, initialTime: number): VideoPlayer {
   const playerHostRef = useRef<HTMLDivElement>(null);
-  const videoElRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
-  /** The IFrame player's methods only exist once onReady has fired. */
+  // The player's methods only exist once onReady has fired
   const playerReadyRef = useRef(false);
   const floatTimeRef = useRef(0);
-  /** Mirrors `duration` so `seekTo` can clamp without a changing identity. */
+  // Mirrors `duration` so `seekTo` can clamp without a changing identity
   const durationRef = useRef(0);
-  /** Where a player that isn't ready yet should start, from the ?t= deep link. */
+  // Where a player that isn't ready yet should start
   const startAtRef = useRef(initialTime);
 
   const [currentTime, setCurrentTime] = useState(0);
@@ -97,37 +84,28 @@ export function useVideoPlayer(source: PlayableSource, initialTime: number): Vid
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
 
-  const isYouTube = source.kind === "youtube";
-  const youtubeId = isYouTube ? source.value : null;
-
-  const applyDuration = useCallback((seconds: number) => {
-    // Some recorders write no duration (Infinity) into the file.
-    const safe = Number.isFinite(seconds) ? seconds : 0;
-    durationRef.current = safe;
-    setDuration(safe);
-  }, []);
-
-  /* --- YouTube player lifecycle ------------------------------------------- */
   useEffect(() => {
-    if (!youtubeId) return;
     let cancelled = false;
 
     loadYouTubeApi().then(() => {
-      if (cancelled || !playerHostRef.current) return;
-      // biome-ignore lint/suspicious/noExplicitAny: YT global is untyped
-      const YT = (window as any).YT;
+      const host = playerHostRef.current;
+      if (cancelled || !host || !window.YT) return;
 
-      playerRef.current = new YT.Player(playerHostRef.current, {
+      playerRef.current = new window.YT.Player(host, {
         videoId: youtubeId,
-        // No native controls: the annotator owns the chrome and the gestures.
+        // No native controls: the annotator owns the chrome and the gestures
         playerVars: { modestbranding: 1, rel: 0, playsinline: 1, controls: 0, disablekb: 1 },
         events: {
-          onReady: (e: { target: YTPlayer }) => {
+          onReady: (e) => {
             playerReadyRef.current = true;
-            applyDuration(e.target.getDuration());
-            if (startAtRef.current > 0) e.target.seekTo(startAtRef.current, true);
+            // Live recordings can report no duration until playback starts
+            const seconds = e.target.getDuration();
+            const safe = Number.isFinite(seconds) ? seconds : 0;
+            durationRef.current = safe;
+            setDuration(safe);
+            e.target.seekTo(startAtRef.current, true);
           },
-          onStateChange: (e: { data: number }) => setPlaying(e.data === 1),
+          onStateChange: (e) => setPlaying(e.data === 1),
         },
       });
     });
@@ -138,83 +116,50 @@ export function useVideoPlayer(source: PlayableSource, initialTime: number): Vid
       playerRef.current?.destroy();
       playerRef.current = null;
     };
-  }, [youtubeId, applyDuration]);
+  }, [youtubeId]);
 
-  /* --- controls ----------------------------------------------------------- */
   const play = useCallback(() => {
-    if (isYouTube) {
-      if (playerReadyRef.current) playerRef.current?.playVideo();
-    } else void videoElRef.current?.play();
+    if (playerReadyRef.current) playerRef.current?.playVideo();
     setPlaying(true);
-  }, [isYouTube]);
+  }, []);
 
   const pause = useCallback(() => {
-    if (isYouTube) {
-      if (playerReadyRef.current) playerRef.current?.pauseVideo();
-    } else videoElRef.current?.pause();
+    if (playerReadyRef.current) playerRef.current?.pauseVideo();
     setPlaying(false);
-  }, [isYouTube]);
+  }, []);
 
-  const seekTo = useCallback(
-    (seconds: number) => {
-      const max = durationRef.current;
-      const clamped = Math.max(0, max ? Math.min(max, seconds) : seconds);
-      if (isYouTube) {
-        if (playerReadyRef.current) playerRef.current?.seekTo(clamped, true);
-      } else if (videoElRef.current) videoElRef.current.currentTime = clamped;
-      floatTimeRef.current = clamped;
-      setCurrentTime(Math.floor(clamped));
-    },
-    [isYouTube]
-  );
+  const seekTo = useCallback((seconds: number) => {
+    const max = durationRef.current;
+    const clamped = Math.max(0, max ? Math.min(max, seconds) : seconds);
+    if (playerReadyRef.current) playerRef.current?.seekTo(clamped, true);
+    floatTimeRef.current = clamped;
+    setCurrentTime(Math.floor(clamped));
+  }, []);
 
-  const setRate = useCallback(
-    (rate: number) => {
-      if (isYouTube) {
-        if (playerReadyRef.current) playerRef.current?.setPlaybackRate(rate);
-      } else if (videoElRef.current) videoElRef.current.playbackRate = rate;
-      setSpeed(rate);
-    },
-    [isYouTube]
-  );
+  const setRate = useCallback((rate: number) => {
+    if (playerReadyRef.current) playerRef.current?.setPlaybackRate(rate);
+    setSpeed(rate);
+  }, []);
 
-  /**
-   * Team notes deep-link to a moment, so `initialTime` changes while this
-   * component stays mounted — clicking a second note for the same video must
-   * move the playhead, not just the URL.
-   */
+  // Team notes deep-link to a moment, so `initialTime` changes while this stays
+  // mounted: clicking a second note for the same video has to move the
+  // playhead. 0 counts, for a note on the very start of the match.
   useEffect(() => {
     startAtRef.current = initialTime;
-    if (initialTime > 0) seekTo(initialTime);
+    seekTo(initialTime);
   }, [initialTime, seekTo]);
 
   const syncTime = useCallback(() => {
-    const t = isYouTube
-      ? playerReadyRef.current
-        ? playerRef.current?.getCurrentTime()
-        : undefined
-      : videoElRef.current?.currentTime;
+    if (!playerReadyRef.current) return;
+    const t = playerRef.current?.getCurrentTime();
     if (typeof t !== "number" || Number.isNaN(t)) return;
     floatTimeRef.current = t;
     const floored = Math.floor(t);
     setCurrentTime((prev) => (prev === floored ? prev : floored));
-  }, [isYouTube]);
-
-  const onLoadedMetadata = useCallback(
-    (event: SyntheticEvent<HTMLVideoElement>) => {
-      applyDuration(event.currentTarget.duration);
-      if (startAtRef.current > 0) event.currentTarget.currentTime = startAtRef.current;
-    },
-    [applyDuration]
-  );
-
-  const onPlay = useCallback(() => setPlaying(true), []);
-  const onPause = useCallback(() => setPlaying(false), []);
+  }, []);
 
   return {
-    isYouTube,
     playerHostRef,
-    videoElRef,
     floatTimeRef,
     currentTime,
     duration,
@@ -225,6 +170,5 @@ export function useVideoPlayer(source: PlayableSource, initialTime: number): Vid
     seekTo,
     setRate,
     syncTime,
-    nativeVideoProps: { onLoadedMetadata, onPlay, onPause },
   };
 }

@@ -2,14 +2,16 @@ import { describe, expect, it } from "vitest";
 import {
   alphaForAnnotation,
   applyQueuedOps,
-  createAnnotationId,
   distanceToAnnotation,
   filterMatchOptions,
   firstYouTubeVideo,
   formatVideoTime,
   isAnnotationVisible,
+  MAX_ANNOTATION_POINTS,
   type MarkOp,
+  MIN_POINT_SPACING,
   parseYouTubeId,
+  pushStrokePoint,
   tbaQualMatchKey,
 } from "./logic";
 import type { Annotation } from "./types";
@@ -145,32 +147,9 @@ describe("alphaForAnnotation", () => {
 
   it("stays opaque until the fade, then eases out over the whole length", () => {
     expect(alphaForAnnotation(mark, 10)).toBe(1);
-    // A 20s mark must still be solid at 15s in — the fade is the last 0.4s only.
+    // A 20s mark is still solid at 15s in: the fade is the last 0.4s only
     expect(alphaForAnnotation(mark, 25)).toBe(1);
     expect(alphaForAnnotation(mark, 29.8)).toBeCloseTo(0.5);
-  });
-});
-
-describe("createAnnotationId", () => {
-  const expectUsableIds = () => {
-    const ids = Array.from({ length: 100 }, createAnnotationId);
-    for (const id of ids) {
-      // The server validates mark ids as uuids, so the shape has to hold.
-      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
-    }
-    expect(new Set(ids).size).toBe(ids.length);
-  };
-
-  it("makes distinct v4 uuids", expectUsableIds);
-
-  it("still does in an insecure context, where randomUUID is undefined", () => {
-    const original = crypto.randomUUID;
-    Reflect.set(crypto, "randomUUID", undefined);
-    try {
-      expectUsableIds();
-    } finally {
-      Reflect.set(crypto, "randomUUID", original);
-    }
   });
 });
 
@@ -196,5 +175,48 @@ describe("applyQueuedOps", () => {
       ["d", "kept"],
       ["c", "new"],
     ]);
+  });
+});
+
+describe("pushStrokePoint", () => {
+  it("drops samples too close to see", () => {
+    const points = [{ x: 0.5, y: 0.5 }];
+    pushStrokePoint(points, { x: 0.5 + MIN_POINT_SPACING / 2, y: 0.5 });
+    expect(points).toHaveLength(1);
+  });
+
+  it("keeps samples that have moved", () => {
+    const points = [{ x: 0.5, y: 0.5 }];
+    pushStrokePoint(points, { x: 0.5 + MIN_POINT_SPACING * 2, y: 0.5 });
+    expect(points).toHaveLength(2);
+  });
+
+  it("always keeps the first sample of a stroke", () => {
+    const points: { x: number; y: number }[] = [];
+    pushStrokePoint(points, { x: 0.1, y: 0.1 });
+    expect(points).toEqual([{ x: 0.1, y: 0.1 }]);
+  });
+
+  it("stays inside the limit the server enforces, however long the drag", () => {
+    const points: { x: number; y: number }[] = [];
+    // Every sample is far enough apart to be kept, so only the cap can stop it.
+    for (let i = 0; i < MAX_ANNOTATION_POINTS * 3; i++) {
+      pushStrokePoint(points, { x: (i % 100) / 100, y: Math.floor(i / 100) / 100 });
+      expect(points.length).toBeLessThanOrEqual(MAX_ANNOTATION_POINTS);
+    }
+  });
+
+  it("halves a full stroke instead of refusing the next point", () => {
+    const points = Array.from({ length: MAX_ANNOTATION_POINTS }, (_, i) => ({
+      x: i / 10000,
+      y: 0,
+    }));
+    pushStrokePoint(points, { x: 0.9, y: 0.9 });
+
+    expect(points).toHaveLength(MAX_ANNOTATION_POINTS / 2 + 1);
+    // The stroke still starts where it started and ends on the new point.
+    expect(points[0]).toEqual({ x: 0, y: 0 });
+    expect(points[1]).toEqual({ x: 2 / 10000, y: 0 });
+    expect(points.at(-1)).toEqual({ x: 0.9, y: 0.9 });
   });
 });

@@ -9,12 +9,21 @@ import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
 import { event, match, matchVideo, videoAnnotation } from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
-import { createPresignedUploadUrl } from "@/lib/server/storage";
 import { getTBAClient } from "@/lib/server/tba";
-import { firstYouTubeVideo, parseYouTubeId, qualMatchLabel, tbaQualMatchKey } from "./logic";
+import {
+  firstYouTubeVideo,
+  MAX_ANNOTATION_POINTS,
+  parseYouTubeId,
+  qualMatchLabel,
+  tbaQualMatchKey,
+} from "./logic";
 import { getLatestVideoForMatch } from "./queries";
 
-type ActionResult<T> = { success: true; data: T } | { success?: never; error: string };
+/** `retryable` marks a failure a later attempt could survive, like an expired
+ * session. The offline mark queue keeps those ops instead of dropping them. */
+type ActionResult<T> =
+  | { success: true; data: T }
+  | { success?: never; error: string; retryable?: boolean };
 
 async function getActiveMember() {
   const requestHeaders = await headers();
@@ -32,9 +41,8 @@ async function getActiveMember() {
 const openMatchSchema = z.object({ matchId: z.string().uuid() });
 
 /**
- * A qual match was picked. Reopens this org's existing video for it, or starts
- * one from the YouTube video TBA lists for the match. When neither exists the
- * picker asks for a link or an upload instead.
+ * Reopens this org's existing video for a match, or starts one from the video
+ * TBA lists for it. When neither exists the picker asks for a link instead.
  */
 export async function openMatchVideo(
   input: unknown
@@ -72,7 +80,6 @@ export async function openMatchVideo(
     .insert(matchVideo)
     .values({
       organizationId: member.organizationId,
-      source: "youtube",
       url: `https://www.youtube.com/watch?v=${youtubeId}`,
       youtubeId,
       title: qualMatchLabel(row.matchNumber),
@@ -86,21 +93,11 @@ export async function openMatchVideo(
   return { success: true, data: { videoId: created.id } };
 }
 
-const createVideoSchema = z.discriminatedUnion("source", [
-  z.object({
-    source: z.literal("youtube"),
-    url: z.string().min(1).max(2000),
-    matchId: z.string().uuid().nullish(),
-  }),
-  z.object({
-    source: z.literal("upload"),
-    storageKey: z.string().min(1).max(512),
-    fileName: z.string().max(200).nullish(),
-    matchId: z.string().uuid().nullish(),
-  }),
-]);
+const createVideoSchema = z.object({
+  url: z.string().min(1).max(2000),
+  matchId: z.string().uuid().nullish(),
+});
 
-/** A pasted YouTube link or a finished upload, optionally tied to a qual match. */
 export async function createMatchVideo(input: unknown): Promise<ActionResult<{ videoId: string }>> {
   const member = await getActiveMember();
   if (!member) return { error: "Unauthorized" };
@@ -109,19 +106,13 @@ export async function createMatchVideo(input: unknown): Promise<ActionResult<{ v
   if (!validated.success) return { error: "Invalid input" };
   const data = validated.data;
 
-  let youtubeId: string | null = null;
-  if (data.source === "youtube") {
-    youtubeId = parseYouTubeId(data.url);
-    if (!youtubeId) return { error: "That doesn't look like a YouTube link." };
-  } else if (!data.storageKey.startsWith(`${member.organizationId}/match-videos/`)) {
-    return { error: "Invalid upload" };
-  }
+  const youtubeId = parseYouTubeId(data.url);
+  if (!youtubeId) return { error: "That doesn't look like a YouTube link." };
 
-  // Tie the video to its match (and that match's event) when one was picked;
-  // otherwise file it under the active event so it still scopes correctly.
+  // Tie the video to its match and that match's event when one was picked,
+  // otherwise file it under the active event so it still scopes correctly
   let eventId: string | null = null;
-  let title: string =
-    data.source === "youtube" ? "YouTube clip" : data.fileName?.trim() || "Uploaded clip";
+  let title = "YouTube clip";
   if (data.matchId) {
     const [row] = await db
       .select({ matchNumber: match.matchNumber, eventId: match.eventId })
@@ -140,10 +131,8 @@ export async function createMatchVideo(input: unknown): Promise<ActionResult<{ v
     .insert(matchVideo)
     .values({
       organizationId: member.organizationId,
-      source: data.source,
-      url: data.source === "youtube" ? data.url.trim() : null,
+      url: data.url.trim(),
       youtubeId,
-      storageKey: data.source === "upload" ? data.storageKey : null,
       title,
       matchId: data.matchId ?? null,
       eventId,
@@ -153,46 +142,6 @@ export async function createMatchVideo(input: unknown): Promise<ActionResult<{ v
 
   if (!created) return { error: "Couldn't create the video" };
   return { success: true, data: { videoId: created.id } };
-}
-
-const VIDEO_CONTENT_TYPES = ["video/mp4", "video/quicktime", "video/webm"] as const;
-const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024; // 2GB: a full match straight off an iPad
-
-const uploadUrlSchema = z.object({
-  contentType: z.enum(VIDEO_CONTENT_TYPES),
-  fileSize: z.number().int().positive().max(MAX_VIDEO_BYTES),
-});
-
-/** Presigned PUT for a clip from Photos, same storage as pit photos. */
-export async function getVideoUploadUrl(
-  input: unknown
-): Promise<ActionResult<{ url: string; key: string }>> {
-  const member = await getActiveMember();
-  if (!member) return { error: "Unauthorized" };
-
-  const validated = uploadUrlSchema.safeParse(input);
-  if (!validated.success) {
-    return { error: "Pick an MP4, MOV or WebM video under 2GB." };
-  }
-
-  const extension = { "video/mp4": "mp4", "video/quicktime": "mov", "video/webm": "webm" }[
-    validated.data.contentType
-  ];
-  const key = `${member.organizationId}/match-videos/${Date.now()}-${crypto.randomUUID()}.${extension}`;
-
-  try {
-    // Sign the size too: checking the browser-supplied number on its own would
-    // leave the presigned PUT free to carry a body of any length.
-    const result = await createPresignedUploadUrl(
-      key,
-      validated.data.contentType,
-      validated.data.fileSize
-    );
-    return { success: true, data: result };
-  } catch (error) {
-    console.error("[film-room] upload URL error:", error);
-    return { error: "Uploads aren't set up on this server." };
-  }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -207,12 +156,12 @@ const pointSchema = z.object({
 const annotationSchema = z.object({
   videoId: z.string().uuid(),
   annotation: z.object({
-    /** Client-generated so a retry after a dropped connection stays idempotent. */
+    // Client-generated, so a retry after a dropped connection is idempotent
     id: z.string().uuid(),
     timestamp: z.number().int().min(0),
     durationSeconds: z.number().int().positive().max(60),
     type: z.enum(["pen", "line", "arrow", "rect", "ellipse"]),
-    points: z.array(pointSchema).min(1).max(2000),
+    points: z.array(pointSchema).min(1).max(MAX_ANNOTATION_POINTS),
     verdict: z.enum(["good", "bad"]).nullish(),
     note: z.string().max(2000).nullish(),
     teamNumber: z.number().int().positive().nullish(),
@@ -220,13 +169,12 @@ const annotationSchema = z.object({
 });
 
 /**
- * Autosave for one mark: "Save mark" and Undo both land here. Upserts by the
- * client id; any member of the org may edit a shared mark, but the author
- * column keeps whoever drew it first.
+ * Upserts one mark by its client id. Any member of the org may edit a shared
+ * mark, but the author column keeps whoever drew it first.
  */
 export async function saveAnnotation(input: unknown): Promise<ActionResult<{ id: string }>> {
   const member = await getActiveMember();
-  if (!member) return { error: "Unauthorized" };
+  if (!member) return { error: "Unauthorized", retryable: true };
 
   const validated = annotationSchema.safeParse(input);
   if (!validated.success) return { error: "Invalid input" };
@@ -260,7 +208,7 @@ export async function saveAnnotation(input: unknown): Promise<ActionResult<{ id:
     .onConflictDoUpdate({
       target: videoAnnotation.id,
       set: values,
-      // Never let an id collision rewrite another org's row.
+      // Never let an id collision rewrite another org's row
       setWhere: and(
         eq(videoAnnotation.organizationId, member.organizationId),
         eq(videoAnnotation.videoId, videoId)
@@ -278,12 +226,12 @@ const deleteSchema = z.object({ id: z.string().uuid() });
 
 export async function deleteAnnotation(input: unknown): Promise<ActionResult<{ id: string }>> {
   const member = await getActiveMember();
-  if (!member) return { error: "Unauthorized" };
+  if (!member) return { error: "Unauthorized", retryable: true };
 
   const validated = deleteSchema.safeParse(input);
   if (!validated.success) return { error: "Invalid input" };
 
-  // Deleting a row that's already gone is fine: a retried delete must not fail.
+  // Deleting a row that's already gone is fine: a retried delete must not fail
   await db
     .delete(videoAnnotation)
     .where(

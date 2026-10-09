@@ -1,20 +1,16 @@
 CREATE TYPE "public"."annotation_type" AS ENUM('pen', 'line', 'arrow', 'rect', 'ellipse');--> statement-breakpoint
 CREATE TYPE "public"."annotation_verdict" AS ENUM('good', 'bad');--> statement-breakpoint
-CREATE TYPE "public"."video_source" AS ENUM('youtube', 'upload');--> statement-breakpoint
 CREATE TABLE "match_video" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"organization_id" text NOT NULL,
-	"source" "video_source" DEFAULT 'youtube' NOT NULL,
-	"url" text,
-	"youtube_id" text,
-	"storage_key" text,
+	"url" text NOT NULL,
+	"youtube_id" text NOT NULL,
 	"title" text NOT NULL,
 	"match_id" uuid,
 	"event_id" uuid,
 	"created_by_member_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "match_video_source_target" CHECK (("match_video"."source" = 'youtube' and "match_video"."youtube_id" is not null) or ("match_video"."source" = 'upload' and "match_video"."storage_key" is not null))
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "video_annotation" (

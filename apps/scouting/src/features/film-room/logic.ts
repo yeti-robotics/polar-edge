@@ -1,7 +1,9 @@
 import type { Annotation, Point } from "./types";
 
-/** Clip length a new mark gets when the scout doesn't pick another. */
 export const DEFAULT_CLIP_SECONDS = 6;
+export const MAX_ANNOTATION_POINTS = 2000;
+/** Smallest gap between two stored pen points, normalized. */
+export const MIN_POINT_SPACING = 0.004;
 /** Seconds a mark takes to fade out at the end of its clip. */
 export const FADE_SECONDS = 0.4;
 
@@ -15,31 +17,24 @@ export function parseYouTubeId(input: string): string | null {
   return match?.[1] ?? null;
 }
 
-/** "Qual 42" — what the picker and the title bar show. */
 export function qualMatchLabel(matchNumber: number): string {
   return `Qual ${matchNumber}`;
 }
 
-/** TBA match key for a qualification match, e.g. `2026ncwak_qm42`. */
+/** e.g. `2026ncwak_qm42` */
 export function tbaQualMatchKey(eventCode: string, matchNumber: number): string {
   return `${eventCode}_qm${matchNumber}`;
 }
 
-/**
- * First YouTube video TBA lists for a match. TBA also lists its own "tba"
- * videos, which aren't embeddable, so only type "youtube" counts.
- */
+// TBA also lists its own "tba" videos, which aren't embeddable.
 export function firstYouTubeVideo(videos: { type: string; key: string }[] | undefined) {
   const video = videos?.find((v) => v.type === "youtube" && v.key);
   if (!video) return null;
-  // Keys sometimes carry a start offset, e.g. "abc123DEF45?t=12".
+  // Keys sometimes carry a start offset, e.g. "abc123DEF45?t=12"
   return parseYouTubeId(video.key.split(/[?&#]/)[0] ?? "");
 }
 
-/**
- * Matches the address-bar text against the qual list: "42", "q42" and
- * "Qual 42" all find Qual 42. Empty text shows everything.
- */
+/** "42", "q42" and "Qual 42" all find Qual 42. Empty text shows everything. */
 export function filterMatchOptions<T extends { matchNumber: number; label: string }>(
   options: T[],
   text: string
@@ -54,12 +49,8 @@ export function filterMatchOptions<T extends { matchNumber: number; label: strin
 }
 
 /**
- * Distance from `point` to the shape a strategist actually SEES.
- *
- * Shapes store only their two defining points, so measuring to stored points
- * alone makes a circle tappable only at two invisible corners. Each type is
- * measured against its drawn footprint instead, and closed shapes count their
- * whole interior, so tapping the circled robot works.
+ * Distance from `point` to the drawn shape, not to its stored points: a
+ * circle stores two corners, but has to be tappable anywhere inside it.
  */
 export function distanceToAnnotation(
   annotation: Pick<Annotation, "type" | "points">,
@@ -98,7 +89,7 @@ export function distanceToAnnotation(
   const maxY = Math.max(start.y, end.y);
 
   if (annotation.type === "rect") {
-    // 0 anywhere inside the box.
+    // 0 anywhere inside the box
     return Math.hypot(
       Math.max(minX - point.x, 0, point.x - maxX),
       Math.max(minY - point.y, 0, point.y - maxY)
@@ -114,12 +105,11 @@ export function distanceToAnnotation(
   return norm <= 1 ? 0 : (norm - 1) * Math.min(rx, ry);
 }
 
-/** A mark's clip length, falling back for rows written before lengths were picked. */
 export function clipSeconds(annotation: Pick<Annotation, "durationSeconds">): number {
   return annotation.durationSeconds || DEFAULT_CLIP_SECONDS;
 }
 
-/** Is the mark on screen at `time` (seconds)? In-point inclusive, out-point exclusive. */
+/** In-point inclusive, out-point exclusive. */
 export function isAnnotationVisible(
   annotation: Pick<Annotation, "timestamp" | "durationSeconds">,
   time: number
@@ -127,7 +117,7 @@ export function isAnnotationVisible(
   return time >= annotation.timestamp && time < annotation.timestamp + clipSeconds(annotation);
 }
 
-/** Opaque for most of its clip, eased out over the last FADE_SECONDS. */
+/** Opaque for most of the clip, eased out over the last FADE_SECONDS. */
 export function alphaForAnnotation(
   annotation: Pick<Annotation, "timestamp" | "durationSeconds">,
   time: number
@@ -138,22 +128,25 @@ export function alphaForAnnotation(
 }
 
 /**
- * UUID v4 for a client-generated mark id, which the server validates as a uuid.
- *
- * `crypto.randomUUID` only exists in secure contexts (HTTPS or localhost), so
- * it's undefined when the iPad hits the app over a plain-HTTP LAN address.
- * `crypto.getRandomValues` has no such restriction, so fall back to that rather
- * than to `Math.random`, which is not a source of unique values.
+ * Appends a pen sample in place, keeping the stroke under the point limit the
+ * server enforces. Samples too close together to see are dropped, and a stroke
+ * that still hits the limit is halved instead of refusing to grow.
  */
-export function createAnnotationId(): string {
-  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+export function pushStrokePoint(points: Point[], point: Point): void {
+  const last = points[points.length - 1];
+  if (last && Math.hypot(point.x - last.x, point.y - last.y) < MIN_POINT_SPACING) return;
 
-  const bytes = crypto.getRandomValues(new Uint8Array(16));
-  // Stamp the version (4) and variant (RFC 4122) bits.
-  bytes[6] = ((bytes[6] as number) & 0x0f) | 0x40;
-  bytes[8] = ((bytes[8] as number) & 0x3f) | 0x80;
-  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
-  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  if (points.length >= MAX_ANNOTATION_POINTS) {
+    // Keep every other point: 0, 2, 4, ...
+    let kept = 1;
+    for (let i = 2; i < points.length; i += 2) {
+      points[kept] = points[i] as Point;
+      kept++;
+    }
+    points.length = kept;
+  }
+
+  points.push(point);
 }
 
 export function formatVideoTime(seconds: number): string {
@@ -161,7 +154,6 @@ export function formatVideoTime(seconds: number): string {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
-/** A save or delete waiting to reach the server. */
 export type MarkOp = { kind: "save"; annotation: Annotation } | { kind: "delete"; id: string };
 
 /** Server rows with any not-yet-synced local edits laid over them. */

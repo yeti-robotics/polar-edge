@@ -23,18 +23,16 @@ import { HOLD_MS } from "./constants";
 
 const DOUBLE_TAP_MS = 300;
 const SKIP_SECONDS = 10;
-/** Chrome fades to nothing after this long untouched, playing or paused. */
+/** How long the chrome stays up after the last touch. */
 const CHROME_IDLE_MS = 3000;
 
 interface PlaybackControlsProps {
   player: VideoPlayer;
-  /** Shown top-left, e.g. "Qual 42". */
   title: string;
   /** Shifts the title clear of the offline pill. */
   offline: boolean;
   onBack?: () => void;
   onToggleNotes: () => void;
-  /** View mode only: Edit mode switches skip/scrub/speed off entirely. */
   gesturesEnabled: boolean;
   popoverOpen: boolean;
   onDismissPopover: () => void;
@@ -43,12 +41,9 @@ interface PlaybackControlsProps {
 }
 
 /**
- * Everything that drives playback: the fading title bar and transport, plus the
- * gesture zones over the footage.
- *
- *  - Double-tap left/right skips 10s, YouTube-style.
- *  - Press-and-hold left/right runs 0.5x / 2x until release.
- *  - A tap in the middle toggles play; a tap on a mark reads its note instead.
+ * The fading title bar and transport, plus the gesture zones over the footage:
+ * double-tap left/right skips 10s, press-and-hold runs 0.5x/2x until release,
+ * and a tap in the middle toggles play.
  */
 export function PlaybackControls({
   player,
@@ -74,7 +69,6 @@ export function PlaybackControls({
   const wakeChrome = useCallback(() => {
     setChromeAwake(true);
     if (idleTimerRef.current !== null) window.clearTimeout(idleTimerRef.current);
-    // Fades out whether playing or paused, per the reviewed design.
     idleTimerRef.current = window.setTimeout(() => setChromeAwake(false), CHROME_IDLE_MS);
   }, []);
 
@@ -109,7 +103,7 @@ export function PlaybackControls({
     const prev = lastZoneTapRef.current;
     lastZoneTapRef.current = { side, at: now };
 
-    // Double-tap the same side: skip 10s, YouTube-style.
+    // Double-tap the same side skips
     if (prev && prev.side === side && now - prev.at < DOUBLE_TAP_MS) {
       if (holdTimerRef.current !== null) window.clearTimeout(holdTimerRef.current);
       lastZoneTapRef.current = null;
@@ -118,11 +112,10 @@ export function PlaybackControls({
       return;
     }
 
-    // A single tap also checks whether a mark is under the finger.
     if (onProbeMark(event)) return;
 
     if (holdTimerRef.current !== null) window.clearTimeout(holdTimerRef.current);
-    // Hold: 2x forward, 0.5x back — released on pointerup.
+    // Hold: 2x forward, 0.5x back, released on pointerup
     holdTimerRef.current = window.setTimeout(() => {
       setRate(side === "fwd" ? 2 : 0.5);
       play();
@@ -140,7 +133,7 @@ export function PlaybackControls({
       onDismissPopover();
       return;
     }
-    // Marks in the middle strip are tappable too, not just the side zones.
+    // Marks in the middle strip are tappable too
     if (onProbeMark(event)) return;
     if (playing) pause();
     else play();
@@ -192,7 +185,7 @@ export function PlaybackControls({
         </div>
       )}
 
-      {/* Title bar — fades out after CHROME_IDLE_MS, wakes on any tap */}
+      {/* Title bar: fades out after CHROME_IDLE_MS, wakes on any tap */}
       <div
         className={cn(
           "absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-3 bg-gradient-to-b from-black/70 to-transparent py-4 pr-33.5 pl-4.5 transition-opacity duration-250",
@@ -226,7 +219,7 @@ export function PlaybackControls({
         </div>
       </div>
 
-      {/* Transport — plain bar, no per-mark colour pips */}
+      {/* Transport */}
       <div
         className={cn(
           "absolute inset-x-0 bottom-0 z-10 flex flex-col gap-1.5 bg-gradient-to-t from-black/75 to-transparent px-3.5 pb-3.5 transition-opacity duration-250",

@@ -28,16 +28,14 @@ const TOOLS: { value: AnnotationTool; label: string; icon: React.ReactNode }[] =
   { value: "arrow", label: "Arrow", icon: <ArrowUpRightIcon className="size-[22px]" /> },
 ];
 
-/** Radius of the tool ring around the draw button. */
 const RING_RADIUS = 92;
-/** Diameter of each ring petal. */
 const PETAL_SIZE = 60;
 /** The selected tool's petal is drawn slightly larger. */
 const PETAL_SCALE = 1.12;
-/** How far the open ring reaches from the node centre, in px (widest petal). */
+/** How far the open ring reaches from the node centre, in px. */
 const RING_EXTENT = RING_RADIUS + (PETAL_SIZE * PETAL_SCALE) / 2;
 
-/** Where the button sits, as fractions of the stage, so it survives resizes. */
+/** Fractions of the stage, so the button survives a resize. */
 export interface FabPosition {
   fx: number;
   fy: number;
@@ -46,23 +44,18 @@ export interface FabPosition {
 interface DrawToolButtonProps {
   /** Bounds the button is dragged within. */
   stageRef: RefObject<HTMLDivElement | null>;
-  /** Owned by the parent so a trip through View mode doesn't move it back. */
   position: FabPosition;
   onPositionChange: (position: FabPosition) => void;
   tool: AnnotationTool;
   onToolChange: (tool: AnnotationTool) => void;
-  /** The current verdict's colour — the button wears it, so do new strokes. */
   verdictColor: string;
   onToggleVerdict: () => void;
 }
 
 /**
- * The one draw control, draggable anywhere on the stage:
- *   tap  -> flips the verdict between Good and Bad
- *   hold -> opens/closes a full ring of tools around it
- * The ring closes only on another hold — never on a stroke, never on a pick.
- *
- * Mounted only in Edit mode, so leaving Edit resets the ring by unmounting.
+ * The draw control, draggable anywhere on the stage. A tap flips the verdict
+ * between Good and Bad; a hold opens or closes the ring of tools around it.
+ * Only another hold closes the ring, never a stroke or a pick.
  */
 export function DrawToolButton({
   stageRef,
@@ -90,11 +83,7 @@ export function DrawToolButton({
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
     setHover(false);
-    try {
-      event.currentTarget.setPointerCapture(event.pointerId);
-    } catch {
-      // synthetic events / unsupported pointer ids
-    }
+    event.currentTarget.setPointerCapture(event.pointerId);
     dragRef.current = {
       x: event.clientX,
       y: event.clientY,
@@ -104,7 +93,6 @@ export function DrawToolButton({
     };
     heldRef.current = false;
     if (holdTimerRef.current !== null) window.clearTimeout(holdTimerRef.current);
-    // A genuine hold toggles the ring; a quick tap never does.
     holdTimerRef.current = window.setTimeout(() => {
       if (!dragRef.current || dragRef.current.moved) return;
       heldRef.current = true;
@@ -123,7 +111,7 @@ export function DrawToolButton({
       if (holdTimerRef.current !== null) window.clearTimeout(holdTimerRef.current);
     }
     if (!drag.moved) return;
-    // Keep the whole open ring on-screen, so every tool stays tappable.
+    // Keep the whole open ring on-screen, so every tool stays tappable
     const mx = Math.min(0.45, RING_EXTENT / rect.width);
     const my = Math.min(0.45, RING_EXTENT / rect.height);
     onPositionChange({
@@ -138,13 +126,13 @@ export function DrawToolButton({
     const held = heldRef.current;
     dragRef.current = null;
     heldRef.current = false;
-    // Released before the hold fired and didn't drag -> that's a tap: flip verdict.
+    // Released before the hold fired and didn't drag: that's a tap
     if (!moved && !held) onToggleVerdict();
   };
 
-  /** Tools sit on a full circle concentric with the draw button. */
+  // Tools sit on a full circle concentric with the draw button
   const petals = useMemo(() => {
-    // Hovering the closed node ghosts the ring in as an inert preview.
+    // Hovering the closed node ghosts the ring in as an inert preview
     const preview = !menuOpen && hover;
     if (!menuOpen && !preview) return [];
     return TOOLS.map((t, i) => {
@@ -171,7 +159,6 @@ export function DrawToolButton({
           key={p.key}
           type="button"
           title={p.label}
-          // Picking a tool leaves the ring open by design.
           onClick={() => onToolChange(p.key)}
           className={cn(
             "absolute flex items-center justify-center rounded-full border border-white/20 text-white transition-[left,top,transform] duration-150 ease-out",
@@ -195,7 +182,7 @@ export function DrawToolButton({
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        // Finger taps fire fake hover events on iPad; only mouse and Pencil preview.
+        // Finger taps fire fake hover events on iPad, so only preview for mouse and Pencil
         onPointerEnter={(e) => {
           if (e.pointerType !== "touch") setHover(true);
         }}

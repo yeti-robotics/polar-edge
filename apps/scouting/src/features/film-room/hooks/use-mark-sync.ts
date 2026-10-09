@@ -15,7 +15,7 @@ function storageKey(videoId: string) {
   return `film-room-queue:${videoId}`;
 }
 
-/** Unsynced ops for a video, keyed by mark id (only the latest op per mark matters). */
+/** Unsynced ops for a video, keyed by mark id. Only the latest op per mark. */
 export function readQueuedOps(videoId: string): Map<string, MarkOp> {
   try {
     const raw = window.localStorage.getItem(storageKey(videoId));
@@ -31,23 +31,23 @@ function writeQueuedOps(videoId: string, queue: Map<string, MarkOp>) {
     if (queue.size === 0) window.localStorage.removeItem(storageKey(videoId));
     else window.localStorage.setItem(storageKey(videoId), JSON.stringify([...queue]));
   } catch {
-    // Private mode / storage full: the in-memory queue still retries this session.
+    // Private mode / storage full: the in-memory queue still retries
   }
 }
 
 /**
- * Autosave for Film Room marks that survives venue wifi.
- *
- * Every save/delete goes into a per-video queue (mirrored to localStorage) and
- * is sent straight away. If the request can't reach the server it stays queued
- * and retries when the iPad comes back online, and every few seconds while
- * anything is waiting. The app-wide pending badge counts what's queued.
+ * Every save/delete goes into a per-video queue, mirrored to localStorage, and
+ * is sent straight away. If it can't reach the server it stays queued and
+ * retries on reconnect, and every RETRY_MS while anything is waiting. The
+ * app-wide pending badge counts what's queued.
  */
 export function useMarkSync(videoId: string) {
   const online = useNetworkStatus();
   const { increment, decrement } = useQueueCount();
   const queueRef = useRef<Map<string, MarkOp> | null>(null);
   const flushingRef = useRef(false);
+  // The retry timer re-runs every RETRY_MS; only warn about a stall once
+  const warnedRef = useRef(false);
 
   const getQueue = useCallback(() => {
     if (!queueRef.current) queueRef.current = readQueuedOps(videoId);
@@ -68,14 +68,28 @@ export function useMarkSync(videoId: string) {
               ? await saveAnnotation({ videoId, annotation: op.annotation })
               : await deleteAnnotation({ id: op.id });
         } catch {
-          // Couldn't reach the server: keep everything queued for the next try.
+          // Couldn't reach the server: keep everything queued for the next try
           return;
         }
-        // A newer edit to the same mark landed while this one was in flight.
+        // Refused, but a later attempt could land: usually a session that
+        // expired mid-match. Keep it queued so signing back in recovers it.
+        if ("error" in result && result.retryable) {
+          if (!warnedRef.current) {
+            warnedRef.current = true;
+            toast.error(`Marks aren't saving: ${result.error}`, {
+              description: "They're kept on this device and will retry.",
+            });
+          }
+          return;
+        }
+        warnedRef.current = false;
+
+        // A newer edit to the same mark landed while this one was in flight
         if (queue.get(id) !== op) continue;
         queue.delete(id);
         decrement();
         writeQueuedOps(videoId, queue);
+        // Anything else would be rejected again, so drop it and say why
         if ("error" in result) toast.error(`Couldn't save a mark: ${result.error}`);
       }
     } finally {
@@ -87,7 +101,7 @@ export function useMarkSync(videoId: string) {
     (id: string, op: MarkOp) => {
       const queue = getQueue();
       if (!queue.has(id)) increment();
-      // Re-insert so the newest op for a mark goes to the back of the line.
+      // Re-insert so the newest op for a mark goes to the back of the line
       queue.delete(id);
       queue.set(id, op);
       writeQueuedOps(videoId, queue);
@@ -96,7 +110,7 @@ export function useMarkSync(videoId: string) {
     [flush, getQueue, increment, videoId]
   );
 
-  // Pick up anything left from a previous visit, and release the badge on leave.
+  // Pick up anything left from a previous visit, and release the badge on leave
   useEffect(() => {
     const queue = getQueue();
     const size = queue.size;

@@ -22,7 +22,6 @@ interface NotesDrawerProps {
   children?: ReactNode;
 }
 
-/** The sidebar: the composer pops out here after a mark is drawn, over the list. */
 export function NotesDrawer({
   offset,
   animated,
@@ -56,7 +55,6 @@ export function NotesDrawer({
 
       {children}
 
-      {/* Collapsed list: colour, time, team number coloured by verdict */}
       <ul className="flex flex-col gap-1.5">
         {annotations.length === 0 && !children && (
           <li className="py-6 text-center text-sm text-muted-foreground">

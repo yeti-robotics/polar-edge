@@ -30,7 +30,7 @@ export function AnnotationPopover({
       <div
         className="absolute z-30 flex w-65 flex-col gap-1.5 rounded-xl border bg-popover p-3 text-popover-foreground shadow-lg"
         style={{
-          // Centred under the finger, clamped so it never leaves the frame.
+          // Centred under the finger, clamped so it never leaves the frame
           left: `clamp(8px, calc(${popover.x * 100}% - 130px), calc(100% - 268px))`,
           top: `clamp(8px, calc(${popover.y * 100}% + 16px), calc(100% - 140px))`,
         }}

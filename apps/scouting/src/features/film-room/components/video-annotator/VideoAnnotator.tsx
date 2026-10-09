@@ -1,38 +1,15 @@
 "use client";
 
 /**
- * VideoAnnotator — FRC match strategy review, iPad first. Polar Edge "Film Room".
+ * Two modes, toggled from the pill in the title bar. The state keys are
+ * "draft"/"final"; the UI calls them Edit and View.
+ *   View - playback only. The draw button is hidden and tapping a mark shows
+ *          its note.
+ *   Edit - drawing only. The skip/scrub/speed gestures are switched off.
  *
- * This file owns the shared state and wires the pieces together; each piece is
- * its own module:
- *   VideoStage          footage + the annotation canvas
- *   useVideoPlayer      YouTube / native player, clock and controls
- *   useAnnotationCanvas painting, resizing and the frame loop
- *   PlaybackControls    chrome, transport and the playback gestures
- *   DrawToolButton      the draggable draw button and its tool ring
- *   NotesDrawer         the sidebar: the mark list, with the composer over it
- *   AnnotationComposer  the pending mark's fields, save and cancel
- *   AnnotationPopover   a tapped mark's details
- *   UndoToast           delete recovery
- *
- * Interaction model (matches the reviewed mock, Film Room v6):
- *
- *  - Two explicit modes, toggled from an always-visible title-bar pill, so
- *    nothing is ambiguous under competition stress. (The state keys are
- *    "draft"/"final"; the UI calls them Edit and View.)
- *      View  — playback only. The draw button is hidden entirely. Tapping a
- *               mark shows a read-only popover with its note.
- *      Edit  — drawing only. The footage is always live to draw on, and the
- *               skip/scrub/speed gestures are switched off. The mode pill never
- *               fades, because in Edit mode nothing else wakes the chrome.
- *  - A mark's COLOUR IS ITS VERDICT: green for good, red for bad. There is no
- *    colour palette and no thickness control.
- *  - Finishing a stroke pops the sidebar out with a note composer.
- *  - Marks autosave: "Save mark", the trash can and Undo each call straight
- *    through to `onSaveMark` / `onDeleteMark`. There is no separate save step.
- *
- * Geometry is stored as normalized 0..1 fractions, never pixels, so a mark
- * drawn on the iPad lines up on a laptop or a projector.
+ * A mark's colour is its verdict, so there is no colour or thickness control.
+ * Finishing a stroke opens the composer, and saving autosaves through
+ * onSaveMark - there is no separate save step.
  */
 
 import { Button } from "@repo/ui/components/button";
@@ -50,10 +27,10 @@ import { useAnnotationCanvas } from "../../hooks/use-annotation-canvas";
 import { useVideoPlayer } from "../../hooks/use-video-player";
 import {
   clipSeconds,
-  createAnnotationId,
   DEFAULT_CLIP_SECONDS,
   distanceToAnnotation,
   isAnnotationVisible,
+  pushStrokePoint,
 } from "../../logic";
 import {
   type Annotation,
@@ -61,7 +38,6 @@ import {
   type AnnotationVerdict,
   colorForVerdict,
   type FilmRoomTeamOption,
-  type PlayableSource,
   type Point,
 } from "../../types";
 import { AnnotationComposer, type ComposerFields } from "./AnnotationComposer";
@@ -72,13 +48,13 @@ import { PlaybackControls } from "./PlaybackControls";
 import { UndoToast } from "./UndoToast";
 import { VideoStage } from "./VideoStage";
 
-/** Tap distance (normalized) that counts as "on" a mark. */
+/** Tap distance, normalized, that counts as "on" a mark. */
 const HIT_RADIUS = 0.03;
 
 type Mode = "draft" | "final";
 
 interface PendingMark {
-  /** Set when editing an existing row rather than creating one. */
+  // Set when editing an existing row rather than creating one
   editingId: string | null;
   timestamp: number;
   type: AnnotationTool;
@@ -86,27 +62,21 @@ interface PendingMark {
 }
 
 export interface VideoAnnotatorProps {
-  source: PlayableSource;
-  /** Shown top-left, e.g. "Qual 42". */
+  youtubeId: string;
   title: string;
-  /** Rows loaded from Postgres for this video. */
   initialAnnotations?: Annotation[];
-  /** Teams the composer offers; the first is preselected until one is used. */
   teams?: FilmRoomTeamOption[];
-  /** Start here (seconds), e.g. from a team-page deep link. */
+  /** Seconds to start at, e.g. from a team-page deep link. */
   initialTime?: number;
-  /** Surfaces the offline pill when the iPad is off the venue wifi. */
   offline?: boolean;
-  /** Autosave for one mark (create, edit, or undo a delete). */
   onSaveMark?: (annotation: Annotation) => void;
   onDeleteMark?: (id: string) => void;
-  /** The back chevron in the title bar. */
   onBack?: () => void;
   className?: string;
 }
 
 export function VideoAnnotator({
-  source,
+  youtubeId,
   title,
   initialAnnotations = [],
   teams = [],
@@ -118,7 +88,7 @@ export function VideoAnnotator({
   className,
 }: VideoAnnotatorProps) {
   const stageRef = useRef<HTMLDivElement>(null);
-  /** In-progress stroke, kept in a ref so pointermove doesn't re-render. */
+  // In-progress stroke, in a ref so pointermove doesn't re-render
   const draftRef = useRef<Point[] | null>(null);
   const isDrawingRef = useRef(false);
   const toastTimerRef = useRef<number | null>(null);
@@ -127,9 +97,8 @@ export function VideoAnnotator({
   const [annotations, setAnnotations] = useState<Annotation[]>(initialAnnotations);
   const [mode, setMode] = useState<Mode>("final");
   const [tool, setTool] = useState<AnnotationTool>("pen");
-  /** Where the scout parked the draw button; outlives a trip through View mode. */
+  // Held here so a trip through View mode doesn't move the button back
   const [fabPosition, setFabPosition] = useState<FabPosition>({ fx: 0.84, fy: 0.74 });
-  /** Current verdict — also the colour every new stroke is drawn in. */
   const [verdict, setVerdict] = useState<AnnotationVerdict>("bad");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerDrag, setDrawerDrag] = useState<number | null>(null);
@@ -142,12 +111,12 @@ export function VideoAnnotator({
     note: "",
     durationSeconds: DEFAULT_CLIP_SECONDS,
   });
-  /** Carried to the next mark — you watch one robot, at one tempo, at a time. */
+  // Carried over to the next mark
   const [lastTeam, setLastTeam] = useState<string | null>(null);
   const [lastDuration, setLastDuration] = useState(DEFAULT_CLIP_SECONDS);
 
   const verdictColor = colorForVerdict(verdict);
-  const player = useVideoPlayer(source, initialTime);
+  const player = useVideoPlayer(youtubeId, initialTime);
   const { floatTimeRef, pause, seekTo } = player;
 
   const { canvasRef } = useAnnotationCanvas({
@@ -179,7 +148,7 @@ export function VideoAnnotator({
     [annotations, player.currentTime]
   );
 
-  /** Shared by every gesture zone: show a mark's note if one is under the finger. */
+  /** Shows a mark's note if one is under the finger; true when it did. */
   const probeMark = useCallback(
     (event: { clientX: number; clientY: number }): boolean => {
       const rect = stageRef.current?.getBoundingClientRect();
@@ -213,7 +182,6 @@ export function VideoAnnotator({
   );
 
   /* --- composer ------------------------------------------------------------ */
-  /** Stroke finished -> sidebar pops out with the composer. */
   const openComposer = useCallback(
     (points: Point[], type: AnnotationTool, teamOverride?: string) => {
       pause();
@@ -231,7 +199,7 @@ export function VideoAnnotator({
 
   const openEditor = useCallback(
     (a: Annotation) => {
-      // Park the footage on the mark so the drawing is in context.
+      // Park the footage on the mark so the drawing is in context
       pause();
       seekTo(a.timestamp);
       setPending({ editingId: a.id, timestamp: a.timestamp, type: a.type, points: a.points });
@@ -249,7 +217,7 @@ export function VideoAnnotator({
   const commitPending = useCallback(() => {
     if (!pending) return;
     const record: Annotation = {
-      id: pending.editingId ?? createAnnotationId(),
+      id: pending.editingId ?? crypto.randomUUID(),
       timestamp: pending.timestamp,
       durationSeconds: fields.durationSeconds,
       type: pending.type,
@@ -269,7 +237,6 @@ export function VideoAnnotator({
     setPending(null);
   }, [fields, onSaveMark, pending]);
 
-  /** Delete with a 5s undo window — you are usually moving fast. */
   const removeAnnotation = useCallback(
     (target: Annotation) => {
       onDeleteMark?.(target.id);
@@ -286,19 +253,14 @@ export function VideoAnnotator({
   const normalize = useCallback((event: ReactPointerEvent<HTMLCanvasElement>): Point => {
     const rect = event.currentTarget.getBoundingClientRect();
     return {
-      // Clamp so a drag that leaves the frame still stores a valid fraction.
+      // Clamp so a drag that leaves the frame still stores a valid fraction
       x: Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width)),
       y: Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height)),
     };
   }, []);
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLCanvasElement>) => {
-    try {
-      event.currentTarget.setPointerCapture(event.pointerId);
-    } catch {
-      // synthetic events / unsupported pointer ids
-    }
-    // The ring stays open through the stroke; only a hold closes it.
+    event.currentTarget.setPointerCapture(event.pointerId);
     isDrawingRef.current = true;
     draftRef.current = [normalize(event)];
   };
@@ -306,8 +268,8 @@ export function VideoAnnotator({
   const handlePointerMove = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     if (!isDrawingRef.current || !draftRef.current) return;
     const point = normalize(event);
-    if (tool === "pen") draftRef.current.push(point);
-    // Shapes only ever keep [start, current].
+    if (tool === "pen") pushStrokePoint(draftRef.current, point);
+    // Shapes only ever keep [start, current]
     else draftRef.current = [draftRef.current[0] ?? point, point];
   };
 
@@ -317,8 +279,8 @@ export function VideoAnnotator({
     const points = draftRef.current ?? [];
     draftRef.current = null;
     if (points.length < 2) return;
-    // Each stroke is its own mark: auto-save the open one with whatever was
-    // typed, then open the note box for the new stroke.
+    // Each stroke is its own mark: save the open one with whatever was typed,
+    // then open the composer for the new stroke.
     if (pending) {
       commitPending();
       openComposer(points, tool, fields.team);
@@ -373,11 +335,7 @@ export function VideoAnnotator({
         }}
       >
         <VideoStage
-          source={source}
-          isYouTube={player.isYouTube}
           playerHostRef={player.playerHostRef}
-          videoElRef={player.videoElRef}
-          nativeVideoProps={player.nativeVideoProps}
           canvasRef={canvasRef}
           drawable={mode === "draft"}
           onPointerDown={handlePointerDown}
@@ -399,8 +357,7 @@ export function VideoAnnotator({
 
         {popover && <AnnotationPopover popover={popover} onDismiss={() => setPopover(null)} />}
 
-        {/* Mode pill lives OUTSIDE the fading chrome: it never hides, in either
-            mode, because in Edit mode nothing else can wake the bar. */}
+        {/* Outside the fading chrome: in Edit mode nothing else wakes the bar */}
         <div className="absolute top-4 right-4.5 z-40">
           <Button
             type="button"

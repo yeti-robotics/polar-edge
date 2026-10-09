@@ -3,10 +3,9 @@ import { Suspense } from "react";
 import { z } from "zod";
 import { FilmRoomReview } from "@/features/film-room/components/FilmRoomReview";
 import { getMatchTeams, getMatchVideo, getVideoAnnotations } from "@/features/film-room/queries";
-import type { FilmRoomTeamOption, PlayableSource } from "@/features/film-room/types";
+import type { FilmRoomTeamOption } from "@/features/film-room/types";
 import { getEventTeams } from "@/features/scouting/pit/queries";
 import { requireActiveMember } from "@/lib/server/auth/require-member";
-import { createPresignedDownloadUrl } from "@/lib/server/storage";
 
 interface FilmRoomVideoPageProps {
   params: Promise<{ videoId: string }>;
@@ -22,25 +21,7 @@ async function FilmRoomVideoContent({ params, searchParams }: FilmRoomVideoPageP
   if (!row) notFound();
   const { video } = row;
 
-  let source: PlayableSource | null = null;
-  if (video.source === "youtube" && video.youtubeId) {
-    source = { kind: "youtube", value: video.youtubeId };
-  } else if (video.source === "upload" && video.storageKey) {
-    try {
-      source = { kind: "upload", value: await createPresignedDownloadUrl(video.storageKey) };
-    } catch (error) {
-      console.error("[film-room] could not sign video URL:", error);
-    }
-  }
-  if (!source) {
-    return (
-      <div className="flex size-full items-center justify-center text-sm text-white/70">
-        This video can't be played right now.
-      </div>
-    );
-  }
-
-  // The match's six teams when it's linked; otherwise everyone at the event.
+  // The match's six teams when it's linked, otherwise everyone at the event
   let teams: FilmRoomTeamOption[] = [];
   if (video.matchId) {
     teams = await getMatchTeams(video.matchId);
@@ -52,16 +33,17 @@ async function FilmRoomVideoContent({ params, searchParams }: FilmRoomVideoPageP
   }
 
   const annotations = await getVideoAnnotations(video.id, member.organizationId);
+  // t=0 is a real deep link: a note on the very first frame of the match
   const startAt = Number.parseInt(t ?? "", 10);
 
   return (
     <FilmRoomReview
       videoId={video.id}
-      source={source}
+      youtubeId={video.youtubeId}
       title={video.title}
       initialAnnotations={annotations}
       teams={teams}
-      initialTime={Number.isFinite(startAt) && startAt > 0 ? startAt : undefined}
+      initialTime={Number.isFinite(startAt) && startAt >= 0 ? startAt : undefined}
     />
   );
 }

@@ -17,10 +17,9 @@ import {
   VERDICT_COLORS,
 } from "../../types";
 
-/** Clip lengths offered for a mark. The server accepts up to 60s. */
+/** The server accepts up to 60s. */
 const CLIP_LENGTH_OPTIONS = [3, 6, 10, 20];
 
-/** What the scout fills in for the mark currently in the composer. */
 export interface ComposerFields {
   verdict: AnnotationVerdict | null;
   /** Team number as a string, or "none". */
@@ -38,10 +37,7 @@ interface AnnotationComposerProps {
   onDiscard: () => void;
 }
 
-/**
- * The note box that pops out after a stroke: verdict, how long the mark holds,
- * which team it is about, the note, and one large Save bar.
- */
+/** The note box that pops out after a stroke. */
 export function AnnotationComposer({
   fields,
   onChange,
@@ -61,7 +57,6 @@ export function AnnotationComposer({
         <span className="text-[13px] font-semibold" style={{ color: colorForVerdict(verdict) }}>
           {verdict ? verdict.toUpperCase() : "New mark"}
         </span>
-        {/* Discard lives up here next to the colour dot */}
         <Button
           type="button"
           size="icon-sm"
@@ -146,7 +141,6 @@ export function AnnotationComposer({
         className="min-h-22 resize-none text-sm"
       />
 
-      {/* One large save target — the only thing you must hit accurately */}
       <Button type="button" className="h-13 text-base font-semibold" onClick={onSave}>
         <CheckIcon className="size-5" />
         Save mark

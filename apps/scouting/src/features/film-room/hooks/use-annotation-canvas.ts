@@ -4,14 +4,6 @@ import { type RefObject, useCallback, useEffect, useRef } from "react";
 import { alphaForAnnotation } from "../logic";
 import { type Annotation, type AnnotationTool, colorForVerdict, type Point } from "../types";
 
-/**
- * The annotation layer over the footage: sizing, painting and the frame loop.
- *
- * Geometry arrives as normalized 0..1 fractions, never pixels, so a mark drawn
- * on the iPad lines up on a laptop or a projector.
- */
-
-/** One fixed stroke weight — the thickness control was removed by design. */
 const LINE_WIDTH = 4;
 
 type Shape = { type: AnnotationTool; points: Point[]; color: string };
@@ -35,7 +27,7 @@ export function drawAnnotation(
   ctx.lineWidth = LINE_WIDTH;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  // Keep strokes legible over bright field lighting.
+  // Keep strokes legible over bright field lighting
   ctx.shadowColor = "rgba(0,0,0,0.55)";
   ctx.shadowBlur = 3;
 
@@ -47,7 +39,7 @@ export function drawAnnotation(
   if (type === "pen") {
     ctx.beginPath();
     ctx.moveTo(x0, y0);
-    // Quadratic midpoint smoothing keeps freehand strokes from looking jagged.
+    // Quadratic midpoint smoothing, so freehand strokes aren't jagged
     for (let i = 1; i < points.length - 1; i++) {
       const p = points[i];
       const n = points[i + 1];
@@ -103,16 +95,16 @@ export function drawAnnotation(
 export interface AnnotationCanvasInput {
   /** Saved marks, each faded by how much of its clip is left. */
   annotations: Annotation[];
-  /** The mark in the composer. Drawn at full alpha, in place of its saved row. */
+  /** The mark in the composer, drawn at full alpha in place of its saved row. */
   pending: { editingId: string | null; type: AnnotationTool; points: Point[] } | null;
   pendingColor: string;
-  /** In-progress stroke, a ref so pointermove doesn't re-render. */
+  /** In-progress stroke. */
   draftRef: RefObject<Point[] | null>;
   draftType: AnnotationTool;
   draftColor: string;
   /** Float playback clock, for sub-second fades. */
   timeRef: RefObject<number>;
-  /** Runs once per frame before painting — this is where the clock is read. */
+  /** Runs once per frame before painting, to read the clock. */
   onFrame?: () => void;
 }
 
@@ -120,7 +112,7 @@ export function useAnnotationCanvas(input: AnnotationCanvasInput): {
   canvasRef: RefObject<HTMLCanvasElement | null>;
 } {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // The loop runs off the latest props without restarting on every state change.
+  // So the frame loop reads the latest props without restarting
   const inputRef = useRef(input);
   useEffect(() => {
     inputRef.current = input;
@@ -146,7 +138,7 @@ export function useAnnotationCanvas(input: AnnotationCanvasInput): {
     const t = timeRef.current;
 
     for (const annotation of annotations) {
-      // The row being edited is drawn from the composer instead, at full alpha.
+      // The row being edited is drawn from the composer instead
       if (pending?.editingId === annotation.id) continue;
       drawAnnotation(
         ctx,

@@ -17,11 +17,6 @@ function VerdictCount({ label, value, color }: { label: string; value: number; c
   );
 }
 
-/**
- * Film Room roll-up on the team page: Good/Bad counts to scan during alliance
- * selection, then the notes to read when a count looks alarming. Each note
- * links back to its moment in the video.
- */
 export function TeamFilmNotesCard({ summary }: { summary: TeamFilmSummary }) {
   const total = summary.good + summary.bad;
 
