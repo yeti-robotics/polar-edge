@@ -1,0 +1,486 @@
+"use client";
+
+/**
+ * VideoAnnotator — FRC match strategy review, iPad first. Polar Edge "Film Room".
+ *
+ * This file owns the shared state and wires the pieces together; each piece is
+ * its own module:
+ *   VideoStage          footage + the annotation canvas
+ *   useVideoPlayer      YouTube / native player, clock and controls
+ *   useAnnotationCanvas painting, resizing and the frame loop
+ *   PlaybackControls    chrome, transport and the playback gestures
+ *   DrawToolButton      the draggable draw button and its tool ring
+ *   NotesDrawer         the sidebar: the mark list, with the composer over it
+ *   AnnotationComposer  the pending mark's fields, save and cancel
+ *   AnnotationPopover   a tapped mark's details
+ *   UndoToast           delete recovery
+ *
+ * Interaction model (matches the reviewed mock, Film Room v6):
+ *
+ *  - Two explicit modes, toggled from an always-visible title-bar pill, so
+ *    nothing is ambiguous under competition stress. (The state keys are
+ *    "draft"/"final"; the UI calls them Edit and View.)
+ *      View  — playback only. The draw button is hidden entirely. Tapping a
+ *               mark shows a read-only popover with its note.
+ *      Edit  — drawing only. The footage is always live to draw on, and the
+ *               skip/scrub/speed gestures are switched off. The mode pill never
+ *               fades, because in Edit mode nothing else wakes the chrome.
+ *  - A mark's COLOUR IS ITS VERDICT: green for good, red for bad. There is no
+ *    colour palette and no thickness control.
+ *  - Finishing a stroke pops the sidebar out with a note composer.
+ *  - Marks autosave: "Save mark", the trash can and Undo each call straight
+ *    through to `onSaveMark` / `onDeleteMark`. There is no separate save step.
+ *
+ * Geometry is stored as normalized 0..1 fractions, never pixels, so a mark
+ * drawn on the iPad lines up on a laptop or a projector.
+ */
+
+import { Button } from "@repo/ui/components/button";
+import { cn } from "@repo/ui/lib/utils";
+import { EyeIcon, PencilIcon, WifiOffIcon } from "lucide-react";
+import {
+  type PointerEvent as ReactPointerEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useAnnotationCanvas } from "../../hooks/use-annotation-canvas";
+import { useVideoPlayer } from "../../hooks/use-video-player";
+import {
+  clipSeconds,
+  createAnnotationId,
+  DEFAULT_CLIP_SECONDS,
+  distanceToAnnotation,
+  isAnnotationVisible,
+} from "../../logic";
+import {
+  type Annotation,
+  type AnnotationTool,
+  type AnnotationVerdict,
+  colorForVerdict,
+  type FilmRoomTeamOption,
+  type PlayableSource,
+  type Point,
+} from "../../types";
+import { AnnotationComposer, type ComposerFields } from "./AnnotationComposer";
+import { AnnotationPopover, type MarkPopover } from "./AnnotationPopover";
+import { DrawToolButton, type FabPosition } from "./DrawToolButton";
+import { DRAWER_WIDTH, NotesDrawer } from "./NotesDrawer";
+import { PlaybackControls } from "./PlaybackControls";
+import { UndoToast } from "./UndoToast";
+import { VideoStage } from "./VideoStage";
+
+/** Tap distance (normalized) that counts as "on" a mark. */
+const HIT_RADIUS = 0.03;
+
+type Mode = "draft" | "final";
+
+interface PendingMark {
+  /** Set when editing an existing row rather than creating one. */
+  editingId: string | null;
+  timestamp: number;
+  type: AnnotationTool;
+  points: Point[];
+}
+
+export interface VideoAnnotatorProps {
+  source: PlayableSource;
+  /** Shown top-left, e.g. "Qual 42". */
+  title: string;
+  /** Rows loaded from Postgres for this video. */
+  initialAnnotations?: Annotation[];
+  /** Teams the composer offers; the first is preselected until one is used. */
+  teams?: FilmRoomTeamOption[];
+  /** Start here (seconds), e.g. from a team-page deep link. */
+  initialTime?: number;
+  /** Surfaces the offline pill when the iPad is off the venue wifi. */
+  offline?: boolean;
+  /** Autosave for one mark (create, edit, or undo a delete). */
+  onSaveMark?: (annotation: Annotation) => void;
+  onDeleteMark?: (id: string) => void;
+  /** The back chevron in the title bar. */
+  onBack?: () => void;
+  className?: string;
+}
+
+export function VideoAnnotator({
+  source,
+  title,
+  initialAnnotations = [],
+  teams = [],
+  initialTime = 0,
+  offline = false,
+  onSaveMark,
+  onDeleteMark,
+  onBack,
+  className,
+}: VideoAnnotatorProps) {
+  const stageRef = useRef<HTMLDivElement>(null);
+  /** In-progress stroke, kept in a ref so pointermove doesn't re-render. */
+  const draftRef = useRef<Point[] | null>(null);
+  const isDrawingRef = useRef(false);
+  const toastTimerRef = useRef<number | null>(null);
+  const swipeRef = useRef<{ x: number; open: boolean } | null>(null);
+
+  const [annotations, setAnnotations] = useState<Annotation[]>(initialAnnotations);
+  const [mode, setMode] = useState<Mode>("final");
+  const [tool, setTool] = useState<AnnotationTool>("pen");
+  /** Where the scout parked the draw button; outlives a trip through View mode. */
+  const [fabPosition, setFabPosition] = useState<FabPosition>({ fx: 0.84, fy: 0.74 });
+  /** Current verdict — also the colour every new stroke is drawn in. */
+  const [verdict, setVerdict] = useState<AnnotationVerdict>("bad");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerDrag, setDrawerDrag] = useState<number | null>(null);
+  const [lastDeleted, setLastDeleted] = useState<Annotation | null>(null);
+  const [popover, setPopover] = useState<MarkPopover | null>(null);
+  const [pending, setPending] = useState<PendingMark | null>(null);
+  const [fields, setFields] = useState<ComposerFields>({
+    verdict: null,
+    team: "none",
+    note: "",
+    durationSeconds: DEFAULT_CLIP_SECONDS,
+  });
+  /** Carried to the next mark — you watch one robot, at one tempo, at a time. */
+  const [lastTeam, setLastTeam] = useState<string | null>(null);
+  const [lastDuration, setLastDuration] = useState(DEFAULT_CLIP_SECONDS);
+
+  const verdictColor = colorForVerdict(verdict);
+  const player = useVideoPlayer(source, initialTime);
+  const { floatTimeRef, pause, seekTo } = player;
+
+  const { canvasRef } = useAnnotationCanvas({
+    annotations,
+    pending,
+    pendingColor: colorForVerdict(fields.verdict),
+    draftRef,
+    draftType: tool,
+    draftColor: verdictColor,
+    timeRef: floatTimeRef,
+    onFrame: player.syncTime,
+  });
+
+  useEffect(
+    () => () => {
+      if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    },
+    []
+  );
+
+  const patchFields = useCallback(
+    (patch: Partial<ComposerFields>) => setFields((prev) => ({ ...prev, ...patch })),
+    []
+  );
+
+  /* --- marks under the finger --------------------------------------------- */
+  const visibleAnnotations = useMemo(
+    () => annotations.filter((a) => isAnnotationVisible(a, player.currentTime)),
+    [annotations, player.currentTime]
+  );
+
+  /** Shared by every gesture zone: show a mark's note if one is under the finger. */
+  const probeMark = useCallback(
+    (event: { clientX: number; clientY: number }): boolean => {
+      const rect = stageRef.current?.getBoundingClientRect();
+      if (!rect) return false;
+      const point = {
+        x: (event.clientX - rect.left) / rect.width,
+        y: (event.clientY - rect.top) / rect.height,
+      };
+
+      let target: Annotation | null = null;
+      let best = HIT_RADIUS;
+      for (const a of visibleAnnotations) {
+        const d = distanceToAnnotation(a, point);
+        if (d <= best) {
+          best = d;
+          target = a;
+        }
+      }
+      if (!target) return false;
+
+      setPopover({
+        x: point.x,
+        y: point.y,
+        verdict: target.verdict,
+        teamNumber: target.teamNumber,
+        note: target.note,
+      });
+      return true;
+    },
+    [visibleAnnotations]
+  );
+
+  /* --- composer ------------------------------------------------------------ */
+  /** Stroke finished -> sidebar pops out with the composer. */
+  const openComposer = useCallback(
+    (points: Point[], type: AnnotationTool, teamOverride?: string) => {
+      pause();
+      setPending({ editingId: null, timestamp: Math.floor(floatTimeRef.current), type, points });
+      setFields({
+        verdict,
+        team: teamOverride ?? lastTeam ?? (teams[0] ? String(teams[0].teamNumber) : "none"),
+        note: "",
+        durationSeconds: lastDuration,
+      });
+      setDrawerOpen(true);
+    },
+    [floatTimeRef, lastDuration, lastTeam, pause, teams, verdict]
+  );
+
+  const openEditor = useCallback(
+    (a: Annotation) => {
+      // Park the footage on the mark so the drawing is in context.
+      pause();
+      seekTo(a.timestamp);
+      setPending({ editingId: a.id, timestamp: a.timestamp, type: a.type, points: a.points });
+      setFields({
+        verdict: a.verdict ?? null,
+        team: a.teamNumber ? String(a.teamNumber) : "none",
+        note: a.note ?? "",
+        durationSeconds: clipSeconds(a),
+      });
+      setDrawerOpen(true);
+    },
+    [pause, seekTo]
+  );
+
+  const commitPending = useCallback(() => {
+    if (!pending) return;
+    const record: Annotation = {
+      id: pending.editingId ?? createAnnotationId(),
+      timestamp: pending.timestamp,
+      durationSeconds: fields.durationSeconds,
+      type: pending.type,
+      points: pending.points,
+      verdict: fields.verdict,
+      note: fields.note.trim() || null,
+      teamNumber: fields.team === "none" ? null : Number(fields.team),
+    };
+    setAnnotations((prev) =>
+      pending.editingId
+        ? prev.map((a) => (a.id === pending.editingId ? record : a))
+        : [...prev, record]
+    );
+    onSaveMark?.(record);
+    setLastTeam(fields.team);
+    setLastDuration(fields.durationSeconds);
+    setPending(null);
+  }, [fields, onSaveMark, pending]);
+
+  /** Delete with a 5s undo window — you are usually moving fast. */
+  const removeAnnotation = useCallback(
+    (target: Annotation) => {
+      onDeleteMark?.(target.id);
+      setAnnotations((prev) => prev.filter((a) => a.id !== target.id));
+      setPending((prev) => (prev?.editingId === target.id ? null : prev));
+      setLastDeleted(target);
+      if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = window.setTimeout(() => setLastDeleted(null), 5000);
+    },
+    [onDeleteMark]
+  );
+
+  /* --- drawing handlers (Edit mode only) ---------------------------------- */
+  const normalize = useCallback((event: ReactPointerEvent<HTMLCanvasElement>): Point => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return {
+      // Clamp so a drag that leaves the frame still stores a valid fraction.
+      x: Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width)),
+      y: Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height)),
+    };
+  }, []);
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // synthetic events / unsupported pointer ids
+    }
+    // The ring stays open through the stroke; only a hold closes it.
+    isDrawingRef.current = true;
+    draftRef.current = [normalize(event)];
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    if (!isDrawingRef.current || !draftRef.current) return;
+    const point = normalize(event);
+    if (tool === "pen") draftRef.current.push(point);
+    // Shapes only ever keep [start, current].
+    else draftRef.current = [draftRef.current[0] ?? point, point];
+  };
+
+  const handlePointerUp = () => {
+    if (!isDrawingRef.current) return;
+    isDrawingRef.current = false;
+    const points = draftRef.current ?? [];
+    draftRef.current = null;
+    if (points.length < 2) return;
+    // Each stroke is its own mark: auto-save the open one with whatever was
+    // typed, then open the note box for the new stroke.
+    if (pending) {
+      commitPending();
+      openComposer(points, tool, fields.team);
+      return;
+    }
+    openComposer(points, tool);
+  };
+
+  /* --- drawer swipe -------------------------------------------------------- */
+  const onSwipeStart = (event: ReactPointerEvent) => {
+    swipeRef.current = { x: event.clientX, open: drawerOpen };
+  };
+
+  const onSwipeMove = (event: ReactPointerEvent) => {
+    const swipe = swipeRef.current;
+    if (!swipe) return;
+    const delta = swipe.x - event.clientX;
+    const base = swipe.open ? DRAWER_WIDTH : 0;
+    setDrawerDrag(Math.min(DRAWER_WIDTH, Math.max(0, base + delta)));
+  };
+
+  const onSwipeEnd = () => {
+    if (drawerDrag !== null) setDrawerOpen(drawerDrag > DRAWER_WIDTH / 2);
+    swipeRef.current = null;
+    setDrawerDrag(null);
+  };
+
+  const drawerOffset = drawerDrag ?? (drawerOpen ? DRAWER_WIDTH : 0);
+
+  /* --- render -------------------------------------------------------------- */
+  return (
+    <div
+      ref={stageRef}
+      className={cn(
+        "relative size-full overflow-hidden bg-black text-white select-none",
+        className
+      )}
+    >
+      {offline && (
+        <div className="absolute top-3 left-3 z-40 flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1.5 text-xs">
+          <WifiOffIcon className="size-3.5" />
+          Offline
+        </div>
+      )}
+
+      {/* Stage: the drawer slides it left */}
+      <div
+        className="absolute inset-0 ease-out"
+        style={{
+          transform: `translateX(-${drawerOffset}px)`,
+          transition: drawerDrag === null ? "transform 220ms" : "none",
+        }}
+      >
+        <VideoStage
+          source={source}
+          isYouTube={player.isYouTube}
+          playerHostRef={player.playerHostRef}
+          videoElRef={player.videoElRef}
+          nativeVideoProps={player.nativeVideoProps}
+          canvasRef={canvasRef}
+          drawable={mode === "draft"}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+        />
+
+        <PlaybackControls
+          player={player}
+          title={title}
+          offline={offline}
+          onBack={onBack}
+          onToggleNotes={() => setDrawerOpen((v) => !v)}
+          gesturesEnabled={mode === "final"}
+          popoverOpen={popover !== null}
+          onDismissPopover={() => setPopover(null)}
+          onProbeMark={probeMark}
+        />
+
+        {popover && <AnnotationPopover popover={popover} onDismiss={() => setPopover(null)} />}
+
+        {/* Mode pill lives OUTSIDE the fading chrome: it never hides, in either
+            mode, because in Edit mode nothing else can wake the bar. */}
+        <div className="absolute top-4 right-4.5 z-40">
+          <Button
+            type="button"
+            size="lg"
+            className={cn(
+              "h-11 rounded-full px-4 text-white shadow-lg",
+              mode === "draft" ? "bg-primary hover:bg-primary/90" : "bg-black/50 hover:bg-black/70"
+            )}
+            onClick={() => {
+              setMode((m) => (m === "draft" ? "final" : "draft"));
+              setPopover(null);
+            }}
+          >
+            {mode === "draft" ? <PencilIcon className="size-4" /> : <EyeIcon className="size-4" />}
+            {mode === "draft" ? "Edit" : "View"}
+          </Button>
+        </div>
+
+        {mode === "draft" && (
+          <DrawToolButton
+            stageRef={stageRef}
+            position={fabPosition}
+            onPositionChange={setFabPosition}
+            tool={tool}
+            onToolChange={setTool}
+            verdictColor={verdictColor}
+            onToggleVerdict={() => setVerdict((v) => (v === "good" ? "bad" : "good"))}
+          />
+        )}
+      </div>
+
+      {lastDeleted && (
+        <UndoToast
+          onUndo={() => {
+            if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+            setAnnotations((prev) => [...prev, lastDeleted]);
+            onSaveMark?.(lastDeleted);
+            setLastDeleted(null);
+          }}
+        />
+      )}
+
+      {/* Swipe zone on the right edge */}
+      <div
+        onPointerDown={onSwipeStart}
+        onPointerMove={onSwipeMove}
+        onPointerUp={onSwipeEnd}
+        onPointerCancel={onSwipeEnd}
+        className="absolute inset-y-0 right-0 z-30 w-6 touch-none"
+        style={{ transform: `translateX(-${drawerOffset}px)` }}
+      >
+        <span className="absolute top-1/2 right-1 h-16 w-1 -translate-y-1/2 rounded-full bg-white/30" />
+      </div>
+
+      <NotesDrawer
+        offset={drawerOffset}
+        animated={drawerDrag === null}
+        heading={
+          pending ? (pending.editingId ? "Edit mark" : "New mark") : `Marks (${annotations.length})`
+        }
+        onClose={() => {
+          setDrawerOpen(false);
+          setPending(null);
+        }}
+        annotations={annotations}
+        onEditMark={openEditor}
+        onDeleteMark={removeAnnotation}
+      >
+        {pending && (
+          <AnnotationComposer
+            fields={fields}
+            onChange={patchFields}
+            teams={teams}
+            onSave={commitPending}
+            onDiscard={() => setPending(null)}
+          />
+        )}
+      </NotesDrawer>
+    </div>
+  );
+}
+
+export default VideoAnnotator;

@@ -1,5 +1,10 @@
 import type { Annotation, Point } from "./types";
 
+/** Clip length a new mark gets when the scout doesn't pick another. */
+export const DEFAULT_CLIP_SECONDS = 6;
+/** Seconds a mark takes to fade out at the end of its clip. */
+export const FADE_SECONDS = 0.4;
+
 /** Accepts youtu.be, /watch?v=, /embed/, /live/ and /shorts/ URLs, or a bare 11-char id. */
 export function parseYouTubeId(input: string): string | null {
   const raw = input.trim();
@@ -109,12 +114,46 @@ export function distanceToAnnotation(
   return norm <= 1 ? 0 : (norm - 1) * Math.min(rx, ry);
 }
 
+/** A mark's clip length, falling back for rows written before lengths were picked. */
+export function clipSeconds(annotation: Pick<Annotation, "durationSeconds">): number {
+  return annotation.durationSeconds || DEFAULT_CLIP_SECONDS;
+}
+
 /** Is the mark on screen at `time` (seconds)? In-point inclusive, out-point exclusive. */
 export function isAnnotationVisible(
   annotation: Pick<Annotation, "timestamp" | "durationSeconds">,
   time: number
 ): boolean {
-  return time >= annotation.timestamp && time < annotation.timestamp + annotation.durationSeconds;
+  return time >= annotation.timestamp && time < annotation.timestamp + clipSeconds(annotation);
+}
+
+/** Opaque for most of its clip, eased out over the last FADE_SECONDS. */
+export function alphaForAnnotation(
+  annotation: Pick<Annotation, "timestamp" | "durationSeconds">,
+  time: number
+): number {
+  const end = annotation.timestamp + clipSeconds(annotation);
+  if (!isAnnotationVisible(annotation, time)) return 0;
+  return Math.max(0, Math.min(1, (end - time) / FADE_SECONDS));
+}
+
+/**
+ * UUID v4 for a client-generated mark id, which the server validates as a uuid.
+ *
+ * `crypto.randomUUID` only exists in secure contexts (HTTPS or localhost), so
+ * it's undefined when the iPad hits the app over a plain-HTTP LAN address.
+ * `crypto.getRandomValues` has no such restriction, so fall back to that rather
+ * than to `Math.random`, which is not a source of unique values.
+ */
+export function createAnnotationId(): string {
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  // Stamp the version (4) and variant (RFC 4122) bits.
+  bytes[6] = ((bytes[6] as number) & 0x0f) | 0x40;
+  bytes[8] = ((bytes[8] as number) & 0x3f) | 0x80;
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
 export function formatVideoTime(seconds: number): string {

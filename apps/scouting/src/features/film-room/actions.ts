@@ -181,7 +181,13 @@ export async function getVideoUploadUrl(
   const key = `${member.organizationId}/match-videos/${Date.now()}-${crypto.randomUUID()}.${extension}`;
 
   try {
-    const result = await createPresignedUploadUrl(key, validated.data.contentType);
+    // Sign the size too: checking the browser-supplied number on its own would
+    // leave the presigned PUT free to carry a body of any length.
+    const result = await createPresignedUploadUrl(
+      key,
+      validated.data.contentType,
+      validated.data.fileSize
+    );
     return { success: true, data: result };
   } catch (error) {
     console.error("[film-room] upload URL error:", error);

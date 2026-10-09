@@ -6,7 +6,7 @@ import { routes } from "@/lib/routes";
 import { readQueuedOps, useMarkSync } from "../hooks/use-mark-sync";
 import { applyQueuedOps } from "../logic";
 import type { Annotation, FilmRoomTeamOption, PlayableSource } from "../types";
-import { VideoAnnotator } from "./VideoAnnotator";
+import { VideoAnnotator } from "./video-annotator/VideoAnnotator";
 
 interface FilmRoomReviewProps {
   videoId: string;

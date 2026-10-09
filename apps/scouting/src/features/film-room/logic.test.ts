@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  alphaForAnnotation,
   applyQueuedOps,
+  createAnnotationId,
   distanceToAnnotation,
   filterMatchOptions,
   firstYouTubeVideo,
@@ -115,9 +117,60 @@ describe("timing", () => {
     expect(isAnnotationVisible(mark, 16)).toBe(false);
   });
 
+  it("honours the clip length the scout picked", () => {
+    const long = { timestamp: 10, durationSeconds: 20 };
+    expect(isAnnotationVisible(long, 25)).toBe(true);
+    expect(isAnnotationVisible(long, 30)).toBe(false);
+  });
+
+  it("falls back to the default length for rows saved without one", () => {
+    const legacy = { timestamp: 10, durationSeconds: 0 };
+    expect(isAnnotationVisible(legacy, 15.9)).toBe(true);
+    expect(isAnnotationVisible(legacy, 16)).toBe(false);
+  });
+
   it("formats m:ss", () => {
     expect(formatVideoTime(0)).toBe("0:00");
     expect(formatVideoTime(75.9)).toBe("1:15");
+  });
+});
+
+describe("alphaForAnnotation", () => {
+  const mark = { timestamp: 10, durationSeconds: 20 };
+
+  it("is invisible outside the clip", () => {
+    expect(alphaForAnnotation(mark, 9.9)).toBe(0);
+    expect(alphaForAnnotation(mark, 30)).toBe(0);
+  });
+
+  it("stays opaque until the fade, then eases out over the whole length", () => {
+    expect(alphaForAnnotation(mark, 10)).toBe(1);
+    // A 20s mark must still be solid at 15s in — the fade is the last 0.4s only.
+    expect(alphaForAnnotation(mark, 25)).toBe(1);
+    expect(alphaForAnnotation(mark, 29.8)).toBeCloseTo(0.5);
+  });
+});
+
+describe("createAnnotationId", () => {
+  const expectUsableIds = () => {
+    const ids = Array.from({ length: 100 }, createAnnotationId);
+    for (const id of ids) {
+      // The server validates mark ids as uuids, so the shape has to hold.
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    }
+    expect(new Set(ids).size).toBe(ids.length);
+  };
+
+  it("makes distinct v4 uuids", expectUsableIds);
+
+  it("still does in an insecure context, where randomUUID is undefined", () => {
+    const original = crypto.randomUUID;
+    Reflect.set(crypto, "randomUUID", undefined);
+    try {
+      expectUsableIds();
+    } finally {
+      Reflect.set(crypto, "randomUUID", original);
+    }
   });
 });
 
