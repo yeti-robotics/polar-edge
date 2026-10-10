@@ -7,7 +7,13 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/database";
-import { event, match, matchVideo, videoAnnotation } from "@/lib/database/schema";
+import {
+  event,
+  match,
+  matchVideo,
+  organizationEvent,
+  videoAnnotation,
+} from "@/lib/database/schema";
 import { getActiveEventForOrganization } from "@/lib/server/organization/active-event";
 import { getTBAClient } from "@/lib/server/tba";
 import {
@@ -61,6 +67,13 @@ export async function openMatchVideo(
     .select({ matchNumber: match.matchNumber, eventId: match.eventId, eventCode: event.eventCode })
     .from(match)
     .innerJoin(event, eq(event.id, match.eventId))
+    .innerJoin(
+      organizationEvent,
+      and(
+        eq(organizationEvent.eventId, match.eventId),
+        eq(organizationEvent.organizationId, member.organizationId)
+      )
+    )
     .where(and(eq(match.id, matchId), eq(match.matchType, "qm")))
     .limit(1);
   if (!row) return { error: "Match not found" };
@@ -117,6 +130,13 @@ export async function createMatchVideo(input: unknown): Promise<ActionResult<{ v
     const [row] = await db
       .select({ matchNumber: match.matchNumber, eventId: match.eventId })
       .from(match)
+      .innerJoin(
+        organizationEvent,
+        and(
+          eq(organizationEvent.eventId, match.eventId),
+          eq(organizationEvent.organizationId, member.organizationId)
+        )
+      )
       .where(eq(match.id, data.matchId))
       .limit(1);
     if (!row) return { error: "Match not found" };
