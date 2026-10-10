@@ -23,7 +23,7 @@ export function ClimbingActiveLayout() {
         <div className="text-lg text-muted-foreground">Climbing</div>
       </div>
       <div className="grid grid-cols-2 gap-4 w-full h-24">
-        <Button variant="outline" className="h-full" onClick={cancelAction}>
+        <Button variant="destructive" className="h-full" onClick={cancelAction}>
           <XIcon className="mr-2 h-4 w-4" />
           Cancel
         </Button>
