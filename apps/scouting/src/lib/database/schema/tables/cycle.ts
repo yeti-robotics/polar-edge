@@ -14,7 +14,7 @@ export const cycle = pgTable(
     phase: phaseEnum("phase").notNull(),
     cycleNumber: smallint("cycle_number").notNull(),
 
-    // Legacy: balls per second bucket (0-5), now nullable since BPS is derived from COPRs
+    // Manual balls-per-second bucket (0-5), used only when event COPR is unavailable.
     bucket: smallint("bucket"),
     dumpDuration: numeric("dump_duration", { precision: 12, scale: 6 }).notNull(),
 

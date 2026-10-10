@@ -2,9 +2,12 @@
 
 import { Button } from "@repo/ui/components/button";
 import { CheckCircleIcon, XIcon } from "lucide-react";
+import { useState } from "react";
 import { useActionState } from "../contexts/ActionStateContext";
+import { useFormData } from "../contexts/FormDataContext";
 import { useElapsedTime } from "../hooks/useElapsedTime";
 import { useStandFormActions } from "../hooks/useStandFormActions";
+import { ManualFuelEstimateDialog } from "./ManualFuelEstimateDialog";
 
 /**
  * Active shooting layout with large timer and end/cancel buttons.
@@ -12,8 +15,20 @@ import { useStandFormActions } from "../hooks/useStandFormActions";
  */
 export function ShootingActiveLayout() {
   const { state: actionState } = useActionState();
+  const { state: formData } = useFormData();
   const { cancelAction, completeShootingCycle } = useStandFormActions();
-  const elapsedSeconds = useElapsedTime(actionState.activeAction?.startedAt ?? null);
+  const [dialogOpenedAt, setDialogOpenedAt] = useState<number | null>(null);
+  const elapsedSeconds = useElapsedTime(
+    actionState.activeAction?.startedAt ?? null,
+    dialogOpenedAt
+  );
+
+  const handleDialogOpen = () => setDialogOpenedAt(Date.now());
+  const handleDialogCancel = () => setDialogOpenedAt(null);
+  const handleComplete = (bucket: number) => {
+    completeShootingCycle(bucket, dialogOpenedAt ?? undefined);
+    setDialogOpenedAt(null);
+  };
 
   return (
     <div className="flex flex-col items-center gap-4 py-4 min-h-[280px]">
@@ -26,10 +41,18 @@ export function ShootingActiveLayout() {
           <XIcon className="mr-2 h-4 w-4" />
           Cancel
         </Button>
-        <Button variant="default" className="h-full" onClick={() => completeShootingCycle()}>
-          <CheckCircleIcon className="mr-2 h-5 w-5" />
-          End Shoot
-        </Button>
+        {formData.requiresManualFuelEstimate ? (
+          <ManualFuelEstimateDialog
+            onComplete={handleComplete}
+            onOpen={handleDialogOpen}
+            onCancel={handleDialogCancel}
+          />
+        ) : (
+          <Button variant="default" className="h-full" onClick={() => completeShootingCycle()}>
+            <CheckCircleIcon className="mr-2 h-5 w-5" />
+            End Shoot
+          </Button>
+        )}
       </div>
     </div>
   );

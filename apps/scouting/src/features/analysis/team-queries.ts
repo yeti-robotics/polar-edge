@@ -2,7 +2,7 @@ import "server-only";
 
 import { createGradientProvider } from "@repo/ai";
 import { generateText } from "ai";
-import { and, desc, eq, exists, inArray, isNull, ne, sql } from "drizzle-orm";
+import { and, desc, eq, exists, isNotNull, isNull, ne, or, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { z } from "zod";
 import { cacheTags } from "@/lib/cache";
@@ -17,6 +17,7 @@ import {
   teamEventCopr,
   teamMatch,
   user,
+  vStandFormExpected,
   vTeamGoblinMatch,
   vTeamMatchConsensus,
   vTeamRpMagicMatch,
@@ -25,6 +26,8 @@ import {
 export type TeamKeyMetrics = {
   avgAutoPoints: number;
   avgTeleopPoints: number;
+  autoFuelIsEstimated: boolean;
+  teleopFuelIsEstimated: boolean;
   avgClimbPoints: number;
   avgAutoClimbPoints: number;
   avgTeleopClimbPoints: number;
@@ -37,45 +40,42 @@ export type TeamKeyMetrics = {
   brokeCount: number;
 };
 
+type TeamAnalysisScope = {
+  organizationId?: string | null;
+  eventId?: string | null;
+};
+
+function teamMatchScope(teamNumber: number, eventId?: string | null) {
+  return and(
+    eq(teamMatch.teamNumber, teamNumber),
+    eventId ? eq(teamMatch.eventId, eventId) : undefined
+  );
+}
+
+function organizationFormScope(organizationId?: string | null) {
+  if (!organizationId) return undefined;
+
+  return exists(
+    db
+      .select({ one: sql<number>`1` })
+      .from(member)
+      .where(and(eq(member.id, standForm.scoutMemberId), eq(member.organizationId, organizationId)))
+  );
+}
+
 export async function getTeamKeyMetrics(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<TeamKeyMetrics | null> {
   const { organizationId, eventId } = opts;
-
-  const scopeCondition = eventId
-    ? eq(teamMatch.eventId, eventId)
-    : organizationId
-      ? exists(
-          db
-            .select({ one: sql<number>`1` })
-            .from(standForm)
-            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-            .where(
-              and(
-                eq(standForm.teamMatchId, teamMatch.id),
-                isNull(standForm.deletedAt),
-                eq(member.organizationId, organizationId)
-              )
-            )
-        )
-      : undefined;
-
-  const teamWhere = scopeCondition
-    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
-    : eq(teamMatch.teamNumber, teamNumber);
-
-  // Direct COPR fuel averages, scoped to events where this team has been scouted
-  const scopedEventIds = db
-    .selectDistinct({ eventId: teamMatch.eventId })
-    .from(teamMatch)
-    .where(teamWhere);
+  const teamWhere = teamMatchScope(teamNumber, eventId);
+  const formScope = organizationFormScope(organizationId);
 
   // Subquery: distinct teamMatchIds that have at least one stand form
   const sfExistsSub = db
     .select({ teamMatchId: standForm.teamMatchId })
     .from(standForm)
-    .where(isNull(standForm.deletedAt))
+    .where(and(isNull(standForm.deletedAt), formScope))
     .groupBy(standForm.teamMatchId)
     .as("sf_exists");
 
@@ -83,24 +83,48 @@ export async function getTeamKeyMetrics(
   const sfOofSub = db
     .select({ teamMatchId: standForm.teamMatchId })
     .from(standForm)
-    .where(and(isNull(standForm.deletedAt), sql`${standForm.oofTimeSeconds} > 0`))
+    .where(and(isNull(standForm.deletedAt), sql`${standForm.oofTimeSeconds} > 0`, formScope))
     .groupBy(standForm.teamMatchId)
     .as("sf_oof");
 
-  const [coprStats, formStats, matchStats] = await Promise.all([
-    // Direct COPR averages across scoped events
+  // Reduce multiple scout observations to one value per match before averaging across matches.
+  // This prevents matches with more submitted forms from carrying extra weight.
+  const perMatchFuel = db
+    .select({
+      teamMatchId: teamMatch.id,
+      autoPoints:
+        sql<number>`percentile_cont(0.5) within group (order by ${vStandFormExpected.expFuelAuto}::numeric)`.as(
+          "auto_points"
+        ),
+      teleopPoints:
+        sql<number>`percentile_cont(0.5) within group (order by ${vStandFormExpected.expFuelTeleop}::numeric)`.as(
+          "teleop_points"
+        ),
+      autoFuelIsEstimated: sql<boolean>`bool_or(${vStandFormExpected.expFuelAutoIsEstimated})`.as(
+        "auto_fuel_is_estimated"
+      ),
+      teleopFuelIsEstimated:
+        sql<boolean>`bool_or(${vStandFormExpected.expFuelTeleopIsEstimated})`.as(
+          "teleop_fuel_is_estimated"
+        ),
+    })
+    .from(teamMatch)
+    .innerJoin(standForm, and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt)))
+    .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
+    .where(and(teamWhere, formScope))
+    .groupBy(teamMatch.id)
+    .as("per_match_fuel");
+
+  const [fuelStats, formStats, matchStats] = await Promise.all([
+    // COPR-first fuel averages with manual fallback, weighted once per match.
     db
       .select({
-        avgAutoPoints: sql<number>`avg(${teamEventCopr.autoFuelCount}::numeric)`,
-        avgTeleopPoints: sql<number>`avg(${teamEventCopr.teleopFuelCount}::numeric)`,
+        avgAutoPoints: sql<number>`avg(${perMatchFuel.autoPoints})`,
+        avgTeleopPoints: sql<number>`avg(${perMatchFuel.teleopPoints})`,
+        autoFuelIsEstimated: sql<boolean>`bool_or(${perMatchFuel.autoFuelIsEstimated})`,
+        teleopFuelIsEstimated: sql<boolean>`bool_or(${perMatchFuel.teleopFuelIsEstimated})`,
       })
-      .from(teamEventCopr)
-      .where(
-        and(
-          eq(teamEventCopr.teamNumber, teamNumber),
-          inArray(teamEventCopr.eventId, scopedEventIds)
-        )
-      ),
+      .from(perMatchFuel),
 
     // Per stand-form: uptime, downtime
     db
@@ -113,7 +137,7 @@ export async function getTeamKeyMetrics(
         standForm,
         and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt))
       )
-      .where(teamWhere),
+      .where(and(teamWhere, formScope)),
 
     // Per match: climb pts, total scouted matches, broke count
     db
@@ -151,12 +175,14 @@ export async function getTeamKeyMetrics(
   const m = matchStats[0];
   if (!m || Number(m.totalMatchesScouted) === 0) return null;
 
-  const c = coprStats[0];
+  const fuel = fuelStats[0];
   const f = formStats[0];
   if (!f) return null;
   return {
-    avgAutoPoints: Math.round(Number(c?.avgAutoPoints ?? 0) * 10) / 10,
-    avgTeleopPoints: Math.round(Number(c?.avgTeleopPoints ?? 0) * 10) / 10,
+    avgAutoPoints: Math.round(Number(fuel?.avgAutoPoints ?? 0) * 10) / 10,
+    avgTeleopPoints: Math.round(Number(fuel?.avgTeleopPoints ?? 0) * 10) / 10,
+    autoFuelIsEstimated: fuel?.autoFuelIsEstimated ?? false,
+    teleopFuelIsEstimated: fuel?.teleopFuelIsEstimated ?? false,
     avgClimbPoints: Math.round(Number(m.avgClimbPoints) * 10) / 10,
     avgAutoClimbPoints: Math.round(Number(m.avgAutoClimbPoints) * 10) / 10,
     avgTeleopClimbPoints: Math.round(Number(m.avgTeleopClimbPoints) * 10) / 10,
@@ -172,37 +198,18 @@ export async function getTeamKeyMetrics(
 
 export type BpsEstimate = {
   bps: number;
+  isEstimated: boolean;
   totalFuelPerMatch: number;
   avgShootingTimePerMatch: number;
 };
 
 export async function getTeamBpsEstimate(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<BpsEstimate | null> {
   const { organizationId, eventId } = opts;
-
-  const scopeCondition = eventId
-    ? eq(teamMatch.eventId, eventId)
-    : organizationId
-      ? exists(
-          db
-            .select({ one: sql<number>`1` })
-            .from(standForm)
-            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-            .where(
-              and(
-                eq(standForm.teamMatchId, teamMatch.id),
-                isNull(standForm.deletedAt),
-                eq(member.organizationId, organizationId)
-              )
-            )
-        )
-      : undefined;
-
-  const teamWhere = scopeCondition
-    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
-    : eq(teamMatch.teamNumber, teamNumber);
+  const teamWhere = teamMatchScope(teamNumber, eventId);
+  const formScope = organizationFormScope(organizationId);
 
   // Step 1: Per stand_form total dump duration (one row per form)
   // Alias teamMatchId/eventId explicitly to avoid column name collision (both tables have "id")
@@ -212,12 +219,35 @@ export async function getTeamBpsEstimate(
       teamMatchId: sql<number>`${teamMatch.id}`.as("team_match_id"),
       eventId: sql<string>`${teamMatch.eventId}`.as("evt_id"),
       totalDumpDuration: sql<number>`sum(${cycle.dumpDuration}::numeric)`.as("total_dump_duration"),
+      totalFuel: vStandFormExpected.expFuelActive,
+      fuelIsEstimated: vStandFormExpected.expFuelActiveIsEstimated,
     })
     .from(cycle)
     .innerJoin(standForm, and(eq(standForm.id, cycle.standFormId), isNull(standForm.deletedAt)))
     .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
-    .where(teamWhere)
-    .groupBy(standForm.id, teamMatch.id, teamMatch.eventId)
+    .innerJoin(vStandFormExpected, eq(vStandFormExpected.standFormId, standForm.id))
+    .leftJoin(
+      teamEventCopr,
+      and(
+        eq(teamEventCopr.eventId, teamMatch.eventId),
+        eq(teamEventCopr.teamNumber, teamMatch.teamNumber)
+      )
+    )
+    // Unknown fuel is not an observed zero. Keep duration and fuel populations aligned.
+    .where(
+      and(
+        teamWhere,
+        formScope,
+        or(isNotNull(teamEventCopr.id), eq(vStandFormExpected.expFuelActiveIsEstimated, true))
+      )
+    )
+    .groupBy(
+      standForm.id,
+      teamMatch.id,
+      teamMatch.eventId,
+      vStandFormExpected.expFuelActive,
+      vStandFormExpected.expFuelActiveIsEstimated
+    )
     .as("per_form_dur");
 
   // Step 2: Per team_match median across forms (consensus), then avg across matches
@@ -229,6 +259,13 @@ export async function getTeamBpsEstimate(
         sql<number>`percentile_cont(0.5) within group (order by ${perFormDuration.totalDumpDuration})`.as(
           "consensus_duration"
         ),
+      consensusFuel:
+        sql<number>`percentile_cont(0.5) within group (order by ${perFormDuration.totalFuel})`.as(
+          "consensus_fuel"
+        ),
+      fuelIsEstimated: sql<boolean>`bool_or(${perFormDuration.fuelIsEstimated})`.as(
+        "fuel_is_estimated"
+      ),
     })
     .from(perFormDuration)
     .groupBy(perFormDuration.teamMatchId, perFormDuration.eventId)
@@ -237,16 +274,10 @@ export async function getTeamBpsEstimate(
   const rows = await db
     .select({
       avgDumpDurationPerMatch: sql<number>`avg(${perMatchConsensus.consensusDuration})`,
-      avgTotalFuelCount: sql<number>`avg(${teamEventCopr.totalFuelCount}::numeric)`,
+      avgTotalFuelCount: sql<number>`avg(${perMatchConsensus.consensusFuel})`,
+      fuelIsEstimated: sql<boolean>`bool_or(${perMatchConsensus.fuelIsEstimated})`,
     })
-    .from(perMatchConsensus)
-    .leftJoin(
-      teamEventCopr,
-      and(
-        eq(teamEventCopr.eventId, perMatchConsensus.eventId),
-        eq(teamEventCopr.teamNumber, teamNumber)
-      )
-    );
+    .from(perMatchConsensus);
 
   const row = rows[0];
   if (!row) return null;
@@ -254,10 +285,11 @@ export async function getTeamBpsEstimate(
   const avgDuration = Number(row.avgDumpDurationPerMatch);
   const avgFuel = Number(row.avgTotalFuelCount);
 
-  if (!avgDuration || avgDuration <= 0 || !avgFuel) return null;
+  if (!avgDuration || avgDuration <= 0 || row.avgTotalFuelCount == null) return null;
 
   return {
     bps: Math.round((avgFuel / avgDuration) * 100) / 100,
+    isEstimated: row.fuelIsEstimated ?? false,
     totalFuelPerMatch: Math.round(avgFuel * 10) / 10,
     avgShootingTimePerMatch: Math.round(avgDuration * 10) / 10,
   };
@@ -276,31 +308,11 @@ export type CycleTimeseriesPoint = {
 
 export async function getTeamCycleTimeseries(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<CycleTimeseriesPoint[]> {
   const { organizationId, eventId } = opts;
-
-  const scopeCondition = eventId
-    ? eq(teamMatch.eventId, eventId)
-    : organizationId
-      ? exists(
-          db
-            .select({ one: sql<number>`1` })
-            .from(standForm)
-            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-            .where(
-              and(
-                eq(standForm.teamMatchId, teamMatch.id),
-                isNull(standForm.deletedAt),
-                eq(member.organizationId, organizationId)
-              )
-            )
-        )
-      : undefined;
-
-  const teamWhere = scopeCondition
-    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
-    : eq(teamMatch.teamNumber, teamNumber);
+  const teamWhere = teamMatchScope(teamNumber, eventId);
+  const formScope = organizationFormScope(organizationId);
 
   // Step 1: Aggregate per stand_form (one row per form per match)
   // Alias teamMatchId explicitly to avoid column name collision with standForm.id
@@ -336,7 +348,7 @@ export async function getTeamCycleTimeseries(
     .innerJoin(teamMatch, eq(teamMatch.id, standForm.teamMatchId))
     .innerJoin(match, eq(match.id, teamMatch.matchId))
     .innerJoin(event, eq(event.id, teamMatch.eventId))
-    .where(teamWhere)
+    .where(and(teamWhere, formScope))
     .groupBy(
       standForm.id,
       teamMatch.id,
@@ -397,31 +409,11 @@ export type TeamComment = {
 
 export async function getTeamComments(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<TeamComment[]> {
   const { organizationId, eventId } = opts;
-
-  const scopeCondition = eventId
-    ? eq(teamMatch.eventId, eventId)
-    : organizationId
-      ? exists(
-          db
-            .select({ one: sql<number>`1` })
-            .from(standForm)
-            .innerJoin(member, eq(member.id, standForm.scoutMemberId))
-            .where(
-              and(
-                eq(standForm.teamMatchId, teamMatch.id),
-                isNull(standForm.deletedAt),
-                eq(member.organizationId, organizationId)
-              )
-            )
-        )
-      : undefined;
-
-  const teamWhere = scopeCondition
-    ? and(eq(teamMatch.teamNumber, teamNumber), scopeCondition)
-    : eq(teamMatch.teamNumber, teamNumber);
+  const teamWhere = teamMatchScope(teamNumber, eventId);
+  const formScope = organizationFormScope(organizationId);
 
   const rows = await db
     .select({ comments: standForm.comments, scoutName: user.name })
@@ -429,7 +421,7 @@ export async function getTeamComments(
     .innerJoin(standForm, and(eq(standForm.teamMatchId, teamMatch.id), isNull(standForm.deletedAt)))
     .leftJoin(member, eq(member.id, standForm.scoutMemberId))
     .leftJoin(user, eq(user.id, member.userId))
-    .where(and(teamWhere, ne(standForm.comments, "")))
+    .where(and(teamWhere, formScope, ne(standForm.comments, "")))
     .orderBy(desc(standForm.createdAt));
 
   return rows.map((r) => ({ comment: r.comments, scoutName: r.scoutName }));
@@ -437,7 +429,7 @@ export async function getTeamComments(
 
 export async function getTeamCommentSummary(
   teamNumber: number,
-  opts: { organizationId?: string | null; eventId?: string | null }
+  opts: TeamAnalysisScope
 ): Promise<(CommentSummary & { commentCount: number }) | null> {
   "use cache";
   cacheLife("hours");
