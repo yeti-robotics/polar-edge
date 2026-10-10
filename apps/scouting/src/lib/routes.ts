@@ -39,6 +39,15 @@ export const routes = {
     detail: (id: string) => `/auto-path/${id}` as const,
   },
 
+  // Film Room
+  filmRoom: {
+    root: "/film-room",
+    video: (videoId: string, atSeconds?: number) =>
+      atSeconds === undefined
+        ? (`/film-room/${videoId}` as const)
+        : (`/film-room/${videoId}?t=${Math.max(0, Math.floor(atSeconds))}` as const),
+  },
+
   // Forms
   forms: {
     pit: "/forms/pit",
