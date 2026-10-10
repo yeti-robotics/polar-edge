@@ -19,10 +19,7 @@ let container: StartedPostgreSqlContainer;
  * left behind by a previous one.
  */
 export async function setup({ provide }: TestProject) {
-  // Use upstream images outside Docker Hub to avoid anonymous CI pull limits.
-  // Preserve an explicitly configured cleanup image for custom Docker environments.
-  process.env.RYUK_CONTAINER_IMAGE ??= "ghcr.io/testcontainers/ryuk:0.14.0";
-  container = await new PostgreSqlContainer("public.ecr.aws/docker/library/postgres:17.0")
+  container = await new PostgreSqlContainer("postgres:17.0")
     .withDatabase("polar_edge_test")
     .withTmpFs({ "/var/lib/postgresql/data": "rw" })
     .start();
