@@ -5,7 +5,7 @@ import { Input } from "@repo/ui/components/input";
 import { cn } from "@repo/ui/lib/utils";
 import { ChevronDownIcon, LoaderCircleIcon, VideoIcon, WifiOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNetworkStatus } from "@/lib/offline/use-network-status";
 import { routes } from "@/lib/routes";
 import { createMatchVideo, openMatchVideo } from "../actions";
@@ -29,6 +29,20 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Opening a video doesn't unmount this screen: the router parks it in a
+  // hidden <Activity> so going back is instant, state and all. That state
+  // includes the spinner we leave up while navigating, which comes back as a
+  // frozen, disabled address bar. Effects re-run when the screen is shown
+  // again, so clear it there, and drop any request that lands once we're gone.
+  const showing = useRef(true);
+  useEffect(() => {
+    showing.current = true;
+    setBusy(null);
+    return () => {
+      showing.current = false;
+    };
+  }, []);
+
   const looksLikeLink = /[/.]/.test(text) || parseYouTubeId(text) !== null;
   const suggestions = useMemo(
     () => (looksLikeLink ? [] : filterMatchOptions(matchOptions, selectedMatch ? "" : text)),
@@ -50,6 +64,7 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
     }
     setBusy(`Finding ${option.label} on TBA…`);
     const result = await openMatchVideo({ matchId: option.matchId });
+    if (!showing.current) return;
     if ("error" in result) {
       setBusy(null);
       setError(result.error);
@@ -78,6 +93,7 @@ export function FilmRoomPicker({ matchOptions }: { matchOptions: FilmRoomMatchOp
     setSuggestOpen(false);
     setBusy("Opening video…");
     const result = await createMatchVideo({ url, matchId: selectedMatch?.matchId ?? null });
+    if (!showing.current) return;
     if ("error" in result) {
       setBusy(null);
       setError(result.error);
