@@ -1,6 +1,6 @@
 {
-  "id": "b59841ea-e659-45a2-94f4-3657d78dd5ed",
-  "prevId": "f11bb0a9-d776-462b-bf04-4edb2f8c8822",
+  "id": "496c897b-427f-4af1-9b1d-835ae7f266fd",
+  "prevId": "8fa49d38-452f-4c0f-9310-c9b52445e1a6",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -875,171 +875,6 @@
           "columns": ["event_id", "match_number", "match_type"]
         }
       },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.match_video": {
-      "name": "match_video",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "organization_id": {
-          "name": "organization_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "url": {
-          "name": "url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "youtube_id": {
-          "name": "youtube_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "match_id": {
-          "name": "match_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "event_id": {
-          "name": "event_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_by_member_id": {
-          "name": "created_by_member_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "idx_match_video_organization": {
-          "name": "idx_match_video_organization",
-          "columns": [
-            {
-              "expression": "organization_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_match_video_org_match": {
-          "name": "idx_match_video_org_match",
-          "columns": [
-            {
-              "expression": "organization_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "match_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_match_video_event": {
-          "name": "idx_match_video_event",
-          "columns": [
-            {
-              "expression": "event_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "match_video_organization_id_organization_id_fk": {
-          "name": "match_video_organization_id_organization_id_fk",
-          "tableFrom": "match_video",
-          "tableTo": "organization",
-          "columnsFrom": ["organization_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "match_video_match_id_match_id_fk": {
-          "name": "match_video_match_id_match_id_fk",
-          "tableFrom": "match_video",
-          "tableTo": "match",
-          "columnsFrom": ["match_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "match_video_event_id_event_id_fk": {
-          "name": "match_video_event_id_event_id_fk",
-          "tableFrom": "match_video",
-          "tableTo": "event",
-          "columnsFrom": ["event_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "match_video_created_by_member_id_member_id_fk": {
-          "name": "match_video_created_by_member_id_member_id_fk",
-          "tableFrom": "match_video",
-          "tableTo": "member",
-          "columnsFrom": ["created_by_member_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -2108,6 +1943,13 @@
           "notNull": true,
           "default": 0
         },
+        "uses_manual_fuel_estimate": {
+          "name": "uses_manual_fuel_estimate",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -2706,6 +2548,382 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.workability_form": {
+      "name": "workability_form",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "match_id": {
+          "name": "match_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "team_number": {
+          "name": "team_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "scout_member_id": {
+          "name": "scout_member_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "workability_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rating": {
+          "name": "rating",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_workability_event_team": {
+          "name": "idx_workability_event_team",
+          "columns": [
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "team_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_workability_member": {
+          "name": "idx_workability_member",
+          "columns": [
+            {
+              "expression": "scout_member_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_workability_match_team": {
+          "name": "idx_workability_match_team",
+          "columns": [
+            {
+              "expression": "match_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "team_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_workability_event_team_role": {
+          "name": "idx_workability_event_team_role",
+          "columns": [
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "team_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "role",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "workability_form_event_id_event_id_fk": {
+          "name": "workability_form_event_id_event_id_fk",
+          "tableFrom": "workability_form",
+          "tableTo": "event",
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "workability_form_match_id_match_id_fk": {
+          "name": "workability_form_match_id_match_id_fk",
+          "tableFrom": "workability_form",
+          "tableTo": "match",
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "workability_form_team_number_team_team_number_fk": {
+          "name": "workability_form_team_number_team_team_number_fk",
+          "tableFrom": "workability_form",
+          "tableTo": "team",
+          "columnsFrom": ["team_number"],
+          "columnsTo": ["team_number"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "workability_form_scout_member_id_member_id_fk": {
+          "name": "workability_form_scout_member_id_member_id_fk",
+          "tableFrom": "workability_form",
+          "tableTo": "member",
+          "columnsFrom": ["scout_member_id"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "uniq_workability_submission": {
+          "name": "uniq_workability_submission",
+          "nullsNotDistinct": false,
+          "columns": ["match_id", "team_number", "scout_member_id", "role"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "workability_rating_range": {
+          "name": "workability_rating_range",
+          "value": "\"workability_form\".\"rating\" between 1 and 5"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.match_video": {
+      "name": "match_video",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "youtube_id": {
+          "name": "youtube_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "match_id": {
+          "name": "match_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by_member_id": {
+          "name": "created_by_member_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_match_video_organization": {
+          "name": "idx_match_video_organization",
+          "columns": [
+            {
+              "expression": "organization_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_match_video_org_match": {
+          "name": "idx_match_video_org_match",
+          "columns": [
+            {
+              "expression": "organization_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "match_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_match_video_event": {
+          "name": "idx_match_video_event",
+          "columns": [
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "match_video_organization_id_organization_id_fk": {
+          "name": "match_video_organization_id_organization_id_fk",
+          "tableFrom": "match_video",
+          "tableTo": "organization",
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "match_video_match_id_match_id_fk": {
+          "name": "match_video_match_id_match_id_fk",
+          "tableFrom": "match_video",
+          "tableTo": "match",
+          "columnsFrom": ["match_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "match_video_event_id_event_id_fk": {
+          "name": "match_video_event_id_event_id_fk",
+          "tableFrom": "match_video",
+          "tableTo": "event",
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "match_video_created_by_member_id_member_id_fk": {
+          "name": "match_video_created_by_member_id_member_id_fk",
+          "tableFrom": "match_video",
+          "tableTo": "member",
+          "columnsFrom": ["created_by_member_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.video_annotation": {
       "name": "video_annotation",
       "schema": "",
@@ -2954,217 +3172,6 @@
         }
       },
       "isRLSEnabled": false
-    },
-    "public.workability_form": {
-      "name": "workability_form",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "event_id": {
-          "name": "event_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "match_id": {
-          "name": "match_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "team_number": {
-          "name": "team_number",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "scout_member_id": {
-          "name": "scout_member_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "role": {
-          "name": "role",
-          "type": "workability_role",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "rating": {
-          "name": "rating",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "notes": {
-          "name": "notes",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "idx_workability_event_team": {
-          "name": "idx_workability_event_team",
-          "columns": [
-            {
-              "expression": "event_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "team_number",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_workability_member": {
-          "name": "idx_workability_member",
-          "columns": [
-            {
-              "expression": "scout_member_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_workability_match_team": {
-          "name": "idx_workability_match_team",
-          "columns": [
-            {
-              "expression": "match_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "team_number",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_workability_event_team_role": {
-          "name": "idx_workability_event_team_role",
-          "columns": [
-            {
-              "expression": "event_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "team_number",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "role",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "workability_form_event_id_event_id_fk": {
-          "name": "workability_form_event_id_event_id_fk",
-          "tableFrom": "workability_form",
-          "tableTo": "event",
-          "columnsFrom": ["event_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "workability_form_match_id_match_id_fk": {
-          "name": "workability_form_match_id_match_id_fk",
-          "tableFrom": "workability_form",
-          "tableTo": "match",
-          "columnsFrom": ["match_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "workability_form_team_number_team_team_number_fk": {
-          "name": "workability_form_team_number_team_team_number_fk",
-          "tableFrom": "workability_form",
-          "tableTo": "team",
-          "columnsFrom": ["team_number"],
-          "columnsTo": ["team_number"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "workability_form_scout_member_id_member_id_fk": {
-          "name": "workability_form_scout_member_id_member_id_fk",
-          "tableFrom": "workability_form",
-          "tableTo": "member",
-          "columnsFrom": ["scout_member_id"],
-          "columnsTo": ["id"],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "uniq_workability_submission": {
-          "name": "uniq_workability_submission",
-          "nullsNotDistinct": false,
-          "columns": ["match_id", "team_number", "scout_member_id", "role"]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {
-        "workability_rating_range": {
-          "name": "workability_rating_range",
-          "value": "\"workability_form\".\"rating\" between 1 and 5"
-        }
-      },
-      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -3172,16 +3179,6 @@
       "name": "alliance",
       "schema": "public",
       "values": ["red", "blue"]
-    },
-    "public.annotation_type": {
-      "name": "annotation_type",
-      "schema": "public",
-      "values": ["pen", "line", "arrow", "rect", "ellipse"]
-    },
-    "public.annotation_verdict": {
-      "name": "annotation_verdict",
-      "schema": "public",
-      "values": ["good", "bad"]
     },
     "public.climb_type": {
       "name": "climb_type",
@@ -3212,6 +3209,16 @@
       "name": "workability_role",
       "schema": "public",
       "values": ["driver", "human_player"]
+    },
+    "public.annotation_type": {
+      "name": "annotation_type",
+      "schema": "public",
+      "values": ["pen", "line", "arrow", "rect", "ellipse"]
+    },
+    "public.annotation_verdict": {
+      "name": "annotation_verdict",
+      "schema": "public",
+      "values": ["good", "bad"]
     }
   },
   "schemas": {},
@@ -3382,9 +3389,39 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "exp_fuel_auto": {
+          "name": "exp_fuel_auto",
+          "type": "numeric(18, 6)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exp_fuel_teleop": {
+          "name": "exp_fuel_teleop",
+          "type": "numeric(18, 6)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exp_fuel_active_is_estimated": {
+          "name": "exp_fuel_active_is_estimated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exp_fuel_auto_is_estimated": {
+          "name": "exp_fuel_auto_is_estimated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exp_fuel_teleop_is_estimated": {
+          "name": "exp_fuel_teleop_is_estimated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
         }
       },
-      "definition": "\n  with form_phase_duration as (\n    -- Total dump duration per stand form per phase (single match).\n    -- COPR fuel counts are per-match estimates, so we distribute them\n    -- across cycles within the same match proportionally by dump duration.\n    select\n      c.stand_form_id,\n      c.phase,\n      sum(greatest(coalesce(c.dump_duration, 0.0), 0.0)) as total_duration\n    from cycle c\n    join stand_form sf2 on sf2.id = c.stand_form_id\n    where sf2.deleted_at is null\n    group by c.stand_form_id, c.phase\n  ),\n  cycle_fuel as (\n    select\n      c.stand_form_id,\n      sum(\n        case\n          when fpd.total_duration > 0 then\n            (case c.phase\n              when 'auto' then coalesce(copr.auto_fuel_count, 0.0)\n              when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0) + coalesce(copr.endgame_fuel_count, 0.0)\n              else 0.0\n            end)\n            / fpd.total_duration\n            * greatest(coalesce(c.dump_duration, 0.0), 0.0)\n          else 0.0\n        end\n      ) as fuel_active,\n      count(*) as cycles_count\n    from cycle c\n    join stand_form sf3 on sf3.id = c.stand_form_id\n    join team_match tm on tm.id = sf3.team_match_id\n    left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number\n    left join form_phase_duration fpd on fpd.stand_form_id = c.stand_form_id and fpd.phase = c.phase\n    where sf3.deleted_at is null\n    group by c.stand_form_id\n  ),\n  climb_pts as (\n    select\n      sf2.id as stand_form_id,\n      -- Auto climb points from TBA\n      (case\n        when bd.auto_climb_level is null or bd.auto_climb_level = 0 then 0.0\n        when bd.auto_climb_level = 1 then 15.0\n        when bd.auto_climb_level = 2 then 20.0\n        when bd.auto_climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_auto,\n      -- Endgame climb points from TBA\n      (case\n        when bd.endgame_climb_level is null or bd.endgame_climb_level = 0 then 0.0\n        when bd.endgame_climb_level = 1 then 10.0\n        when bd.endgame_climb_level = 2 then 20.0\n        when bd.endgame_climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_teleop,\n      -- Combined climb points\n      (case\n        when bd.auto_climb_level is null or bd.auto_climb_level = 0 then 0.0\n        when bd.auto_climb_level = 1 then 15.0\n        when bd.auto_climb_level = 2 then 20.0\n        when bd.auto_climb_level = 3 then 30.0\n        else 0.0\n      end)\n      +\n      (case\n        when bd.endgame_climb_level is null or bd.endgame_climb_level = 0 then 0.0\n        when bd.endgame_climb_level = 1 then 10.0\n        when bd.endgame_climb_level = 2 then 20.0\n        when bd.endgame_climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_total,\n      -- Time bonus from latest scout-reported climb attempt\n      (case\n        when bd.auto_climb_level is null or bd.auto_climb_level = 0 then 0.0\n        when bd.auto_climb_level = 1 then 15.0\n        when bd.auto_climb_level = 2 then 20.0\n        when bd.auto_climb_level = 3 then 30.0\n        else 0.0\n      end)\n      +\n      (case\n        when bd.endgame_climb_level is null or bd.endgame_climb_level = 0 then 0.0\n        when bd.endgame_climb_level = 1 then 10.0\n        when bd.endgame_climb_level = 2 then 20.0\n        when bd.endgame_climb_level = 3 then 30.0\n        else 0.0\n      end)\n      +\n      coalesce(\n        (select case\n          when cl.climb_duration <= 3.0 then 2.0\n          when cl.climb_duration <= 6.0 then 0.0\n          else -2.0\n         end\n         from climb cl where cl.stand_form_id = sf2.id\n         order by cl.created_at desc limit 1),\n        0.0\n      ) as total_climb_pts\n    from stand_form sf2\n    join team_match tm2 on tm2.id = sf2.team_match_id\n    left join tba_match_breakdown bd on bd.team_match_id = tm2.id\n    where sf2.deleted_at is null\n  )\n  select\n    sf.id as stand_form_id,\n    sf.team_match_id,\n\n    coalesce(cf.fuel_active, 0.0) as exp_fuel_active,\n\n    coalesce(cp.total_climb_pts, 0.0) as exp_tower,\n    coalesce(cp.total_climb_pts, 0.0) as clank_match,\n\n    coalesce(cp.pure_climb_total, 0.0) as pure_climb_total,\n    coalesce(cp.pure_climb_auto,  0.0) as pure_climb_auto,\n    coalesce(cp.pure_climb_teleop, 0.0) as pure_climb_teleop,\n\n    coalesce(cf.cycles_count, 0)::int as cycles_count\n  from stand_form sf\n  left join cycle_fuel cf on cf.stand_form_id = sf.id\n  left join climb_pts cp on cp.stand_form_id = sf.id\n  where sf.deleted_at is null\n",
+      "definition": "\n  with form_phase_duration as (\n    -- Total dump duration per stand form per phase (single match).\n    -- COPR fuel counts are per-match estimates, so we distribute them\n    -- across cycles within the same match proportionally by dump duration.\n    select\n      c.stand_form_id,\n      c.phase,\n      sum(greatest(coalesce(c.dump_duration, 0.0), 0.0)) as total_duration\n    from cycle c\n    join stand_form sf2 on sf2.id = c.stand_form_id\n    where sf2.deleted_at is null\n    group by c.stand_form_id, c.phase\n  ),\n  cycle_estimates as (\n    select\n      c.stand_form_id,\n      c.phase,\n      case\n        when copr.id is not null and fpd.total_duration > 0 then\n          (case c.phase\n            when 'auto' then coalesce(copr.auto_fuel_count, 0.0)\n            when 'teleop' then coalesce(copr.teleop_fuel_count, 0.0)\n            else 0.0\n          end)\n          / fpd.total_duration\n          * greatest(coalesce(c.dump_duration, 0.0), 0.0)\n        when copr.id is null and sf3.uses_manual_fuel_estimate = true then\n          (case c.bucket\n            when 0 then 0.0\n            when 1 then 1.0\n            when 2 then 2.25\n            when 3 then 4.0\n            when 4 then 6.0\n            when 5 then 8.0\n            else 0.0\n          end)\n          * greatest(coalesce(c.dump_duration, 0.0), 0.0)\n        else 0.0\n      end as fuel_estimate,\n      (\n        copr.id is null\n        and sf3.uses_manual_fuel_estimate = true\n        and c.bucket is not null\n      ) as fuel_is_estimated\n    from cycle c\n    join stand_form sf3 on sf3.id = c.stand_form_id\n    join team_match tm on tm.id = sf3.team_match_id\n    left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number\n    left join form_phase_duration fpd on fpd.stand_form_id = c.stand_form_id and fpd.phase = c.phase\n    where sf3.deleted_at is null\n  ),\n  cycle_fuel as (\n    select\n      stand_form_id,\n      sum(fuel_estimate) as fuel_active,\n      sum(fuel_estimate) filter (where phase = 'auto') as fuel_auto,\n      sum(fuel_estimate) filter (where phase = 'teleop') as fuel_teleop,\n      bool_or(fuel_is_estimated) as fuel_active_is_estimated,\n      bool_or(fuel_is_estimated) filter (where phase = 'auto') as fuel_auto_is_estimated,\n      bool_or(fuel_is_estimated) filter (where phase = 'teleop') as fuel_teleop_is_estimated,\n      count(*) as cycles_count\n    from cycle_estimates\n    group by stand_form_id\n  ),\n  climb_pts as (\n    select\n      sf2.id as stand_form_id,\n      -- Auto climb points from TBA\n      (case\n        when bd.auto_climb_level is null or bd.auto_climb_level = 0 then 0.0\n        when bd.auto_climb_level = 1 then 15.0\n        when bd.auto_climb_level = 2 then 20.0\n        when bd.auto_climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_auto,\n      -- Endgame climb points from TBA\n      (case\n        when bd.endgame_climb_level is null or bd.endgame_climb_level = 0 then 0.0\n        when bd.endgame_climb_level = 1 then 10.0\n        when bd.endgame_climb_level = 2 then 20.0\n        when bd.endgame_climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_teleop,\n      -- Combined climb points\n      (case\n        when bd.auto_climb_level is null or bd.auto_climb_level = 0 then 0.0\n        when bd.auto_climb_level = 1 then 15.0\n        when bd.auto_climb_level = 2 then 20.0\n        when bd.auto_climb_level = 3 then 30.0\n        else 0.0\n      end)\n      +\n      (case\n        when bd.endgame_climb_level is null or bd.endgame_climb_level = 0 then 0.0\n        when bd.endgame_climb_level = 1 then 10.0\n        when bd.endgame_climb_level = 2 then 20.0\n        when bd.endgame_climb_level = 3 then 30.0\n        else 0.0\n      end) as pure_climb_total,\n      -- Time bonus from latest scout-reported climb attempt\n      (case\n        when bd.auto_climb_level is null or bd.auto_climb_level = 0 then 0.0\n        when bd.auto_climb_level = 1 then 15.0\n        when bd.auto_climb_level = 2 then 20.0\n        when bd.auto_climb_level = 3 then 30.0\n        else 0.0\n      end)\n      +\n      (case\n        when bd.endgame_climb_level is null or bd.endgame_climb_level = 0 then 0.0\n        when bd.endgame_climb_level = 1 then 10.0\n        when bd.endgame_climb_level = 2 then 20.0\n        when bd.endgame_climb_level = 3 then 30.0\n        else 0.0\n      end)\n      +\n      coalesce(\n        (select case\n          when cl.climb_duration <= 3.0 then 2.0\n          when cl.climb_duration <= 6.0 then 0.0\n          else -2.0\n         end\n         from climb cl where cl.stand_form_id = sf2.id\n         order by cl.created_at desc limit 1),\n        0.0\n      ) as total_climb_pts\n    from stand_form sf2\n    join team_match tm2 on tm2.id = sf2.team_match_id\n    left join tba_match_breakdown bd on bd.team_match_id = tm2.id\n    where sf2.deleted_at is null\n  )\n  select\n    sf.id as stand_form_id,\n    sf.team_match_id,\n\n    -- A missing phase has no cycle aggregate; retain its available COPR count.\n    coalesce(cf.fuel_auto, copr.auto_fuel_count, 0.0)\n      + coalesce(cf.fuel_teleop, copr.teleop_fuel_count, 0.0) as exp_fuel_active,\n\n    coalesce(cp.total_climb_pts, 0.0) as exp_tower,\n    coalesce(cp.total_climb_pts, 0.0) as clank_match,\n\n    coalesce(cp.pure_climb_total, 0.0) as pure_climb_total,\n    coalesce(cp.pure_climb_auto,  0.0) as pure_climb_auto,\n    coalesce(cp.pure_climb_teleop, 0.0) as pure_climb_teleop,\n\n    coalesce(cf.cycles_count, 0)::int as cycles_count,\n    coalesce(cf.fuel_auto, copr.auto_fuel_count, 0.0) as exp_fuel_auto,\n    coalesce(cf.fuel_teleop, copr.teleop_fuel_count, 0.0) as exp_fuel_teleop,\n    coalesce(cf.fuel_active_is_estimated, false) as exp_fuel_active_is_estimated,\n    coalesce(cf.fuel_auto_is_estimated, false) as exp_fuel_auto_is_estimated,\n    coalesce(cf.fuel_teleop_is_estimated, false) as exp_fuel_teleop_is_estimated\n  from stand_form sf\n  join team_match tm on tm.id = sf.team_match_id\n  left join team_event_copr copr on copr.event_id = tm.event_id and copr.team_number = tm.team_number\n  left join cycle_fuel cf on cf.stand_form_id = sf.id\n  left join climb_pts cp on cp.stand_form_id = sf.id\n  where sf.deleted_at is null\n",
       "name": "v_stand_form_expected",
       "schema": "public",
       "isExisting": false,

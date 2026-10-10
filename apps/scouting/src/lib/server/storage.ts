@@ -59,21 +59,27 @@ export function robotPhotoKey(params: {
   return `${params.organizationId}/pit-photos/${params.teamNumber}/${timestamp}-${params.index}.${ext}`;
 }
 
+/**
+ * Signs Bucket, Key and ContentType; the client must send the same Content-Type.
+ *
+ * Passing `sizeBytes` signs Content-Length as well, which pins the upload to a
+ * body of exactly that many bytes — the browser can no longer declare a small
+ * size to the server and then PUT something larger. Leave it off when the size
+ * isn't known up front and the body may vary.
+ */
 export async function createPresignedUploadUrl(
   objectKey: string,
   contentType: string,
-  maxSizeBytes?: number
+  sizeBytes?: number
 ): Promise<{ url: string; key: string }> {
   const config = getStorageConfig();
   const client = getClient();
 
-  // Sign Bucket, Key, and ContentType. Client must send the same Content-Type
-  // (no ContentLength in signature so body size can vary).
   const command = new PutObjectCommand({
     Bucket: config.bucket,
     Key: objectKey,
     ContentType: contentType,
-    ContentLength: maxSizeBytes, // Enforce maximum upload size at S3 level
+    ContentLength: sizeBytes,
   });
 
   const url = await getSignedUrl(client, command, {
