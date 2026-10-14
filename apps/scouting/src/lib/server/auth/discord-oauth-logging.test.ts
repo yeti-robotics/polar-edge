@@ -57,6 +57,24 @@ describe("Discord OAuth logging", () => {
     expect(JSON.stringify(info.mock.calls)).not.toContain("private-code");
   });
 
+  it("identifies a signup rejected after a successful Discord exchange", async () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => {});
+    const request = new Request(
+      "https://scout.yetirobotics.org/api/auth/callback/discord?state=private-state&code=private-code"
+    );
+    const response = Response.redirect(
+      "https://scout.yetirobotics.org/login?signup=restricted",
+      302
+    );
+
+    await logDiscordOAuthCallback(request, async () => response);
+
+    expect(info).toHaveBeenCalledWith(
+      "[discord-oauth] callback_completed",
+      expect.objectContaining({ outcome: "signup_rejected_no_valid_invite" })
+    );
+  });
+
   it("does not log unrelated auth requests", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => {});
     const request = new Request("https://scout.yetirobotics.org/api/auth/get-session");

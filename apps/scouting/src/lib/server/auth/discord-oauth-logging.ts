@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { routes } from "@/lib/routes";
 
 const DISCORD_CALLBACK_PATH = "/api/auth/callback/discord";
 const AUTH_ERROR_PATH = "/api/auth/error";
@@ -29,9 +30,16 @@ function getCallbackOutcome(response: Response, requestUrl: string): string {
   try {
     const destination = new URL(location, requestUrl);
     const request = new URL(requestUrl);
-    if (destination.origin !== request.origin || destination.pathname !== AUTH_ERROR_PATH) {
-      return "redirected";
+    if (destination.origin !== request.origin) return "redirected";
+
+    if (
+      destination.pathname === routes.login &&
+      destination.searchParams.get("signup") === "restricted"
+    ) {
+      return "signup_rejected_no_valid_invite";
     }
+
+    if (destination.pathname !== AUTH_ERROR_PATH) return "redirected";
 
     return destination.searchParams.get("error") === "invalid_code"
       ? "token_exchange_error"
