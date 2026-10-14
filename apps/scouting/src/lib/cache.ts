@@ -25,4 +25,6 @@ export const cacheTags = {
   memberStandForms: (eventId: string, memberId: string) =>
     `member-stand-forms-${eventId}-${memberId}`,
   standFormAudit: (formId: string) => `stand-form-audit-${formId}`,
+  filmNotes: (organizationId: string) => `film-notes-${organizationId}`,
+  tbaMatchVideos: (eventCode: string) => `tba-match-videos-${eventCode}`,
 };

@@ -5,6 +5,7 @@ import { driveTeamRankingEntry } from "../tables/drive-team-ranking-entry";
 import { event } from "../tables/event";
 import { invitation } from "../tables/invitation";
 import { match } from "../tables/match";
+import { matchVideo } from "../tables/match-video";
 import { member } from "../tables/member";
 import { organization } from "../tables/organization";
 import { organizationEvent } from "../tables/organization-event";
@@ -20,6 +21,7 @@ import { team } from "../tables/team";
 import { teamEventCopr } from "../tables/team-event-copr";
 import { teamMatch } from "../tables/team-match";
 import { user } from "../tables/user";
+import { videoAnnotation } from "../tables/video-annotation";
 import { workabilityForm } from "../tables/workability-form";
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -189,6 +191,33 @@ export const teamEventCoprRelations = relations(teamEventCopr, ({ one }) => ({
   }),
   team: one(team, {
     fields: [teamEventCopr.teamNumber],
+    references: [team.teamNumber],
+  }),
+}));
+
+export const matchVideoRelations = relations(matchVideo, ({ one, many }) => ({
+  organization: one(organization, {
+    fields: [matchVideo.organizationId],
+    references: [organization.id],
+  }),
+  match: one(match, {
+    fields: [matchVideo.matchId],
+    references: [match.id],
+  }),
+  event: one(event, {
+    fields: [matchVideo.eventId],
+    references: [event.id],
+  }),
+  annotations: many(videoAnnotation),
+}));
+
+export const videoAnnotationRelations = relations(videoAnnotation, ({ one }) => ({
+  video: one(matchVideo, {
+    fields: [videoAnnotation.videoId],
+    references: [matchVideo.id],
+  }),
+  team: one(team, {
+    fields: [videoAnnotation.teamNumber],
     references: [team.teamNumber],
   }),
 }));

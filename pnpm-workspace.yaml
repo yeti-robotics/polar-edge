@@ -2,6 +2,8 @@ packages:
   - apps/*
   - packages/*
 
+autoInstallPeers: false
+
 catalog:
   '@types/node': 24.10.13
   '@types/react': ^19.2.18
@@ -20,11 +22,13 @@ catalog:
 
 onlyBuiltDependencies:
   - '@swc/core'
+  - cpu-features
   - esbuild
+  - necord
+  - protobufjs
   - sharp
+  - ssh2
   - workerd
-
-autoInstallPeers: false
 
 overrides:
   # drizzle-kit pulls the deprecated @esbuild-kit/* packages, which pin an
