@@ -7,16 +7,23 @@ export function MetricTile({
   unit,
   description,
   valueClass,
+  estimated = false,
 }: {
   label: string;
   value: string | number;
   unit?: string;
   description?: string;
   valueClass?: string;
+  estimated?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <TypographyLabel>{label}</TypographyLabel>
+      <div className="flex items-center gap-1.5">
+        <TypographyLabel>{label}</TypographyLabel>
+        {estimated && (
+          <TypographySmall className="text-muted-foreground">Estimated</TypographySmall>
+        )}
+      </div>
       <p className={cn("text-2xl font-bold tabular-nums tracking-tight leading-none", valueClass)}>
         {value}
         {unit && (
