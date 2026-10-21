@@ -10,8 +10,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "collect-json-reports": "tsx src/scripts/collect-json-outputs.ts",
-    "merge-json-reports": "nyc merge coverage/raw coverage/merged/merged-coverage.json",
-    "report": "nyc report -t coverage/merged --report-dir coverage/report --reporter=html --exclude-after-remap false",
+    "merge-json-reports": "node src/scripts/coverage-report.mjs merge",
+    "report": "node src/scripts/coverage-report.mjs report",
     "view-report": "open coverage/report/index.html"
   },
   "dependencies": {
@@ -23,7 +23,9 @@
     "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "glob": "^13.0.6",
-    "nyc": "^18.0.0",
+    "istanbul-lib-coverage": "^3.2.2",
+    "istanbul-lib-report": "^3.0.1",
+    "istanbul-reports": "^3.2.0",
     "tsx": "catalog:",
     "typescript": "catalog:"
   }
