@@ -31,6 +31,8 @@ import {
   getTeamCycleTimeseries,
   getTeamKeyMetrics,
 } from "@/features/analysis/team-queries";
+import { TeamFilmNotesCard } from "@/features/film-room/components/TeamFilmNotesCard";
+import { getTeamFilmSummary } from "@/features/film-room/queries";
 import { DriveRatingCard } from "@/features/scouting/drive-ranking/components/DriveRatingCard";
 import { DriveRatingHistoryChart } from "@/features/scouting/drive-ranking/components/DriveRatingHistory";
 import {
@@ -173,6 +175,21 @@ async function WorkabilitySection({
 
   const summary = await getTeamWorkabilitySummary(teamNum, organizationId, effectiveEventId);
   return <TeamWorkabilityCard summary={summary} />;
+}
+
+async function FilmRoomSection({
+  teamNum,
+  organizationId,
+  effectiveEventId,
+}: {
+  teamNum: number;
+  organizationId: string | null;
+  effectiveEventId: string | null;
+}) {
+  if (!organizationId) return null;
+
+  const summary = await getTeamFilmSummary(teamNum, organizationId, effectiveEventId);
+  return <TeamFilmNotesCard summary={summary} />;
 }
 
 function PitStatCard({ label, value }: { label: string; value: React.ReactNode }) {
@@ -380,6 +397,15 @@ export default async function TeamPage({
       {/* ── Scout Comments ─────────────────────────────────────── */}
       <Suspense fallback={<Skeleton className="h-48 w-full rounded-lg" />}>
         <TeamCommentsSection {...scopeProps} isOrgAdmin={isOrgAdmin} />
+      </Suspense>
+
+      {/* ── Film Room ──────────────────────────────────────────── */}
+      <Suspense fallback={<Skeleton className="h-32 w-full rounded-lg" />}>
+        <FilmRoomSection
+          teamNum={teamNum}
+          organizationId={organizationId}
+          effectiveEventId={effectiveEventId}
+        />
       </Suspense>
 
       {/* ── Robot Profile ──────────────────────────────────────── */}

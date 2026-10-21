@@ -6,6 +6,7 @@ import { routes } from "@/lib/routes";
 import {
   acceptInviteLink as acceptLink,
   generateInviteLink as generateLink,
+  getBaseUrl,
   revokeInviteLink as revokeLink,
 } from "@/lib/server/invite-links";
 
@@ -15,7 +16,7 @@ export async function generateInviteLink() {
     if (!link) {
       throw new Error("Failed to generate invite link");
     }
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl();
     return {
       data: {
         ...link,

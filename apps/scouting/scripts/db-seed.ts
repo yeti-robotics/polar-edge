@@ -142,6 +142,10 @@ async function main() {
 
   const randomMemberId = () =>
     allMemberIds[Math.floor(Math.random() * allMemberIds.length)] ?? ownerMemberId;
+  const randomMemberIdExcluding = (excludedMemberId: string) => {
+    const candidates = allMemberIds.filter((memberId) => memberId !== excludedMemberId);
+    return candidates[Math.floor(Math.random() * candidates.length)] ?? ownerMemberId;
+  };
   const randomScoutLeadId = () =>
     scoutLeadIds[Math.floor(Math.random() * scoutLeadIds.length)] ?? ownerMemberId;
 
@@ -322,12 +326,13 @@ async function main() {
       for (const teamResult of [...result.redTeams, ...result.blueTeams]) {
         const tmId = tmIdMap.get(`${matchId}-${teamResult.teamNumber}`);
         if (!tmId) continue;
+        const firstScoutMemberId = randomMemberId();
 
         // First scout: use the match simulation data
         observations.push({
           standFormValue: {
             teamMatchId: tmId,
-            scoutMemberId: randomMemberId(),
+            scoutMemberId: firstScoutMemberId,
             comments: teamResult.comments,
             oofTimeSeconds: teamResult.oofTimeSeconds,
           },
@@ -339,10 +344,11 @@ async function main() {
           const profile = profileMap.get(teamResult.teamNumber);
           if (profile) {
             const secondObs = simulateTeamMatch(profile);
+            const secondScoutMemberId = randomMemberIdExcluding(firstScoutMemberId);
             observations.push({
               standFormValue: {
                 teamMatchId: tmId,
-                scoutMemberId: randomMemberId(),
+                scoutMemberId: secondScoutMemberId,
                 comments: secondObs.comments,
                 oofTimeSeconds: secondObs.oofTimeSeconds,
               },

@@ -25,6 +25,7 @@ export const standForm = pgTable(
     comments: text("comments").notNull().default(""),
     canShuttle: boolean("can_shuttle"),
     oofTimeSeconds: smallint("oof_time_seconds").notNull().default(0),
+    usesManualFuelEstimate: boolean("uses_manual_fuel_estimate").notNull().default(false),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })

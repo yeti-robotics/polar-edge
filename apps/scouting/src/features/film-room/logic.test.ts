@@ -1,0 +1,222 @@
+import { describe, expect, it } from "vitest";
+import {
+  alphaForAnnotation,
+  applyQueuedOps,
+  distanceToAnnotation,
+  filterMatchOptions,
+  firstYouTubeVideo,
+  formatVideoTime,
+  isAnnotationVisible,
+  MAX_ANNOTATION_POINTS,
+  type MarkOp,
+  MIN_POINT_SPACING,
+  parseYouTubeId,
+  pushStrokePoint,
+  tbaQualMatchKey,
+} from "./logic";
+import type { Annotation } from "./types";
+
+describe("parseYouTubeId", () => {
+  it.each([
+    ["https://www.youtube.com/watch?v=dQw4w9WgXcQ", "dQw4w9WgXcQ"],
+    ["https://youtube.com/watch?feature=share&v=dQw4w9WgXcQ&t=30", "dQw4w9WgXcQ"],
+    ["https://youtu.be/dQw4w9WgXcQ?t=12", "dQw4w9WgXcQ"],
+    ["https://www.youtube.com/live/dQw4w9WgXcQ", "dQw4w9WgXcQ"],
+    ["https://www.youtube.com/shorts/dQw4w9WgXcQ", "dQw4w9WgXcQ"],
+    ["https://www.youtube.com/embed/dQw4w9WgXcQ", "dQw4w9WgXcQ"],
+    ["  dQw4w9WgXcQ  ", "dQw4w9WgXcQ"],
+  ])("reads %s", (input, id) => {
+    expect(parseYouTubeId(input)).toBe(id);
+  });
+
+  it.each(["Qual 42", "https://vimeo.com/123", ""])("rejects %s", (input) => {
+    expect(parseYouTubeId(input)).toBeNull();
+  });
+});
+
+describe("TBA helpers", () => {
+  it("builds qual match keys", () => {
+    expect(tbaQualMatchKey("2026ncwak", 42)).toBe("2026ncwak_qm42");
+  });
+
+  it("takes the first YouTube video and ignores TBA-hosted ones", () => {
+    expect(
+      firstYouTubeVideo([
+        { type: "tba", key: "abc" },
+        { type: "youtube", key: "dQw4w9WgXcQ?t=5" },
+      ])
+    ).toBe("dQw4w9WgXcQ");
+    expect(firstYouTubeVideo([{ type: "tba", key: "abc" }])).toBeNull();
+    expect(firstYouTubeVideo(undefined)).toBeNull();
+  });
+});
+
+describe("filterMatchOptions", () => {
+  const options = [4, 12, 42, 120].map((n) => ({ matchNumber: n, label: `Qual ${n}` }));
+
+  it("shows everything for empty text", () => {
+    expect(filterMatchOptions(options, " ")).toHaveLength(4);
+  });
+
+  it.each(["42", "q42", "qm42", "Qual 42"])("finds Qual 42 from %s", (text) => {
+    expect(filterMatchOptions(options, text).map((o) => o.matchNumber)).toEqual([42]);
+  });
+
+  it("prefix-matches match numbers", () => {
+    expect(filterMatchOptions(options, "12").map((o) => o.matchNumber)).toEqual([12, 120]);
+  });
+});
+
+describe("distanceToAnnotation", () => {
+  it("measures lines and arrows along the drawn segment, not just endpoints", () => {
+    const arrow = {
+      type: "arrow" as const,
+      points: [
+        { x: 0.1, y: 0.5 },
+        { x: 0.9, y: 0.5 },
+      ],
+    };
+    expect(distanceToAnnotation(arrow, { x: 0.5, y: 0.52 })).toBeCloseTo(0.02);
+  });
+
+  it("counts the inside of boxes and circles as a hit", () => {
+    const corners = [
+      { x: 0.2, y: 0.2 },
+      { x: 0.6, y: 0.6 },
+    ];
+    expect(distanceToAnnotation({ type: "rect", points: corners }, { x: 0.4, y: 0.4 })).toBe(0);
+    expect(distanceToAnnotation({ type: "ellipse", points: corners }, { x: 0.4, y: 0.4 })).toBe(0);
+    expect(
+      distanceToAnnotation({ type: "ellipse", points: corners }, { x: 0.9, y: 0.4 })
+    ).toBeGreaterThan(0.1);
+  });
+
+  it("follows every segment of a pen stroke", () => {
+    const pen = {
+      type: "pen" as const,
+      points: [
+        { x: 0, y: 0 },
+        { x: 0.5, y: 0 },
+        { x: 0.5, y: 0.5 },
+      ],
+    };
+    expect(distanceToAnnotation(pen, { x: 0.51, y: 0.25 })).toBeCloseTo(0.01);
+  });
+
+  it("is infinitely far from an empty mark", () => {
+    expect(distanceToAnnotation({ type: "pen", points: [] }, { x: 0, y: 0 })).toBe(
+      Number.POSITIVE_INFINITY
+    );
+  });
+});
+
+describe("timing", () => {
+  it("shows a mark from its in-point up to (not including) its out-point", () => {
+    const mark = { timestamp: 10, durationSeconds: 6 };
+    expect(isAnnotationVisible(mark, 9.9)).toBe(false);
+    expect(isAnnotationVisible(mark, 10)).toBe(true);
+    expect(isAnnotationVisible(mark, 15.9)).toBe(true);
+    expect(isAnnotationVisible(mark, 16)).toBe(false);
+  });
+
+  it("honours the clip length the scout picked", () => {
+    const long = { timestamp: 10, durationSeconds: 20 };
+    expect(isAnnotationVisible(long, 25)).toBe(true);
+    expect(isAnnotationVisible(long, 30)).toBe(false);
+  });
+
+  it("falls back to the default length for rows saved without one", () => {
+    const legacy = { timestamp: 10, durationSeconds: 0 };
+    expect(isAnnotationVisible(legacy, 15.9)).toBe(true);
+    expect(isAnnotationVisible(legacy, 16)).toBe(false);
+  });
+
+  it("formats m:ss", () => {
+    expect(formatVideoTime(0)).toBe("0:00");
+    expect(formatVideoTime(75.9)).toBe("1:15");
+  });
+});
+
+describe("alphaForAnnotation", () => {
+  const mark = { timestamp: 10, durationSeconds: 20 };
+
+  it("is invisible outside the clip", () => {
+    expect(alphaForAnnotation(mark, 9.9)).toBe(0);
+    expect(alphaForAnnotation(mark, 30)).toBe(0);
+  });
+
+  it("stays opaque until the fade, then eases out over the whole length", () => {
+    expect(alphaForAnnotation(mark, 10)).toBe(1);
+    // A 20s mark is still solid at 15s in: the fade is the last 0.4s only
+    expect(alphaForAnnotation(mark, 25)).toBe(1);
+    expect(alphaForAnnotation(mark, 29.8)).toBeCloseTo(0.5);
+  });
+});
+
+describe("applyQueuedOps", () => {
+  const mark = (id: string, note: string): Annotation => ({
+    id,
+    timestamp: 1,
+    durationSeconds: 6,
+    type: "pen",
+    points: [{ x: 0, y: 0 }],
+    note,
+  });
+
+  it("lays unsynced edits, creates and deletes over the server rows", () => {
+    const queue = new Map<string, MarkOp>([
+      ["a", { kind: "save", annotation: mark("a", "edited") }],
+      ["b", { kind: "delete", id: "b" }],
+      ["c", { kind: "save", annotation: mark("c", "new") }],
+    ]);
+    const result = applyQueuedOps([mark("a", "old"), mark("b", "gone"), mark("d", "kept")], queue);
+    expect(result.map((a) => [a.id, a.note])).toEqual([
+      ["a", "edited"],
+      ["d", "kept"],
+      ["c", "new"],
+    ]);
+  });
+});
+
+describe("pushStrokePoint", () => {
+  it("drops samples too close to see", () => {
+    const points = [{ x: 0.5, y: 0.5 }];
+    pushStrokePoint(points, { x: 0.5 + MIN_POINT_SPACING / 2, y: 0.5 });
+    expect(points).toHaveLength(1);
+  });
+
+  it("keeps samples that have moved", () => {
+    const points = [{ x: 0.5, y: 0.5 }];
+    pushStrokePoint(points, { x: 0.5 + MIN_POINT_SPACING * 2, y: 0.5 });
+    expect(points).toHaveLength(2);
+  });
+
+  it("always keeps the first sample of a stroke", () => {
+    const points: { x: number; y: number }[] = [];
+    pushStrokePoint(points, { x: 0.1, y: 0.1 });
+    expect(points).toEqual([{ x: 0.1, y: 0.1 }]);
+  });
+
+  it("stays inside the limit the server enforces, however long the drag", () => {
+    const points: { x: number; y: number }[] = [];
+    // Every sample is far enough apart to be kept, so only the cap can stop it.
+    for (let i = 0; i < MAX_ANNOTATION_POINTS * 3; i++) {
+      pushStrokePoint(points, { x: (i % 100) / 100, y: Math.floor(i / 100) / 100 });
+      expect(points.length).toBeLessThanOrEqual(MAX_ANNOTATION_POINTS);
+    }
+  });
+
+  it("halves a full stroke instead of refusing the next point", () => {
+    const points = Array.from({ length: MAX_ANNOTATION_POINTS }, (_, i) => ({
+      x: i / 10000,
+      y: 0,
+    }));
+    pushStrokePoint(points, { x: 0.9, y: 0.9 });
+
+    expect(points).toHaveLength(MAX_ANNOTATION_POINTS / 2 + 1);
+    // The stroke still starts where it started and ends on the new point.
+    expect(points[0]).toEqual({ x: 0, y: 0 });
+    expect(points[1]).toEqual({ x: 2 / 10000, y: 0 });
+    expect(points.at(-1)).toEqual({ x: 0.9, y: 0.9 });
+  });
+});
