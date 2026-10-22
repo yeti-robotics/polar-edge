@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/yeti-robotics/polar-edge/compare/basecamp-fe-v1.1.2...basecamp-fe-v1.1.3) (2026-10-22)
+
+
+### Bug Fixes
+
+* **basecamp-fe:** restore source copy for Docker build ([#595](https://github.com/yeti-robotics/polar-edge/issues/595)) ([5499a20](https://github.com/yeti-robotics/polar-edge/commit/5499a20f9d717b1a625913a6c5edae0abb045bad))
+
 ## [1.1.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-fe-v1.1.1...basecamp-fe-v1.1.2) (2026-10-22)
 
 
