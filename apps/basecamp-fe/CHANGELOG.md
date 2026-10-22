@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/yeti-robotics/polar-edge/compare/basecamp-fe-v1.1.1...basecamp-fe-v1.1.2) (2026-10-22)
+
+
+### Bug Fixes
+
+* pin node versions to 24.22.1 ([#594](https://github.com/yeti-robotics/polar-edge/issues/594)) ([288060b](https://github.com/yeti-robotics/polar-edge/commit/288060bf1081d0cd834e113dbd664b3d01df6a75))
+
 ## [1.1.1](https://github.com/yeti-robotics/polar-edge/compare/basecamp-fe-v1.1.0...basecamp-fe-v1.1.1) (2026-03-05)
 
 
