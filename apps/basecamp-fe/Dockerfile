@@ -6,6 +6,7 @@ RUN apk update
 # Set working directory
 WORKDIR /app
 RUN npm i -g turbo
+COPY . .
 
 # Generate a partial monorepo with a pruned lockfile for a target workspace.
 # Assuming "web" is the name entered in the project's package.json: { name: "web" }
