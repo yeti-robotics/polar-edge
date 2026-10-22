@@ -1,5 +1,18 @@
 # Changelog
 
+## [2026.26.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.25.0...scouting-v2026.26.0) (2026-10-22)
+
+
+### Features
+
+* **scouting:** add manual BPS fallback estimation ([#579](https://github.com/yeti-robotics/polar-edge/issues/579)) ([2b1e13c](https://github.com/yeti-robotics/polar-edge/commit/2b1e13ce3746e77bbf2e141ca5dd43403020c15b))
+
+
+### Bug Fixes
+
+* pin node versions to 24.22.1 ([#594](https://github.com/yeti-robotics/polar-edge/issues/594)) ([288060b](https://github.com/yeti-robotics/polar-edge/commit/288060bf1081d0cd834e113dbd664b3d01df6a75))
+* **scouting:** invite link base url correctly set based on env ([#591](https://github.com/yeti-robotics/polar-edge/issues/591)) ([49589e9](https://github.com/yeti-robotics/polar-edge/commit/49589e98efc992e6b3bd41c2a3104276e14797bb))
+
 ## [2026.25.0](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.24.0...scouting-v2026.25.0) (2026-10-10)
 
 
