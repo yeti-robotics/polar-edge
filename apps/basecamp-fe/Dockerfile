@@ -26,6 +26,7 @@ RUN pnpm install --frozen-lockfile
 
 # Build the project
 COPY --from=builder /app/out/full/ .
+ARG NEXT_DEPLOYMENT_ID
 RUN pnpm dlx turbo run build --filter=basecamp-fe
 
 FROM base AS runner

@@ -1,0 +1,17 @@
+name: Publish Basecamp Frontend Image
+
+on:
+  push:
+    tags:
+      - "basecamp-fe-v*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    uses: ./.github/workflows/_publish-docker-image.yml
+    with:
+      app: basecamp-fe
+      build_args: NEXT_DEPLOYMENT_ID=${{ github.ref_name }}

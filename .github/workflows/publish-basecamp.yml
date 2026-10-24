@@ -1,0 +1,16 @@
+name: Publish Basecamp Image
+
+on:
+  push:
+    tags:
+      - "basecamp-v*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    uses: ./.github/workflows/_publish-docker-image.yml
+    with:
+      app: basecamp

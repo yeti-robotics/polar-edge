@@ -391,8 +391,8 @@ GitHub Actions workflows:
 - `status-checks.yml` - Lint, test, typecheck, build on PRs
 - `pr-title-lint.yml` - Validate conventional commit format
 - `release-please.yml` - Automated releases on main
-- `release-docker-images.yml` - Build Docker images on tag push
-- `publish-basecamp.yml` - CI builds with `main` tag
+- `publish-basecamp.yml`, `publish-basecamp-fe.yml`, and `publish-scouting.yml` - Publish one image for each app's release tags
+- `_publish-docker-image.yml` - Shared Docker build and GHCR push workflow
 
 Docker images hosted at `ghcr.io/yeti3506/polar-edge/{app}:{tag}`.
 
