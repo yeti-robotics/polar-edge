@@ -179,9 +179,10 @@ Docker images are hosted on GitHub Container Registry (GHCR).
 | -------- | ------------- | --------- |
 | `{version}` | Every release | `ghcr.io/yeti3506/polar-edge/basecamp:1.2.3` |
 | `latest` | Stable releases only | `ghcr.io/yeti3506/polar-edge/basecamp:latest` |
-| `main` | Every push to main (CI) | `ghcr.io/yeti3506/polar-edge/basecamp:main` |
 
 Prerelease versions (e.g., `2026.1.0-alpha.1`) do **not** update the `latest` tag.
+In Portainer, deploy a specific version tag so the running image and rollback target are explicit.
+The `basecamp-fe` and `scouting` images use their full release tag as the Next.js deployment ID.
 
 ### Pulling Images
 
@@ -191,9 +192,6 @@ docker pull ghcr.io/yeti3506/polar-edge/basecamp:latest
 
 # Specific version
 docker pull ghcr.io/yeti3506/polar-edge/scouting:2026.1.0
-
-# Latest from main (CI build, may not be stable)
-docker pull ghcr.io/yeti3506/polar-edge/basecamp:main
 ```
 
 ## Release Workflow
@@ -213,7 +211,7 @@ Release Please creates:
   - Git tag (e.g., basecamp-v1.2.0)
   - GitHub Release with changelog
        ↓
-Docker build workflow triggers:
+The app-specific Docker publish workflow calls the shared publisher:
   - Builds image from Dockerfile
   - Pushes to GHCR with version tags
 ```
@@ -255,5 +253,7 @@ To roll back a deployment:
 | `status-checks.yml` | Push to main, PRs | Lint, test, typecheck, build |
 | `pr-title-lint.yml` | PR open/edit | Validates conventional commit format |
 | `release-please.yml` | Push to main | Creates/updates release PRs |
-| `release-docker-images.yml` | Tag push | Builds and pushes Docker images |
-| `publish-basecamp.yml` | Push to main | CI builds with `main` tag |
+| `publish-basecamp.yml` | `basecamp-v*` tag push | Publishes the Basecamp image |
+| `publish-basecamp-fe.yml` | `basecamp-fe-v*` tag push | Publishes the Basecamp frontend image |
+| `publish-scouting.yml` | `scouting-v*` tag push | Publishes the scouting image |
+| `_publish-docker-image.yml` | Called by the three publish workflows | Builds and pushes one Docker image |

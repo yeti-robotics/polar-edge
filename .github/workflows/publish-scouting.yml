@@ -1,0 +1,17 @@
+name: Publish Scouting Image
+
+on:
+  push:
+    tags:
+      - "scouting-v*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    uses: ./.github/workflows/_publish-docker-image.yml
+    with:
+      app: scouting
+      build_args: NEXT_DEPLOYMENT_ID=${{ github.ref_name }}
