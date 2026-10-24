@@ -67,7 +67,7 @@ export async function getPhotoUploadUrl(params: {
     });
 
     // Generate presigned URL
-    const result = await createPresignedUploadUrl(key, params.contentType);
+    const result = await createPresignedUploadUrl(key, params.contentType, params.fileSize);
     return result;
   } catch (error) {
     console.error("Get photo upload URL error:", error);
