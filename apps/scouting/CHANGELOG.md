@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.26.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.26.1...scouting-v2026.26.2) (2026-10-25)
+
+
+### Bug Fixes
+
+* **scouting:** enforce pit photo size in signed upload URL ([#600](https://github.com/yeti-robotics/polar-edge/issues/600)) ([6cb7478](https://github.com/yeti-robotics/polar-edge/commit/6cb74782948dfdc7b6e80909198cc06589c7047c))
+
 ## [2026.26.1](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.26.0...scouting-v2026.26.1) (2026-10-24)
 
 
