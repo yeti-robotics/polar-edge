@@ -8,7 +8,7 @@ Polar Edge is a scouting application for _FIRST_ Robotics Competition, built by 
 
 ### Prerequisites
 
-Polar Edge requires a local installation of [Node.js](https://nodejs.org/en/download/), and [Docker Desktop](https://www.docker.com/products/docker-desktop/)/[PostgreSQL](https://www.postgresql.org/download/) to run. We recommend using [nvm](https://github.com/nvm-sh/nvm) (MacOS/Linux) or [fnm](https://github.com/Schniz/fnm) (Windows) to manage your Node.js installation.
+Polar Edge requires Node.js 26, pnpm 12.15.0, and [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [PostgreSQL](https://www.postgresql.org/download/). Use [nvm](https://github.com/nvm-sh/nvm) (macOS/Linux) or [fnm](https://github.com/Schniz/fnm) (Windows) to select the Node.js version in `.nvmrc`, then install pnpm with `npm install --global pnpm@12.15.0`.
 
 ### Local Setup
 
