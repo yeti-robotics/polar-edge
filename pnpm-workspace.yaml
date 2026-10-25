@@ -2,10 +2,22 @@ packages:
   - apps/*
   - packages/*
 
+allowBuilds:
+  '@swc/core': true
+  cpu-features: false
+  esbuild: true
+  necord: true
+  protobufjs: true
+  sharp: true
+  # ssh2's native binding and cpu-features are optional addons from scouting's testcontainers dependency.
+  # ssh2's binding does not compile against Node 26's V8 API.
+  ssh2: false
+  workerd: true
+
 autoInstallPeers: false
 
 catalog:
-  '@types/node': 24.10.13
+  '@types/node': 26.6.5
   '@types/react': ^19.2.18
   '@types/react-dom': ^19.2.4
   '@vitest/coverage-v8': ^4.1.12
@@ -19,16 +31,6 @@ catalog:
   unplugin-swc: ^1.5.11
   vitest: ^4.1.12
   zod: ^4.4.3
-
-onlyBuiltDependencies:
-  - '@swc/core'
-  - cpu-features
-  - esbuild
-  - necord
-  - protobufjs
-  - sharp
-  - ssh2
-  - workerd
 
 overrides:
   # drizzle-kit pulls the deprecated @esbuild-kit/* packages, which pin an

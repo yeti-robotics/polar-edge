@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24.22.1-alpine AS base
+FROM node:26.12.1-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN npm install --global pnpm@12.15.0
 
 FROM base AS builder
 RUN apk add --no-cache libc6-compat && apk update
