@@ -21,8 +21,8 @@ catalog:
   '@types/react': ^19.2.18
   '@types/react-dom': ^19.2.4
   '@vitest/coverage-v8': ^4.1.12
-  ai: 7.0.65
-  next: 16.3.8
+  ai: 7.0.153
+  next: 16.4.3
   react: 19.2.4
   react-dom: 19.2.4
   tsdown: 0.21.7
@@ -31,6 +31,12 @@ catalog:
   unplugin-swc: ^1.5.11
   vitest: ^4.1.12
   zod: ^4.4.3
+
+minimumReleaseAgeExclude:
+  - '@ai-sdk/gateway@4.0.126'
+  - '@ai-sdk/provider-utils@5.0.68'
+  - '@ai-sdk/provider@4.0.34'
+  - ai@7.0.153
 
 overrides:
   # drizzle-kit pulls the deprecated @esbuild-kit/* packages, which pin an
@@ -47,3 +53,7 @@ overrides:
   next>@swc/helpers: 0.5.15
   js-yaml@^4: 4.3.2
   postcss-selector-parser@^6: 7.1.6
+  # Current @nestjs/platform-express releases pin multer 2.4.0.
+  '@nestjs/platform-express>multer': 2.5.0
+  # Current miniflare releases pin undici 7.29.1.
+  miniflare>undici: 7.30.1
