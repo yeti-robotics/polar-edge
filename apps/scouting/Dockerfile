@@ -1,4 +1,5 @@
-FROM node:24.22.1-alpine AS base
+FROM node:26.12.1-alpine AS base
+RUN npm install --global pnpm@12.15.0
 
 FROM base AS builder
 RUN apk add --no-cache libc6-compat
@@ -21,13 +22,12 @@ WORKDIR /app
 # First install the dependencies (as they change less often)
 # NOTE: pnpm-workspace.yaml pins next's @swc/helpers to 0.5.15. Newer versions
 # add a `module-sync` export condition; under pnpm's symlinked layout Next's
-# file tracer only copies the cjs build into .next/standalone, while the node:24
+# file tracer only copies the cjs build into .next/standalone, while the Node 26
 # runtime below honours `module-sync` and loads the ESM build that was never
 # traced -- the server then dies at boot with MODULE_NOT_FOUND. Don't drop that
 # override without checking `node apps/scouting/server.js` still starts.
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN corepack enable
 RUN pnpm install --frozen-lockfile
 
 # Build the project

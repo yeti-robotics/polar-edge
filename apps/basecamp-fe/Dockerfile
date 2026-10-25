@@ -1,4 +1,5 @@
-FROM node:24.22.1-alpine AS base
+FROM node:26.12.1-alpine AS base
+RUN npm install --global pnpm@12.15.0
 
 FROM base AS builder
 RUN apk add --no-cache libc6-compat
@@ -21,7 +22,6 @@ WORKDIR /app
 # First install the dependencies (as they change less often)
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN corepack enable
 RUN pnpm install --frozen-lockfile
 
 # Build the project
