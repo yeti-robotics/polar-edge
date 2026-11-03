@@ -37,6 +37,16 @@ minimumReleaseAgeExclude:
   - '@ai-sdk/provider-utils@5.0.68'
   - '@ai-sdk/provider@4.0.34'
   - ai@7.0.153
+  - '@better-auth/core@1.7.16'
+  - '@better-auth/drizzle-adapter@1.7.16'
+  - '@better-auth/kysely-adapter@1.7.16'
+  - '@better-auth/memory-adapter@1.7.16'
+  - '@better-auth/mongo-adapter@1.7.16'
+  - '@better-auth/passkey@1.7.16'
+  - '@better-auth/prisma-adapter@1.7.16'
+  - '@better-auth/telemetry@1.7.16'
+  - better-auth@1.7.16
+  - better-call@1.4.5
 
 overrides:
   # drizzle-kit pulls the deprecated @esbuild-kit/* packages, which pin an
