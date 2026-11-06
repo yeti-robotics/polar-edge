@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/yeti-robotics/polar-edge/compare/basecamp-fe-v1.1.4...basecamp-fe-v1.1.5) (2026-11-06)
+
+
+### Bug Fixes
+
+* repair Next.js Docker release builds ([1860438](https://github.com/yeti-robotics/polar-edge/commit/186043835e3a54a9f908a05503ecb9e80525c554))
+
 ## [1.1.4](https://github.com/yeti-robotics/polar-edge/compare/basecamp-fe-v1.1.3...basecamp-fe-v1.1.4) (2026-11-06)
 
 
