@@ -50,4 +50,8 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/scouting/.next/standalone 
 COPY --from=installer --chown=nextjs:nodejs /app/apps/scouting/.next/static ./apps/scouting/.next/static
 # COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
-CMD node apps/scouting/server.js
+ENV HOSTNAME=0.0.0.0
+
+ENV HOSTNAME=0.0.0.0
+
+CMD ["node", "apps/scouting/server.js"]
