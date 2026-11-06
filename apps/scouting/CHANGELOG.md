@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.26.4](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.26.3...scouting-v2026.26.4) (2026-11-06)
+
+
+### Bug Fixes
+
+* repair Next.js Docker release builds ([1860438](https://github.com/yeti-robotics/polar-edge/commit/186043835e3a54a9f908a05503ecb9e80525c554))
+
 ## [2026.26.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.26.2...scouting-v2026.26.3) (2026-11-06)
 
 
