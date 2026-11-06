@@ -14,4 +14,4 @@ jobs:
     uses: ./.github/workflows/_publish-docker-image.yml
     with:
       app: scouting
-      build_args: NEXT_DEPLOYMENT_ID=${{ github.ref_name }}
+      build_args: NEXT_DEPLOYMENT_ID=${{ github.sha }}

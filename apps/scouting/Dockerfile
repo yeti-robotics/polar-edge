@@ -52,6 +52,4 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/scouting/.next/static ./ap
 
 ENV HOSTNAME=0.0.0.0
 
-ENV HOSTNAME=0.0.0.0
-
 CMD ["node", "apps/scouting/server.js"]
