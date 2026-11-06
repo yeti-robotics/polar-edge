@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026.26.3](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.26.2...scouting-v2026.26.3) (2026-11-06)
+
+
+### Bug Fixes
+
+* update dockerfiles ([8395a9c](https://github.com/yeti-robotics/polar-edge/commit/8395a9ca1651534f3c7d7f90af3e3adc2d6d3509))
+
 ## [2026.26.2](https://github.com/yeti-robotics/polar-edge/compare/scouting-v2026.26.1...scouting-v2026.26.2) (2026-10-25)
 
 
