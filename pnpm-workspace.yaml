@@ -22,7 +22,7 @@ catalog:
   '@types/react-dom': ^19.2.4
   '@vitest/coverage-v8': ^4.1.12
   ai: 7.0.153
-  next: 16.4.3
+  next: 16.4.5
   react: 19.2.4
   react-dom: 19.2.4
   tsdown: 0.21.7
