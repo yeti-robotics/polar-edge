@@ -12,6 +12,7 @@ import { member } from "@/lib/database/schema/tables/member";
 import { session } from "@/lib/database/schema/tables/session";
 import { user as userTable } from "@/lib/database/schema/tables/user";
 import { isSuperAdmin } from "@/lib/permissions";
+import { routes } from "@/lib/routes";
 import { getInviteLinkByToken } from "@/lib/server/invite-links";
 
 const PENDING_INVITE_COOKIE = "pending_invite_token";
@@ -111,7 +112,7 @@ export const auth = betterAuth({
         if (sessionCookieName) {
           ctx.setCookie(sessionCookieName, "", { maxAge: 0, path: "/" });
         }
-        throw ctx.redirect("/?signup=restricted");
+        throw ctx.redirect(`${routes.login}?signup=restricted`);
       }
 
       // For returning users: restore active org on the new session if it isn't set.

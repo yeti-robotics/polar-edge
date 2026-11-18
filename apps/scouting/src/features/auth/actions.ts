@@ -2,6 +2,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { logDiscordOAuthStart } from "@/lib/server/auth/discord-oauth-logging";
 
 export async function signInDiscord(callbackURL = "/") {
   "use server";
@@ -14,6 +15,7 @@ export async function signInDiscord(callbackURL = "/") {
   });
 
   if (response?.url) {
+    logDiscordOAuthStart(response.url);
     redirect(response.url);
   }
 }
